@@ -1,4 +1,3 @@
-
 //
 // Disclaimer:
 // ----------
@@ -16,9 +15,9 @@
 
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
-
-// Here is a small helper for you! Have a look.
 #include "ResourcePath.hpp"
+#include <iostream>
+#include "Group.h"
 
 int main(int, char const**)
 {
@@ -32,21 +31,6 @@ int main(int, char const**)
     }
     window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
 
-    // Load a sprite to display
-    sf::Texture texture;
-    if (!texture.loadFromFile(resourcePath() + "cute_image.jpg")) {
-        return EXIT_FAILURE;
-    }
-    sf::Sprite sprite(texture);
-
-    // Create a graphical text to display
-    sf::Font font;
-    if (!font.loadFromFile(resourcePath() + "sansation.ttf")) {
-        return EXIT_FAILURE;
-    }
-    sf::Text text("Hello SFML", font, 50);
-    text.setFillColor(sf::Color::Black);
-
     // Load a music to play
     sf::Music music;
     if (!music.openFromFile(resourcePath() + "nice_music.ogg")) {
@@ -55,6 +39,14 @@ int main(int, char const**)
 
     // Play the music
     music.play();
+    
+    // Window
+    window.setVerticalSyncEnabled(true);
+    window.setFramerateLimit(60);
+    window.setTitle("Ungroup");
+
+    // Create group one
+    Group group_one(10.f, sf::Color(100, 250, 50));
 
     // Start the game loop
     while (window.isOpen())
@@ -72,17 +64,20 @@ int main(int, char const**)
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
                 window.close();
             }
+
+            // Handle group event
+            group_one.handleEvents(event);
         }
 
+        // Update group
+        group_one.update();
+        
         // Clear screen
-        window.clear();
+        window.clear(sf::Color::White);
 
-        // Draw the sprite
-        window.draw(sprite);
-
-        // Draw the string
-        window.draw(text);
-
+        // Draw group
+        group_one.draw(window);
+        
         // Update the window
         window.display();
     }
