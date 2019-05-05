@@ -50,7 +50,7 @@ TODO
 - `Direction Target`
   - Current vote for direction to move `Group`
 - `Merge Target`
- - Current vote for which `Group` to merge with
+  - Current vote for which `Group` to merge with
 - `Supply`
   - Amount of each `Resource` in possession
 - `Goal`
