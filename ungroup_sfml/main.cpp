@@ -17,7 +17,8 @@
 #include <SFML/Graphics.hpp>
 #include "ResourcePath.hpp"
 #include <iostream>
-#include "Group.h"
+#include "Group.hpp"
+#include "Player.hpp"
 
 int main(int, char const**)
 {
@@ -46,7 +47,13 @@ int main(int, char const**)
     window.setTitle("Ungroup");
 
     // Create group one
-    Group group_one(10.f, sf::Color(100, 250, 50));
+    Player player_one((sf::Keyboard::Key[]) {sf::Keyboard::W, sf::Keyboard::S, sf::Keyboard::D, sf::Keyboard::A});
+    
+    Player player_two((sf::Keyboard::Key[]) {sf::Keyboard::Up, sf::Keyboard::Down, sf::Keyboard::Right, sf::Keyboard::Left});
+    
+    Group group_one(10.f, sf::Vector2f(10.f, 10.f), sf::Color(100, 250, 50));
+    group_one.addMemeber(&player_one);
+    group_one.addMemeber(&player_two);
 
     // Start the game loop
     while (window.isOpen())
@@ -61,15 +68,21 @@ int main(int, char const**)
             }
 
             // Escape pressed: exit
-            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
+            if (event.type == sf::Event::KeyPressed &&
+                event.key.code == sf::Keyboard::Escape
+            ) {
                 window.close();
             }
 
             // Handle group event
+            player_one.handleEvents(event);
+            player_two.handleEvents(event);
             group_one.handleEvents(event);
         }
 
         // Update group
+        player_one.update();
+        player_two.update();
         group_one.update();
         
         // Clear screen

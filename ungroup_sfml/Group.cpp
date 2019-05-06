@@ -1,7 +1,13 @@
 #include <stdio.h>
-#include "Group.h"
+#include <iostream>
+#include "Group.hpp"
 
-Group::Group(float size, sf::Color color) : mCircle(size) {
+Group::Group(
+    float size,
+    sf::Vector2f position,
+    sf::Color color
+):mCircle(size) {
+    mPosition = position;
     mCircle.setFillColor(color);
 }
 
@@ -10,6 +16,9 @@ Group::~Group() {
 }
 
 void Group::update() {
+    for(auto member: mMembers) {
+        mPosition = mPosition + member->getDirection();
+    }
     mCircle.setPosition(mPosition);
 }
 
@@ -18,17 +27,9 @@ void Group::draw(sf::RenderTarget& target) {
 }
 
 void Group::handleEvents(sf::Event& event) {
-    if (event.type == sf::Event::KeyPressed) {
-        if (event.key.code == sf::Keyboard::W) {
-            mPosition.y -= 5.f;
-        } else if (event.key.code == sf::Keyboard::S) {
-            mPosition.y += 5.f;
-        }
-        
-        if (event.key.code == sf::Keyboard::A) {
-            mPosition.x -= 5.f;
-        } else if (event.key.code == sf::Keyboard::D) {
-            mPosition.x += 5.f;
-        }
-    }
+    //
+}
+
+void Group::addMemeber(Player* player) {
+    mMembers.push_back(player);
 }
