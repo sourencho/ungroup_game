@@ -32,4 +32,5 @@ void Group::handleEvents(sf::Event& event) {
 
 void Group::addMemeber(Player* player) {
     mMembers.push_back(player);
+    mCircle.setRadius(mMembers.size() * 10.f);
 }

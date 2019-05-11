@@ -7,6 +7,7 @@
 //
 
 #include "Player.hpp"
+#include "util.hpp"
 #include <iostream>
 
 Player::Player(sf::Keyboard::Key keys[4]):mDirection(1.0, 1.0) {
@@ -30,20 +31,12 @@ sf::Vector2f Player::getDirection() const {
 
 void Player::handleEvents(sf::Event& event) {
     if (event.type == sf::Event::KeyPressed) {
-        if (event.key.code == mUp) {
-            mDirection.x = 0.f;
-            mDirection.y = -1.f;
-        } else if (event.key.code == mDown) {
-            mDirection.x = 0.f;
-            mDirection.y = 1.f;
-        }
-        if (event.key.code == mLeft) {
-            mDirection.x = -1.f;
-            mDirection.y = 0.f;
-        } else if (event.key.code == mRigth) {
-            mDirection.x = 1.f;
-            mDirection.y = 0.f;
-        }
+        mDirection = sf::Vector2f(0.f,0.f);
+        if(sf::Keyboard::isKeyPressed(mUp)) { mDirection += sf::Vector2f(0.f,-1.f); }
+        if(sf::Keyboard::isKeyPressed(mDown)) { mDirection += sf::Vector2f(0.f,1.f); }
+        if(sf::Keyboard::isKeyPressed(mLeft)) { mDirection += sf::Vector2f(-1.f,0.f); }
+        if(sf::Keyboard::isKeyPressed(mRigth)) { mDirection += sf::Vector2f(1.f,0.f); }
+        mDirection = normalize(mDirection);
     }
 }
 

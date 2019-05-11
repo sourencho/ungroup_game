@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8002CAED2282C1A30041E463 /* util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8002CAEB2282C1A30041E463 /* util.cpp */; };
 		8019960E22765F2700C15F7D /* ResourcePath.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8019960D22765F2700C15F7D /* ResourcePath.mm */; };
 		8019961122765F2700C15F7D /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8019961022765F2700C15F7D /* main.cpp */; };
 		8019961422765F2700C15F7D /* cute_image.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8019961322765F2700C15F7D /* cute_image.jpg */; };
@@ -18,6 +19,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8002CAEB2282C1A30041E463 /* util.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = util.cpp; sourceTree = "<group>"; };
+		8002CAEC2282C1A30041E463 /* util.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = util.hpp; sourceTree = "<group>"; };
 		8019960822765F2700C15F7D /* ungroup_sfml.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ungroup_sfml.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8019960C22765F2700C15F7D /* ungroup_sfml-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ungroup_sfml-Info.plist"; sourceTree = "<group>"; };
 		8019960D22765F2700C15F7D /* ResourcePath.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ResourcePath.mm; sourceTree = "<group>"; };
@@ -70,6 +73,8 @@
 				80ACC8412279562600948569 /* Group.cpp */,
 				8020968C227F4A5F0083FCF5 /* Player.cpp */,
 				8020968D227F4A5F0083FCF5 /* Player.hpp */,
+				8002CAEB2282C1A30041E463 /* util.cpp */,
+				8002CAEC2282C1A30041E463 /* util.hpp */,
 				8019960B22765F2700C15F7D /* Supporting Files */,
 			);
 			path = ungroup_sfml;
@@ -189,6 +194,7 @@
 				8020968E227F4A5F0083FCF5 /* Player.cpp in Sources */,
 				80ACC8422279562600948569 /* Group.cpp in Sources */,
 				8019961122765F2700C15F7D /* main.cpp in Sources */,
+				8002CAED2282C1A30041E463 /* util.cpp in Sources */,
 				8019960E22765F2700C15F7D /* ResourcePath.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
