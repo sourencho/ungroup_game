@@ -16,6 +16,7 @@
 		8019961A22765F2700C15F7D /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 8019961922765F2700C15F7D /* icon.png */; };
 		8020968E227F4A5F0083FCF5 /* Player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8020968C227F4A5F0083FCF5 /* Player.cpp */; };
 		80ACC8422279562600948569 /* Group.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 80ACC8412279562600948569 /* Group.cpp */; };
+		80DB938D22879DEC00163464 /* GameController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 80DB938B22879DEC00163464 /* GameController.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,6 +35,8 @@
 		8020968D227F4A5F0083FCF5 /* Player.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Player.hpp; sourceTree = "<group>"; };
 		80ACC8402279548000948569 /* Group.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Group.hpp; sourceTree = "<group>"; };
 		80ACC8412279562600948569 /* Group.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Group.cpp; sourceTree = "<group>"; };
+		80DB938B22879DEC00163464 /* GameController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GameController.cpp; sourceTree = "<group>"; };
+		80DB938C22879DEC00163464 /* GameController.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = GameController.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,8 +76,8 @@
 				80ACC8412279562600948569 /* Group.cpp */,
 				8020968C227F4A5F0083FCF5 /* Player.cpp */,
 				8020968D227F4A5F0083FCF5 /* Player.hpp */,
-				8002CAEB2282C1A30041E463 /* util.cpp */,
-				8002CAEC2282C1A30041E463 /* util.hpp */,
+				80DB938B22879DEC00163464 /* GameController.cpp */,
+				80DB938C22879DEC00163464 /* GameController.hpp */,
 				8019960B22765F2700C15F7D /* Supporting Files */,
 			);
 			path = ungroup_sfml;
@@ -191,6 +194,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				80DB938D22879DEC00163464 /* GameController.cpp in Sources */,
 				8020968E227F4A5F0083FCF5 /* Player.cpp in Sources */,
 				80ACC8422279562600948569 /* Group.cpp in Sources */,
 				8019961122765F2700C15F7D /* main.cpp in Sources */,
