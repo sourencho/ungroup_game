@@ -3,7 +3,7 @@
 #include <cstdlib>
 
 GameController::GameController() {
-    //constructor
+    mCollisionDetector = new CollisionDetector();
 }
 
 GameController::~GameController() {
@@ -20,6 +20,9 @@ void GameController::update() {
     for(auto group: mGroups) {
         group->update();
     }
+    
+    // Detect Collisions
+    mCollisionDetector->detectGroupCollisions(mGroups);
 }
 
 void GameController::createPlayer(sf::Keyboard::Key keys[4]) {

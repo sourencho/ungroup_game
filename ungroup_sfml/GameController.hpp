@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include "Player.hpp"
 #include "Group.hpp"
+#include "CollisionDetector.hpp"
+
 
 class GameController {
 
@@ -19,6 +21,7 @@ class GameController {
     private:
         std::vector<Player*> mPlayers;
         std::vector<Group*> mGroups;
+        CollisionDetector* mCollisionDetector;
 };
     
 #endif /* GameController_hpp */

@@ -15,6 +15,7 @@
 		8019961A22765F2700C15F7D /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 8019961922765F2700C15F7D /* icon.png */; };
 		8020968E227F4A5F0083FCF5 /* Player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8020968C227F4A5F0083FCF5 /* Player.cpp */; };
 		8078FD042287B03800B15EA6 /* util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8078FD022287B03800B15EA6 /* util.cpp */; };
+		80A46BA92287B2FD00F5408F /* CollisionDetector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 80A46BA72287B2FD00F5408F /* CollisionDetector.cpp */; };
 		80ACC8422279562600948569 /* Group.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 80ACC8412279562600948569 /* Group.cpp */; };
 		80DB938D22879DEC00163464 /* GameController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 80DB938B22879DEC00163464 /* GameController.cpp */; };
 /* End PBXBuildFile section */
@@ -34,6 +35,8 @@
 		8020968D227F4A5F0083FCF5 /* Player.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Player.hpp; sourceTree = "<group>"; };
 		8078FD022287B03800B15EA6 /* util.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = util.cpp; sourceTree = "<group>"; };
 		8078FD032287B03800B15EA6 /* util.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = util.hpp; sourceTree = "<group>"; };
+		80A46BA72287B2FD00F5408F /* CollisionDetector.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CollisionDetector.cpp; sourceTree = "<group>"; };
+		80A46BA82287B2FD00F5408F /* CollisionDetector.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = CollisionDetector.hpp; sourceTree = "<group>"; };
 		80ACC8402279548000948569 /* Group.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Group.hpp; sourceTree = "<group>"; };
 		80ACC8412279562600948569 /* Group.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Group.cpp; sourceTree = "<group>"; };
 		80DB938B22879DEC00163464 /* GameController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GameController.cpp; sourceTree = "<group>"; };
@@ -80,9 +83,11 @@
 				8020968D227F4A5F0083FCF5 /* Player.hpp */,
 				80DB938B22879DEC00163464 /* GameController.cpp */,
 				80DB938C22879DEC00163464 /* GameController.hpp */,
-				8019960B22765F2700C15F7D /* Supporting Files */,
 				8078FD022287B03800B15EA6 /* util.cpp */,
 				8078FD032287B03800B15EA6 /* util.hpp */,
+				80A46BA72287B2FD00F5408F /* CollisionDetector.cpp */,
+				80A46BA82287B2FD00F5408F /* CollisionDetector.hpp */,
+				8019960B22765F2700C15F7D /* Supporting Files */,
 			);
 			path = ungroup_sfml;
 			sourceTree = "<group>";
@@ -209,6 +214,7 @@
 				80DB938D22879DEC00163464 /* GameController.cpp in Sources */,
 				8020968E227F4A5F0083FCF5 /* Player.cpp in Sources */,
 				8078FD042287B03800B15EA6 /* util.cpp in Sources */,
+				80A46BA92287B2FD00F5408F /* CollisionDetector.cpp in Sources */,
 				80ACC8422279562600948569 /* Group.cpp in Sources */,
 				8019961122765F2700C15F7D /* main.cpp in Sources */,
 				8019960E22765F2700C15F7D /* ResourcePath.mm in Sources */,

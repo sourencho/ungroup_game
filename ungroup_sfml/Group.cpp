@@ -34,3 +34,11 @@ void Group::addMemeber(Player* player) {
     mMembers.push_back(player);
     mCircle.setRadius(mMembers.size() * 10.f);
 }
+
+sf::Vector2f Group::getPosition() const {
+    return mCircle.getPosition();
+}
+
+float Group::getRadius() const {
+    return mCircle.getRadius();
+}

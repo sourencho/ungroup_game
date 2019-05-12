@@ -14,7 +14,12 @@ class Group{
         void update();
         void draw(sf::RenderTarget& target);
         void handleEvents(sf::Event& event);
+    
         void addMemeber(Player* player);
+    
+        // Getters
+        sf::Vector2f getPosition() const;
+        float getRadius() const;
     
     private:
         sf::CircleShape mCircle;
