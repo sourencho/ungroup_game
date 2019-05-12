@@ -1,11 +1,3 @@
-//
-//  Player.cpp
-//  ungroup_sfml
-//
-//  Created by Souren Papazian on 5/5/19.
-//  Copyright © 2019 Souren Papazian. All rights reserved.
-//
-
 #include "Player.hpp"
 #include <iostream>
 

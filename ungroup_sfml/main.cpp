@@ -19,6 +19,7 @@
 #include <iostream>
 #include "Group.hpp"
 #include "Player.hpp"
+#include "GameController.hpp"
 
 int main(int, char const**)
 {
@@ -46,14 +47,19 @@ int main(int, char const**)
     window.setFramerateLimit(60);
     window.setTitle("Ungroup");
 
-    // Create group one
-    Player player_one((sf::Keyboard::Key[]) {sf::Keyboard::W, sf::Keyboard::S, sf::Keyboard::D, sf::Keyboard::A});
+    // Create game controller
+    GameController game_controller;
     
-    Player player_two((sf::Keyboard::Key[]) {sf::Keyboard::Up, sf::Keyboard::Down, sf::Keyboard::Right, sf::Keyboard::Left});
+    // Create players
+    game_controller.createPlayer(
+        (sf::Keyboard::Key[])
+        {sf::Keyboard::W, sf::Keyboard::S, sf::Keyboard::D, sf::Keyboard::A}
+    );
     
-    Group group_one(10.f, sf::Vector2f(10.f, 10.f), sf::Color(100, 250, 50));
-    group_one.addMemeber(&player_one);
-    group_one.addMemeber(&player_two);
+    game_controller.createPlayer(
+        (sf::Keyboard::Key[])
+        {sf::Keyboard::Up, sf::Keyboard::Down, sf::Keyboard::Right, sf::Keyboard::Left}
+    );
 
     // Start the game loop
     while (window.isOpen())
@@ -74,24 +80,16 @@ int main(int, char const**)
                 window.close();
             }
 
-            // Handle group event
-            player_one.handleEvents(event);
-            player_two.handleEvents(event);
-            group_one.handleEvents(event);
+            // Handle game controller events
+            game_controller.handleEvents(event);
         }
 
-        // Update group
-        player_one.update();
-        player_two.update();
-        group_one.update();
+        // Update
+        game_controller.update();
         
-        // Clear screen
+        // Display
         window.clear(sf::Color::White);
-
-        // Draw group
-        group_one.draw(window);
-        
-        // Update the window
+        game_controller.draw(window);
         window.display();
     }
 
