@@ -27,14 +27,14 @@ int main(int, char const**)
 
     // Set the Icon
     sf::Image icon;
-    if (!icon.loadFromFile("./icon.png")) {
+    if (!icon.loadFromFile("./resources/images/icon.png")) {
         return EXIT_FAILURE;
     }
     window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
 
     // Load a music to play
     sf::Music music;
-    if (!music.openFromFile("./nice_music.ogg")) {
+    if (!music.openFromFile("./resources/audio/nice_music.ogg")) {
         return EXIT_FAILURE;
     }
 
