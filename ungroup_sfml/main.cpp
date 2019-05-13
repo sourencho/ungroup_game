@@ -15,7 +15,6 @@
 
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
-#include "ResourcePath.hpp"
 #include <iostream>
 #include "Group.hpp"
 #include "Player.hpp"
@@ -28,14 +27,14 @@ int main(int, char const**)
 
     // Set the Icon
     sf::Image icon;
-    if (!icon.loadFromFile(resourcePath() + "icon.png")) {
+    if (!icon.loadFromFile("./icon.png")) {
         return EXIT_FAILURE;
     }
     window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
 
     // Load a music to play
     sf::Music music;
-    if (!music.openFromFile(resourcePath() + "nice_music.ogg")) {
+    if (!music.openFromFile("./nice_music.ogg")) {
         return EXIT_FAILURE;
     }
 
@@ -51,16 +50,12 @@ int main(int, char const**)
     GameController game_controller;
     
     // Create players
-    game_controller.createPlayer(
-        (sf::Keyboard::Key[])
-        {sf::Keyboard::W, sf::Keyboard::S, sf::Keyboard::D, sf::Keyboard::A}
-    );
     
-    game_controller.createPlayer(
-        (sf::Keyboard::Key[])
-        {sf::Keyboard::Up, sf::Keyboard::Down, sf::Keyboard::Right, sf::Keyboard::Left}
-    );
+    sf::Keyboard::Key keys[] = {sf::Keyboard::Up, sf::Keyboard::Down, sf::Keyboard::Right, sf::Keyboard::Left};
+    game_controller.createPlayer(keys);
 
+    sf::Keyboard::Key keys2[] = {sf::Keyboard::W, sf::Keyboard::S, sf::Keyboard::D, sf::Keyboard::A};
+    game_controller.createPlayer(keys2);
     // Start the game loop
     while (window.isOpen())
     {
