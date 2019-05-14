@@ -1,17 +1,7 @@
-//
 // Disclaimer:
 // ----------
 //
 // This code will work only if you selected window, graphics and audio.
-//
-// Note that the "Run Script" build phase will copy the required frameworks
-// or dylibs to your application bundle so you can execute it on any OS X
-// computer.
-//
-// Your resource files (images, sounds, fonts, ...) are also copied to your
-// application bundle. To get the path to these resources, use the helper
-// function `resourcePath()` from ResourcePath.hpp
-//
 
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
@@ -27,14 +17,14 @@ int main(int, char const**)
 
     // Set the Icon
     sf::Image icon;
-    if (!icon.loadFromFile("./resources/images/icon.png")) {
+    if (!icon.loadFromFile("../resources/images/icon.png")) {
         return EXIT_FAILURE;
     }
     window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
 
     // Load a music to play
     sf::Music music;
-    if (!music.openFromFile("./resources/audio/nice_music.ogg")) {
+    if (!music.openFromFile("../resources/audio/nice_music.ogg")) {
         return EXIT_FAILURE;
     }
 
