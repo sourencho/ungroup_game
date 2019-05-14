@@ -27,20 +27,20 @@ int main(int, char const**)
 
     // Set the Icon
     sf::Image icon;
-    if (!icon.loadFromFile("./icon.png")) {
+    if (!icon.loadFromFile("./resources/images/icon.png")) {
         return EXIT_FAILURE;
     }
     window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
 
     // Load a music to play
     sf::Music music;
-    if (!music.openFromFile("./nice_music.ogg")) {
+    if (!music.openFromFile("./resources/audio/nice_music.ogg")) {
         return EXIT_FAILURE;
     }
 
     // Play the music
     music.play();
-    
+
     // Window
     window.setVerticalSyncEnabled(true);
     window.setFramerateLimit(60);
@@ -48,14 +48,14 @@ int main(int, char const**)
 
     // Create game controller
     GameController game_controller;
-    
+
     // Create players
-    
     sf::Keyboard::Key keys[] = {sf::Keyboard::Up, sf::Keyboard::Down, sf::Keyboard::Right, sf::Keyboard::Left};
     game_controller.createPlayer(keys);
 
     sf::Keyboard::Key keys2[] = {sf::Keyboard::W, sf::Keyboard::S, sf::Keyboard::D, sf::Keyboard::A};
     game_controller.createPlayer(keys2);
+
     // Start the game loop
     while (window.isOpen())
     {
@@ -81,7 +81,7 @@ int main(int, char const**)
 
         // Update
         game_controller.update();
-        
+
         // Display
         window.clear(sf::Color::White);
         game_controller.draw(window);
