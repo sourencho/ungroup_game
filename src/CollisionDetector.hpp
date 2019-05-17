@@ -8,7 +8,7 @@ class CollisionDetector
 {
     public:
         CollisionDetector();
-        void detectGroupCollisions(const std::vector<Group*> groups);
+        void detectGroupCollisions(std::vector<Group*> groups);
 };
 
 #endif /* CollisionDetector_hpp */

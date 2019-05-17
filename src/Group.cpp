@@ -42,3 +42,8 @@ sf::Vector2f Group::getPosition() const {
 float Group::getRadius() const {
     return mCircle.getRadius();
 }
+
+
+void Group::move(const sf::Vector2f& offset) {
+    return mCircle.move(offset);
+}

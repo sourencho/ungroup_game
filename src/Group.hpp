@@ -20,6 +20,9 @@ class Group{
         // Getters
         sf::Vector2f getPosition() const;
         float getRadius() const;
+
+        // Setters
+        void move(const sf::Vector2f& offset);
     
     private:
         sf::CircleShape mCircle;
