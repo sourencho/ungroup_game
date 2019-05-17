@@ -32,3 +32,4 @@
 *.out
 *.app
 ungroup_client
+ungroup_server

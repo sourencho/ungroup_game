@@ -1,14 +1,21 @@
-SRC = $(wildcard *.cpp)
-OBJ = $(SRC:.cpp=.o)
+SRC_CLIENT = $(wildcard *.cpp)
+OBJ_CLIENT = $(SRC_CLIENT:.cpp=.o)
+LDFLAGS_CLIENT = -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
+
+SRC_SERV = server/main_server.cpp
+OBJ_SERV = $(SRC_SERV:.cpp=.o)
+LDFLAGS_SERV = -lsfml-network -lsfml-system
 
 CFLAGS = -Wall -Weffc++ -Werror -pedantic -g
-LDFLAGS = -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
 
-all: ungroup_client
+all: ungroup_client ungroup_server
 
-ungroup_client: $(OBJ)
-	$(CXX) $(CFLAGS) -o $@ $^ $(LDFLAGS)
+ungroup_server: $(OBJ_SERV)
+	$(CXX) $(CFLAGS) -o $@ $^ $(LDFLAGS_SERV)
+
+ungroup_client: $(OBJ_CLIENT)
+	$(CXX) $(CFLAGS) -o $@ $^ $(LDFLAGS_CLIENT)
 
 .PHONY: clean
 clean:
-	rm -rf *.o *.gch ungroup_client
+	rm -rf *.o server/*.o *.gch server/*.gch ungroup_client ungroup_server
