@@ -31,5 +31,5 @@
 *.exe
 *.out
 *.app
-ungroup_client
-ungroup_server
+ug-client
+ug-server

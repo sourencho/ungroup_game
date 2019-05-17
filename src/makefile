@@ -8,14 +8,14 @@ LDFLAGS_SERV = -lsfml-network -lsfml-system
 
 CFLAGS = -Wall -Weffc++ -Werror -pedantic -g
 
-all: ungroup_client ungroup_server
+all: ug-client ug-server
 
-ungroup_server: $(OBJ_SERV)
+ug-server: $(OBJ_SERV)
 	$(CXX) $(CFLAGS) -o $@ $^ $(LDFLAGS_SERV)
 
-ungroup_client: $(OBJ_CLIENT)
+ug-client: $(OBJ_CLIENT)
 	$(CXX) $(CFLAGS) -o $@ $^ $(LDFLAGS_CLIENT)
 
 .PHONY: clean
 clean:
-	rm -rf *.o server/*.o *.gch server/*.gch ungroup_client ungroup_server
+	rm -rf *.o server/*.o *.gch server/*.gch ug-client ug-server
