@@ -22,6 +22,7 @@ class GameController {
         std::vector<Player*> mPlayers;
         std::vector<Group*> mGroups;
         CollisionDetector* mCollisionDetector;
+        int mNextGroupId;
 };
     
 #endif /* GameController_hpp */

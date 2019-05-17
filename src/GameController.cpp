@@ -4,6 +4,7 @@
 
 GameController::GameController() {
     mCollisionDetector = new CollisionDetector();
+    mNextGroupId = 0;
 }
 
 GameController::~GameController() {
@@ -27,11 +28,8 @@ void GameController::update() {
 
 void GameController::createPlayer(sf::Keyboard::Key keys[4]) {
     Player* new_player = new Player(keys);
-    Group* new_group = new Group(
-        10.f,
-        sf::Vector2f(10.f, 10.f),
-        sf::Color(rand() % 255, rand() % 255, rand() % 255)
-    );
+    Group* new_group = new Group(mNextGroupId, sf::Vector2f(20.f * mNextGroupId, 20.f * mNextGroupId));
+    mNextGroupId++;
     
     new_group->addMemeber(new_player);
     
@@ -48,17 +46,5 @@ void GameController::handleEvents(sf::Event& event) {
     // Handle players
     for(auto player: mPlayers) {
         player->handleEvents(event);
-    }
-
-    // Handle groups
-    for(auto group: mGroups) {
-        group->handleEvents(event);
-    }
-}
-
-void GameController::draw(sf::RenderTarget& target) {
-    // Draw groups
-    for(auto group: mGroups) {
-        group->draw(target);
     }
 }
