@@ -4,8 +4,9 @@
 #include <SFML/Graphics.hpp>
 #include <stdio.h>
 #include "Player.hpp"
+#include "GameObject.hpp"
 
-class Group {
+class Group: public GameObject {
 
     public:
         Group(int id, sf::Vector2f position);

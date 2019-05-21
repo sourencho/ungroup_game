@@ -9,7 +9,6 @@ GroupShape::GroupShape(
 ):mCircle(size) {
     mCircle.setPosition(position);
     mCircle.setFillColor(color);
-    mIsActive = false;
 }
 
 GroupShape::~GroupShape() {
@@ -35,12 +34,4 @@ void GroupShape::setPosition(sf::Vector2f position) {
 
 void GroupShape::setRadius(int size) {
     mCircle.setRadius(size);
-}
-
-void GroupShape::setActive(bool is_active) {
-    mIsActive = is_active;
-}
-
-bool GroupShape::isActive() const {
-    return mIsActive;
 }

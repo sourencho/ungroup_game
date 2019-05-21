@@ -3,23 +3,20 @@
 
 #include <SFML/Graphics.hpp>
 #include <stdio.h>
+#include "GameObject.hpp"
 
-class Player {
-    
-public:
-    Player(sf::Keyboard::Key keys[4]);
-    ~Player();
-    
-    void update();
-    void handleEvents(sf::Event& event);
-    sf::Vector2f getDirection() const;
-    
-private:
-    sf::Vector2f mDirection;
-    sf::Keyboard::Key mUp;
-    sf::Keyboard::Key mDown;
-    sf::Keyboard::Key mLeft;
-    sf::Keyboard::Key mRigth;
+class Player: public GameObject {
+
+    public:
+        Player();
+        ~Player();
+
+        void setDirection(sf::Vector2f direction);
+        sf::Vector2f getDirection() const;
+
+    private:
+        sf::Vector2f mDirection;
+
 };
 
 

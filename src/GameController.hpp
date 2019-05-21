@@ -10,19 +10,19 @@
 class GameController {
 
     public:
-        GameController();
+        GameController(int max_player_count);
         ~GameController();
-        void update();
-        void createPlayer(sf::Keyboard::Key keys[4]);
+        void update(int client_id, sf::Vector2f client_direction);
+        size_t createPlayer();
         const std::vector<Group*> &getGroups();
         void draw(sf::RenderTarget& target);
-        void handleEvents(sf::Event& event);
 
     private:
         std::vector<Player*> mPlayers;
         std::vector<Group*> mGroups;
         CollisionDetector* mCollisionDetector;
-        int mNextGroupId;
+        int mNextGroupId = 0;
+        int mNextPlayerId = 0;
 };
     
 #endif /* GameController_hpp */

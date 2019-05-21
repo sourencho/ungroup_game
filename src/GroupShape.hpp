@@ -2,9 +2,10 @@
 #define GroupShape_hpp
 
 #include <SFML/Graphics.hpp>
+#include "GameObject.hpp"
 #include <stdio.h>
 
-class GroupShape {
+class GroupShape: public GameObject {
 
     public:
         GroupShape(float size, sf::Vector2f position, sf::Color color);
@@ -15,16 +16,13 @@ class GroupShape {
         // Getters
         sf::Vector2f getPosition() const;
         float getRadius() const;
-        bool isActive() const;
 
         // Setters
         void setPosition(sf::Vector2f position);
         void setRadius(int size);
-        void setActive(bool is_active);
 
     private:
         sf::CircleShape mCircle;
-        bool mIsActive;
 };
 
 #endif /* GroupShape_hpp */

@@ -2,49 +2,48 @@
 #include <iostream>
 #include <cstdlib>
 
-GameController::GameController() {
+GameController::GameController(int max_player_count) {
+    for (int i=0; i < max_player_count; i++) {
+        mPlayers.push_back(new Player());
+    }
+
+    for (int i=0; i < max_player_count; i++) {
+        mGroups.push_back(new Group(i, sf::Vector2f(20.f * i, 20.f * i)));
+    }
+
     mCollisionDetector = new CollisionDetector();
-    mNextGroupId = 0;
 }
 
 GameController::~GameController() {
     //de-construcstructor
 }
 
-void GameController::update() {
+void GameController::update(int client_id, sf::Vector2f client_direction) {
     // Update players
-    for(auto player: mPlayers) {
-        player->update();
-    }
-    
+    mPlayers[client_id]->setDirection(client_direction);
+
     // Update groups
     for(auto group: mGroups) {
         group->update();
     }
-    
+
     // Detect Collisions
     mCollisionDetector->detectGroupCollisions(mGroups);
 }
 
-void GameController::createPlayer(sf::Keyboard::Key keys[4]) {
-    Player* new_player = new Player(keys);
-    Group* new_group = new Group(mNextGroupId, sf::Vector2f(20.f * mNextGroupId, 20.f * mNextGroupId));
-    mNextGroupId++;
-    
-    new_group->addMemeber(new_player);
-    
-    mPlayers.push_back(new_player);
-    mGroups.push_back(new_group);
-    
+size_t GameController::createPlayer() {
+    int new_group_id = mNextGroupId++;
+    int new_player_id = mNextPlayerId++;
+
+    mPlayers[new_player_id]->setActive(true);
+    mGroups[new_group_id]->setActive(true);
+
+    mGroups[new_group_id]->addMemeber(mPlayers[new_player_id]);
+
+    return new_player_id;
 }
 
 const std::vector<Group*> &GameController::getGroups() {
+    // TODO: Only send active groups to client
     return mGroups;
-}
-
-void GameController::handleEvents(sf::Event& event) {
-    // Handle players
-    for(auto player: mPlayers) {
-        player->handleEvents(event);
-    }
 }
