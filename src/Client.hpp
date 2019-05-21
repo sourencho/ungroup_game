@@ -4,6 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include "Group.hpp"
 #include "GroupShape.hpp"
+#include "game_def.hpp"
 #include <stdio.h>
 
 class Client {
@@ -13,7 +14,7 @@ class Client {
         ~Client();
 
         void draw(sf::RenderTarget& target);
-        void update(std::vector<Group*> groups);
+        void update(std::vector<Group*> active_groups);
         void handleEvents(sf::Event& event);
 
         // Setters
@@ -26,10 +27,7 @@ class Client {
     private:
         std::vector<GroupShape*> mGroupShapes;
         sf::Vector2f mDirection;
-        sf::Keyboard::Key mUp;
-        sf::Keyboard::Key mDown;
-        sf::Keyboard::Key mLeft;
-        sf::Keyboard::Key mRigth;
+        keys mKeys;
         int mId;
 
 };

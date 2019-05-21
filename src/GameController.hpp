@@ -14,7 +14,7 @@ class GameController {
         ~GameController();
         void update(int client_id, sf::Vector2f client_direction);
         size_t createPlayer();
-        const std::vector<Group*> &getGroups();
+        std::vector<Group*> getActiveGroups();
         void draw(sf::RenderTarget& target);
 
     private:
@@ -24,5 +24,5 @@ class GameController {
         int mNextGroupId = 0;
         int mNextPlayerId = 0;
 };
-    
+
 #endif /* GameController_hpp */

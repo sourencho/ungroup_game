@@ -10,8 +10,8 @@
 #include "Player.hpp"
 #include "Client.hpp"
 #include "GameController.hpp"
+#include "game_def.hpp"
 
-const int MAX_PLAYER_COUNT = 10;
 
 int main(int, char const**)
 {
@@ -75,7 +75,7 @@ int main(int, char const**)
 
         // Update
         game_controller.update(client_1.getId(), client_1.getDirection());
-        client_1.update(game_controller.getGroups());
+        client_1.update(game_controller.getActiveGroups());
 
         // Display
         window.clear(sf::Color::White);

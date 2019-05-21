@@ -15,10 +15,10 @@ Client::Client(int max_player_count, sf::Keyboard::Key keys[4]):mDirection(1.0, 
     }
 
     // Set up input
-    mUp = keys[0];
-    mDown = keys[1];
-    mRigth = keys[2];
-    mLeft = keys[3];
+    mKeys.up = keys[0];
+    mKeys.down = keys[1];
+    mKeys.right = keys[2];
+    mKeys.left = keys[3];
 }
 
 Client::~Client() {
@@ -34,16 +34,19 @@ void Client::draw(sf::RenderTarget& target) {
     }
 }
 
-void Client::update(std::vector<Group*> groups) {
-    for(auto group: groups) {
-        int group_id = group->getId();
-        if (group->isActive()) {
-            GroupShape* group_circle = mGroupShapes[group->getId()];
+void Client::update(std::vector<Group*> active_groups) {
+    for(auto active_group: active_groups) {
+        int active_group_id = active_group->getId();
 
-            group_circle->setPosition(group->getPosition());
-            group_circle->setRadius(group->getSize());
-            group_circle->setActive(true);
+        if (active_group_id >= mGroupShapes.size()) {
+            throw std::runtime_error("Update group with no corresponding GroupShape");
         }
+
+        GroupShape* group_shape = mGroupShapes[active_group_id];
+
+        group_shape->setPosition(active_group->getPosition());
+        group_shape->setRadius(active_group->getSize());
+        group_shape->setActive(true);
     }
 }
 
@@ -63,16 +66,16 @@ int Client::getId() const {
 void Client::handleEvents(sf::Event& event) {
     if (event.type == sf::Event::KeyPressed) {
         mDirection = sf::Vector2f(0.f,0.f);
-        if(sf::Keyboard::isKeyPressed(mUp)) {
+        if(sf::Keyboard::isKeyPressed(mKeys.up)) {
             mDirection += sf::Vector2f(0.f,-1.f);
         }
-        if(sf::Keyboard::isKeyPressed(mDown)) {
+        if(sf::Keyboard::isKeyPressed(mKeys.down)) {
             mDirection += sf::Vector2f(0.f,1.f);
         }
-        if(sf::Keyboard::isKeyPressed(mLeft)) {
+        if(sf::Keyboard::isKeyPressed(mKeys.left)) {
             mDirection += sf::Vector2f(-1.f,0.f);
         }
-        if(sf::Keyboard::isKeyPressed(mRigth)) {
+        if(sf::Keyboard::isKeyPressed(mKeys.right)) {
             mDirection += sf::Vector2f(1.f,0.f);
         }
         mDirection = normalize(mDirection);
