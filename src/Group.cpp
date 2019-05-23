@@ -2,13 +2,10 @@
 #include <iostream>
 #include "Group.hpp"
 
-Group::Group(
-    float size,
-    sf::Vector2f position,
-    sf::Color color
-):mCircle(size) {
+Group::Group(int id, sf::Vector2f position) {
+    mId = id;
     mPosition = position;
-    mCircle.setFillColor(color);
+    mSize = 0;
 }
 
 Group::~Group() {
@@ -19,26 +16,27 @@ void Group::update() {
     for(auto member: mMembers) {
         mPosition = mPosition + member->getDirection();
     }
-    mCircle.setPosition(mPosition);
-}
-
-void Group::draw(sf::RenderTarget& target) {
-    target.draw(mCircle);
-}
-
-void Group::handleEvents(sf::Event& event) {
-    //
 }
 
 void Group::addMemeber(Player* player) {
     mMembers.push_back(player);
-    mCircle.setRadius(mMembers.size() * 10.f);
+    mSize = mMembers.size() * 10.f;
 }
 
 sf::Vector2f Group::getPosition() const {
-    return mCircle.getPosition();
+    return mPosition;
 }
 
-float Group::getRadius() const {
-    return mCircle.getRadius();
+float Group::getSize() const {
+    return mSize;
+}
+
+int Group::getId() const {
+    return mId;
+}
+
+
+void Group::move(const sf::Vector2f& offset) {
+    mPosition.x += offset.x;
+    mPosition.y += offset.y;
 }

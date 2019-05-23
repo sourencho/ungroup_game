@@ -8,7 +8,10 @@
 #include <iostream>
 #include "Group.hpp"
 #include "Player.hpp"
+#include "Client.hpp"
 #include "GameController.hpp"
+#include "game_def.hpp"
+
 
 int main(int, char const**)
 {
@@ -37,14 +40,15 @@ int main(int, char const**)
     window.setTitle("Ungroup");
 
     // Create game controller
-    GameController game_controller;
+    GameController game_controller(MAX_PLAYER_COUNT);
+
+    // Create client
+    sf::Keyboard::Key keys[] = {sf::Keyboard::Up, sf::Keyboard::Down, sf::Keyboard::Right, sf::Keyboard::Left};
+    Client client_1(MAX_PLAYER_COUNT, keys);
 
     // Create players
-    sf::Keyboard::Key keys[] = {sf::Keyboard::Up, sf::Keyboard::Down, sf::Keyboard::Right, sf::Keyboard::Left};
-    game_controller.createPlayer(keys);
-
-    sf::Keyboard::Key keys2[] = {sf::Keyboard::W, sf::Keyboard::S, sf::Keyboard::D, sf::Keyboard::A};
-    game_controller.createPlayer(keys2);
+    size_t player_1_id = game_controller.createPlayer();
+    client_1.setId(player_1_id);
 
     // Start the game loop
     while (window.isOpen())
@@ -66,15 +70,16 @@ int main(int, char const**)
             }
 
             // Handle game controller events
-            game_controller.handleEvents(event);
+            client_1.handleEvents(event);
         }
 
         // Update
-        game_controller.update();
+        game_controller.update(client_1.getId(), client_1.getDirection());
+        client_1.update(game_controller.getActiveGroups());
 
         // Display
         window.clear(sf::Color::White);
-        game_controller.draw(window);
+        client_1.draw(window);
         window.display();
     }
 
