@@ -18,17 +18,18 @@ class Client {
         void handleEvents(sf::Event& event);
 
         // Setters
-        void setId(int id);
+        void setId(sf::Uint32 id);
 
         // Getters
-        int getId() const;
+        sf::Uint32 getId() const;
         sf::Vector2f getDirection() const;
 
     private:
+        sf::Uint32 initNetworking();
         std::vector<GroupShape*> mGroupShapes;
         sf::Vector2f mDirection;
         keys mKeys;
-        int mId;
+        sf::Uint32 mId;
 
 };
 
