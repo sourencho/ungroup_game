@@ -1,3 +1,22 @@
+ifeq '$(findstring ;,$(PATH))' ';'
+    detected_OS := Windows
+else
+    detected_OS := $(shell uname 2>/dev/null || echo Unknown)
+    detected_OS := $(patsubst CYGWIN%,Cygwin,$(detected_OS))
+    detected_OS := $(patsubst MSYS%,MSYS,$(detected_OS))
+    detected_OS := $(patsubst MINGW%,MSYS,$(detected_OS))
+endif
+
+ifeq ($(detected_OS),Darwin)        # Mac OS X
+	CXX = clang
+	CXXFLAGS = -std=c++11 -stdlib=libc++
+	LDFLAGS = -lstdc++
+	CFLAGS = -Wall -Weffc++ -Werror -pedantic -g
+$(info SOUREN is $(CXX))
+else
+	CFLAGS = -Weverything -Wall -Weffc++ -Werror -pedantic -g
+endif
+
 SRC_CLIENT = $(wildcard *.cpp)
 OBJ_CLIENT = $(SRC_CLIENT:.cpp=.o)
 LDFLAGS_CLIENT = -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
@@ -10,18 +29,16 @@ SRC_SERV = server/main_server.cpp
 OBJ_SERV = $(SRC_SERV:.cpp=.o)
 LDFLAGS_SERV = -lsfml-network -lsfml-system -lpthread
 
-CFLAGS = -Wall -Weffc++ -Werror -pedantic -g
-
 all: ug-client ug-demo-client ug-server
 
 ug-server: $(OBJ_SERV)
-	$(CXX) $(CFLAGS) -o $@ $^ $(LDFLAGS_SERV)
+	$(CXX) $(CFLAGS) -o $@ $^ $(LDFLAGS_SERV) $(LDFLAGS)
 
 ug-client: $(OBJ_CLIENT)
-	$(CXX) $(CFLAGS) -o $@ $^ $(LDFLAGS_CLIENT)
+	$(CXX) $(CFLAGS) -o $@ $^ $(LDFLAGS_CLIENT) $(LDFLAGS)
 
 ug-demo-client: $(OBJ_DEMO_CLIENT)
-	$(CXX) $(CFLAGS) -o $@ $^ $(LDFLAGS_DEMO_CLIENT)
+	$(CXX) $(CFLAGS) -o $@ $^ $(LDFLAGS_DEMO_CLIENT) $(LDFLAGS)
 
 .PHONY: clean
 clean:
