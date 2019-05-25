@@ -37,3 +37,7 @@ ug-demo-client
 
 # vscode
 .vscode
+
+# vim
+*.swp
+*.swo

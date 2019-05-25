@@ -50,6 +50,9 @@ int main(int, char const**)
     size_t player_1_id = game_controller.createPlayer();
     client_1.setId(player_1_id);
 
+    while (true) {};
+
+    /*
     // Start the game loop
     while (window.isOpen())
     {
@@ -82,6 +85,7 @@ int main(int, char const**)
         client_1.draw(window);
         window.display();
     }
+    */
 
     return EXIT_SUCCESS;
 }

@@ -43,16 +43,18 @@ void api_client_recv(sf::TcpSocket* api_client) {}
 void api_client_send(sf::TcpSocket* api_client) {}
 
 void realtime_client_recv(sf::UdpSocket* realtime_client) {
+  sf::Uint32 server_tick;
+  sf::Uint32 client_id;
+  sf::Uint32 x_pos;
+  sf::Uint32 y_pos;
+
   while (true) {
     sf::Packet packet;
     sf::IpAddress sender;
     unsigned short port;
-    if(!realtime_client->receive(packet, sender, port)) { continue; };
+    realtime_client->receive(packet, sender, port);
+    std::cout << "recv: " << sender << " " << port << std::endl;
     // fetch state updates for now
-    sf::Uint32 server_tick;
-    sf::Uint32 client_id;
-    sf::Uint32 x_pos;
-    sf::Uint32 y_pos;
     if (packet >> server_tick) {
       while (packet >> client_id >> x_pos >> y_pos) {
         std::cout << "Client: " << client_id << " has position x,y: " << x_pos << " " << y_pos << std::endl;
@@ -69,10 +71,11 @@ void realtime_client_recv(sf::UdpSocket* realtime_client) {
 
 void realtime_client_send(sf::UdpSocket* realtime_client) {
   while (true) {
+    std::cout << "send: " <<  my_client_id << curr_tick << std::endl;
     sf::Packet packet;
     sf::Uint32 move_cmd = (sf::Uint32)RealtimeCommand::move;
     if (packet << my_client_id << move_cmd << curr_tick << x_dir << y_dir) {
-      realtime_client->send(packet,"127.0.0.1", 4845);
+      realtime_client->send(packet,"127.0.0.1", 4888);
     } else {
       std::cout << "Failed to form packet" << std::endl;
     }
@@ -87,6 +90,7 @@ void realtime_client_send(sf::UdpSocket* realtime_client) {
 // in different threads, which is a Good Thing(tm) to avoid blocking in the client on network IO.
 void sync_server_state(sf::UdpSocket* realtime_client) {
   while (true) {
+    std::cout << "sync: " << my_client_id << curr_tick << std::endl;
     sf::Packet packet;
     sf::Uint32 fetch_state_cmd = (sf::Uint32)RealtimeCommand::fetch_state;
     if (packet << my_client_id << fetch_state_cmd << curr_tick) {
@@ -99,42 +103,64 @@ void sync_server_state(sf::UdpSocket* realtime_client) {
   }
 }
 
-int main(int, char const**)
+sf::TcpSocket* create_api_client()
 {
-  std::cout << "Starting ungroup demo client." << std::endl;
-  sf::TcpSocket api_client;
-  api_client.connect("127.0.0.1", 4844);
+  sf::TcpSocket* api_client = new sf::TcpSocket;
+  api_client->connect("127.0.0.1", 4844);
+  return api_client;
+}
+
+sf::UdpSocket* create_realtime_client()
+{
+  sf::UdpSocket* realtime_client = new sf::UdpSocket;
+  realtime_client->bind(4846);
+  return realtime_client;
+}
+
+sf::Uint32 register_networking_client(sf::TcpSocket* api_client)
+{
   sf::Packet registration_request;
   if(registration_request << (sf::Uint32)APICommand::register_client) {
-    api_client.send(registration_request);
-    read_registration_response(&api_client);
+    api_client->send(registration_request);
+    read_registration_response(api_client);
   }
 
   if (!is_registered) {
-    std::cout << "Failed to register. Exiting." << std::endl;
-    return EXIT_FAILURE;
+    throw std::runtime_error("Failed to register. Exiting.");
+    return -1;
   }
 
-  sf::UdpSocket realtime_client;
-  realtime_client.bind(sf::Socket::AnyPort);
-/*
+  // TODO: my_client_id should be local and passed to the threads on creation
+  return my_client_id;
+}
+
+int start_networking_client(sf::TcpSocket* api_client, sf::UdpSocket* realtime_client)
+{
+  std::cout << "Starting ungroup demo client." << std::endl;
+
+  /*
   // api
   std::thread api_client_recv_thread(api_client_recv, &api_client);
   std::thread api_client_send_thread(api_client_send, &api_client);
-*/
+  */
   // realtime
-  std::thread realtime_client_recv_thread(realtime_client_recv, &realtime_client);
-  std::thread realtime_client_send_thread(realtime_client_send, &realtime_client);
+  std::thread realtime_client_recv_thread(realtime_client_recv, realtime_client);
+  std::thread realtime_client_send_thread(realtime_client_send, realtime_client);
 
   // syncs authoritative sever state to client at a regular interval
-  std::thread sync_server_state_thread(sync_server_state, &realtime_client);
+  std::thread sync_server_state_thread(sync_server_state, realtime_client);
 
-  // Only really need one of these joins since they're all in infinite loops
+  // I don't really know if all these joins do anything if the first thread I join is in an infinite loop
   // api_client_recv_thread.join();
   // api_client_send_thread.join();
+  /*
   realtime_client_recv_thread.join();
   realtime_client_send_thread.join();
   sync_server_state_thread.join();
+  */
+  realtime_client_recv_thread.detach();
+  realtime_client_send_thread.detach();
+  sync_server_state_thread.detach();
 
   return EXIT_SUCCESS;
 }
