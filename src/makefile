@@ -8,7 +8,7 @@ LDFLAGS_DEMO_CLIENT = -lsfml-system -lsfml-network -lpthread
 
 SRC_SERV = server/main_server.cpp
 OBJ_SERV = $(SRC_SERV:.cpp=.o)
-LDFLAGS_SERV = -lsfml-network -lsfml-system
+LDFLAGS_SERV = -lsfml-network -lsfml-system -lpthread
 
 CFLAGS = -Wall -Weffc++ -Werror -pedantic -g
 
