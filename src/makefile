@@ -1,10 +1,10 @@
 ifeq '$(findstring ;,$(PATH))' ';'
-    detected_OS := Windows
+	detected_OS := Windows
 else
-    detected_OS := $(shell uname 2>/dev/null || echo Unknown)
-    detected_OS := $(patsubst CYGWIN%,Cygwin,$(detected_OS))
-    detected_OS := $(patsubst MSYS%,MSYS,$(detected_OS))
-    detected_OS := $(patsubst MINGW%,MSYS,$(detected_OS))
+	detected_OS := $(shell uname 2>/dev/null || echo Unknown)
+	detected_OS := $(patsubst CYGWIN%,Cygwin,$(detected_OS))
+	detected_OS := $(patsubst MSYS%,MSYS,$(detected_OS))
+	detected_OS := $(patsubst MINGW%,MSYS,$(detected_OS))
 endif
 
 ifeq ($(detected_OS),Darwin)        # Mac OS X
@@ -14,7 +14,7 @@ ifeq ($(detected_OS),Darwin)        # Mac OS X
 	CFLAGS = -Wall -Weffc++ -Werror -pedantic -g
 $(info SOUREN is $(CXX))
 else
-	CFLAGS = -Weverything -Wall -Weffc++ -Werror -pedantic -g
+	CFLAGS = -Wall -Weffc++ -Werror -pedantic -g
 endif
 
 SRC_CLIENT = $(wildcard *.cpp)
