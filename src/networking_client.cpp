@@ -103,10 +103,22 @@ void sync_server_state(sf::UdpSocket* realtime_client) {
   }
 }
 
-sf::Uint32 register_networking_client()
+sf::TcpSocket* create_api_client()
 {
-  sf::TcpSocket api_client;
-  api_client.connect("127.0.0.1", 4844);
+  sf::TcpSocket* api_client = new sf::TcpSocket;
+  api_client->connect("127.0.0.1", 4844);
+  return api_client;
+}
+
+sf::UdpSocket* create_realtime_client()
+{
+  sf::UdpSocket* realtime_client = new sf::UdpSocket;
+  realtime_client->bind(4846);
+  return realtime_client;
+}
+
+sf::Uint32 register_networking_client(sf::TcpSocket api_client)
+{
   sf::Packet registration_request;
   if(registration_request << (sf::Uint32)APICommand::register_client) {
     api_client.send(registration_request);
@@ -114,25 +126,23 @@ sf::Uint32 register_networking_client()
   }
 
   if (!is_registered) {
-    std::cout << "Failed to register. Exiting." << std::endl;
-    return EXIT_FAILURE;
+    throw std::runtime_error("Failed to register. Exiting.");
+    return -1;
   }
 
   // TODO: my_client_id should be local and passed to the threads on creation
   return my_client_id;
 }
 
-int start_networking_client()
+int start_networking_client(sf::TcpSocket* api_client, sf::UdpSocket* realtime_client)
 {
   std::cout << "Starting ungroup demo client." << std::endl;
 
-  sf::UdpSocket* realtime_client = new sf::UdpSocket;
-  realtime_client->bind(sf::UdpSocket::AnyPort);
-/*
+  /*
   // api
   std::thread api_client_recv_thread(api_client_recv, &api_client);
   std::thread api_client_send_thread(api_client_send, &api_client);
-*/
+  */
   // realtime
   std::thread realtime_client_recv_thread(realtime_client_recv, realtime_client);
   std::thread realtime_client_send_thread(realtime_client_send, realtime_client);

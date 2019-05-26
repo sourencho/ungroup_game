@@ -8,7 +8,7 @@ else
 endif
 
 ifeq ($(detected_OS),Darwin)        # Mac OS X
-	CXX = clang
+	CXX = clang++
 	CXXFLAGS = -std=c++11 -stdlib=libc++
 	LDFLAGS = -lstdc++
 	CFLAGS = -Wall -Weffc++ -Werror -pedantic -g

@@ -2,7 +2,6 @@
 #include <iostream>
 #include "Client.hpp"
 #include "util.hpp"
-#include "networking_client.hpp"
 
 Client::Client(int max_player_count, sf::Keyboard::Key keys[4]):mDirection(1.0, 1.0) {
     for (int i=0; i < max_player_count; i++) {
@@ -88,8 +87,10 @@ void Client::handleEvents(sf::Event& event) {
 }
 
 sf::Uint32 Client::initNetworking() {
+    mApiClient = create_api_client();
+    mRealtimeClient = create_realtime_client();
     sf::Uint32 my_client_id = register_networking_client();
-    start_networking_client();
+    start_networking_client(mApiClient, mRealtimeClient);
 
     return my_client_id;
 }
