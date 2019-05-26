@@ -43,19 +43,19 @@ void api_client_recv(sf::TcpSocket* api_client) {}
 void api_client_send(sf::TcpSocket* api_client) {}
 
 void realtime_client_recv(sf::UdpSocket* realtime_client) {
-  sf::Packet packet;
-  sf::IpAddress sender;
-  unsigned short port;
   sf::Uint32 server_tick;
   sf::Uint32 client_id;
   sf::Uint32 x_pos;
   sf::Uint32 y_pos;
+
   while (true) {
+    sf::Packet packet;
+    sf::IpAddress sender;
+    unsigned short port;
     realtime_client->receive(packet, sender, port);
-    std::cout << "made it souren" << std::endl;
+    std::cout << "recv: " << sender << " " << port << std::endl;
     // fetch state updates for now
     if (packet >> server_tick) {
-      std::cout << "souren" << server_tick << std::endl;
       while (packet >> client_id >> x_pos >> y_pos) {
         std::cout << "Client: " << client_id << " has position x,y: " << x_pos << " " << y_pos << std::endl;
       }
@@ -71,6 +71,7 @@ void realtime_client_recv(sf::UdpSocket* realtime_client) {
 
 void realtime_client_send(sf::UdpSocket* realtime_client) {
   while (true) {
+    std::cout << "send: " <<  my_client_id << curr_tick << std::endl;
     sf::Packet packet;
     sf::Uint32 move_cmd = (sf::Uint32)RealtimeCommand::move;
     if (packet << my_client_id << move_cmd << curr_tick << x_dir << y_dir) {
@@ -89,6 +90,7 @@ void realtime_client_send(sf::UdpSocket* realtime_client) {
 // in different threads, which is a Good Thing(tm) to avoid blocking in the client on network IO.
 void sync_server_state(sf::UdpSocket* realtime_client) {
   while (true) {
+    std::cout << "sync: " << my_client_id << curr_tick << std::endl;
     sf::Packet packet;
     sf::Uint32 fetch_state_cmd = (sf::Uint32)RealtimeCommand::fetch_state;
     if (packet << my_client_id << fetch_state_cmd << curr_tick) {
@@ -125,7 +127,7 @@ int start_networking_client()
   std::cout << "Starting ungroup demo client." << std::endl;
 
   sf::UdpSocket* realtime_client = new sf::UdpSocket;
-  realtime_client->bind(4888);
+  realtime_client->bind(sf::UdpSocket::AnyPort);
 /*
   // api
   std::thread api_client_recv_thread(api_client_recv, &api_client);

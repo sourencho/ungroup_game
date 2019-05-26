@@ -47,7 +47,7 @@ void realtime_client_recv(sf::UdpSocket* realtime_client) {
     sf::Packet packet;
     sf::IpAddress sender;
     unsigned short port;
-    realtime_client->receive(packet, sender, port);
+    if(!realtime_client->receive(packet, sender, port)) { continue; };
     // fetch state updates for now
     sf::Uint32 server_tick;
     sf::Uint32 client_id;
@@ -90,7 +90,7 @@ void sync_server_state(sf::UdpSocket* realtime_client) {
     sf::Packet packet;
     sf::Uint32 fetch_state_cmd = (sf::Uint32)RealtimeCommand::fetch_state;
     if (packet << my_client_id << fetch_state_cmd << curr_tick) {
-      realtime_client->send(packet, "127.0.0.1", 4845);
+      realtime_client->send(packet, "127.0.0.1", 4888);
     } else {
       std::cout << "Failed to form packet" << std::endl;
     }
@@ -116,7 +116,7 @@ int main(int, char const**)
   }
 
   sf::UdpSocket realtime_client;
-  realtime_client.bind(4846);
+  realtime_client.bind(sf::Socket::AnyPort);
 /*
   // api
   std::thread api_client_recv_thread(api_client_recv, &api_client);
@@ -129,7 +129,7 @@ int main(int, char const**)
   // syncs authoritative sever state to client at a regular interval
   std::thread sync_server_state_thread(sync_server_state, &realtime_client);
 
-  // I don't really know if all these joins do anything if the first thread I join is in an infinite loop
+  // Only really need one of these joins since they're all in infinite loops
   // api_client_recv_thread.join();
   // api_client_send_thread.join();
   realtime_client_recv_thread.join();

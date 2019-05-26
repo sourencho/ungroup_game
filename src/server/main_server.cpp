@@ -87,7 +87,7 @@ void api_server() {
 
 void realtime_server() {
   sf::UdpSocket rt_server;
-  rt_server.bind(4845);
+  rt_server.bind(4888);
 
   while (true) {
     sf::Uint32 ct = curr_tick;
@@ -136,7 +136,7 @@ void realtime_server() {
             sf::Uint32 client_id = iter.first;
             game_state_packet << client_id << iter.second[0] << iter.second[1];
           }
-          rt_server.send(game_state_packet, "127.0.0.1", 4846);
+          rt_server.send(game_state_packet, sender, port);
           break;
         default:
           std::cout << "Unknown command code sent: " << realtime_command << std::endl;
