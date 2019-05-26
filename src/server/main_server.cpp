@@ -13,7 +13,7 @@ enum class RealtimeCommand { move, fetch_state };
 
 std::unordered_map<sf::Uint32, sf::Int32*> client_moves;
 std::unordered_map<sf::Uint32, sf::Uint32*> client_positions;
-sf::Uint32 client_id_counter = 1000;
+sf::Uint32 client_id_counter = 0;
 
 std::atomic<uint> curr_tick(0);
 std::atomic<bool> accepting_move_commands(true);

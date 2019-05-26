@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <SFML/Network.hpp>
+#include "game_def.hpp"
 
 
 class NetworkingClient {
@@ -44,6 +45,8 @@ class NetworkingClient {
 
         sf::Uint32 connect();
         void disconnect();
+        
+        std::vector<position> getPositions();
 
     private: 
         // Methods
@@ -62,6 +65,8 @@ class NetworkingClient {
         sf::TcpSocket* mApiClient;
         sf::UdpSocket* mRealtimeClient;
 
+        std::atomic<bool> mAcceptingPositionRead;
+        std::vector<position> mPositions;
 };
 
 #endif /* NetworkingClient_hpp */

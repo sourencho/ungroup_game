@@ -40,6 +40,24 @@ void Client::draw(sf::RenderTarget& target) {
 }
 
 void Client::update(std::vector<Group*> active_groups) {
+    std::vector<position> positions = mNetworkingClient->getPositions();
+
+    // Network update state
+    for(auto position: positions) {
+        int active_group_id = position.id;
+        if (active_group_id >= mGroupShapes.size()) {
+            throw std::runtime_error("Update group with no corresponding GroupShape");
+        }
+
+        GroupShape* group_shape = mGroupShapes[active_group_id];
+
+        group_shape->setPosition(sf::Vector2f(position.x_pos, position.y_pos));
+        group_shape->setRadius(10.f);
+        group_shape->setActive(true);
+    }
+
+    // Local update state
+    /*
     for(auto active_group: active_groups) {
         int active_group_id = active_group->getId();
 
@@ -53,6 +71,7 @@ void Client::update(std::vector<Group*> active_groups) {
         group_shape->setRadius(active_group->getSize());
         group_shape->setActive(true);
     }
+    */
 }
 
 sf::Vector2f Client::getDirection() const {

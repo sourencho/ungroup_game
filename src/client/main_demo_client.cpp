@@ -72,7 +72,7 @@ void realtime_client_send(sf::UdpSocket* realtime_client) {
     sf::Packet packet;
     sf::Uint32 move_cmd = (sf::Uint32)RealtimeCommand::move;
     if (packet << my_client_id << move_cmd << curr_tick << x_dir << y_dir) {
-      realtime_client->send(packet,"127.0.0.1", 4845);
+      realtime_client->send(packet,"127.0.0.1", 4888);
     } else {
       std::cout << "Failed to form packet" << std::endl;
     }

@@ -11,6 +11,7 @@
 
 NetworkingClient::NetworkingClient() {
     mIsRegistered = false;
+    mAcceptingPositionRead = true;
 }
 
 NetworkingClient::~NetworkingClient() {
@@ -26,6 +27,13 @@ sf::Uint32 NetworkingClient::connect() {
 }
 
 void NetworkingClient::disconnect() {
+}
+
+std::vector<position> NetworkingClient::getPositions() {
+    while (!mAcceptingPositionRead) {
+        //
+    }
+    return mPositions;
 }
 
 void NetworkingClient::read_registration_response() {
@@ -104,13 +112,18 @@ void NetworkingClient::realtime_client_recv() {
     std::cout << "recv: " << sender << " " << port << std::endl;
     // fetch state updates for now
     if (packet >> server_tick) {
+      mAcceptingPositionRead = false;
+      mPositions.clear();
       while (packet >> client_id >> x_pos >> y_pos) {
         std::cout << "Client: " << client_id << " has position x,y: " << x_pos << " " << y_pos << std::endl;
+        position p = {client_id, x_pos, y_pos};
+        mPositions.push_back(p);
       }
       // Im not sure what kind of synchronization needs to happen here.
       // If this tick is the most up-to-date we've ever seen, maybe we set the game to it?
       std::cout << "Client positions from server for tick: " << server_tick << std::endl;
       mCurrentTick = server_tick;
+      mAcceptingPositionRead = true;
     } else {
       std::cout << "Failed to read server tick from new packet" << std::endl;
     }
