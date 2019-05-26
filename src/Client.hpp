@@ -6,7 +6,7 @@
 #include "GroupShape.hpp"
 #include "game_def.hpp"
 #include <stdio.h>
-#include "networking_client.hpp"
+#include "NetworkingClient.hpp"
 
 class Client {
 
@@ -32,8 +32,7 @@ class Client {
         keys mKeys;
         sf::Uint32 mId;
 
-        sf::TcpSocket* mApiClient;
-        sf::UdpSocket* mRealtimeClient;
+        NetworkingClient* mNetworkingClient;
 };
 
 #endif /* Client_hpp */

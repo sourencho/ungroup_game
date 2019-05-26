@@ -22,7 +22,8 @@ Client::Client(int max_player_count, sf::Keyboard::Key keys[4]):mDirection(1.0, 
 
     // Networking
     // TODO: assign id from client and use it to create player
-    initNetworking();
+    mNetworkingClient = new NetworkingClient();
+    mNetworkingClient->connect();
 }
 
 Client::~Client() {
@@ -84,13 +85,4 @@ void Client::handleEvents(sf::Event& event) {
         }
         mDirection = normalize(mDirection);
     }
-}
-
-sf::Uint32 Client::initNetworking() {
-    mApiClient = create_api_client();
-    mRealtimeClient = create_realtime_client();
-    sf::Uint32 my_client_id = register_networking_client(mApiClient);
-    start_networking_client(mApiClient, mRealtimeClient);
-
-    return my_client_id;
 }
