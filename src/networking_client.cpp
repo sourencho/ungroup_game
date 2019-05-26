@@ -51,7 +51,7 @@ void realtime_client_recv(sf::UdpSocket* realtime_client) {
   sf::Uint32 x_pos;
   sf::Uint32 y_pos;
   while (true) {
-    if(realtime_client->receive(packet, sender, port) != sf::Socket::Done) { continue; }
+    realtime_client->receive(packet, sender, port);
     std::cout << "made it souren" << std::endl;
     // fetch state updates for now
     if (packet >> server_tick) {
@@ -124,19 +124,19 @@ int start_networking_client()
 {
   std::cout << "Starting ungroup demo client." << std::endl;
 
-  sf::UdpSocket realtime_client;
-  realtime_client.bind(4846);
+  sf::UdpSocket* realtime_client = new sf::UdpSocket;
+  realtime_client->bind(4888);
 /*
   // api
   std::thread api_client_recv_thread(api_client_recv, &api_client);
   std::thread api_client_send_thread(api_client_send, &api_client);
 */
   // realtime
-  std::thread realtime_client_recv_thread(realtime_client_recv, &realtime_client);
-  std::thread realtime_client_send_thread(realtime_client_send, &realtime_client);
+  std::thread realtime_client_recv_thread(realtime_client_recv, realtime_client);
+  std::thread realtime_client_send_thread(realtime_client_send, realtime_client);
 
   // syncs authoritative sever state to client at a regular interval
-  std::thread sync_server_state_thread(sync_server_state, &realtime_client);
+  std::thread sync_server_state_thread(sync_server_state, realtime_client);
 
   // I don't really know if all these joins do anything if the first thread I join is in an infinite loop
   // api_client_recv_thread.join();
