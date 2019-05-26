@@ -8,15 +8,23 @@
 #include <unordered_map>
 
 const unsigned int CMD_DRIFT_THRESHOLD = 5;
-enum class APICommand { register_client, group, ungroup };
-enum class RealtimeCommand { move, fetch_state };
+enum APICommand { register_client, group, ungroup };
+enum RealtimeCommand { move, fetch_state };
 
+std::unordered_map<sf::TcpSocket*, sf::Int32> client_sockets_to_ids;
 std::unordered_map<sf::Uint32, sf::Int32*> client_moves;
 std::unordered_map<sf::Uint32, sf::Uint32*> client_positions;
 sf::Uint32 client_id_counter = 1000;
 
 std::atomic<uint> curr_tick(0);
 std::atomic<bool> accepting_move_commands(true);
+
+void delete_client(sf::TcpSocket* client, sf::SocketSelector selector) {
+  client_moves.erase(client_sockets_to_ids[client]);
+  client_positions.erase(client_sockets_to_ids[client]);
+  selector.remove(*client);
+  delete client;
+}
 
 void api_server() {
   // Create a socket to listen to new connections
@@ -64,19 +72,30 @@ void api_server() {
           {
             // The client has sent some data, we can receive it
             sf::Packet packet;
-            if (client.receive(packet) == sf::Socket::Done)
-            {
-              sf::Uint32 api_command;
-              if (packet >> api_command && (api_command == (sf::Uint32)APICommand::register_client)) {
-                sf::Packet response_packet;
-                sf::Uint32 api_command = (sf::Uint32)APICommand::register_client;
-                if(response_packet << api_command << client_id_counter << (sf::Uint32)curr_tick) {
-                  client.send(response_packet);
-                  std::cout << "Received client registration. Issued client ID " << client_id_counter << std::endl;
-                  client_positions[client_id_counter] = new sf::Uint32[2]{0, 0};
-                  client_id_counter++;
+            sf::Uint32 api_command;
+            switch (client.receive(packet)) {
+              case sf::Socket::Done:
+                if (packet >> api_command && (api_command == (sf::Uint32)APICommand::register_client)) {
+                  sf::Packet response_packet;
+                  sf::Uint32 api_command = (sf::Uint32)APICommand::register_client;
+                  if(response_packet << api_command << client_id_counter << (sf::Uint32)curr_tick) {
+                    client.send(response_packet);
+                    std::cout << "Received client registration. Issued client ID " << client_id_counter << std::endl;
+                    client_positions[client_id_counter] = new sf::Uint32[2]{0, 0};
+                    client_sockets_to_ids[&client] = client_id_counter;
+                    client_id_counter++;
+                  }
                 }
-              }
+                break;
+              case sf::TcpSocket::Error:
+                std::cout << "TCP client encountered error. Removing client." << std::endl;
+                delete_client(&client, selector);
+                break;
+              case sf::TcpSocket::Disconnected:
+                // clean up client_moves/client_positions hashes
+                std::cout << "TCP client disconnected. Removing client. " << std::endl;
+                delete_client(&client, selector);
+                break;
             }
           }
         }

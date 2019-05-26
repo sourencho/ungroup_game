@@ -11,6 +11,7 @@
 enum class APICommand { register_client, group, ungroup };
 enum class RealtimeCommand { move, fetch_state };
 
+const char* SERVER_IP = "127.0.0.1";
 sf::Uint32 my_client_id;
 sf::Uint32 curr_tick;
 // these values should be user input instead of hard-coded
@@ -53,7 +54,6 @@ void realtime_client_recv(sf::UdpSocket* realtime_client) {
     sf::IpAddress sender;
     unsigned short port;
     realtime_client->receive(packet, sender, port);
-    std::cout << "recv: " << sender << " " << port << std::endl;
     // fetch state updates for now
     if (packet >> server_tick) {
       while (packet >> client_id >> x_pos >> y_pos) {
@@ -71,15 +71,14 @@ void realtime_client_recv(sf::UdpSocket* realtime_client) {
 
 void realtime_client_send(sf::UdpSocket* realtime_client) {
   while (true) {
-    std::cout << "send: " <<  my_client_id << curr_tick << std::endl;
     sf::Packet packet;
     sf::Uint32 move_cmd = (sf::Uint32)RealtimeCommand::move;
     if (packet << my_client_id << move_cmd << curr_tick << x_dir << y_dir) {
-      realtime_client->send(packet,"127.0.0.1", 4888);
+      realtime_client->send(packet, SERVER_IP, 4888);
     } else {
       std::cout << "Failed to form packet" << std::endl;
     }
-    std::this_thread::sleep_for(std::chrono::milliseconds(80));
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
   }
 }
 
@@ -90,23 +89,22 @@ void realtime_client_send(sf::UdpSocket* realtime_client) {
 // in different threads, which is a Good Thing(tm) to avoid blocking in the client on network IO.
 void sync_server_state(sf::UdpSocket* realtime_client) {
   while (true) {
-    std::cout << "sync: " << my_client_id << curr_tick << std::endl;
     sf::Packet packet;
     sf::Uint32 fetch_state_cmd = (sf::Uint32)RealtimeCommand::fetch_state;
     if (packet << my_client_id << fetch_state_cmd << curr_tick) {
-      realtime_client->send(packet, "127.0.0.1", 4888);
+      realtime_client->send(packet, SERVER_IP, 4888);
     } else {
       std::cout << "Failed to form packet" << std::endl;
     }
     // fetch state constantly
-    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
   }
 }
 
 sf::TcpSocket* create_api_client()
 {
   sf::TcpSocket* api_client = new sf::TcpSocket;
-  api_client->connect("127.0.0.1", 4844);
+  api_client->connect(SERVER_IP, 4844);
   return api_client;
 }
 
