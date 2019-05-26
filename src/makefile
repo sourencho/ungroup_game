@@ -15,19 +15,20 @@ ifeq ($(detected_OS),Darwin)        # Mac OS X
 $(info SOUREN is $(CXX))
 else
 	CFLAGS = -Wall -Weffc++ -Werror -pedantic -g -fsanitize=address -fno-omit-frame-pointer
+	LDFLAGS = -lasan
 endif
 
 SRC_CLIENT = $(wildcard *.cpp)
 OBJ_CLIENT = $(SRC_CLIENT:.cpp=.o)
-LDFLAGS_CLIENT = -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio -lsfml-network -lpthread -lasan
+LDFLAGS_CLIENT = -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio -lsfml-network -lpthread
 
 SRC_DEMO_CLIENT = client/main_demo_client.cpp
 OBJ_DEMO_CLIENT = $(SRC_DEMO_CLIENT:.cpp=.o)
-LDFLAGS_DEMO_CLIENT = -lsfml-system -lsfml-network -lpthread -lasan
+LDFLAGS_DEMO_CLIENT = -lsfml-system -lsfml-network -lpthread
 
 SRC_SERV = server/main_server.cpp
 OBJ_SERV = $(SRC_SERV:.cpp=.o)
-LDFLAGS_SERV = -lsfml-network -lsfml-system -lpthread -lasan
+LDFLAGS_SERV = -lsfml-network -lsfml-system -lpthread
 
 all: ug-client ug-demo-client ug-server
 
