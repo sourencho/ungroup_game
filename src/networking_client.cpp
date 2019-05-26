@@ -117,12 +117,12 @@ sf::UdpSocket* create_realtime_client()
   return realtime_client;
 }
 
-sf::Uint32 register_networking_client(sf::TcpSocket api_client)
+sf::Uint32 register_networking_client(sf::TcpSocket* api_client)
 {
   sf::Packet registration_request;
   if(registration_request << (sf::Uint32)APICommand::register_client) {
-    api_client.send(registration_request);
-    read_registration_response(&api_client);
+    api_client->send(registration_request);
+    read_registration_response(api_client);
   }
 
   if (!is_registered) {

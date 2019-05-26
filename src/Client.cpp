@@ -89,7 +89,7 @@ void Client::handleEvents(sf::Event& event) {
 sf::Uint32 Client::initNetworking() {
     mApiClient = create_api_client();
     mRealtimeClient = create_realtime_client();
-    sf::Uint32 my_client_id = register_networking_client();
+    sf::Uint32 my_client_id = register_networking_client(mApiClient);
     start_networking_client(mApiClient, mRealtimeClient);
 
     return my_client_id;
