@@ -132,15 +132,14 @@ void NetworkingClient::realtime_client_recv() {
 
 void NetworkingClient::realtime_client_send() {
   while (true) {
-    std::cout << "send: " <<  mClientId << mCurrentTick << std::endl;
     sf::Packet packet;
     sf::Uint32 move_cmd = (sf::Uint32)RealtimeCommand::move;
     if (packet << mClientId << move_cmd << mCurrentTick << x_dir << y_dir) {
-      mRealtimeClient->send(packet,"127.0.0.1", 4888);
+      mRealtimeClient->send(packet, SERVER_IP, 4888);
     } else {
       std::cout << "Failed to form packet" << std::endl;
     }
-    std::this_thread::sleep_for(std::chrono::milliseconds(80));
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
   }
 }
 
@@ -151,18 +150,14 @@ void NetworkingClient::realtime_client_send() {
 // in different threads, which is a Good Thing(tm) to avoid blocking in the client on network IO.
 void NetworkingClient::sync_server_state() {
   while (true) {
-    std::cout << "sync: " << mClientId << mCurrentTick << std::endl;
     sf::Packet packet;
     sf::Uint32 fetch_state_cmd = (sf::Uint32)RealtimeCommand::fetch_state;
     if (packet << mClientId << fetch_state_cmd << mCurrentTick) {
-      mRealtimeClient->send(packet, "127.0.0.1", 4888);
+      mRealtimeClient->send(packet, SERVER_IP, 4888);
     } else {
       std::cout << "Failed to form packet" << std::endl;
     }
     // fetch state constantly
-    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
   }
 }
-
-
-

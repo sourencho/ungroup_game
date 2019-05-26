@@ -8,9 +8,11 @@
 
 class NetworkingClient {
 
+    const char* SERVER_IP = "127.0.0.1";
+
     // dedup these into shared header file
-    enum class APICommand { register_client, group, ungroup };
-    enum class RealtimeCommand { move, fetch_state };
+    enum APICommand { register_client, group, ungroup };
+    enum RealtimeCommand { move, fetch_state };
 
 
     // these values should be user input instead of hard-coded
@@ -28,7 +30,7 @@ class NetworkingClient {
     sf::TcpSocket* create_api_client()
     {
       sf::TcpSocket* api_client = new sf::TcpSocket;
-      api_client->connect("127.0.0.1", 4844);
+      api_client->connect(SERVER_IP, 4844);
       return api_client;
     }
 
@@ -45,10 +47,10 @@ class NetworkingClient {
 
         sf::Uint32 connect();
         void disconnect();
-        
+
         std::vector<position> getPositions();
 
-    private: 
+    private:
         // Methods
         void read_registration_response();
         void register_networking_client();
