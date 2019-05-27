@@ -12,8 +12,8 @@ enum APICommand { register_client, group, ungroup };
 enum RealtimeCommand { move, fetch_state };
 
 std::unordered_map<sf::TcpSocket*, sf::Int32> client_sockets_to_ids;
-std::unordered_map<sf::Uint32, sf::Int32*> client_moves;
-std::unordered_map<sf::Uint32, sf::Uint32*> client_positions;
+std::unordered_map<sf::Uint32, float*> client_moves;
+std::unordered_map<sf::Uint32, float*> client_positions;
 sf::Uint32 client_id_counter = 0;
 
 std::atomic<uint> curr_tick(0);
@@ -81,7 +81,7 @@ void api_server() {
                   if(response_packet << api_command << client_id_counter << (sf::Uint32)curr_tick) {
                     client.send(response_packet);
                     std::cout << "Received client registration. Issued client ID " << client_id_counter << std::endl;
-                    client_positions[client_id_counter] = new sf::Uint32[2]{0, 0};
+                    client_positions[client_id_counter] = new float[2]{0.f, 0.f};
                     client_sockets_to_ids[&client] = client_id_counter;
                     client_id_counter++;
                   }
@@ -123,14 +123,14 @@ void realtime_server() {
     if (command_packet >> client_id >> realtime_command >> tick) {
       switch(realtime_command) {
         case (sf::Uint32)RealtimeCommand::move:
-          sf::Int32 x_dir;
-          sf::Int32 y_dir;
+          float x_dir;
+          float y_dir;
           if (command_packet >> x_dir >> y_dir) {
             std::cout << "Client ID, tick, command, x, y: " << client_id << " " << tick << " " << realtime_command << " " << x_dir << " " << y_dir << std::endl;
             int drift = std::abs((int)((curr_tick - tick)));
             if (drift < CMD_DRIFT_THRESHOLD) {
               // your newest commands will overwrite old ones
-              std::unordered_map<sf::Uint32, sf::Int32*>::const_iterator iter = client_moves.find(client_id);
+              std::unordered_map<sf::Uint32, float*>::const_iterator iter = client_moves.find(client_id);
               if (accepting_move_commands) {
                 // if entry exists, don't allocate new array.
                 if(iter != client_moves.end()) {
@@ -138,7 +138,7 @@ void realtime_server() {
                   iter->second[1] = y_dir;
                 }
                 // drop the move command if we're computing game state in the other thread. doesn't feel great.
-                client_moves[client_id] = new sf::Int32[2]{x_dir, y_dir};
+                client_moves[client_id] = new float[2]{x_dir, y_dir};
               } else {
                 std::cout << "Dropping move command because game state being computed" << std::endl;
               }
@@ -180,7 +180,7 @@ void compute_game_state() {
     std::cout << "game state thread: dumping client moves for tick " << curr_tick << std::endl;
     for (const auto iter : client_moves) {
       sf::Uint32 client_id = iter.first;
-      sf::Int32* move_vector = iter.second;
+      float* move_vector = iter.second;
       if (client_positions.find(client_id) != client_positions.end()) {
         client_positions[client_id][0] += move_vector[0]; // x component
         client_positions[client_id][1] += move_vector[1]; // y component

@@ -56,6 +56,10 @@ void Client::update(std::vector<Group*> active_groups) {
         group_shape->setActive(true);
     }
 
+    // Network update direction
+    direction d = {mDirection.x, mDirection.y};
+    mNetworkingClient->setDirection(d);
+
     // Local update state
     /*
     for(auto active_group: active_groups) {

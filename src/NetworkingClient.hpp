@@ -15,11 +15,6 @@ class NetworkingClient {
     enum RealtimeCommand { move, fetch_state };
 
 
-    // these values should be user input instead of hard-coded
-    sf::Uint32 x_dir = 1;
-    sf::Uint32 y_dir = 1;
-
-
     // these will be strictly for ungroup/group/register/deregister and other Big abstraction changes
     // not sure it's really necessary, but implementing retry logic for something like ungrouping specifically
     // would be annoying. We're a lot more OK with duplication/out of order sends/dropped datagrams for stuff like moving.
@@ -48,6 +43,7 @@ class NetworkingClient {
         sf::Uint32 Connect();
 
         std::vector<position> getPositions();
+        void setDirection(direction dir);
 
     private:
         // Methods
@@ -68,6 +64,8 @@ class NetworkingClient {
 
         std::atomic<bool> mAcceptingPositionRead;
         std::vector<position> mPositions;
+        std::atomic<bool> mAcceptingDirectionRead;
+        direction mDirection;        
 };
 
 #endif /* NetworkingClient_hpp */

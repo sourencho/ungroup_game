@@ -11,8 +11,13 @@ struct keys {
 
 struct position {
     sf::Uint32 id;
-    sf::Uint32 x_pos;
-    sf::Uint32 y_pos;
+    float x_pos;
+    float y_pos;
+};
+
+struct direction {
+    float x_dir;
+    float y_dir;
 };
 
 #endif /* game_def_hpp */

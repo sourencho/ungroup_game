@@ -12,6 +12,7 @@
 NetworkingClient::NetworkingClient() {
     mIsRegistered = false;
     mAcceptingPositionRead = true;
+    mAcceptingDirectionRead = true;
 }
 
 NetworkingClient::~NetworkingClient() {
@@ -31,6 +32,12 @@ std::vector<position> NetworkingClient::getPositions() {
         //
     }
     return mPositions;
+}
+
+void NetworkingClient::setDirection(direction dir) {
+    mAcceptingDirectionRead = false;
+    mDirection = dir;
+    mAcceptingDirectionRead = true;
 }
 
 void NetworkingClient::ReadRegistrationResponse() {
@@ -98,8 +105,8 @@ void NetworkingClient::StartNetworkingClient()
 void NetworkingClient::RealtimeClientRecv() {
     sf::Uint32 server_tick;
     sf::Uint32 client_id;
-    sf::Uint32 x_pos;
-    sf::Uint32 y_pos;
+    float x_pos;
+    float y_pos;
 
     while (true) {
         sf::Packet packet;
@@ -129,14 +136,16 @@ void NetworkingClient::RealtimeClientRecv() {
 
 void NetworkingClient::RealtimeClientSend() {
     while (true) {
-        sf::Packet packet;
-        sf::Uint32 move_cmd = (sf::Uint32)RealtimeCommand::move;
-        if (packet << mClientId << move_cmd << mCurrentTick << x_dir << y_dir) {
-            mRealtimeClient->send(packet, SERVER_IP, 4888);
-        } else {
-            std::cout << "Failed to form packet" << std::endl;
+        if (mAcceptingDirectionRead) {
+            sf::Packet packet;
+            sf::Uint32 move_cmd = (sf::Uint32)RealtimeCommand::move;
+            if (packet << mClientId << move_cmd << mCurrentTick << mDirection.x_dir << mDirection.y_dir) {
+                mRealtimeClient->send(packet, SERVER_IP, 4888);
+            } else {
+                std::cout << "Failed to form packet" << std::endl;
+            }
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
         }
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 }
 
