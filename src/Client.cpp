@@ -23,7 +23,7 @@ Client::Client(int max_player_count, sf::Keyboard::Key keys[4]):mDirection(1.0, 
     // Networking
     // TODO: assign id from client and use it to create player
     mNetworkingClient = new NetworkingClient();
-    mNetworkingClient->connect();
+    mNetworkingClient->Connect();
 }
 
 Client::~Client() {

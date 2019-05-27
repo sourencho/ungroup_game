@@ -29,35 +29,34 @@ class NetworkingClient {
 
     sf::TcpSocket* create_api_client()
     {
-      sf::TcpSocket* api_client = new sf::TcpSocket;
-      api_client->connect(SERVER_IP, 4844);
-      return api_client;
+        sf::TcpSocket* api_client = new sf::TcpSocket;
+        api_client->connect(SERVER_IP, 4844);
+        return api_client;
     }
 
     sf::UdpSocket* create_realtime_client()
     {
-      sf::UdpSocket* realtime_client = new sf::UdpSocket;
-      realtime_client->bind(4846);
-      return realtime_client;
+        sf::UdpSocket* realtime_client = new sf::UdpSocket;
+        realtime_client->bind(4846);
+        return realtime_client;
     }
 
     public:
         NetworkingClient();
         ~NetworkingClient();
 
-        sf::Uint32 connect();
-        void disconnect();
+        sf::Uint32 Connect();
 
         std::vector<position> getPositions();
 
     private:
         // Methods
-        void read_registration_response();
-        void register_networking_client();
-        void start_networking_client();
-        void realtime_client_send();
-        void realtime_client_recv();
-        void sync_server_state();
+        void ReadRegistrationResponse();
+        void RegisterNetworkingClient();
+        void StartNetworkingClient();
+        void RealtimeClientSend();
+        void RealtimeClientRecv();
+        void SyncServerState();
 
         // Variables
         sf::Uint32 mClientId;
