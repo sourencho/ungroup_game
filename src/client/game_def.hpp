@@ -20,4 +20,7 @@ struct direction {
     float y_dir;
 };
 
+enum APICommand { register_client, group, ungroup };
+enum RealtimeCommand { move, fetch_state };
+
 #endif /* game_def_hpp */

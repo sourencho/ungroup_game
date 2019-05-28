@@ -18,12 +18,29 @@ NetworkingClient::NetworkingClient() {
 NetworkingClient::~NetworkingClient() {
 }
 
-sf::Uint32 NetworkingClient::Connect() {
+sf::Uint32 NetworkingClient::Start() {
     mApiClient = create_api_client();
     mRealtimeClient = create_realtime_client();
     RegisterNetworkingClient();   // Sets mClientId, mCurrentTick, mIsRegistered
 
-    StartNetworkingClient();
+    std::cout << "Starting ungroup demo client." << std::endl;
+
+    /*
+    // api
+    std::thread api_client_recv_thread(api_client_recv, &api_client);
+    std::thread api_client_send_thread(api_client_send, &api_client);
+    */
+
+    // realtime
+    std::thread RealtimeClientRecv_thread(&NetworkingClient::RealtimeClientRecv, this);
+    std::thread RealtimeClientSend_thread(&NetworkingClient::RealtimeClientSend, this);
+
+    // syncs authoritative sever state to client at a regular interval
+    std::thread SyncServerState_thread(&NetworkingClient::SyncServerState, this);
+
+    RealtimeClientRecv_thread.detach();
+    RealtimeClientSend_thread.detach();
+    SyncServerState_thread.detach();
     return mClientId;
 }
 
@@ -72,35 +89,6 @@ void NetworkingClient::RegisterNetworkingClient()
 
     // TODO: my_client_id should be local and passed to the threads on creation
 }
-
-
-void NetworkingClient::StartNetworkingClient()
-{
-    std::cout << "Starting ungroup demo client." << std::endl;
-
-    /*
-    // api
-    std::thread api_client_recv_thread(api_client_recv, &api_client);
-    std::thread api_client_send_thread(api_client_send, &api_client);
-    */
-
-    // realtime
-    std::thread RealtimeClientRecv_thread(&NetworkingClient::RealtimeClientRecv, this);
-    std::thread RealtimeClientSend_thread(&NetworkingClient::RealtimeClientSend, this);
-
-    // syncs authoritative sever state to client at a regular interval
-    std::thread SyncServerState_thread(&NetworkingClient::SyncServerState, this);
-
-    // I don't really know if all these joins do anything if the first thread I join is in an infinite loop
-    // api_client_recv_thread.join();
-    // api_client_send_thread.join();
-
-    RealtimeClientRecv_thread.detach();
-    RealtimeClientSend_thread.detach();
-    SyncServerState_thread.detach();
-}
-
-
 
 void NetworkingClient::RealtimeClientRecv() {
     sf::Uint32 server_tick;

@@ -2,11 +2,11 @@
 #define Client_hpp
 
 #include <SFML/Graphics.hpp>
-#include "Group.hpp"
 #include "GroupShape.hpp"
 #include "game_def.hpp"
 #include <stdio.h>
 #include "NetworkingClient.hpp"
+#include "../common/util.hpp"
 
 class Client {
 
@@ -15,7 +15,7 @@ class Client {
         ~Client();
 
         void draw(sf::RenderTarget& target);
-        void update(std::vector<Group*> active_groups);
+        void update();
         void handleEvents(sf::Event& event);
 
         // Setters

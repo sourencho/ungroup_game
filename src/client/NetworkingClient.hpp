@@ -10,11 +10,6 @@ class NetworkingClient {
 
     const char* SERVER_IP = "127.0.0.1";
 
-    // dedup these into shared header file
-    enum APICommand { register_client, group, ungroup };
-    enum RealtimeCommand { move, fetch_state };
-
-
     // these will be strictly for ungroup/group/register/deregister and other Big abstraction changes
     // not sure it's really necessary, but implementing retry logic for something like ungrouping specifically
     // would be annoying. We're a lot more OK with duplication/out of order sends/dropped datagrams for stuff like moving.
@@ -40,7 +35,7 @@ class NetworkingClient {
         NetworkingClient();
         ~NetworkingClient();
 
-        sf::Uint32 Connect();
+        sf::Uint32 Start();
 
         std::vector<position> getPositions();
         void setDirection(direction dir);
@@ -49,7 +44,6 @@ class NetworkingClient {
         // Methods
         void ReadRegistrationResponse();
         void RegisterNetworkingClient();
-        void StartNetworkingClient();
         void RealtimeClientSend();
         void RealtimeClientRecv();
         void SyncServerState();

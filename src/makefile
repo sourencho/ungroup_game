@@ -18,29 +18,26 @@ else
 	LDFLAGS = -lasan
 endif
 
-SRC_CLIENT = $(wildcard *.cpp)
-OBJ_CLIENT = $(SRC_CLIENT:.cpp=.o)
-LDFLAGS_CLIENT = -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio -lsfml-network -lpthread
+CMN_DIR = ./common
 
-SRC_DEMO_CLIENT = client/main_demo_client.cpp
-OBJ_DEMO_CLIENT = $(SRC_DEMO_CLIENT:.cpp=.o)
-LDFLAGS_DEMO_CLIENT = -lsfml-system -lsfml-network -lpthread
+CLIENT_LDFLAGS = -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio -lsfml-network -lpthread
+CLIENT_SRC_DIR = ./client
+CLIENT_SRC_LIST = $(wildcard $(CMN_DIR)/*.cpp) $(wildcard $(CLIENT_SRC_DIR)/*.cpp)
+CLIENT_OBJ_LIST = $(CLIENT_SRC_LIST:.cpp=.o)
 
-SRC_SERV = server/main_server.cpp
-OBJ_SERV = $(SRC_SERV:.cpp=.o)
-LDFLAGS_SERV = -lsfml-network -lsfml-system -lpthread
+SERVER_LDFLAGS = -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio -lsfml-network -lpthread
+SERVER_SRC_DIR = ./server
+SERVER_SRC_LIST = $(wildcard $(CMN_DIR)/*.cpp) $(wildcard $(SERVER_SRC_DIR)/*.cpp)
+SERVER_OBJ_LIST = $(SERVER_SRC_LIST:.cpp=.o)
 
-all: ug-client ug-demo-client ug-server
+all: ug-server ug-client
 
-ug-server: $(OBJ_SERV)
-	$(CXX) $(CFLAGS) -o $@ $^ $(LDFLAGS_SERV) $(LDFLAGS)
+ug-server: $(SERVER_OBJ_LIST)
+	$(CXX) $(CFLAG) -o $@ $^ $(LDFLAGS) $(SERVER_LDFLAGS)
 
-ug-client: $(OBJ_CLIENT)
-	$(CXX) $(CFLAGS) -o $@ $^ $(LDFLAGS_CLIENT) $(LDFLAGS)
-
-ug-demo-client: $(OBJ_DEMO_CLIENT)
-	$(CXX) $(CFLAGS) -o $@ $^ $(LDFLAGS_DEMO_CLIENT) $(LDFLAGS)
+ug-client: $(CLIENT_OBJ_LIST)
+	$(CXX) $(CFLAG) -o $@ $^ $(LDFLAGS) $(CLIENT_LDFLAGS)
 
 .PHONY: clean
 clean:
-	rm -rf *.o server/*.o *.gch server/*.gch client/*.o client/*.gch ug-client ug-demo-client ug-server
+	rm -rf server/*.o common/*.o client/*.o ug-server ug-client

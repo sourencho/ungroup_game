@@ -1,6 +1,6 @@
 #include "CollisionHandler.hpp"
 #include <iostream>
-#include "util.hpp"
+#include "../common/util.hpp"
 
 void handleGroupCollision(Group* group_a, Group* group_b) {
     // Get vector between group centers
