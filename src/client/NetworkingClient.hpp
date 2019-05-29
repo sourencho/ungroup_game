@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 #include <SFML/Network.hpp>
-#include "game_def.hpp"
+#include "../common/game_def.hpp"
 
 
 class NetworkingClient {

@@ -3,10 +3,10 @@
 
 #include <SFML/Graphics.hpp>
 #include "GroupShape.hpp"
-#include "game_def.hpp"
 #include <stdio.h>
 #include "NetworkingClient.hpp"
 #include "../common/util.hpp"
+#include "../common/game_def.hpp"
 
 class Client {
 

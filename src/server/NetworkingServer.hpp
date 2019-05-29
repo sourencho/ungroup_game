@@ -9,7 +9,7 @@
 #include <future>
 #include <chrono>
 #include <unordered_map>
-#include "game_def.hpp"
+#include "../common/game_def.hpp"
 
 
 class NetworkingServer {

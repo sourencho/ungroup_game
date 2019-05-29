@@ -7,7 +7,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include "Client.hpp"
-#include "game_def.hpp"
+#include "../common/game_def.hpp"
 
 
 int main(int, char const**)
