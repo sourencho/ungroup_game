@@ -6,11 +6,8 @@
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
 #include <iostream>
-#include "Group.hpp"
-#include "Player.hpp"
 #include "Client.hpp"
-#include "GameController.hpp"
-#include "game_def.hpp"
+#include "../common/game_def.hpp"
 
 
 int main(int, char const**)
@@ -39,16 +36,9 @@ int main(int, char const**)
     window.setFramerateLimit(60);
     window.setTitle("Ungroup");
 
-    // Create game controller
-    GameController game_controller(MAX_PLAYER_COUNT);
-
     // Create client
     sf::Keyboard::Key keys[] = {sf::Keyboard::Up, sf::Keyboard::Down, sf::Keyboard::Right, sf::Keyboard::Left};
     Client client_1(MAX_PLAYER_COUNT, keys);
-
-    // Create players
-    size_t player_1_id = game_controller.createPlayer();
-    client_1.setId(player_1_id);
 
     // Start the game loop
     while (window.isOpen())
@@ -74,8 +64,7 @@ int main(int, char const**)
         }
 
         // Update
-        game_controller.update(client_1.getId(), client_1.getDirection());
-        client_1.update(game_controller.getActiveGroups());
+        client_1.update();
 
         // Display
         window.clear(sf::Color::White);

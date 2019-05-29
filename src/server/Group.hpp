@@ -4,7 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include <stdio.h>
 #include "Player.hpp"
-#include "GameObject.hpp"
+#include "../common/GameObject.hpp"
 
 class Group: public GameObject {
 

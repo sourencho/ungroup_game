@@ -1,6 +1,6 @@
 #include "CollisionDetector.hpp"
 #include <iostream>
-#include "util.hpp"
+#include "../common/util.hpp"
 #include "CollisionHandler.hpp"
 
 CollisionDetector::CollisionDetector() {

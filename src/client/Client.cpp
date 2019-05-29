@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <iostream>
 #include "Client.hpp"
-#include "util.hpp"
 
 Client::Client(int max_player_count, sf::Keyboard::Key keys[4]):mDirection(1.0, 1.0) {
     for (int i=0; i < max_player_count; i++) {
@@ -19,6 +18,11 @@ Client::Client(int max_player_count, sf::Keyboard::Key keys[4]):mDirection(1.0, 
     mKeys.down = keys[1];
     mKeys.right = keys[2];
     mKeys.left = keys[3];
+
+    // Networking
+    // TODO: assign id from client and use it to create player
+    mNetworkingClient = new NetworkingClient();
+    mNetworkingClient->Start();
 }
 
 Client::~Client() {
@@ -34,32 +38,38 @@ void Client::draw(sf::RenderTarget& target) {
     }
 }
 
-void Client::update(std::vector<Group*> active_groups) {
-    for(auto active_group: active_groups) {
-        int active_group_id = active_group->getId();
+void Client::update() {
+    std::vector<position> positions = mNetworkingClient->getPositions();
 
+    // Network update state
+    for(auto position: positions) {
+        int active_group_id = position.id;
         if (active_group_id >= mGroupShapes.size()) {
             throw std::runtime_error("Update group with no corresponding GroupShape");
         }
 
         GroupShape* group_shape = mGroupShapes[active_group_id];
 
-        group_shape->setPosition(active_group->getPosition());
-        group_shape->setRadius(active_group->getSize());
+        group_shape->setPosition(sf::Vector2f(position.x_pos, position.y_pos));
+        group_shape->setRadius(10.f);
         group_shape->setActive(true);
     }
+
+    // Network update direction
+    direction d = {mDirection.x, mDirection.y};
+    mNetworkingClient->setDirection(d);
 }
 
 sf::Vector2f Client::getDirection() const {
     return mDirection;
 }
 
-void Client::setId(int id) {
+void Client::setId(sf::Uint32 id) {
     mId = id;
 }
 
 
-int Client::getId() const {
+sf::Uint32 Client::getId() const {
     return mId;
 }
 

@@ -2,7 +2,7 @@
 #define GroupShape_hpp
 
 #include <SFML/Graphics.hpp>
-#include "GameObject.hpp"
+#include "../common/GameObject.hpp"
 #include <stdio.h>
 
 class GroupShape: public GameObject {

@@ -5,6 +5,7 @@
 #include "Player.hpp"
 #include "Group.hpp"
 #include "CollisionDetector.hpp"
+#include "NetworkingServer.hpp"
 
 
 class GameController {
@@ -23,6 +24,7 @@ class GameController {
         CollisionDetector* mCollisionDetector;
         int mNextGroupId = 0;
         int mNextPlayerId = 0;
+        NetworkingServer* mNetworkingServer;
 };
 
 #endif /* GameController_hpp */

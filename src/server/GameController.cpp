@@ -13,6 +13,9 @@ GameController::GameController(int max_player_count) {
     }
 
     mCollisionDetector = new CollisionDetector();
+
+    mNetworkingServer = new NetworkingServer();
+    mNetworkingServer->Start();
 }
 
 GameController::~GameController() {

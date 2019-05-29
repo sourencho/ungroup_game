@@ -1,5 +1,5 @@
 #include "Player.hpp"
-#include "util.hpp"
+#include "../common/util.hpp"
 #include <iostream>
 
 Player::Player():mDirection(0.0, 0.0) {
