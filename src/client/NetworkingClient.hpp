@@ -2,6 +2,7 @@
 #define NetworkingClient_hpp
 
 #include <stdio.h>
+#include <atomic>
 #include <SFML/Network.hpp>
 #include "../common/game_def.hpp"
 
