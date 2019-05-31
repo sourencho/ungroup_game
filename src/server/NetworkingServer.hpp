@@ -23,8 +23,8 @@ class NetworkingServer {
         void Start();
     private:
         // Methods
-        void RealtimeServer();
-        void ApiServer();
+        void RunRealtimeServer();
+        void RunAPIServer();
         void ComputeGameState();
         void DeleteClient(sf::TcpSocket* client, sf::SocketSelector selector);
 

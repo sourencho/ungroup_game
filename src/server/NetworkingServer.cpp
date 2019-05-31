@@ -11,15 +11,15 @@ NetworkingServer::~NetworkingServer() {
 
 void NetworkingServer::Start() {
     std::cout << "Starting ungroup game server.\n";
-    std::thread api_thread(&NetworkingServer::ApiServer, this);
-    std::thread realtime_thread(&NetworkingServer::RealtimeServer, this);
+    std::thread api_thread(&NetworkingServer::RunAPIServer, this);
+    std::thread realtime_thread(&NetworkingServer::RunRealtimeServer, this);
     std::thread compute_game_state_thread(&NetworkingServer::ComputeGameState, this);
     api_thread.detach();
     realtime_thread.detach();
     compute_game_state_thread.detach();
 }
 
-void NetworkingServer::RealtimeServer() {
+void NetworkingServer::RunRealtimeServer() {
     sf::UdpSocket rt_server;
     rt_server.bind(4888);
 
@@ -80,7 +80,7 @@ void NetworkingServer::RealtimeServer() {
     }
 }
 
-void NetworkingServer::ApiServer() {
+void NetworkingServer::RunAPIServer() {
     // Create a socket to listen to new connections
     sf::TcpListener listener;
     // API socket
