@@ -3,6 +3,7 @@
 #include "Client.hpp"
 
 Client::Client(int max_player_count, sf::Keyboard::Key keys[4]):mDirection(1.0, 1.0) {
+    mInterpolating = false;
     for (int i=0; i < max_player_count; i++) {
         mGroupShapes.push_back(
             new GroupShape(
@@ -39,22 +40,65 @@ void Client::draw(sf::RenderTarget& target) {
 }
 
 void Client::update() {
-    std::vector<position> positions = mNetworkingClient->getPositions();
+    std::vector<position> positions;
+    std::unordered_map<sf::Uint32, direction> directions;
 
-    // Network update state
-    for(auto position: positions) {
-        int active_group_id = position.id;
-        if (active_group_id >= mGroupShapes.size()) {
-            throw std::runtime_error("Update group with no corresponding GroupShape");
-        }
-
-        GroupShape* group_shape = mGroupShapes[active_group_id];
-
-        group_shape->setPosition(sf::Vector2f(position.x_pos, position.y_pos));
-        group_shape->setRadius(10.f);
-        group_shape->setActive(true);
+    // interpolate if network data is stale
+    if (!mNetworkingClient->getIsFresh()) {
+      if (!mInterpolating) {
+        std::cout << "OMG MOM WE'RE INTERPOLATING" << std::endl;
+        positions = mNetworkingClient->getPositions();
+        mInterpolatedPositions = positions;
+        mInterpolating = true;
+      }
+      // set this so following code can be blissfully
+      // unaware it's working on the inteprolated values
+      directions = mNetworkingClient->getDirections();
+    } else {
+      std::cout << "OMG DAD WE'RE NOT INTERPOLATING" << std::endl;
+      positions = mNetworkingClient->getPositions();
+      mNetworkingClient->setIsFresh(false);
+      mInterpolating = false;
     }
 
+    // update graphical state
+    if (mInterpolating) {
+      for(auto& position: mInterpolatedPositions) {
+          if (mInterpolating) {
+            position.x_pos += directions[position.id].x_dir;
+            position.y_pos += directions[position.id].y_dir;
+            std::cout << "interpol: " << position.id << " x,y: " << position.x_pos << position.y_pos << std::endl;
+          }
+          int active_group_id = position.id;
+          if (active_group_id >= mGroupShapes.size()) {
+              throw std::runtime_error("Update group with no corresponding GroupShape");
+          }
+
+          GroupShape* group_shape = mGroupShapes[active_group_id];
+
+          group_shape->setPosition(sf::Vector2f(position.x_pos, position.y_pos));
+          group_shape->setRadius(10.f);
+          group_shape->setActive(true);
+      }
+    } else {
+      for(auto position: positions) {
+          if (mInterpolating) {
+            position.x_pos += directions[position.id].x_dir;
+            position.y_pos += directions[position.id].y_dir;
+            std::cout << "interpol: " << position.id << " x,y: " << position.x_pos << position.y_pos << std::endl;
+          }
+          int active_group_id = position.id;
+          if (active_group_id >= mGroupShapes.size()) {
+              throw std::runtime_error("Update group with no corresponding GroupShape");
+          }
+
+          GroupShape* group_shape = mGroupShapes[active_group_id];
+
+          group_shape->setPosition(sf::Vector2f(position.x_pos, position.y_pos));
+          group_shape->setRadius(10.f);
+          group_shape->setActive(true);
+      }
+    }
     // Network update direction
     direction d = {mDirection.x, mDirection.y};
     mNetworkingClient->setDirection(d);

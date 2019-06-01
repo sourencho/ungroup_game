@@ -28,9 +28,11 @@ class Client {
     private:
         sf::Uint32 initNetworking();
         std::vector<GroupShape*> mGroupShapes;
+        std::vector<position> mInterpolatedPositions;
         sf::Vector2f mDirection;
         keys mKeys;
         sf::Uint32 mId;
+        bool mInterpolating;
 
         NetworkingClient* mNetworkingClient;
 };

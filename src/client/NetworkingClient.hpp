@@ -2,6 +2,7 @@
 #define NetworkingClient_hpp
 
 #include <stdio.h>
+#include <unordered_map>
 #include <atomic>
 #include <SFML/Network.hpp>
 #include "../common/game_def.hpp"
@@ -38,8 +39,17 @@ class NetworkingClient {
 
         sf::Uint32 Start();
 
+        std::unordered_map<sf::Uint32, direction> getDirections();
         std::vector<position> getPositions();
         void setDirection(direction dir);
+
+        void setIsFresh(bool isFresh) {
+          mIsFresh = isFresh;
+        }
+
+        bool getIsFresh() {
+          return mIsFresh;
+        }
 
     private:
         // Methods
@@ -57,8 +67,10 @@ class NetworkingClient {
         sf::TcpSocket* mApiClient;
         sf::UdpSocket* mRealtimeClient;
 
+        std::atomic<bool> mIsFresh;
         std::atomic<bool> mAcceptingPositionRead;
         std::vector<position> mPositions;
+        std::unordered_map<sf::Uint32, direction> mDirections;
         std::atomic<bool> mAcceptingDirectionRead;
         direction mDirection;        
 };

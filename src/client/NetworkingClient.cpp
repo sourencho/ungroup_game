@@ -13,6 +13,7 @@ NetworkingClient::NetworkingClient() {
     mIsRegistered = false;
     mAcceptingPositionRead = true;
     mAcceptingDirectionRead = true;
+    mIsFresh = true;
 }
 
 NetworkingClient::~NetworkingClient() {
@@ -42,6 +43,13 @@ sf::Uint32 NetworkingClient::Start() {
     RealtimeClientSend_thread.detach();
     SyncServerState_thread.detach();
     return mClientId;
+}
+
+std::unordered_map<sf::Uint32, direction> NetworkingClient::getDirections() {
+    while (!mAcceptingPositionRead) {
+        //
+    }
+    return mDirections;
 }
 
 std::vector<position> NetworkingClient::getPositions() {
@@ -95,26 +103,37 @@ void NetworkingClient::RealtimeClientRecv() {
     sf::Uint32 client_id;
     float x_pos;
     float y_pos;
+    float x_dir;
+    float y_dir;
 
     while (true) {
         sf::Packet packet;
         sf::IpAddress sender;
         unsigned short port;
         mRealtimeClient->receive(packet, sender, port);
-        std::cout << "recv: " << sender << " " << port << std::endl;
         // fetch state updates for now
         if (packet >> server_tick) {
             mAcceptingPositionRead = false;
             mPositions.clear();
-            while (packet >> client_id >> x_pos >> y_pos) {
+            while (packet >> client_id >> x_pos >> y_pos >> x_dir >> y_dir) {
+                // old update
+                if (server_tick <= mCurrentTick) {
+                  continue;
+                }
                 std::cout << "Client: " << client_id << " has position x,y: " << x_pos << " " << y_pos << std::endl;
+                std::cout << "Client: " << client_id << " has vector x,y: " << x_dir << " " << y_dir << std::endl;
+                // TODO: position is not a primitive, it should be capitalized
                 position p = {client_id, x_pos, y_pos};
+                mDirections[client_id] = direction{x_dir, y_dir};
                 mPositions.push_back(p);
             }
             // Im not sure what kind of synchronization needs to happen here.
             // If this tick is the most up-to-date we've ever seen, maybe we set the game to it?
             std::cout << "Client positions from server for tick: " << server_tick << std::endl;
-            mCurrentTick = server_tick;
+            if (server_tick > mCurrentTick) {
+              mIsFresh = true;
+              mCurrentTick = server_tick;
+            }
             mAcceptingPositionRead = true;
         } else {
             std::cout << "Failed to read server tick from new packet" << std::endl;

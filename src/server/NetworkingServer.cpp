@@ -69,6 +69,15 @@ void NetworkingServer::RunRealtimeServer() {
                     for (const auto iter : mClientPositions) {
                         sf::Uint32 client_id = iter.first;
                         game_state_packet << client_id << iter.second[0] << iter.second[1];
+                        std::unordered_map<sf::Uint32, float*>::const_iterator move_iter = mClientMoves.find(client_id);
+                        if(move_iter != mClientMoves.end()) {
+                          game_state_packet << move_iter->second[0] << move_iter->second[1];
+                        } else {
+                          // send no move, which means client should use last known move
+                          // currently server doesnt store moves outside of current window
+                          // if that changes server can instead send last known move here
+                          game_state_packet << 0.0 << 0.0;
+                        }
                     }
                     rt_server.send(game_state_packet, sender, port);
                     break;
@@ -164,11 +173,6 @@ void NetworkingServer::ComputeGameState() {
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
         mAcceptingMoveCommands = false;
         // update game state, take moves array and simulate next tick given current state and inputs
-        // ... simplest behavior would be to track client locations and apply vectors to them ...
-
-        if (mClientMoves.size() == 0) {
-            continue;
-        }
         std::cout << "game state thread: dumping client moves for tick " << mCurrTick << std::endl;
         for (const auto iter : mClientMoves) {
             sf::Uint32 client_id = iter.first;
@@ -185,7 +189,6 @@ void NetworkingServer::ComputeGameState() {
         }
         // window is closed, time to reset. May want to use fix sized array as an optimization.
         // It's a bit mean to disguard old commands, maybe there should be windows for multiple ticks?
-        mClientMoves.clear();
         mCurrTick++;
     }
 }
