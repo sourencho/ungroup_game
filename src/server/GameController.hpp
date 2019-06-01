@@ -13,17 +13,15 @@ class GameController {
     public:
         GameController(int max_player_count);
         ~GameController();
-        void update(int client_id, sf::Vector2f client_direction);
-        size_t createPlayer();
+        void update();
         std::vector<Group*> getActiveGroups();
-        void draw(sf::RenderTarget& target);
 
     private:
+        void createPlayer(int new_player_id);
+
         std::vector<Player*> mPlayers;
         std::vector<Group*> mGroups;
         CollisionDetector* mCollisionDetector;
-        int mNextGroupId = 0;
-        int mNextPlayerId = 0;
         NetworkingServer* mNetworkingServer;
 };
 

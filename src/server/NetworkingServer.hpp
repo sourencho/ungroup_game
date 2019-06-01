@@ -10,6 +10,7 @@
 #include <chrono>
 #include <unordered_map>
 #include "../common/game_def.hpp"
+#include "Group.hpp"
 
 
 class NetworkingServer {
@@ -21,6 +22,9 @@ class NetworkingServer {
         ~NetworkingServer();
 
         void Start();
+        std::vector<client_direction> getClientDirections();
+        void setState(std::vector<Group*> active_groups);
+        std::vector<int> getClientIds();
     private:
         // Methods
         void RealtimeServer();
@@ -31,10 +35,12 @@ class NetworkingServer {
         // Variables
         std::unordered_map<sf::TcpSocket*, sf::Int32> mClientSocketsToIds;
         std::unordered_map<sf::Uint32, float*> mClientMoves;
-        std::unordered_map<sf::Uint32, float*> mClientPositions;
+        std::vector<circle> mCircles;
         sf::Uint32 mClientIdCounter;
         std::atomic<uint> mCurrTick;
         std::atomic<bool> mAcceptingMoveCommands;
+        std::atomic<bool> mAcceptingCircleReads;
+        std::atomic<bool> mAcceptingClientSocketToIdsReads;
 };
 
 #endif /* NetworkingServer_hpp */

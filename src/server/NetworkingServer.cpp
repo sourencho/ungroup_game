@@ -4,6 +4,8 @@ NetworkingServer::NetworkingServer() {
     mClientIdCounter = 0;
     mCurrTick = 0;
     mAcceptingMoveCommands = true;
+    mAcceptingCircleReads = true;
+    mAcceptingClientSocketToIdsReads = true;
 }
 
 NetworkingServer::~NetworkingServer() {
@@ -41,7 +43,7 @@ void NetworkingServer::RealtimeServer() {
                     float x_dir;
                     float y_dir;
                     if (command_packet >> x_dir >> y_dir) {
-                        std::cout << "Client ID, tick, command, x, y: " << client_id << " " << tick << " " << realtime_command << " " << x_dir << " " << y_dir << std::endl;
+                        //std::cout << "Client ID, tick, command, x, y: " << client_id << " " << tick << " " << realtime_command << " " << x_dir << " " << y_dir << std::endl;
                         int drift = std::abs((int)((mCurrTick - tick)));
                         if (drift < CMD_DRIFT_THRESHOLD) {
                             // your newest commands will overwrite old ones
@@ -55,7 +57,7 @@ void NetworkingServer::RealtimeServer() {
                                 // drop the move command if we're computing game state in the other thread. doesn't feel great.
                                 mClientMoves[client_id] = new float[2]{x_dir, y_dir};
                             } else {
-                                std::cout << "Dropping move command because game state being computed" << std::endl;
+                                //std::cout << "Dropping move command because game state being computed" << std::endl;
                             }
                         } else {
                             std::cout << "Receive move command with tick drifted past drift threshold. Drift value is: " << drift << std::endl;
@@ -63,12 +65,13 @@ void NetworkingServer::RealtimeServer() {
                     }
                     break;
                 case (sf::Uint32)RealtimeCommand::fetch_state:
-                    std::cout << "Sending game state to client: " << sender << " " << port << std::endl;
+                    //std::cout << "Sending game state to client: " << sender << " " << port << std::endl;
                     // sample current state every 100 ms, this simply packages and returns it
                     game_state_packet << ct; // should have error handling for <<
-                    for (const auto iter : mClientPositions) {
-                        sf::Uint32 client_id = iter.first;
-                        game_state_packet << client_id << iter.second[0] << iter.second[1];
+                    if (mAcceptingCircleReads) {
+                        for(const auto circle: mCircles) {
+                            game_state_packet << circle.id << circle.x_pos << circle.y_pos << circle.size;
+                        }
                     }
                     rt_server.send(game_state_packet, sender, port);
                     break;
@@ -86,7 +89,7 @@ void NetworkingServer::ApiServer() {
     // API socket
     listener.listen(4844);
 
-    // Create a list to store the future clients
+    // Create a vector to store the future clients
     std::list<sf::TcpSocket*> clients;
 
     // Create a selector
@@ -135,8 +138,9 @@ void NetworkingServer::ApiServer() {
                                     if(response_packet << api_command << mClientIdCounter << (sf::Uint32) mCurrTick) {
                                         client.send(response_packet);
                                         std::cout << "Received client registration. Issued client ID " << mClientIdCounter << std::endl;
-                                        mClientPositions[mClientIdCounter] = new float[2]{0.f, 0.f};
+                                        mAcceptingClientSocketToIdsReads = false;
                                         mClientSocketsToIds[&client] = mClientIdCounter;
+                                        mAcceptingClientSocketToIdsReads = true;
                                         mClientIdCounter++;
                                     }
                                 }
@@ -149,6 +153,8 @@ void NetworkingServer::ApiServer() {
                                 // clean up mClientMoves/mClientPositions hashes
                                 std::cout << "TCP client disconnected. Removing client. " << std::endl;
                                 DeleteClient(&client, selector);
+                                break;
+                            default:
                                 break;
                         }
                     }
@@ -163,36 +169,52 @@ void NetworkingServer::ComputeGameState() {
         mAcceptingMoveCommands = true;
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
         mAcceptingMoveCommands = false;
-        // update game state, take moves array and simulate next tick given current state and inputs
-        // ... simplest behavior would be to track client locations and apply vectors to them ...
 
-        if (mClientMoves.size() == 0) {
-            continue;
-        }
-        std::cout << "game state thread: dumping client moves for tick " << mCurrTick << std::endl;
-        for (const auto iter : mClientMoves) {
-            sf::Uint32 client_id = iter.first;
-            float* move_vector = iter.second;
-            if (mClientPositions.find(client_id) != mClientPositions.end()) {
-                mClientPositions[client_id][0] += move_vector[0]*5.f; // x component
-                mClientPositions[client_id][1] += move_vector[1]*5.f; // y component
-            }
-            std::cout << iter.first << " " << iter.second[0] << " " << iter.second[1] << std::endl;
-        }
-        std::cout << "game state thread: dumping client positions for tick " << mCurrTick << std::endl;
-        for (const auto iter : mClientPositions) {
-            std::cout << iter.first << " " << iter.second[0] << " " << iter.second[1] << std::endl;
-        }
         // window is closed, time to reset. May want to use fix sized array as an optimization.
         // It's a bit mean to disguard old commands, maybe there should be windows for multiple ticks?
-        mClientMoves.clear();
         mCurrTick++;
+        // This sleep is needed to give the GameController time to fetch the client directions in getClientDirections
+        // TODO: Not sure what this sleep value should be...
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 }
 
 void NetworkingServer::DeleteClient(sf::TcpSocket* client, sf::SocketSelector selector) {
     mClientMoves.erase(mClientSocketsToIds[client]);
-    mClientPositions.erase(mClientSocketsToIds[client]);
     selector.remove(*client);
     delete client;
+}
+
+std::vector<client_direction> NetworkingServer::getClientDirections() {
+    std::vector<client_direction> client_directions;
+    if (mAcceptingMoveCommands == false) {
+        for(const auto& client_move : mClientMoves) {
+            client_direction cd = {client_move.first, client_move.second[0], client_move.second[1]};
+            client_directions.push_back(cd);
+        }
+    }
+    return client_directions;
+}
+
+void NetworkingServer::setState(std::vector<Group*> active_groups) {
+    mAcceptingCircleReads = false;
+    mCircles.clear();
+    for(const auto active_group: active_groups) {
+        sf::Uint32 client_id = active_group->getId();
+        sf::Vector2f position = active_group->getPosition();
+        float size = active_group->getSize();
+        circle c = {client_id, position.x, position.y, size};
+        mCircles.push_back(c);
+    }
+    mAcceptingCircleReads = true;
+}
+
+std::vector<int> NetworkingServer::getClientIds() {
+    std::vector<int> client_ids;
+    if (mAcceptingClientSocketToIdsReads) {
+        for(const auto& x : mClientSocketsToIds) {
+            client_ids.push_back(x.second);
+        }
+    }
+    return client_ids;
 }

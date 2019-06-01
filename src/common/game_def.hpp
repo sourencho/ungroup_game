@@ -9,13 +9,20 @@ struct keys {
     sf::Keyboard::Key up, down, left, right;
 };
 
-struct position {
+struct circle {
     sf::Uint32 id;
     float x_pos;
     float y_pos;
+    float size;
 };
 
 struct direction {
+    float x_dir;
+    float y_dir;
+};
+
+struct client_direction {
+    sf::Uint32 id;
     float x_dir;
     float y_dir;
 };

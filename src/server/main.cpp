@@ -9,7 +9,8 @@ int main(int, char const**) {
     //size_t player_1_id = game_controller.createPlayer();
 
     while (true) {
-        // Update game state based on client inputs
-        // game_controller.update(client_1.getId(), client_1.getDirection());
+        // TODO: What should this amount be set to?
+        sf::sleep(sf::milliseconds(50));
+        game_controller.update();
     }
 }

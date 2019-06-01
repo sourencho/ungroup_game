@@ -22,9 +22,24 @@ GameController::~GameController() {
     //de-construcstructor
 }
 
-void GameController::update(int client_id, sf::Vector2f client_direction) {
-    // Update players
-    mPlayers[client_id]->setDirection(client_direction);
+void GameController::update() {
+    // Get clients and new create players
+    std::vector<int> client_ids = mNetworkingServer->getClientIds();
+    for (const int client_id : client_ids) {
+        if (!mPlayers[client_id]->isActive()) {
+            createPlayer(client_id);
+        }
+    }
+
+    // Get client positions
+    std::vector<client_direction> client_directions = mNetworkingServer->getClientDirections();
+
+    // Update player positions 
+    for (const auto& client_direction : client_directions) {
+        sf::Uint32 client_id = client_direction.id;
+        
+        mPlayers[client_id]->setDirection(sf::Vector2f(client_direction.x_dir, client_direction.y_dir));
+    }
 
     // Update groups
     for(auto group: mGroups) {
@@ -33,22 +48,23 @@ void GameController::update(int client_id, sf::Vector2f client_direction) {
 
     // Detect Collisions
     mCollisionDetector->detectGroupCollisions(mGroups);
+
+    // Set network state
+    mNetworkingServer->setState(getActiveGroups());
 }
 
-size_t GameController::createPlayer() {
-    int new_group_id = mNextGroupId++;
-    int new_player_id = mNextPlayerId++;
-
-    if (new_player_id >= mPlayers.size() || new_group_id >= mGroups.size()) {
-        throw std::runtime_error("Create more players or groups than max");
+void GameController::createPlayer(int new_player_id) {
+    if (new_player_id >= mPlayers.size() || new_player_id >= mGroups.size()) {
+        throw std::runtime_error("Create players or groups with id out of range");
     }
 
     mPlayers[new_player_id]->setActive(true);
-    mGroups[new_group_id]->setActive(true);
+    std::cout << "Created player " << new_player_id << std::endl;
 
-    mGroups[new_group_id]->addMemeber(mPlayers[new_player_id]);
-
-    return new_player_id;
+    // Create group for player
+    mGroups[new_player_id]->setActive(true);
+    mGroups[new_player_id]->addMemeber(mPlayers[new_player_id]);
+    std::cout << "Created group " << new_player_id << std::endl;
 }
 
 std::vector<Group*> GameController::getActiveGroups() {

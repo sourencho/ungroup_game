@@ -39,19 +39,19 @@ void Client::draw(sf::RenderTarget& target) {
 }
 
 void Client::update() {
-    std::vector<position> positions = mNetworkingClient->getPositions();
+    std::vector<circle> circles = mNetworkingClient->getPositions();
 
     // Network update state
-    for(auto position: positions) {
-        int active_group_id = position.id;
+    for(auto circle: circles) {
+        int active_group_id = circle.id;
         if (active_group_id >= mGroupShapes.size()) {
             throw std::runtime_error("Update group with no corresponding GroupShape");
         }
 
         GroupShape* group_shape = mGroupShapes[active_group_id];
 
-        group_shape->setPosition(sf::Vector2f(position.x_pos, position.y_pos));
-        group_shape->setRadius(10.f);
+        group_shape->setPosition(sf::Vector2f(circle.x_pos, circle.y_pos));
+        group_shape->setRadius(circle.size);
         group_shape->setActive(true);
     }
 
