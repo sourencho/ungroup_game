@@ -11,9 +11,9 @@
 
 NetworkingClient::NetworkingClient() {
     mIsRegistered = false;
-    mAcceptingCirclesRead = true;
+    mAcceptingNetworkGameObjectsRead = true;
     mAcceptingDirectionRead = true;
-    mDirection = {0.f, 0.f};
+    mDirection = sf::Vector2f(0.f, 0.f);
 }
 
 NetworkingClient::~NetworkingClient() {
@@ -45,16 +45,16 @@ sf::Uint32 NetworkingClient::Start() {
     return mClientId;
 }
 
-std::vector<circle> NetworkingClient::getPositions() {
-    if (mAcceptingCirclesRead) {
-        return mCircles;
+std::vector<network_game_object> NetworkingClient::getNetworkGameObjects() {
+    if (mAcceptingNetworkGameObjectsRead) {
+        return mNetworkGameObjects;
     }
-    return std::vector<circle> {};
+    return std::vector<network_game_object> {};
 }
 
-void NetworkingClient::setDirection(direction dir) {
+void NetworkingClient::setDirection(sf::Vector2f direction) {
     mAcceptingDirectionRead = false;
-    mDirection = dir;
+    mDirection = direction;
     mAcceptingDirectionRead = true;
 }
 
@@ -106,16 +106,16 @@ void NetworkingClient::RealtimeClientRecv() {
         mRealtimeClient->receive(packet, sender, port);
         // fetch state updates for now
         if (packet >> server_tick) {
-            mAcceptingCirclesRead = false;
-            mCircles.clear();
+            mAcceptingNetworkGameObjectsRead = false;
+            mNetworkGameObjects.clear();
             while (packet >> client_id >> x_pos >> y_pos >> size) {
-                circle c = {client_id, x_pos, y_pos, size};
-                mCircles.push_back(c);
+                network_game_object ngo = {client_id, x_pos, y_pos, size};
+                mNetworkGameObjects.push_back(ngo);
             }
             // Im not sure what kind of synchronization needs to happen here.
             // If this tick is the most up-to-date we've ever seen, maybe we set the game to it?
             mCurrentTick = server_tick;
-            mAcceptingCirclesRead = true;
+            mAcceptingNetworkGameObjectsRead = true;
         } else {
             std::cout << "Failed to read server tick from new packet" << std::endl;
         }
@@ -127,7 +127,7 @@ void NetworkingClient::RealtimeClientSend() {
         if (mAcceptingDirectionRead) {
             sf::Packet packet;
             sf::Uint32 move_cmd = (sf::Uint32)RealtimeCommand::move;
-            if (packet << mClientId << move_cmd << mCurrentTick << mDirection.x_dir << mDirection.y_dir) {
+            if (packet << mClientId << move_cmd << mCurrentTick << mDirection.x << mDirection.y) {
                 mRealtimeClient->send(packet, SERVER_IP, 4888);
             } else {
                 std::cout << "Failed to form packet" << std::endl;

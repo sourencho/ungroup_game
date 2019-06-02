@@ -13,9 +13,23 @@ Group::~Group() {
 }
 
 void Group::update() {
+    if (shouldDeactivate()) {
+        setActive(false);
+        return;
+    }
+
     for(auto member: mMembers) {
         mPosition = mPosition + member->getDirection();
     }
+}
+
+bool Group::shouldDeactivate() {
+    for(auto member: mMembers) {
+        if (member->isActive()) {
+            return false;
+        }
+    }
+    return true;
 }
 
 void Group::addMemeber(Player* player) {

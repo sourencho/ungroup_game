@@ -22,7 +22,7 @@ class NetworkingServer {
         ~NetworkingServer();
 
         void Start();
-        std::vector<client_direction> getClientDirections();
+        std::vector<network_player> getNetworkPlayers();
         void setState(std::vector<Group*> active_groups);
         std::vector<int> getClientIds();
     private:
@@ -30,16 +30,19 @@ class NetworkingServer {
         void RealtimeServer();
         void ApiServer();
         void ComputeGameState();
+
         void DeleteClient(sf::TcpSocket* client, sf::SocketSelector selector);
+        void Move(sf::Packet command_packet, sf::Uint32 client_id, sf::Uint32 tick);
+        void RegisterClient(sf::TcpSocket& client);
 
         // Variables
         std::unordered_map<sf::TcpSocket*, sf::Int32> mClientSocketsToIds;
         std::unordered_map<sf::Uint32, float*> mClientMoves;
-        std::vector<circle> mCircles;
+        std::vector<network_game_object> mNetworkGameObjects;
         sf::Uint32 mClientIdCounter;
         std::atomic<uint> mCurrTick;
         std::atomic<bool> mAcceptingMoveCommands;
-        std::atomic<bool> mAcceptingCircleReads;
+        std::atomic<bool> mAcceptingNetworkGameObjectsReads;
         std::atomic<bool> mAcceptingClientSocketToIdsReads;
 };
 

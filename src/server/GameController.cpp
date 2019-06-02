@@ -23,22 +23,31 @@ GameController::~GameController() {
 }
 
 void GameController::update() {
-    // Get clients and new create players
+    // Get clients
     std::vector<int> client_ids = mNetworkingServer->getClientIds();
+
+    // Create new players
     for (const int client_id : client_ids) {
         if (!mPlayers[client_id]->isActive()) {
             createPlayer(client_id);
         }
     }
 
-    // Get client positions
-    std::vector<client_direction> client_directions = mNetworkingServer->getClientDirections();
+    // Deactivate players without a client
+    for (Player* player : mPlayers) {
+        player->setActive(false);
+    }
+    for (const int client_id : client_ids) {
+        mPlayers[client_id]->setActive(true);
+    }
 
-    // Update player positions 
-    for (const auto& client_direction : client_directions) {
-        sf::Uint32 client_id = client_direction.id;
-        
-        mPlayers[client_id]->setDirection(sf::Vector2f(client_direction.x_dir, client_direction.y_dir));
+    // Get client directions
+    std::vector<network_player> network_players = mNetworkingServer->getNetworkPlayers();
+
+    // Update player directions
+    for (const auto& network_player : network_players) {
+        sf::Uint32 client_id = network_player.id;
+        mPlayers[client_id]->setDirection(sf::Vector2f(network_player.x_dir, network_player.y_dir));
     }
 
     // Update groups
@@ -46,7 +55,7 @@ void GameController::update() {
         group->update();
     }
 
-    // Detect Collisions
+    // Detect and handle group collisions
     mCollisionDetector->detectGroupCollisions(mGroups);
 
     // Set network state

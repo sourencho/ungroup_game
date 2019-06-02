@@ -30,7 +30,7 @@ Client::~Client() {
 }
 
 void Client::draw(sf::RenderTarget& target) {
-    // Draw all groupCircles
+    // Draw active groupShapes
     for (auto group_shape: mGroupShapes) {
         if (group_shape->isActive()) {
             group_shape->draw(target);
@@ -39,25 +39,27 @@ void Client::draw(sf::RenderTarget& target) {
 }
 
 void Client::update() {
-    std::vector<circle> circles = mNetworkingClient->getPositions();
+    std::vector<network_game_object> network_game_objects = mNetworkingClient->getNetworkGameObjects();
 
     // Network update state
-    for(auto circle: circles) {
-        int active_group_id = circle.id;
+    for (auto group_shape : mGroupShapes) {
+        group_shape->setActive(false);
+    }
+    for(auto network_game_object: network_game_objects) {
+        int active_group_id = network_game_object.id;
         if (active_group_id >= mGroupShapes.size()) {
             throw std::runtime_error("Update group with no corresponding GroupShape");
         }
 
         GroupShape* group_shape = mGroupShapes[active_group_id];
 
-        group_shape->setPosition(sf::Vector2f(circle.x_pos, circle.y_pos));
-        group_shape->setRadius(circle.size);
+        group_shape->setPosition(sf::Vector2f(network_game_object.x_pos, network_game_object.y_pos));
+        group_shape->setRadius(network_game_object.size);
         group_shape->setActive(true);
     }
 
     // Network update direction
-    direction d = {mDirection.x, mDirection.y};
-    mNetworkingClient->setDirection(d);
+    mNetworkingClient->setDirection(mDirection);
 }
 
 sf::Vector2f Client::getDirection() const {

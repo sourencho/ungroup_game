@@ -37,8 +37,8 @@ class NetworkingClient {
 
         sf::Uint32 Start();
 
-        std::vector<circle> getPositions();
-        void setDirection(direction dir);
+        std::vector<network_game_object> getNetworkGameObjects();
+        void setDirection(sf::Vector2f direction);
 
     private:
         // Methods
@@ -56,10 +56,10 @@ class NetworkingClient {
         sf::TcpSocket* mApiClient;
         sf::UdpSocket* mRealtimeClient;
 
-        std::atomic<bool> mAcceptingCirclesRead;
-        std::vector<circle> mCircles;
+        std::atomic<bool> mAcceptingNetworkGameObjectsRead;
+        std::vector<network_game_object> mNetworkGameObjects;
         std::atomic<bool> mAcceptingDirectionRead;
-        direction mDirection;        
+        sf::Vector2f mDirection;
 };
 
 #endif /* NetworkingClient_hpp */

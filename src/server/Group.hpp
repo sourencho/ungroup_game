@@ -30,6 +30,7 @@ class Group: public GameObject {
         float mSize;
         sf::Vector2f mPosition;
         std::vector<Player*> mMembers;
+        bool shouldDeactivate();
 };
 
 #endif /* Group_hpp */
