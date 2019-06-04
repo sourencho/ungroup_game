@@ -15,7 +15,7 @@ class Group: public GameObject {
         void update();
         void draw(sf::RenderTarget& target);
     
-        void addMemeber(Player* player);
+        void addMember(Player* player);
     
         // Getters
         sf::Vector2f getPosition() const;

@@ -22,14 +22,19 @@ class NetworkingServer {
         ~NetworkingServer();
 
         void Start();
-        std::vector<network_player> getNetworkPlayers();
+
+        // Setters
+        void setAcceptingMoveCommands(bool accepting_move_commands);
         void setState(std::vector<Group*> active_groups);
+        void incrementTick();
+
+        // Getters
+        std::vector<network_player> getNetworkPlayers();
         std::vector<int> getClientIds();
     private:
         // Methods
         void RealtimeServer();
         void ApiServer();
-        void ComputeGameState();
 
         void DeleteClient(sf::TcpSocket* client, sf::SocketSelector selector);
         void Move(sf::Packet command_packet, sf::Uint32 client_id, sf::Uint32 tick);

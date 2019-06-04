@@ -32,7 +32,7 @@ bool Group::shouldDeactivate() {
     return true;
 }
 
-void Group::addMemeber(Player* player) {
+void Group::addMember(Player* player) {
     mMembers.push_back(player);
     mSize = mMembers.size() * 10.f;
 }

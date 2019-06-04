@@ -18,6 +18,7 @@ class GameController {
 
     private:
         void createPlayer(int new_player_id);
+        void updateState();
 
         std::vector<Player*> mPlayers;
         std::vector<Group*> mGroups;

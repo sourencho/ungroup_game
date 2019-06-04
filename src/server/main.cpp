@@ -9,8 +9,6 @@ int main(int, char const**) {
     //size_t player_1_id = game_controller.createPlayer();
 
     while (true) {
-        // TODO: What should this amount be set to?
-        sf::sleep(sf::milliseconds(50));
         game_controller.update();
     }
 }

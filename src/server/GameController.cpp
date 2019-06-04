@@ -18,11 +18,22 @@ GameController::GameController(int max_player_count) {
     mNetworkingServer->Start();
 }
 
-GameController::~GameController() {
-    //de-construcstructor
-}
+GameController::~GameController() {}
 
 void GameController::update() {
+    // Get client input
+    mNetworkingServer->setAcceptingMoveCommands(true);
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    mNetworkingServer->setAcceptingMoveCommands(false);
+
+    // Update State
+    updateState();
+
+    // Increment tick
+    mNetworkingServer->incrementTick();
+}
+
+void GameController::updateState() {
     // Get clients
     std::vector<int> client_ids = mNetworkingServer->getClientIds();
 
@@ -72,7 +83,7 @@ void GameController::createPlayer(int new_player_id) {
 
     // Create group for player
     mGroups[new_player_id]->setActive(true);
-    mGroups[new_player_id]->addMemeber(mPlayers[new_player_id]);
+    mGroups[new_player_id]->addMember(mPlayers[new_player_id]);
     std::cout << "Created group " << new_player_id << std::endl;
 }
 

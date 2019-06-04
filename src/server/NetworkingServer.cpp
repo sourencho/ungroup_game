@@ -8,17 +8,14 @@ NetworkingServer::NetworkingServer() {
     mAcceptingClientSocketToIdsReads = true;
 }
 
-NetworkingServer::~NetworkingServer() {
-}
+NetworkingServer::~NetworkingServer() {}
 
 void NetworkingServer::Start() {
     std::cout << "Starting ungroup game server.\n";
     std::thread api_thread(&NetworkingServer::ApiServer, this);
     std::thread realtime_thread(&NetworkingServer::RealtimeServer, this);
-    std::thread compute_game_state_thread(&NetworkingServer::ComputeGameState, this);
     api_thread.detach();
     realtime_thread.detach();
-    compute_game_state_thread.detach();
 }
 
 void NetworkingServer::Move(sf::Packet command_packet, sf::Uint32 client_id, sf::Uint32 tick) {
@@ -166,27 +163,13 @@ void NetworkingServer::ApiServer() {
                                 DeleteClient(&client, selector);
                                 break;
                             default:
+                                std::cout << "TCP client sent unkown signal." << std::endl;
                                 break;
                         }
                     }
                 }
             }
         }
-    }
-}
-
-void NetworkingServer::ComputeGameState() {
-    while (true) {
-        mAcceptingMoveCommands = true;
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        mAcceptingMoveCommands = false;
-
-        // window is closed, time to reset. May want to use fix sized array as an optimization.
-        // It's a bit mean to disguard old commands, maybe there should be windows for multiple ticks?
-        mCurrTick++;
-        // This sleep is needed to give the GameController time to fetch the client directions in getClientDirections
-        // TODO: Not sure what this sleep value should be...
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 }
 
@@ -229,4 +212,12 @@ std::vector<int> NetworkingServer::getClientIds() {
         }
     }
     return client_ids;
+}
+
+void NetworkingServer::setAcceptingMoveCommands(bool accepting_move_commands) {
+    mAcceptingMoveCommands = accepting_move_commands;
+}
+
+void NetworkingServer::incrementTick() {
+    mCurrTick++;
 }
