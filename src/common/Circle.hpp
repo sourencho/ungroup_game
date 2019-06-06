@@ -1,15 +1,14 @@
-#ifndef GroupShape_hpp
-#define GroupShape_hpp
+#ifndef Circle_hpp
+#define Circle_hpp
 
 #include <SFML/Graphics.hpp>
-#include "../common/GameObject.hpp"
 #include <stdio.h>
 
-class GroupShape: public GameObject {
+class Circle {
 
     public:
-        GroupShape(float size, sf::Vector2f position);
-        ~GroupShape();
+        Circle(float size, sf::Vector2f position);
+        ~Circle();
 
         void draw(sf::RenderTarget& target);
         void move();
@@ -26,9 +25,9 @@ class GroupShape: public GameObject {
         void setVelocity(sf::Vector2f velocity);
 
     private:
-        sf::CircleShape mCircle;
+        sf::CircleShape mCircleShape;
         sf::Vector2f mVelocity;
 
 };
 
-#endif /* GroupShape_hpp */
+#endif /* Circle_hpp */

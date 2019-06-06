@@ -4,27 +4,27 @@
 #include <SFML/Graphics.hpp>
 #include <stdio.h>
 #include "Player.hpp"
-#include "../common/GroupShape.hpp"
+#include "../common/Circle.hpp"
 
-class Group: public GroupShape {
+class Group : public GameObject {
 
     public:
         Group(int id, sf::Vector2f position);
         ~Group();
     
         void update();
-        void draw(sf::RenderTarget& target);
-    
         void addMember(Player* player);
     
         // Getters
         int getId() const;
+        Circle* getCircle();
 
     private:
         int mId;
         float mSize;
         std::vector<Player*> mMembers;
         bool shouldDeactivate();
+        Circle* mCircle;
 };
 
 #endif /* Group_hpp */

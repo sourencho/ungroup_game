@@ -2,10 +2,10 @@
 #include <iostream>
 #include "Group.hpp"
 
-Group::Group(int id, sf::Vector2f position):GroupShape(0.f, position) {
+Group::Group(int id, sf::Vector2f position) {
     mId = id;
     mSize = 0;
-
+    mCircle = new Circle(0.f, position);
 }
 
 Group::~Group() {
@@ -18,15 +18,15 @@ void Group::update() {
         return;
     }
 
-    // Calculate new velocity
+    // Update velocity
     sf::Vector2f new_velocity = sf::Vector2f(0.f, 0.f);
     for(auto member: mMembers) {
         new_velocity += member->getDirection();
     }
-    setVelocity(new_velocity);
+    mCircle->setVelocity(new_velocity);
 
     // Update position
-    move();
+    mCircle->move();
 }
 
 bool Group::shouldDeactivate() {
@@ -41,9 +41,13 @@ bool Group::shouldDeactivate() {
 void Group::addMember(Player* player) {
     mMembers.push_back(player);
     mSize = mMembers.size();
-    setRadius(mSize * 10.f);
+    mCircle->setRadius(mSize * 10.f);
 }
 
 int Group::getId() const {
     return mId;
+}
+
+Circle* Group::getCircle() {
+    return mCircle;
 }

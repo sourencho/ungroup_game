@@ -4,8 +4,8 @@
 
 Client::Client(int max_player_count, sf::Keyboard::Key keys[4]):mDirection(1.0, 1.0) {
     for (int i=0; i < max_player_count; i++) {
-        mGroupShapes.push_back(
-            new GroupShape(
+        mGroupCircles.push_back(
+            new GroupCircle(
                 1.f,
                 sf::Vector2f(10.f, 10.f)
             )
@@ -30,9 +30,9 @@ Client::~Client() {
 
 void Client::draw(sf::RenderTarget& target) {
     // Draw active groupShapes
-    for (auto group_shape: mGroupShapes) {
-        if (group_shape->isActive()) {
-            group_shape->draw(target);
+    for (auto group_circle: mGroupCircles) {
+        if (group_circle->isActive()) {
+            group_circle->getCircle()->draw(target);
         }
     }
 }
@@ -41,20 +41,21 @@ void Client::update() {
     std::vector<network_game_object> network_game_objects = mNetworkingClient->getNetworkGameObjects();
 
     // Network update state
-    for (auto group_shape : mGroupShapes) {
-        group_shape->setActive(false);
+    for (auto group_circle : mGroupCircles) {
+        group_circle->setActive(false);
     }
     for(auto network_game_object: network_game_objects) {
         int active_group_id = network_game_object.id;
-        if (active_group_id >= mGroupShapes.size()) {
-            throw std::runtime_error("Update group with no corresponding GroupShape");
+        if (active_group_id >= mGroupCircles.size()) {
+            throw std::runtime_error("Update group with no corresponding GroupCircle");
         }
 
-        GroupShape* group_shape = mGroupShapes[active_group_id];
+        GroupCircle* group_circle = mGroupCircles[active_group_id];
 
-        group_shape->setPosition(sf::Vector2f(network_game_object.x_pos, network_game_object.y_pos));
-        group_shape->setRadius(network_game_object.size);
-        group_shape->setActive(true);
+        group_circle->getCircle()->setPosition(
+                sf::Vector2f(network_game_object.x_pos, network_game_object.y_pos));
+        group_circle->getCircle()->setRadius(network_game_object.size);
+        group_circle->setActive(true);
     }
 
     // Network update direction

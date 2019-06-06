@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include "Player.hpp"
 #include "Group.hpp"
-#include "CollisionDetector.hpp"
 #include "NetworkingServer.hpp"
 
 
@@ -22,7 +21,6 @@ class GameController {
 
         std::vector<Player*> mPlayers;
         std::vector<Group*> mGroups;
-        CollisionDetector* mCollisionDetector;
         NetworkingServer* mNetworkingServer;
 };
 
