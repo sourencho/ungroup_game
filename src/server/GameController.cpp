@@ -67,7 +67,7 @@ void GameController::updateState() {
     }
 
     // Detect and handle group collisions
-    mCollisionDetector->detectGroupCollisions(mGroups);
+    mCollisionDetector->detectAndHandleShapeCollisions(mGroups);
 
     // Set network state
     mNetworkingServer->setState(getActiveGroups());

@@ -2,7 +2,7 @@
 #define Client_hpp
 
 #include <SFML/Graphics.hpp>
-#include "GroupShape.hpp"
+#include "../common/GroupShape.hpp"
 #include <stdio.h>
 #include "NetworkingClient.hpp"
 #include "../common/util.hpp"

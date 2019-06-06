@@ -197,7 +197,7 @@ void NetworkingServer::setState(std::vector<Group*> active_groups) {
     for(const auto active_group: active_groups) {
         sf::Uint32 client_id = active_group->getId();
         sf::Vector2f position = active_group->getPosition();
-        float size = active_group->getSize();
+        float size = active_group->getRadius();
         network_game_object ngo = {client_id, position.x, position.y, size};
         mNetworkGameObjects.push_back(ngo);
     }

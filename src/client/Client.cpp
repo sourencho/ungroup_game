@@ -7,8 +7,7 @@ Client::Client(int max_player_count, sf::Keyboard::Key keys[4]):mDirection(1.0, 
         mGroupShapes.push_back(
             new GroupShape(
                 1.f,
-                sf::Vector2f(10.f, 10.f),
-                sf::Color(rand() % 255, rand() % 255, rand() % 255)
+                sf::Vector2f(10.f, 10.f)
             )
         );
     }
