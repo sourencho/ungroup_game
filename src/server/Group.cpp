@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <iostream>
 #include "Group.hpp"
+#include "../common/collision.hpp"
 
 Group::Group(int id, sf::Vector2f position) {
     mId = id;
@@ -50,4 +51,12 @@ int Group::getId() const {
 
 Circle* Group::getCircle() {
     return mCircle;
+}
+
+void Group::handleCollisions(std::vector<Group*>& groups) {
+    std::vector<Circle*> circles;
+    for(auto group: groups) {
+        circles.push_back(group->getCircle());
+    }
+    handle_circle_collision(circles);
 }

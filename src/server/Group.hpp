@@ -14,6 +14,7 @@ class Group : public GameObject {
     
         void update();
         void addMember(Player* player);
+        static void handleCollisions(std::vector<Group*>& groups);
     
         // Getters
         int getId() const;

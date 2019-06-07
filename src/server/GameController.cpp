@@ -2,7 +2,6 @@
 #include <algorithm>
 #include <cstdlib>
 #include "GameController.hpp"
-#include "../common/collision.hpp"
 
 GameController::GameController(int max_player_count) {
     for (int i=0; i < max_player_count; i++) {
@@ -66,11 +65,7 @@ void GameController::updateState() {
     }
 
     // Detect and handle group collisions
-    std::vector<Circle*> circles;
-    for(auto group: mGroups) {
-        circles.push_back(group->getCircle());
-    }
-    handle_circle_collision(circles);
+    Group::handleCollisions(mGroups);
 
     // Set network state
     mNetworkingServer->setState(getActiveGroups());
