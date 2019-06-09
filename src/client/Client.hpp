@@ -2,9 +2,9 @@
 #define Client_hpp
 
 #include <SFML/Graphics.hpp>
-#include "GroupShape.hpp"
 #include <stdio.h>
 #include "NetworkingClient.hpp"
+#include "GroupCircle.hpp"
 #include "../common/util.hpp"
 #include "../common/game_def.hpp"
 
@@ -27,7 +27,7 @@ class Client {
 
     private:
         sf::Uint32 initNetworking();
-        std::vector<GroupShape*> mGroupShapes;
+        std::vector<GroupCircle*> mGroupCircles;
         sf::Vector2f mDirection;
         keys mKeys;
         sf::Uint32 mId;

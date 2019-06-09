@@ -1,11 +1,12 @@
 #include <stdio.h>
 #include <iostream>
 #include "Group.hpp"
+#include "../common/collision.hpp"
 
 Group::Group(int id, sf::Vector2f position) {
     mId = id;
-    mPosition = position;
     mSize = 0;
+    mCircle = new Circle(0.f, position);
 }
 
 Group::~Group() {
@@ -18,9 +19,15 @@ void Group::update() {
         return;
     }
 
+    // Update velocity
+    sf::Vector2f new_velocity = sf::Vector2f(0.f, 0.f);
     for(auto member: mMembers) {
-        mPosition = mPosition + member->getDirection();
+        new_velocity += member->getDirection();
     }
+    mCircle->setVelocity(new_velocity);
+
+    // Update position
+    mCircle->move();
 }
 
 bool Group::shouldDeactivate() {
@@ -34,23 +41,22 @@ bool Group::shouldDeactivate() {
 
 void Group::addMember(Player* player) {
     mMembers.push_back(player);
-    mSize = mMembers.size() * 10.f;
-}
-
-sf::Vector2f Group::getPosition() const {
-    return mPosition;
-}
-
-float Group::getSize() const {
-    return mSize;
+    mSize = mMembers.size();
+    mCircle->setRadius(mSize * 10.f);
 }
 
 int Group::getId() const {
     return mId;
 }
 
+Circle* Group::getCircle() {
+    return mCircle;
+}
 
-void Group::move(const sf::Vector2f& offset) {
-    mPosition.x += offset.x;
-    mPosition.y += offset.y;
+void Group::handleCollisions(std::vector<Group*>& groups) {
+    std::vector<Circle*> circles;
+    for(auto group: groups) {
+        circles.push_back(group->getCircle());
+    }
+    handle_circle_collision(circles);
 }
