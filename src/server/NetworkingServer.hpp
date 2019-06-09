@@ -22,6 +22,7 @@ class NetworkingServer {
         ~NetworkingServer();
 
         void Start();
+        void getClientInput();
 
         // Setters
         void setAcceptingMoveCommands(bool accepting_move_commands);
@@ -29,7 +30,7 @@ class NetworkingServer {
         void incrementTick();
 
         // Getters
-        std::vector<network_player> getNetworkPlayers();
+        std::vector<client_direction_update> getClientDirectionUpdates();
         std::vector<int> getClientIds();
     private:
         // Methods
@@ -43,7 +44,7 @@ class NetworkingServer {
         // Variables
         std::unordered_map<sf::TcpSocket*, sf::Int32> mClientSocketsToIds;
         std::unordered_map<sf::Uint32, float*> mClientMoves;
-        std::vector<network_game_object> mNetworkGameObjects;
+        std::vector<group_circle_update> mGroupCircleUpdates;
         sf::Uint32 mClientIdCounter;
         std::atomic<uint> mCurrTick;
         std::atomic<bool> mAcceptingMoveCommands;

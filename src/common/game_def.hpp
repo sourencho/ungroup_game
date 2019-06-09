@@ -9,15 +9,15 @@ struct keys {
     sf::Keyboard::Key up, down, left, right;
 };
 
-struct network_game_object {
-    sf::Uint32 id;
+struct group_circle_update {
+    sf::Uint32 client_id;
     float x_pos;
     float y_pos;
     float size;
 };
 
-struct network_player {
-    sf::Uint32 id;
+struct client_direction_update {
+    sf::Uint32 client_id;
     float x_dir;
     float y_dir;
 };

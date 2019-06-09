@@ -13,15 +13,22 @@ class GameController {
         GameController(int max_player_count);
         ~GameController();
         void update();
-        std::vector<Group*> getActiveGroups();
 
     private:
-        void createPlayer(int new_player_id);
-        void updateState();
+        int createPlayer();
+        void getClientInput();
+        void updateClientPlayers(std::vector<int> client_ids);
+        void updatePlayers(std::vector<client_direction_update> client_direction_updates);
+        void updateGroups();
+        void updateNetworkState();
+        void incrementTick();
+        std::vector<Group*> getActiveGroups();
 
         std::vector<Player*> mPlayers;
         std::vector<Group*> mGroups;
         NetworkingServer* mNetworkingServer;
+        std::unordered_map<sf::Uint32, int> mClientToPlayer;
+        int mNextPlayerId = 0;
 };
 
 #endif /* GameController_hpp */

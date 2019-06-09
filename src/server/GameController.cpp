@@ -4,14 +4,17 @@
 #include "GameController.hpp"
 
 GameController::GameController(int max_player_count) {
+    // Initialize Players
     for (int i=0; i < max_player_count; i++) {
         mPlayers.push_back(new Player());
     }
 
+    // Initialize Groups
     for (int i=0; i < max_player_count; i++) {
         mGroups.push_back(new Group(i, sf::Vector2f(20.f * i, 20.f * i)));
     }
 
+    // Start Network Server
     mNetworkingServer = new NetworkingServer();
     mNetworkingServer->Start();
 }
@@ -20,45 +23,56 @@ GameController::~GameController() {}
 
 void GameController::update() {
     // Get client input
-    mNetworkingServer->setAcceptingMoveCommands(true);
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    mNetworkingServer->setAcceptingMoveCommands(false);
+    getClientInput();
+    std::vector<int> client_ids = mNetworkingServer->getClientIds();
+    std::vector<client_direction_update> client_direction_updates = \
+        mNetworkingServer->getClientDirectionUpdates();
 
     // Update State
-    updateState();
+    updateClientPlayers(client_ids);
+    updatePlayers(client_direction_updates);
+    updateGroups();
+    updateNetworkState();
 
-    // Increment tick
+    // Tick++
+    incrementTick();
+}
+
+void GameController::getClientInput() {
+    mNetworkingServer->getClientInput();
+}
+
+void GameController::incrementTick() {
     mNetworkingServer->incrementTick();
 }
 
-void GameController::updateState() {
-    // Get clients
-    std::vector<int> client_ids = mNetworkingServer->getClientIds();
-
-    // Create new players
-    for (const int client_id : client_ids) {
-        if (!mPlayers[client_id]->isActive()) {
-            createPlayer(client_id);
-        }
-    }
-
-    // Deactivate players without a client
+void GameController::updateClientPlayers(std::vector<int> client_ids) {
+    // Reset players
     for (Player* player : mPlayers) {
         player->setActive(false);
     }
+
+    // Create new players for clients without a player
     for (const int client_id : client_ids) {
-        mPlayers[client_id]->setActive(true);
+        if (mClientToPlayer.find(client_id) == mClientToPlayer.end()) {
+            // Client doesn't have player
+            mClientToPlayer[client_id] = createPlayer();
+        } else {
+            mPlayers[mClientToPlayer[client_id]]->setActive(true);
+        }
     }
+}
 
-    // Get client directions
-    std::vector<network_player> network_players = mNetworkingServer->getNetworkPlayers();
-
+void GameController::updatePlayers(std::vector<client_direction_update> client_direction_updates) {
     // Update player directions
-    for (const auto& network_player : network_players) {
-        sf::Uint32 client_id = network_player.id;
-        mPlayers[client_id]->setDirection(sf::Vector2f(network_player.x_dir, network_player.y_dir));
+    for (const auto& client_direction_update : client_direction_updates) {
+        sf::Uint32 client_id = client_direction_update.client_id;
+        mPlayers[mClientToPlayer[client_id]]->setDirection(
+                sf::Vector2f(client_direction_update.x_dir, client_direction_update.y_dir));
     }
+}
 
+void GameController::updateGroups() {
     // Update groups
     for(auto group: mGroups) {
         group->update();
@@ -66,12 +80,14 @@ void GameController::updateState() {
 
     // Detect and handle group collisions
     Group::handleCollisions(mGroups);
+}
 
-    // Set network state
+void GameController::updateNetworkState() {
     mNetworkingServer->setState(getActiveGroups());
 }
 
-void GameController::createPlayer(int new_player_id) {
+int GameController::createPlayer() {
+    int new_player_id = mNextPlayerId++;
     if (new_player_id >= mPlayers.size() || new_player_id >= mGroups.size()) {
         throw std::runtime_error("Create players or groups with id out of range");
     }
@@ -83,6 +99,7 @@ void GameController::createPlayer(int new_player_id) {
     mGroups[new_player_id]->setActive(true);
     mGroups[new_player_id]->addMember(mPlayers[new_player_id]);
     std::cout << "Created group " << new_player_id << std::endl;
+    return new_player_id;
 }
 
 std::vector<Group*> GameController::getActiveGroups() {

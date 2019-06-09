@@ -45,11 +45,11 @@ sf::Uint32 NetworkingClient::Start() {
     return mClientId;
 }
 
-std::vector<network_game_object> NetworkingClient::getNetworkGameObjects() {
+std::vector<group_circle_update> NetworkingClient::getGroupCircleUpdates() {
     if (mAcceptingNetworkGameObjectsRead) {
-        return mNetworkGameObjects;
+        return mGroupCircleUpdates;
     }
-    return std::vector<network_game_object> {};
+    return std::vector<group_circle_update> {};
 }
 
 void NetworkingClient::setDirection(sf::Vector2f direction) {
@@ -107,10 +107,10 @@ void NetworkingClient::RealtimeClientRecv() {
         // fetch state updates for now
         if (packet >> server_tick) {
             mAcceptingNetworkGameObjectsRead = false;
-            mNetworkGameObjects.clear();
+            mGroupCircleUpdates.clear();
             while (packet >> client_id >> x_pos >> y_pos >> size) {
-                network_game_object ngo = {client_id, x_pos, y_pos, size};
-                mNetworkGameObjects.push_back(ngo);
+                group_circle_update gcu = {client_id, x_pos, y_pos, size};
+                mGroupCircleUpdates.push_back(gcu);
             }
             // Im not sure what kind of synchronization needs to happen here.
             // If this tick is the most up-to-date we've ever seen, maybe we set the game to it?

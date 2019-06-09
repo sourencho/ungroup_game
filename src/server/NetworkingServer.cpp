@@ -18,11 +18,16 @@ void NetworkingServer::Start() {
     realtime_thread.detach();
 }
 
+void NetworkingServer::getClientInput() {
+    setAcceptingMoveCommands(true);
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    setAcceptingMoveCommands(false);
+}
+
 void NetworkingServer::Move(sf::Packet command_packet, sf::Uint32 client_id, sf::Uint32 tick) {
     float x_dir;
     float y_dir;
     if (command_packet >> x_dir >> y_dir) {
-        //std::cout << "Client ID, tick, command, x, y: " << client_id << " " << tick << " " << realtime_command << " " << x_dir << " " << y_dir << std::endl;
         int drift = std::abs((int)((mCurrTick - tick)));
         if (drift < CMD_DRIFT_THRESHOLD) {
             // your newest commands will overwrite old ones
@@ -39,7 +44,8 @@ void NetworkingServer::Move(sf::Packet command_packet, sf::Uint32 client_id, sf:
                 //std::cout << "Dropping move command because game state being computed" << std::endl;
             }
         } else {
-            std::cout << "Receive move command with tick drifted past drift threshold. Drift value is: " << drift << std::endl;
+            std::cout << "Receive move command with tick drifted past drift threshold. Drift value is: " 
+                << drift << std::endl;
         }
     }
 }
@@ -83,11 +89,11 @@ void NetworkingServer::RealtimeServer() {
                     // sample current state every 100 ms, this simply packages and returns it
                     game_state_packet << ct; // should have error handling for <<
                     if (mAcceptingNetworkGameObjectsReads) {
-                        for(const auto network_game_object: mNetworkGameObjects) {
-                            game_state_packet << network_game_object.id
-                                << network_game_object.x_pos
-                                << network_game_object.y_pos
-                                << network_game_object.size;
+                        for(const auto group_circle_update: mGroupCircleUpdates) {
+                            game_state_packet << group_circle_update.client_id
+                                << group_circle_update.x_pos
+                                << group_circle_update.y_pos
+                                << group_circle_update.size;
                         }
                     }
                     rt_server.send(game_state_packet, sender, port);
@@ -180,26 +186,26 @@ void NetworkingServer::DeleteClient(sf::TcpSocket* client, sf::SocketSelector se
     delete client;
 }
 
-std::vector<network_player> NetworkingServer::getNetworkPlayers() {
-    std::vector<network_player> network_players;
+std::vector<client_direction_update> NetworkingServer::getClientDirectionUpdates() {
+    std::vector<client_direction_update> client_direction_updates;
     if (mAcceptingMoveCommands == false) {
         for(const auto& client_move : mClientMoves) {
-            network_player np = {client_move.first, client_move.second[0], client_move.second[1]};
-            network_players.push_back(np);
+            client_direction_update cd = {client_move.first, client_move.second[0], client_move.second[1]};
+            client_direction_updates.push_back(cd);
         }
     }
-    return network_players;
+    return client_direction_updates;
 }
 
 void NetworkingServer::setState(std::vector<Group*> active_groups) {
     mAcceptingNetworkGameObjectsReads = false;
-    mNetworkGameObjects.clear();
+    mGroupCircleUpdates.clear();
     for(const auto active_group: active_groups) {
         sf::Uint32 client_id = active_group->getId();
         sf::Vector2f position = active_group->getCircle()->getPosition();
         float size = active_group->getCircle()->getRadius();
-        network_game_object ngo = {client_id, position.x, position.y, size};
-        mNetworkGameObjects.push_back(ngo);
+        group_circle_update gcu = {client_id, position.x, position.y, size};
+        mGroupCircleUpdates.push_back(gcu);
     }
     mAcceptingNetworkGameObjectsReads = true;
 }

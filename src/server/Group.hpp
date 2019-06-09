@@ -11,11 +11,11 @@ class Group : public GameObject {
     public:
         Group(int id, sf::Vector2f position);
         ~Group();
-    
+
         void update();
         void addMember(Player* player);
         static void handleCollisions(std::vector<Group*>& groups);
-    
+
         // Getters
         int getId() const;
         Circle* getCircle();

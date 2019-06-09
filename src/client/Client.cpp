@@ -38,28 +38,58 @@ void Client::draw(sf::RenderTarget& target) {
 }
 
 void Client::update() {
-    std::vector<network_game_object> network_game_objects = mNetworkingClient->getNetworkGameObjects();
+    // Get group circle updates
+    std::vector<group_circle_update> group_circle_updates = mNetworkingClient->getGroupCircleUpdates();
+    std::vector<int> client_ids;
+    for (const auto group_circle_update : group_circle_updates) {
+        client_ids.push_back(group_circle_update.client_id);
+    }
 
-    // Network update state
+    // Update state
+    updateClientGroupCircles(client_ids);
+    updateGroupCircles(group_circle_updates);
+
+    // Set direction
+    mNetworkingClient->setDirection(mDirection);
+}
+
+void Client::updateClientGroupCircles(std::vector<int> client_ids) {
+    // Reset group circles
     for (auto group_circle : mGroupCircles) {
         group_circle->setActive(false);
     }
-    for(auto network_game_object: network_game_objects) {
-        int active_group_id = network_game_object.id;
-        if (active_group_id >= mGroupCircles.size()) {
-            throw std::runtime_error("Update group with no corresponding GroupCircle");
-        }
 
-        GroupCircle* group_circle = mGroupCircles[active_group_id];
+    // Update group circles
+    for(const auto client_id: client_ids) {
+        if (mClientToGroupCircle.find(client_id) == mClientToGroupCircle.end()) {
+            // Client doesn't have group
+            mClientToGroupCircle[client_id] = createGroupCircle();
+        } else {
+            // Client has group
+            mGroupCircles[mClientToGroupCircle[client_id]]->setActive(true);
+        }
+    }
+}
+
+void Client::updateGroupCircles(std::vector<group_circle_update> group_circle_updates) {
+    // Update group circles
+    for(const auto group_circle_update: group_circle_updates) {
+        int group_circle_id = mClientToGroupCircle[group_circle_update.client_id];
+        GroupCircle* group_circle = mGroupCircles[group_circle_id];
 
         group_circle->getCircle()->setPosition(
-                sf::Vector2f(network_game_object.x_pos, network_game_object.y_pos));
-        group_circle->getCircle()->setRadius(network_game_object.size);
-        group_circle->setActive(true);
+                sf::Vector2f(group_circle_update.x_pos, group_circle_update.y_pos));
+        group_circle->getCircle()->setRadius(group_circle_update.size);
     }
+}
 
-    // Network update direction
-    mNetworkingClient->setDirection(mDirection);
+int Client::createGroupCircle() {
+    int new_group_circle_id = mNextGroupCircleId++;
+    if (new_group_circle_id >= mGroupCircles.size()) {
+        throw std::runtime_error("Update group with no corresponding GroupCircle");
+    }
+    mGroupCircles[new_group_circle_id]->setActive(true);
+    return new_group_circle_id;
 }
 
 sf::Vector2f Client::getDirection() const {
