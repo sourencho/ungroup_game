@@ -31,8 +31,8 @@ class Client {
         // Methods
         sf::Uint32 initNetworking();
         int createGroupCircle();
+        void refreshGroupCircles(std::vector<int> client_ids);
         void updateGroupCircles(std::vector<group_circle_update> group_circle_updates);
-        void updateClientGroupCircles(std::vector<int> client_ids);
 
         // Variables
         std::vector<GroupCircle*> mGroupCircles;

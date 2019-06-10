@@ -14,10 +14,7 @@ Group::~Group() {
 }
 
 void Group::update() {
-    if (shouldDeactivate()) {
-        setActive(false);
-        return;
-    }
+    refresh();
 
     // Update velocity
     sf::Vector2f new_velocity = sf::Vector2f(0.f, 0.f);
@@ -30,13 +27,18 @@ void Group::update() {
     mCircle->move();
 }
 
-bool Group::shouldDeactivate() {
+/**
+    Sets group to active if any of its members are active.
+*/
+void Group::refresh() {
     for(auto member: mMembers) {
         if (member->isActive()) {
-            return false;
+            setActive(true);
+            return;
         }
     }
-    return true;
+    setActive(false);
+    return;
 }
 
 void Group::addMember(Player* player) {

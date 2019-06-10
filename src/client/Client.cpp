@@ -19,7 +19,6 @@ Client::Client(int max_player_count, sf::Keyboard::Key keys[4]):mDirection(1.0, 
     mKeys.left = keys[3];
 
     // Networking
-    // TODO: assign id from client and use it to create player
     mNetworkingClient = new NetworkingClient();
     mNetworkingClient->Start();
 }
@@ -46,14 +45,17 @@ void Client::update() {
     }
 
     // Update state
-    updateClientGroupCircles(client_ids);
+    refreshGroupCircles(client_ids);
     updateGroupCircles(group_circle_updates);
 
     // Set direction
     mNetworkingClient->setDirection(mDirection);
 }
 
-void Client::updateClientGroupCircles(std::vector<int> client_ids) {
+/**
+    Updates the mapping of clients to group circles and the active status of group circles.
+*/
+void Client::refreshGroupCircles(std::vector<int> client_ids) {
     // Reset group circles
     for (auto group_circle : mGroupCircles) {
         group_circle->setActive(false);
@@ -71,6 +73,9 @@ void Client::updateClientGroupCircles(std::vector<int> client_ids) {
     }
 }
 
+/**
+    Updates the properties of group circles based on updates recieved from the server.
+*/
 void Client::updateGroupCircles(std::vector<group_circle_update> group_circle_updates) {
     // Update group circles
     for(const auto group_circle_update: group_circle_updates) {

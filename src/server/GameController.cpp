@@ -29,9 +29,9 @@ void GameController::update() {
         mNetworkingServer->getClientDirectionUpdates();
 
     // Update State
-    updateClientPlayers(client_ids);
+    refreshPlayers(client_ids);
     updatePlayers(client_direction_updates);
-    updateGroups();
+    refreshAndUpdateGroups();
     updateNetworkState();
 
     // Tick++
@@ -46,7 +46,10 @@ void GameController::incrementTick() {
     mNetworkingServer->incrementTick();
 }
 
-void GameController::updateClientPlayers(std::vector<int> client_ids) {
+/**
+    Updates the mapping of clients to players and the active status of players.
+*/
+void GameController::refreshPlayers(std::vector<int> client_ids) {
     // Reset players
     for (Player* player : mPlayers) {
         player->setActive(false);
@@ -63,6 +66,9 @@ void GameController::updateClientPlayers(std::vector<int> client_ids) {
     }
 }
 
+/**
+    Updates the properties of players based on updates recieved from the clients.
+*/
 void GameController::updatePlayers(std::vector<client_direction_update> client_direction_updates) {
     // Update player directions
     for (const auto& client_direction_update : client_direction_updates) {
@@ -72,7 +78,10 @@ void GameController::updatePlayers(std::vector<client_direction_update> client_d
     }
 }
 
-void GameController::updateGroups() {
+/**
+    Updates the active status and properties of groups.
+*/
+void GameController::refreshAndUpdateGroups() {
     // Update groups
     for(auto group: mGroups) {
         group->update();

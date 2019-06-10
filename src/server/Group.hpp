@@ -24,7 +24,7 @@ class Group : public GameObject {
         int mId;
         float mSize;
         std::vector<Player*> mMembers;
-        bool shouldDeactivate();
+        void refresh();
         Circle* mCircle;
 };
 

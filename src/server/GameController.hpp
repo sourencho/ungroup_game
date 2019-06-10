@@ -17,9 +17,9 @@ class GameController {
     private:
         int createPlayer();
         void getClientInput();
-        void updateClientPlayers(std::vector<int> client_ids);
+        void refreshPlayers(std::vector<int> client_ids);
         void updatePlayers(std::vector<client_direction_update> client_direction_updates);
-        void updateGroups();
+        void refreshAndUpdateGroups();
         void updateNetworkState();
         void incrementTick();
         std::vector<Group*> getActiveGroups();
