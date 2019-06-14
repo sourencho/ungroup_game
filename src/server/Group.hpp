@@ -4,32 +4,28 @@
 #include <SFML/Graphics.hpp>
 #include <stdio.h>
 #include "Player.hpp"
-#include "../common/GameObject.hpp"
+#include "../common/Circle.hpp"
 
-class Group: public GameObject {
+class Group : public GameObject {
 
     public:
         Group(int id, sf::Vector2f position);
         ~Group();
-    
-        void update();
-        void draw(sf::RenderTarget& target);
-    
-        void addMemeber(Player* player);
-    
-        // Getters
-        sf::Vector2f getPosition() const;
-        float getSize() const;
-        int getId() const;
 
-        // Setters
-        void move(const sf::Vector2f& offset);
-    
+        void update();
+        void addMember(Player* player);
+        static void handleCollisions(std::vector<Group*>& groups);
+
+        // Getters
+        int getId() const;
+        Circle* getCircle();
+
     private:
         int mId;
         float mSize;
-        sf::Vector2f mPosition;
         std::vector<Player*> mMembers;
+        void refresh();
+        Circle* mCircle;
 };
 
 #endif /* Group_hpp */

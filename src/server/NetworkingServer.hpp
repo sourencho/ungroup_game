@@ -10,6 +10,7 @@
 #include <chrono>
 #include <unordered_map>
 #include "../common/game_def.hpp"
+#include "Group.hpp"
 
 
 class NetworkingServer {
@@ -21,20 +22,35 @@ class NetworkingServer {
         ~NetworkingServer();
 
         void Start();
+        void collectClientInputs();
+
+        // Setters
+        void setState(std::vector<Group*> active_groups);
+        void incrementTick();
+
+        // Getters
+        std::vector<client_direction_update> getClientDirectionUpdates();
+        std::vector<int> getClientIds();
+        client_inputs getClientInputs();
     private:
         // Methods
         void RealtimeServer();
         void ApiServer();
-        void ComputeGameState();
+
         void DeleteClient(sf::TcpSocket* client, sf::SocketSelector selector);
+        void Move(sf::Packet command_packet, sf::Uint32 client_id, sf::Uint32 tick);
+        void RegisterClient(sf::TcpSocket& client);
 
         // Variables
         std::unordered_map<sf::TcpSocket*, sf::Int32> mClientSocketsToIds;
         std::unordered_map<sf::Uint32, float*> mClientMoves;
-        std::unordered_map<sf::Uint32, float*> mClientPositions;
+        std::vector<group_circle_update> mClientGroupUpdates;
+
         sf::Uint32 mClientIdCounter;
         std::atomic<uint> mCurrTick;
-        std::atomic<bool> mAcceptingMoveCommands;
+
+        std::mutex mClientInputsWriteLock; // protects mClientMoves and mClientSocketsToIds
+        std::mutex mClientGroupUpdatesWriteLock; // protects mClientGroupUpdates
 };
 
 #endif /* NetworkingServer_hpp */

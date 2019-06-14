@@ -9,15 +9,22 @@ struct keys {
     sf::Keyboard::Key up, down, left, right;
 };
 
-struct position {
-    sf::Uint32 id;
+struct group_circle_update {
+    sf::Uint32 client_id;
     float x_pos;
     float y_pos;
+    float size;
 };
 
-struct direction {
+struct client_direction_update {
+    sf::Uint32 client_id;
     float x_dir;
     float y_dir;
+};
+
+struct client_inputs {
+    std::vector<int> client_ids;
+    std::vector<client_direction_update> client_direction_updates;
 };
 
 enum APICommand { register_client, group, ungroup };

@@ -11,8 +11,9 @@
 
 NetworkingClient::NetworkingClient() {
     mIsRegistered = false;
-    mAcceptingPositionRead = true;
+    mAcceptingNetworkGameObjectsRead = true;
     mAcceptingDirectionRead = true;
+    mDirection = sf::Vector2f(0.f, 0.f);
 }
 
 NetworkingClient::~NetworkingClient() {
@@ -44,16 +45,16 @@ sf::Uint32 NetworkingClient::Start() {
     return mClientId;
 }
 
-std::vector<position> NetworkingClient::getPositions() {
-    while (!mAcceptingPositionRead) {
-        //
+std::vector<group_circle_update> NetworkingClient::getClientGroupUpdates() {
+    if (mAcceptingNetworkGameObjectsRead) {
+        return mClientGroupUpdates;
     }
-    return mPositions;
+    return std::vector<group_circle_update> {};
 }
 
-void NetworkingClient::setDirection(direction dir) {
+void NetworkingClient::setDirection(sf::Vector2f direction) {
     mAcceptingDirectionRead = false;
-    mDirection = dir;
+    mDirection = direction;
     mAcceptingDirectionRead = true;
 }
 
@@ -65,7 +66,8 @@ void NetworkingClient::ReadRegistrationResponse() {
     sf::Uint32 tick;
 
     if (mApiClient->receive(registration_response) == sf::Socket::Done) {
-        if (registration_response >> api_command >> client_id >> tick && (api_command == (sf::Uint32)APICommand::register_client)) {
+        if (registration_response >> api_command >> client_id >> tick &&
+            api_command == (sf::Uint32)APICommand::register_client) {
             std::cout << "Registered with ID and current tick: " << client_id << " " << tick << std::endl;
             // TODO: have this function return these values instead of setting them
             mClientId = client_id;
@@ -95,27 +97,25 @@ void NetworkingClient::RealtimeClientRecv() {
     sf::Uint32 client_id;
     float x_pos;
     float y_pos;
+    float size;
 
     while (true) {
         sf::Packet packet;
         sf::IpAddress sender;
         unsigned short port;
         mRealtimeClient->receive(packet, sender, port);
-        std::cout << "recv: " << sender << " " << port << std::endl;
         // fetch state updates for now
         if (packet >> server_tick) {
-            mAcceptingPositionRead = false;
-            mPositions.clear();
-            while (packet >> client_id >> x_pos >> y_pos) {
-                std::cout << "Client: " << client_id << " has position x,y: " << x_pos << " " << y_pos << std::endl;
-                position p = {client_id, x_pos, y_pos};
-                mPositions.push_back(p);
+            mAcceptingNetworkGameObjectsRead = false;
+            mClientGroupUpdates.clear();
+            while (packet >> client_id >> x_pos >> y_pos >> size) {
+                group_circle_update gcu = {client_id, x_pos, y_pos, size};
+                mClientGroupUpdates.push_back(gcu);
             }
             // Im not sure what kind of synchronization needs to happen here.
             // If this tick is the most up-to-date we've ever seen, maybe we set the game to it?
-            std::cout << "Client positions from server for tick: " << server_tick << std::endl;
             mCurrentTick = server_tick;
-            mAcceptingPositionRead = true;
+            mAcceptingNetworkGameObjectsRead = true;
         } else {
             std::cout << "Failed to read server tick from new packet" << std::endl;
         }
@@ -127,7 +127,7 @@ void NetworkingClient::RealtimeClientSend() {
         if (mAcceptingDirectionRead) {
             sf::Packet packet;
             sf::Uint32 move_cmd = (sf::Uint32)RealtimeCommand::move;
-            if (packet << mClientId << move_cmd << mCurrentTick << mDirection.x_dir << mDirection.y_dir) {
+            if (packet << mClientId << move_cmd << mCurrentTick << mDirection.x << mDirection.y) {
                 mRealtimeClient->send(packet, SERVER_IP, 4888);
             } else {
                 std::cout << "Failed to form packet" << std::endl;

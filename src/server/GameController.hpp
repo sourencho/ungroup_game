@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include "Player.hpp"
 #include "Group.hpp"
-#include "CollisionDetector.hpp"
 #include "NetworkingServer.hpp"
 
 
@@ -13,18 +12,25 @@ class GameController {
     public:
         GameController(int max_player_count);
         ~GameController();
-        void update(int client_id, sf::Vector2f client_direction);
-        size_t createPlayer();
-        std::vector<Group*> getActiveGroups();
-        void draw(sf::RenderTarget& target);
+        void update();
 
     private:
+        int createPlayer();
+        client_inputs collectInputs();
+        void computeGameState(
+            std::vector<int> client_ids, std::vector<client_direction_update> client_direction_updates);
+        void refreshPlayers(std::vector<int> client_ids);
+        void updatePlayers(std::vector<client_direction_update> client_direction_updates);
+        void refreshAndUpdateGroups();
+        void setNetworkState();
+        void incrementTick();
+        std::vector<Group*> getActiveGroups();
+
         std::vector<Player*> mPlayers;
         std::vector<Group*> mGroups;
-        CollisionDetector* mCollisionDetector;
-        int mNextGroupId = 0;
-        int mNextPlayerId = 0;
         NetworkingServer* mNetworkingServer;
+        std::unordered_map<sf::Uint32, int> mClientToPlayer;
+        size_t mNextPlayerId = 0;
 };
 
 #endif /* GameController_hpp */

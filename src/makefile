@@ -12,7 +12,6 @@ ifeq ($(detected_OS),Darwin)        # Mac OS X
 	CXXFLAGS = -std=c++11 -stdlib=libc++
 	LDFLAGS = -lstdc++
 	CFLAGS = -Wall -Weffc++ -Werror -pedantic -g
-$(info SOUREN is $(CXX))
 else
 	CFLAGS = -Wall -Weffc++ -Werror -pedantic -g -fsanitize=address -fno-omit-frame-pointer
 	LDFLAGS = -lasan
