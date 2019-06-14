@@ -4,7 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include <stdio.h>
 #include "NetworkingClient.hpp"
-#include "GroupCircle.hpp"
+#include "ClientGroup.hpp"
 #include "../common/util.hpp"
 #include "../common/game_def.hpp"
 #include <unordered_map>
@@ -30,18 +30,18 @@ class Client {
     private:
         // Methods
         sf::Uint32 initNetworking();
-        int createGroupCircle();
-        void refreshGroupCircles(std::vector<int> client_ids);
-        void updateGroupCircles(std::vector<group_circle_update> group_circle_updates);
+        int createClientGroup();
+        void refreshClientGroups(std::vector<int> client_ids);
+        void updateClientGroups(std::vector<group_circle_update> group_circle_updates);
 
         // Variables
-        std::vector<GroupCircle*> mGroupCircles;
+        std::vector<ClientGroup*> mClientGroups;
         sf::Vector2f mDirection;
         keys mKeys;
         sf::Uint32 mId;
         NetworkingClient* mNetworkingClient;
-        std::unordered_map<sf::Uint32, int> mClientToGroupCircle;
-        size_t mNextGroupCircleId = 0;
+        std::unordered_map<sf::Uint32, int> mClientToClientGroup;
+        size_t mNextClientGroupId = 0;
 };
 
 #endif /* Client_hpp */

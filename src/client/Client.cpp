@@ -4,12 +4,7 @@
 
 Client::Client(int max_player_count, sf::Keyboard::Key keys[4]):mDirection(1.0, 1.0) {
     for (int i=0; i < max_player_count; i++) {
-        mGroupCircles.push_back(
-            new GroupCircle(
-                1.f,
-                sf::Vector2f(10.f, 10.f)
-            )
-        );
+        mClientGroups.push_back(new ClientGroup(sf::Vector2f(10.f, 10.f)));
     }
 
     // Set up input
@@ -29,7 +24,7 @@ Client::~Client() {
 
 void Client::draw(sf::RenderTarget& target) {
     // Draw active groupShapes
-    for (auto group_circle: mGroupCircles) {
+    for (auto group_circle: mClientGroups) {
         if (group_circle->isActive()) {
             group_circle->getCircle()->draw(target);
         }
@@ -38,15 +33,15 @@ void Client::draw(sf::RenderTarget& target) {
 
 void Client::update() {
     // Get group circle updates
-    std::vector<group_circle_update> group_circle_updates = mNetworkingClient->getGroupCircleUpdates();
+    std::vector<group_circle_update> group_circle_updates = mNetworkingClient->getClientGroupUpdates();
     std::vector<int> client_ids;
     for (const auto group_circle_update : group_circle_updates) {
         client_ids.push_back(group_circle_update.client_id);
     }
 
     // Update state
-    refreshGroupCircles(client_ids);
-    updateGroupCircles(group_circle_updates);
+    refreshClientGroups(client_ids);
+    updateClientGroups(group_circle_updates);
 
     // Set direction
     mNetworkingClient->setDirection(mDirection);
@@ -55,20 +50,20 @@ void Client::update() {
 /**
     Updates the mapping of clients to group circles and the active status of group circles.
 */
-void Client::refreshGroupCircles(std::vector<int> client_ids) {
+void Client::refreshClientGroups(std::vector<int> client_ids) {
     // Reset group circles
-    for (auto group_circle : mGroupCircles) {
+    for (auto group_circle : mClientGroups) {
         group_circle->setActive(false);
     }
 
     // Update group circles
     for(const auto client_id: client_ids) {
-        if (mClientToGroupCircle.find(client_id) == mClientToGroupCircle.end()) {
+        if (mClientToClientGroup.find(client_id) == mClientToClientGroup.end()) {
             // Client doesn't have group
-            mClientToGroupCircle[client_id] = createGroupCircle();
+            mClientToClientGroup[client_id] = createClientGroup();
         } else {
             // Client has group
-            mGroupCircles[mClientToGroupCircle[client_id]]->setActive(true);
+            mClientGroups[mClientToClientGroup[client_id]]->setActive(true);
         }
     }
 }
@@ -76,11 +71,11 @@ void Client::refreshGroupCircles(std::vector<int> client_ids) {
 /**
     Updates the properties of group circles based on updates recieved from the server.
 */
-void Client::updateGroupCircles(std::vector<group_circle_update> group_circle_updates) {
+void Client::updateClientGroups(std::vector<group_circle_update> group_circle_updates) {
     // Update group circles
     for(const auto group_circle_update: group_circle_updates) {
-        int group_circle_id = mClientToGroupCircle[group_circle_update.client_id];
-        GroupCircle* group_circle = mGroupCircles[group_circle_id];
+        int group_circle_id = mClientToClientGroup[group_circle_update.client_id];
+        ClientGroup* group_circle = mClientGroups[group_circle_id];
 
         group_circle->getCircle()->setPosition(
                 sf::Vector2f(group_circle_update.x_pos, group_circle_update.y_pos));
@@ -88,12 +83,12 @@ void Client::updateGroupCircles(std::vector<group_circle_update> group_circle_up
     }
 }
 
-int Client::createGroupCircle() {
-    int new_group_circle_id = mNextGroupCircleId++;
-    if (new_group_circle_id >= mGroupCircles.size()) {
-        throw std::runtime_error("Update group with no corresponding GroupCircle");
+int Client::createClientGroup() {
+    int new_group_circle_id = mNextClientGroupId++;
+    if (new_group_circle_id >= mClientGroups.size()) {
+        throw std::runtime_error("Update group with no corresponding ClientGroup");
     }
-    mGroupCircles[new_group_circle_id]->setActive(true);
+    mClientGroups[new_group_circle_id]->setActive(true);
     return new_group_circle_id;
 }
 

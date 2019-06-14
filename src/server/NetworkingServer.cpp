@@ -4,7 +4,7 @@ NetworkingServer::NetworkingServer() {
     mClientIdCounter = 0;
     mCurrTick = 0;
     mClientInputsWriteLock.unlock();
-    mGroupCircleUpdatesWriteLock.unlock();
+    mClientGroupUpdatesWriteLock.unlock();
 }
 
 NetworkingServer::~NetworkingServer() {}
@@ -91,14 +91,14 @@ void NetworkingServer::RealtimeServer() {
                     //std::cout << "Sending game state to client: " << sender << " " << port << std::endl;
                     // sample current state every 100 ms, this simply packages and returns it
                     game_state_packet << ct; // should have error handling for <<
-                    mGroupCircleUpdatesWriteLock.lock();
-                    for(const auto group_circle_update: mGroupCircleUpdates) {
+                    mClientGroupUpdatesWriteLock.lock();
+                    for(const auto group_circle_update: mClientGroupUpdates) {
                         game_state_packet << group_circle_update.client_id
                             << group_circle_update.x_pos
                             << group_circle_update.y_pos
                             << group_circle_update.size;
                     }
-                    mGroupCircleUpdatesWriteLock.unlock();
+                    mClientGroupUpdatesWriteLock.unlock();
                     rt_server.send(game_state_packet, sender, port);
                     break;
                 default:
@@ -196,18 +196,18 @@ void NetworkingServer::DeleteClient(sf::TcpSocket* client, sf::SocketSelector se
 
 
 void NetworkingServer::setState(std::vector<Group*> active_groups) {
-    mGroupCircleUpdatesWriteLock.lock();
+    mClientGroupUpdatesWriteLock.lock();
 
-    mGroupCircleUpdates.clear();
+    mClientGroupUpdates.clear();
     for(const auto active_group: active_groups) {
         sf::Uint32 client_id = active_group->getId();
         sf::Vector2f position = active_group->getCircle()->getPosition();
         float size = active_group->getCircle()->getRadius();
         group_circle_update gcu = {client_id, position.x, position.y, size};
-        mGroupCircleUpdates.push_back(gcu);
+        mClientGroupUpdates.push_back(gcu);
     }
 
-    mGroupCircleUpdatesWriteLock.unlock();
+    mClientGroupUpdatesWriteLock.unlock();
 }
 
 // GAME_CONTROLLER THREAD FUNCTIONS

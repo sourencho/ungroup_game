@@ -1,16 +1,16 @@
-#ifndef GroupCircle_hpp
-#define GroupCircle_hpp
+#ifndef ClientGroup_hpp
+#define ClientGroup_hpp
 
 #include <SFML/Graphics.hpp>
 #include <stdio.h>
 #include "../common/Circle.hpp"
 #include "../common/GameObject.hpp"
 
-class GroupCircle : public GameObject {
+class ClientGroup : public GameObject {
 
     public:
-        GroupCircle(sf::Vector2f position);
-        ~GroupCircle();
+        ClientGroup(sf::Vector2f position);
+        ~ClientGroup();
 
         Circle* getCircle();
 
@@ -18,4 +18,4 @@ class GroupCircle : public GameObject {
         Circle* mCircle;
 };
 
-#endif /* GroupCircle_hpp */
+#endif /* ClientGroup_hpp */

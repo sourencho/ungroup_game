@@ -44,13 +44,13 @@ class NetworkingServer {
         // Variables
         std::unordered_map<sf::TcpSocket*, sf::Int32> mClientSocketsToIds;
         std::unordered_map<sf::Uint32, float*> mClientMoves;
-        std::vector<group_circle_update> mGroupCircleUpdates;
+        std::vector<group_circle_update> mClientGroupUpdates;
 
         sf::Uint32 mClientIdCounter;
         std::atomic<uint> mCurrTick;
 
         std::mutex mClientInputsWriteLock; // protects mClientMoves and mClientSocketsToIds
-        std::mutex mGroupCircleUpdatesWriteLock; // protects mGroupCircleUpdates
+        std::mutex mClientGroupUpdatesWriteLock; // protects mClientGroupUpdates
 };
 
 #endif /* NetworkingServer_hpp */
