@@ -41,7 +41,7 @@ class Client {
         sf::Uint32 mId;
         NetworkingClient* mNetworkingClient;
         std::unordered_map<sf::Uint32, int> mClientToGroupCircle;
-        int mNextGroupCircleId = 0;
+        size_t mNextGroupCircleId = 0;
 };
 
 #endif /* Client_hpp */

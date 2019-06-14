@@ -30,7 +30,7 @@ class GameController {
         std::vector<Group*> mGroups;
         NetworkingServer* mNetworkingServer;
         std::unordered_map<sf::Uint32, int> mClientToPlayer;
-        int mNextPlayerId = 0;
+        size_t mNextPlayerId = 0;
 };
 
 #endif /* GameController_hpp */

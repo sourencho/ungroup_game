@@ -9,7 +9,7 @@
 class GroupCircle : public GameObject {
 
     public:
-        GroupCircle(int id, sf::Vector2f position);
+        GroupCircle(sf::Vector2f position);
         ~GroupCircle();
 
         Circle* getCircle();

@@ -2,7 +2,7 @@
 #include <iostream>
 #include "GroupCircle.hpp"
 
-GroupCircle::GroupCircle(int id, sf::Vector2f position) {
+GroupCircle::GroupCircle(sf::Vector2f position) {
     mCircle = new Circle(0.f, position);
 }
 
