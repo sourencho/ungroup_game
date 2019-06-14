@@ -22,24 +22,27 @@ GameController::GameController(int max_player_count) {
 GameController::~GameController() {}
 
 void GameController::update() {
-    // Get client input
-    getClientInput();
-    std::vector<int> client_ids = mNetworkingServer->getClientIds();
-    std::vector<client_direction_update> client_direction_updates = \
-        mNetworkingServer->getClientDirectionUpdates();
-
-    // Update State
-    refreshPlayers(client_ids);
-    updatePlayers(client_direction_updates);
-    refreshAndUpdateGroups();
-    updateNetworkState();
-
-    // Tick++
+    client_inputs cis = collectInputs();
+    computeGameState(cis.client_ids, cis.client_direction_updates);
+    setNetworkState();
     incrementTick();
 }
 
-void GameController::getClientInput() {
-    mNetworkingServer->getClientInput();
+client_inputs GameController::collectInputs() {
+    // Give clients a window to write inputs
+    mNetworkingServer->collectClientInputs();
+
+    // Read client inputs
+    return mNetworkingServer->getClientInputs();
+}
+
+void GameController::computeGameState(
+    std::vector<int> client_ids,
+    std::vector<client_direction_update> client_direction_updates
+) {
+    refreshPlayers(client_ids);
+    updatePlayers(client_direction_updates);
+    refreshAndUpdateGroups();
 }
 
 void GameController::incrementTick() {
@@ -91,7 +94,7 @@ void GameController::refreshAndUpdateGroups() {
     Group::handleCollisions(mGroups);
 }
 
-void GameController::updateNetworkState() {
+void GameController::setNetworkState() {
     mNetworkingServer->setState(getActiveGroups());
 }
 

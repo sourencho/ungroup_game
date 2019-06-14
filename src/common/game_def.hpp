@@ -22,6 +22,11 @@ struct client_direction_update {
     float y_dir;
 };
 
+struct client_inputs {
+    std::vector<int> client_ids;
+    std::vector<client_direction_update> client_direction_updates;
+};
+
 enum APICommand { register_client, group, ungroup };
 enum RealtimeCommand { move, fetch_state };
 

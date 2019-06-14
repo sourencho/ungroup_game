@@ -22,16 +22,16 @@ class NetworkingServer {
         ~NetworkingServer();
 
         void Start();
-        void getClientInput();
+        void collectClientInputs();
 
         // Setters
-        void setAcceptingMoveCommands(bool accepting_move_commands);
         void setState(std::vector<Group*> active_groups);
         void incrementTick();
 
         // Getters
         std::vector<client_direction_update> getClientDirectionUpdates();
         std::vector<int> getClientIds();
+        client_inputs getClientInputs();
     private:
         // Methods
         void RealtimeServer();
@@ -45,11 +45,12 @@ class NetworkingServer {
         std::unordered_map<sf::TcpSocket*, sf::Int32> mClientSocketsToIds;
         std::unordered_map<sf::Uint32, float*> mClientMoves;
         std::vector<group_circle_update> mGroupCircleUpdates;
+
         sf::Uint32 mClientIdCounter;
         std::atomic<uint> mCurrTick;
-        std::atomic<bool> mAcceptingMoveCommands;
-        std::atomic<bool> mAcceptingNetworkGameObjectsReads;
-        std::atomic<bool> mAcceptingClientSocketToIdsReads;
+
+        std::mutex mClientInputsWriteLock; // protects mClientMoves and mClientSocketsToIds
+        std::mutex mGroupCircleUpdatesWriteLock; // protects mGroupCircleUpdates
 };
 
 #endif /* NetworkingServer_hpp */
