@@ -35,8 +35,6 @@ class NetworkingClient {
         NetworkingClient();
         ~NetworkingClient();
 
-        sf::Uint32 Start();
-
         std::vector<group_circle_update> getClientGroupUpdates();
         void setDirection(sf::Vector2f direction);
 
@@ -51,7 +49,7 @@ class NetworkingClient {
         // Variables
         sf::Uint32 mClientId;
         sf::Uint32 mCurrentTick;
-        bool mIsRegistered;
+        bool mIsRegistered = false;
 
         sf::TcpSocket* mApiClient;
         sf::UdpSocket* mRealtimeClient;

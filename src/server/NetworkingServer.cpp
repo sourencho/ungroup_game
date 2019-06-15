@@ -1,8 +1,6 @@
 #include "NetworkingServer.hpp"
 
-NetworkingServer::NetworkingServer() {
-    mClientIdCounter = 0;
-    mCurrTick = 0;
+NetworkingServer::NetworkingServer():mCurrTick(0) {
     mClientInputsWriteLock.unlock();
     mClientGroupUpdatesWriteLock.unlock();
 }
@@ -223,9 +221,10 @@ client_inputs NetworkingServer::getClientInputs() {
 std::vector<int> NetworkingServer::getClientIds() {
     // Read mClientSocketsToIds
     std::vector<int> client_ids;
-    for(const auto& x : mClientSocketsToIds) {
-        client_ids.push_back(x.second);
-    }
+    std::transform(
+        mClientSocketsToIds.begin(), mClientSocketsToIds.end(), std::back_inserter(client_ids),
+        [](std::pair<sf::TcpSocket*, sf::Int32> pair){return pair.second;}
+    );
     return client_ids;
 }
 

@@ -37,8 +37,8 @@ client_inputs GameController::collectInputs() {
 }
 
 void GameController::computeGameState(
-    std::vector<int> client_ids,
-    std::vector<client_direction_update> client_direction_updates
+    std::vector<int>& client_ids,
+    std::vector<client_direction_update>& client_direction_updates
 ) {
     refreshPlayers(client_ids);
     updatePlayers(client_direction_updates);
@@ -105,21 +105,21 @@ int GameController::createPlayer() {
     }
 
     mPlayers[new_player_id]->setActive(true);
-    std::cout << "Created player " << new_player_id << std::endl;
+    std::cout << "Created Player " << new_player_id << std::endl;
 
     // Create group for player
     mGroups[new_player_id]->setActive(true);
     mGroups[new_player_id]->addMember(mPlayers[new_player_id]);
-    std::cout << "Created group " << new_player_id << std::endl;
+    std::cout << "Created Group " << new_player_id << std::endl;
+
     return new_player_id;
 }
 
 std::vector<Group*> GameController::getActiveGroups() {
     std::vector<Group*> active_groups;
-    for(auto group: mGroups) {
-        if (group->isActive()) {
-            active_groups.push_back(group);
-        }
-    }
+    std::copy_if(
+        mGroups.begin(), mGroups.end(), std::back_inserter(active_groups),
+        [](Group* group){return group->isActive();}
+    );
     return active_groups;
 }

@@ -15,7 +15,6 @@ Client::Client(int max_player_count, sf::Keyboard::Key keys[4]):mDirection(1.0, 
 
     // Networking
     mNetworkingClient = new NetworkingClient();
-    mNetworkingClient->Start();
 }
 
 Client::~Client() {
@@ -35,9 +34,10 @@ void Client::update() {
     // Get group circle updates
     std::vector<group_circle_update> group_circle_updates = mNetworkingClient->getClientGroupUpdates();
     std::vector<int> client_ids;
-    for (const auto group_circle_update : group_circle_updates) {
-        client_ids.push_back(group_circle_update.client_id);
-    }
+    std::transform(
+        group_circle_updates.begin(), group_circle_updates.end(), std::back_inserter(client_ids),
+        [](group_circle_update gcu){return gcu.client_id;}
+    );
 
     // Update state
     refreshClientGroups(client_ids);

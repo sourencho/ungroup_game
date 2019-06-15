@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <iostream>
+#include <numeric>
 #include "Group.hpp"
 #include "../common/collision.hpp"
 
@@ -17,10 +18,12 @@ void Group::update() {
     refresh();
 
     // Update velocity
-    sf::Vector2f new_velocity = sf::Vector2f(0.f, 0.f);
-    for(auto member: mMembers) {
-        new_velocity += member->getDirection();
-    }
+    sf::Vector2f new_velocity = std::accumulate(
+        mMembers.begin(),
+        mMembers.end(),
+        sf::Vector2f(0.f, 0.f),
+        [](sf::Vector2f curr_vel, Player* player) { return curr_vel + player->getDirection();}
+    );
     mCircle->setVelocity(new_velocity);
 
     // Update position
@@ -31,13 +34,14 @@ void Group::update() {
     Sets group to active if any of its members are active.
 */
 void Group::refresh() {
-    for(auto member: mMembers) {
-        if (member->isActive()) {
-            setActive(true);
-            return;
-        }
-    }
-    setActive(false);
+    bool any_active_members = std::any_of(
+        mMembers.begin(), mMembers.end(),
+        [](Player* player){return player->isActive();}
+    );
+    if (any_active_members)
+        setActive(true);
+    else
+        setActive(false);
     return;
 }
 
@@ -57,8 +61,9 @@ Circle* Group::getCircle() {
 
 void Group::handleCollisions(std::vector<Group*>& groups) {
     std::vector<Circle*> circles;
-    for(auto group: groups) {
-        circles.push_back(group->getCircle());
-    }
+    std::transform(
+        groups.begin(), groups.end(), std::back_inserter(circles),
+        [](Group* group){return group->getCircle();}
+    );
     handle_circle_collision(circles);
 }

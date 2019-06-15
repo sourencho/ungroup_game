@@ -10,15 +10,19 @@
 class GameController {
 
     public:
-        GameController(int max_player_count);
+        explicit GameController(int max_player_count);
         ~GameController();
+        GameController(const GameController& temp_obj) = delete;
+        GameController& operator=(const GameController& temp_obj) = delete;
         void update();
 
     private:
         int createPlayer();
         client_inputs collectInputs();
         void computeGameState(
-            std::vector<int> client_ids, std::vector<client_direction_update> client_direction_updates);
+            std::vector<int>& client_ids,
+            std::vector<client_direction_update>& client_direction_updates
+        );
         void refreshPlayers(std::vector<int> client_ids);
         void updatePlayers(std::vector<client_direction_update> client_direction_updates);
         void refreshAndUpdateGroups();
