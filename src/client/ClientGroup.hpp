@@ -9,8 +9,10 @@
 class ClientGroup : public GameObject {
 
     public:
-        ClientGroup(sf::Vector2f position);
+        explicit ClientGroup(sf::Vector2f position);
         ~ClientGroup();
+        ClientGroup(const ClientGroup& temp_obj) = delete;  // TODO: define this
+        ClientGroup& operator=(const ClientGroup& temp_obj) = delete;  // TODO: define this
 
         Circle* getCircle();
 

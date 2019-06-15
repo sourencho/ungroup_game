@@ -46,7 +46,7 @@ class NetworkingServer {
         std::unordered_map<sf::Uint32, float*> mClientMoves;
         std::vector<group_circle_update> mClientGroupUpdates;
 
-        sf::Uint32 mClientIdCounter;
+        sf::Uint32 mClientIdCounter = 0;
         std::atomic<uint> mCurrTick;
 
         std::mutex mClientInputsWriteLock; // protects mClientMoves and mClientSocketsToIds

@@ -9,17 +9,9 @@
 #include "NetworkingClient.hpp"
 
 
-NetworkingClient::NetworkingClient() {
-    mIsRegistered = false;
-    mAcceptingNetworkGameObjectsRead = true;
-    mAcceptingDirectionRead = true;
-    mDirection = sf::Vector2f(0.f, 0.f);
-}
-
-NetworkingClient::~NetworkingClient() {
-}
-
-sf::Uint32 NetworkingClient::Start() {
+NetworkingClient::NetworkingClient()
+    :mAcceptingNetworkGameObjectsRead{true}, mAcceptingDirectionRead(true), mDirection(0.f, 0.f)
+{
     mApiClient = create_api_client();
     mRealtimeClient = create_realtime_client();
     RegisterNetworkingClient();   // Sets mClientId, mCurrentTick, mIsRegistered
@@ -42,7 +34,9 @@ sf::Uint32 NetworkingClient::Start() {
     RealtimeClientRecv_thread.detach();
     RealtimeClientSend_thread.detach();
     SyncServerState_thread.detach();
-    return mClientId;
+}
+
+NetworkingClient::~NetworkingClient() {
 }
 
 std::vector<group_circle_update> NetworkingClient::getClientGroupUpdates() {

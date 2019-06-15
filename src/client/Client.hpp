@@ -14,6 +14,8 @@ class Client {
     public:
         Client(int max_player_count, sf::Keyboard::Key keys[4]);
         ~Client();
+        Client(const Client& temp_obj) = delete;
+        Client& operator=(const Client& temp_obj) = delete;
 
         // Methods
         void draw(sf::RenderTarget& target);

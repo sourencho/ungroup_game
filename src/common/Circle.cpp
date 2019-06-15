@@ -2,8 +2,7 @@
 #include <iostream>
 #include "Circle.hpp"
 
-Circle::Circle(float size, sf::Vector2f position) {
-    mCircleShape = sf::CircleShape(size);
+Circle::Circle(float size, sf::Vector2f position):mCircleShape(size) {
     mCircleShape.setPosition(position);
     mCircleShape.setFillColor(
         sf::Color(rand() % 255, rand() % 255, rand() % 255)

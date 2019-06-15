@@ -11,6 +11,8 @@ class Group : public GameObject {
     public:
         Group(int id, sf::Vector2f position);
         ~Group();
+        //Group(const Group& temp_obj) = delete;  // TODO: define this
+        //Group& operator=(const Group& temp_obj) = delete;  // TODO: define this
 
         void update();
         void addMember(Player* player);
