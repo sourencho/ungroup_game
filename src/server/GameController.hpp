@@ -28,11 +28,11 @@ class GameController {
         void refreshAndUpdateGroups();
         void setNetworkState();
         void incrementTick();
-        std::vector<Group*> getActiveGroups();
+        std::vector<std::shared_ptr<Group>> getActiveGroups();
 
-        std::vector<Player*> mPlayers;
-        std::vector<Group*> mGroups;
-        NetworkingServer* mNetworkingServer;
+        std::vector<std::shared_ptr<Player>> mPlayers;
+        std::vector<std::shared_ptr<Group>> mGroups;
+        std::unique_ptr<NetworkingServer> mNetworkingServer;
         std::unordered_map<sf::Uint32, int> mClientToPlayer;
         size_t mNextPlayerId = 0;
 };

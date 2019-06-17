@@ -3,17 +3,15 @@
 NetworkingServer::NetworkingServer():mCurrTick(0) {
     mClientInputsWriteLock.unlock();
     mClientGroupUpdatesWriteLock.unlock();
-}
 
-NetworkingServer::~NetworkingServer() {}
-
-void NetworkingServer::Start() {
     std::cout << "Starting ungroup game server.\n";
     std::thread api_thread(&NetworkingServer::ApiServer, this);
     std::thread realtime_thread(&NetworkingServer::RealtimeServer, this);
     api_thread.detach();
     realtime_thread.detach();
 }
+
+NetworkingServer::~NetworkingServer() {}
 
 void NetworkingServer::collectClientInputs() {
     mClientInputsWriteLock.unlock();
@@ -193,7 +191,7 @@ void NetworkingServer::DeleteClient(sf::TcpSocket* client, sf::SocketSelector se
 
 
 
-void NetworkingServer::setState(std::vector<Group*> active_groups) {
+void NetworkingServer::setState(std::vector<std::shared_ptr<Group>> active_groups) {
     mClientGroupUpdatesWriteLock.lock();
 
     mClientGroupUpdates.clear();
