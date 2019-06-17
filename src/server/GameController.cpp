@@ -6,17 +6,16 @@
 GameController::GameController(int max_player_count) {
     // Initialize Players
     for (int i=0; i < max_player_count; i++) {
-        mPlayers.push_back(new Player());
+        mPlayers.push_back(std::shared_ptr<Player>(new Player()));
     }
 
     // Initialize Groups
     for (int i=0; i < max_player_count; i++) {
-        mGroups.push_back(new Group(i, sf::Vector2f(20.f * i, 20.f * i)));
+        mGroups.push_back(std::shared_ptr<Group>(new Group(i, sf::Vector2f(20.f * i, 20.f * i))));
     }
 
     // Start Network Server
-    mNetworkingServer = new NetworkingServer();
-    mNetworkingServer->Start();
+    mNetworkingServer = std::unique_ptr<NetworkingServer>(new NetworkingServer());
 }
 
 GameController::~GameController() {}
@@ -54,7 +53,7 @@ void GameController::incrementTick() {
 */
 void GameController::refreshPlayers(std::vector<int> client_ids) {
     // Reset players
-    for (Player* player : mPlayers) {
+    for (std::shared_ptr<Player> player : mPlayers) {
         player->setActive(false);
     }
 
@@ -110,16 +109,15 @@ int GameController::createPlayer() {
     // Create group for player
     mGroups[new_player_id]->setActive(true);
     mGroups[new_player_id]->addMember(mPlayers[new_player_id]);
-    std::cout << "Created Group " << new_player_id << std::endl;
 
     return new_player_id;
 }
 
-std::vector<Group*> GameController::getActiveGroups() {
-    std::vector<Group*> active_groups;
+std::vector<std::shared_ptr<Group>> GameController::getActiveGroups() {
+    std::vector<std::shared_ptr<Group>> active_groups;
     std::copy_if(
         mGroups.begin(), mGroups.end(), std::back_inserter(active_groups),
-        [](Group* group){return group->isActive();}
+        [](std::shared_ptr<Group> group){return group->isActive();}
     );
     return active_groups;
 }

@@ -21,11 +21,10 @@ class NetworkingServer {
         NetworkingServer();
         ~NetworkingServer();
 
-        void Start();
         void collectClientInputs();
 
         // Setters
-        void setState(std::vector<Group*> active_groups);
+        void setState(std::vector<std::shared_ptr<Group>> active_groups);
         void incrementTick();
 
         // Getters

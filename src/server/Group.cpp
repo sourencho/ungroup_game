@@ -17,17 +17,22 @@ Group::~Group() {
 void Group::update() {
     refresh();
 
-    // Update velocity
-    sf::Vector2f new_velocity = std::accumulate(
-        mMembers.begin(),
-        mMembers.end(),
-        sf::Vector2f(0.f, 0.f),
-        [](sf::Vector2f curr_vel, Player* player) { return curr_vel + player->getDirection();}
-    );
-    mCircle->setVelocity(new_velocity);
+    if (isActive()) {
+        // Update velocity
+        sf::Vector2f new_velocity = std::accumulate(
+            mMembers.begin(),
+            mMembers.end(),
+            sf::Vector2f(0.f, 0.f),
+            [](sf::Vector2f curr_vel, std::shared_ptr<Player> player) {
+                return curr_vel + player->getDirection();
+            }
+        );
+        mCircle->setVelocity(new_velocity);
 
-    // Update position
-    mCircle->move();
+        // Update position
+        mCircle->move();
+
+    }
 }
 
 /**
@@ -36,7 +41,7 @@ void Group::update() {
 void Group::refresh() {
     bool any_active_members = std::any_of(
         mMembers.begin(), mMembers.end(),
-        [](Player* player){return player->isActive();}
+        [](std::shared_ptr<Player> player){return player->isActive();}
     );
     if (any_active_members)
         setActive(true);
@@ -45,7 +50,7 @@ void Group::refresh() {
     return;
 }
 
-void Group::addMember(Player* player) {
+void Group::addMember(std::shared_ptr<Player> player) {
     mMembers.push_back(player);
     mSize = mMembers.size();
     mCircle->setRadius(mSize * 10.f);
@@ -59,11 +64,11 @@ Circle* Group::getCircle() {
     return mCircle;
 }
 
-void Group::handleCollisions(std::vector<Group*>& groups) {
+void Group::handleCollisions(std::vector<std::shared_ptr<Group>>& groups) {
     std::vector<Circle*> circles;
     std::transform(
         groups.begin(), groups.end(), std::back_inserter(circles),
-        [](Group* group){return group->getCircle();}
+        [](std::shared_ptr<Group> group){return group->getCircle();}
     );
     handle_circle_collision(circles);
 }
