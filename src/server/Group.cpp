@@ -4,10 +4,11 @@
 #include "Group.hpp"
 #include "../common/collision.hpp"
 
-Group::Group(int id, sf::Vector2f position) {
+Group::Group(int id, sf::Vector2f position)
+    :mCircle(std::shared_ptr<Circle>(new Circle(0.f, position)))
+{
     mId = id;
     mSize = 0;
-    mCircle = new Circle(0.f, position);
 }
 
 Group::~Group() {
@@ -60,12 +61,12 @@ int Group::getId() const {
     return mId;
 }
 
-Circle* Group::getCircle() {
+std::shared_ptr<Circle> Group::getCircle() {
     return mCircle;
 }
 
 void Group::handleCollisions(std::vector<std::shared_ptr<Group>>& groups) {
-    std::vector<Circle*> circles;
+    std::vector<std::shared_ptr<Circle>> circles;
     std::transform(
         groups.begin(), groups.end(), std::back_inserter(circles),
         [](std::shared_ptr<Group> group){return group->getCircle();}

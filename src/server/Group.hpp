@@ -20,14 +20,14 @@ class Group : public GameObject {
 
         // Getters
         int getId() const;
-        Circle* getCircle();
+        std::shared_ptr<Circle> getCircle();
 
     private:
         int mId;
         float mSize;
         std::vector<std::shared_ptr<Player>> mMembers;
         void refresh();
-        Circle* mCircle;
+        std::shared_ptr<Circle> mCircle;
 };
 
 #endif /* Group_hpp */

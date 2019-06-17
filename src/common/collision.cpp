@@ -7,9 +7,9 @@
     of the vector spanning from the center of cirlce A to the center of circle B by the 
     amount needed such that the circles are touching but not intersecting.
 */
-void handle_circle_collision(std::vector<Circle*>& circles) {
-    for(Circle* circle_a: circles) {
-        for(Circle* circle_b: circles) {
+void handle_circle_collision(std::vector<std::shared_ptr<Circle>>& circles) {
+    for(std::shared_ptr<Circle> circle_a: circles) {
+        for(std::shared_ptr<Circle> circle_b: circles) {
             if (circle_a == circle_b) {
                 continue;
             }

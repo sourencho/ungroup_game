@@ -5,6 +5,6 @@
 #include "Circle.hpp"
 #include "../common/util.hpp"
 
-void handle_circle_collision(std::vector<Circle*>& circles);
+void handle_circle_collision(std::vector<std::shared_ptr<Circle>>& circles);
 
 #endif /* collision_hpp */
