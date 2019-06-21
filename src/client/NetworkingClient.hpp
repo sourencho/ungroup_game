@@ -2,6 +2,7 @@
 #define NetworkingClient_hpp
 
 #include <stdio.h>
+#include <atomic>
 #include <SFML/Network.hpp>
 #include "../common/game_def.hpp"
 
@@ -27,7 +28,7 @@ class NetworkingClient {
     sf::UdpSocket* create_realtime_client()
     {
         sf::UdpSocket* realtime_client = new sf::UdpSocket;
-        realtime_client->bind(4846);
+        realtime_client->bind(0);
         return realtime_client;
     }
 
