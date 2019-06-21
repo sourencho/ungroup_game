@@ -32,16 +32,16 @@ void Client::draw(sf::RenderTarget& target) {
 
 void Client::update() {
     // Get group circle updates
-    std::vector<group_circle_update> group_circle_updates = mNetworkingClient->getClientGroupUpdates();
+    std::vector<client_group_update> client_group_updates = mNetworkingClient->getClientGroupUpdates();
     std::vector<int> client_ids;
     std::transform(
-        group_circle_updates.begin(), group_circle_updates.end(), std::back_inserter(client_ids),
-        [](group_circle_update gcu){return gcu.client_id;}
+        client_group_updates.begin(), client_group_updates.end(), std::back_inserter(client_ids),
+        [](client_group_update cgu){return cgu.client_id;}
     );
 
     // Update state
     refreshClientGroups(client_ids);
-    updateClientGroups(group_circle_updates);
+    updateClientGroups(client_group_updates);
 
     // Set direction
     mNetworkingClient->setDirection(mDirection);
@@ -71,15 +71,15 @@ void Client::refreshClientGroups(std::vector<int> client_ids) {
 /**
     Updates the properties of group circles based on updates recieved from the server.
 */
-void Client::updateClientGroups(std::vector<group_circle_update> group_circle_updates) {
+void Client::updateClientGroups(std::vector<client_group_update> client_group_updates) {
     // Update group circles
-    for(const auto group_circle_update: group_circle_updates) {
-        int group_circle_id = mClientToClientGroup[group_circle_update.client_id];
+    for(const auto client_group_update: client_group_updates) {
+        int group_circle_id = mClientToClientGroup[client_group_update.client_id];
         ClientGroup* group_circle = mClientGroups[group_circle_id];
 
         group_circle->getCircle()->setPosition(
-                sf::Vector2f(group_circle_update.x_pos, group_circle_update.y_pos));
-        group_circle->getCircle()->setRadius(group_circle_update.size);
+                sf::Vector2f(client_group_update.x_pos, client_group_update.y_pos));
+        group_circle->getCircle()->setRadius(client_group_update.size);
     }
 }
 

@@ -28,11 +28,7 @@ void GameController::update() {
 }
 
 client_inputs GameController::collectInputs() {
-    // Give clients a window to write inputs
-    mNetworkingServer->collectClientInputs();
-
-    // Read client inputs
-    return mNetworkingServer->getClientInputs();
+    return mNetworkingServer->collectClientInputs();
 }
 
 void GameController::computeGameState(
