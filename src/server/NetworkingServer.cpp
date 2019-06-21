@@ -240,7 +240,7 @@ void NetworkingServer::ApiServer() {
 
 void NetworkingServer::DeleteClient(sf::TcpSocket* client, sf::SocketSelector selector) {
     delete client;
-    mClientMoves.erase(mClientSocketsToIds[client]);
+    eraseFromClientMoves(readFromClientSocketsToIds(client));
     eraseFromClientSocketsToIds(client);
 }
 
