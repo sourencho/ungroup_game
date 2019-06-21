@@ -164,11 +164,13 @@ void NetworkingServer::ApiServer() {
                                 break;
                             case sf::TcpSocket::Error:
                                 std::cout << "TCP client encountered error. Removing client." << std::endl;
+                                 selector.remove(client);
                                 DeleteClient(&client, selector);
                                 break;
                             case sf::TcpSocket::Disconnected:
                                 // clean up mClientMoves/mClientPositions hashes
                                 std::cout << "TCP client disconnected. Removing client. " << std::endl;
+                                selector.remove(client);
                                 DeleteClient(&client, selector);
                                 break;
                             default:
@@ -185,10 +187,9 @@ void NetworkingServer::ApiServer() {
 void NetworkingServer::DeleteClient(sf::TcpSocket* client, sf::SocketSelector selector) {
     mClientInputsWriteLock.lock();
 
-    mClientMoves.erase(mClientSocketsToIds[client]);
-    selector.remove(*client);
-    mClientSocketsToIds.erase(client);
     delete client;
+    mClientMoves.erase(mClientSocketsToIds[client]);
+    mClientSocketsToIds.erase(client);
 
     mClientInputsWriteLock.unlock();
 }
