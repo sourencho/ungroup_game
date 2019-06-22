@@ -21,36 +21,41 @@ class NetworkingServer {
         NetworkingServer();
         ~NetworkingServer();
 
-        void Start();
-        void collectClientInputs();
-
-        // Setters
-        void setState(std::vector<Group*> active_groups);
+        client_inputs collectClientInputs();
+        void setState(std::vector<std::shared_ptr<Group>> active_groups);
         void incrementTick();
-
-        // Getters
         std::vector<client_direction_update> getClientDirectionUpdates();
         std::vector<int> getClientIds();
-        client_inputs getClientInputs();
     private:
-        // Methods
         void RealtimeServer();
         void ApiServer();
-
         void DeleteClient(sf::TcpSocket* client, sf::SocketSelector selector);
         void Move(sf::Packet command_packet, sf::Uint32 client_id, sf::Uint32 tick);
         void RegisterClient(sf::TcpSocket& client);
 
-        // Variables
-        std::unordered_map<sf::TcpSocket*, sf::Int32> mClientSocketsToIds;
-        std::unordered_map<sf::Uint32, float*> mClientMoves;
-        std::vector<group_circle_update> mClientGroupUpdates;
+        // Thread safe mClientGroupUpdates operations
+        std::vector<client_group_update> getClientGroupUpdatesCopy();
+        void clearClientGroupUpdates();
+        void addToClientGroupUpdates(client_group_update cgu);
 
-        sf::Uint32 mClientIdCounter;
-        std::atomic<uint> mCurrTick;
+        // Thread safe mClientMove operations
+        void updateClientMoves(sf::Uint32 client_id, float x_dir, float y_dir);
+        void eraseFromClientMoves(sf::Uint32 client_id);
+
+        // Thread safe mClientSocketsToIds opreations
+        void eraseFromClientSocketsToIds(sf::TcpSocket* client);
+        void writeToClientSocketsToIds(sf::TcpSocket* client, sf::Uint32 id);
+        sf::Uint32 readFromClientSocketsToIds(sf::TcpSocket* client);
+
+        std::unordered_map<sf::TcpSocket*, sf::Int32> mClientSocketsToIds;
+        std::vector<client_group_update> mClientGroupUpdates;
+        std::unordered_map<sf::Uint32, float*> mClientMoves;
 
         std::mutex mClientInputsWriteLock; // protects mClientMoves and mClientSocketsToIds
         std::mutex mClientGroupUpdatesWriteLock; // protects mClientGroupUpdates
+
+        sf::Uint32 mClientIdCounter = 0;
+        std::atomic<uint> mCurrTick;
 };
 
 #endif /* NetworkingServer_hpp */

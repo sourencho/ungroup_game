@@ -14,6 +14,8 @@ class Client {
     public:
         Client(int max_player_count, sf::Keyboard::Key keys[4]);
         ~Client();
+        Client(const Client& temp_obj) = delete;
+        Client& operator=(const Client& temp_obj) = delete;
 
         // Methods
         void draw(sf::RenderTarget& target);
@@ -32,7 +34,7 @@ class Client {
         sf::Uint32 initNetworking();
         int createClientGroup();
         void refreshClientGroups(std::vector<int> client_ids);
-        void updateClientGroups(std::vector<group_circle_update> group_circle_updates);
+        void updateClientGroups(std::vector<client_group_update> client_group_updates);
 
         // Variables
         std::vector<ClientGroup*> mClientGroups;

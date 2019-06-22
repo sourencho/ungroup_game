@@ -11,21 +11,23 @@ class Group : public GameObject {
     public:
         Group(int id, sf::Vector2f position);
         ~Group();
+        Group(const Group& temp_obj) = delete;  // TODO: define this
+        Group& operator=(const Group& temp_obj) = delete;  // TODO: define this
 
         void update();
-        void addMember(Player* player);
-        static void handleCollisions(std::vector<Group*>& groups);
+        void addMember(std::shared_ptr<Player> player);
+        static void handleCollisions(std::vector<std::shared_ptr<Group>>& groups);
 
         // Getters
         int getId() const;
-        Circle* getCircle();
+        std::shared_ptr<Circle> getCircle();
 
     private:
         int mId;
         float mSize;
-        std::vector<Player*> mMembers;
+        std::vector<std::shared_ptr<Player>> mMembers;
         void refresh();
-        Circle* mCircle;
+        std::shared_ptr<Circle> mCircle;
 };
 
 #endif /* Group_hpp */

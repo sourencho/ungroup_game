@@ -9,17 +9,9 @@
 #include "NetworkingClient.hpp"
 
 
-NetworkingClient::NetworkingClient() {
-    mIsRegistered = false;
-    mAcceptingNetworkGameObjectsRead = true;
-    mAcceptingDirectionRead = true;
-    mDirection = sf::Vector2f(0.f, 0.f);
-}
-
-NetworkingClient::~NetworkingClient() {
-}
-
-sf::Uint32 NetworkingClient::Start() {
+NetworkingClient::NetworkingClient()
+    :mAcceptingNetworkGameObjectsRead(true), mAcceptingDirectionRead(true), mDirection(0.f, 0.f)
+{
     mApiClient = create_api_client();
     mRealtimeClient = create_realtime_client();
     RegisterNetworkingClient();   // Sets mClientId, mCurrentTick, mIsRegistered
@@ -42,14 +34,15 @@ sf::Uint32 NetworkingClient::Start() {
     RealtimeClientRecv_thread.detach();
     RealtimeClientSend_thread.detach();
     SyncServerState_thread.detach();
-    return mClientId;
 }
 
-std::vector<group_circle_update> NetworkingClient::getClientGroupUpdates() {
+NetworkingClient::~NetworkingClient() {}
+
+std::vector<client_group_update> NetworkingClient::getClientGroupUpdates() {
     if (mAcceptingNetworkGameObjectsRead) {
         return mClientGroupUpdates;
     }
-    return std::vector<group_circle_update> {};
+    return std::vector<client_group_update> {};
 }
 
 void NetworkingClient::setDirection(sf::Vector2f direction) {
@@ -109,8 +102,8 @@ void NetworkingClient::RealtimeClientRecv() {
             mAcceptingNetworkGameObjectsRead = false;
             mClientGroupUpdates.clear();
             while (packet >> client_id >> x_pos >> y_pos >> size) {
-                group_circle_update gcu = {client_id, x_pos, y_pos, size};
-                mClientGroupUpdates.push_back(gcu);
+                client_group_update cgu = {client_id, x_pos, y_pos, size};
+                mClientGroupUpdates.push_back(cgu);
             }
             // Im not sure what kind of synchronization needs to happen here.
             // If this tick is the most up-to-date we've ever seen, maybe we set the game to it?

@@ -36,9 +36,7 @@ class NetworkingClient {
         NetworkingClient();
         ~NetworkingClient();
 
-        sf::Uint32 Start();
-
-        std::vector<group_circle_update> getClientGroupUpdates();
+        std::vector<client_group_update> getClientGroupUpdates();
         void setDirection(sf::Vector2f direction);
 
     private:
@@ -52,13 +50,13 @@ class NetworkingClient {
         // Variables
         sf::Uint32 mClientId;
         sf::Uint32 mCurrentTick;
-        bool mIsRegistered;
+        bool mIsRegistered = false;
 
         sf::TcpSocket* mApiClient;
         sf::UdpSocket* mRealtimeClient;
 
         std::atomic<bool> mAcceptingNetworkGameObjectsRead;
-        std::vector<group_circle_update> mClientGroupUpdates;
+        std::vector<client_group_update> mClientGroupUpdates;
         std::atomic<bool> mAcceptingDirectionRead;
         sf::Vector2f mDirection;
 };

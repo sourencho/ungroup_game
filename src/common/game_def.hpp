@@ -9,7 +9,7 @@ struct keys {
     sf::Keyboard::Key up, down, left, right;
 };
 
-struct group_circle_update {
+struct client_group_update {
     sf::Uint32 client_id;
     float x_pos;
     float y_pos;
