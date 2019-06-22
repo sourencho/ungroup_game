@@ -44,11 +44,11 @@ void Group::refresh() {
         mMembers.begin(), mMembers.end(),
         [](std::shared_ptr<Player> player){return player->isActive();}
     );
-    if (any_active_members)
+    if (any_active_members) {
         setActive(true);
-    else
+    } else {
         setActive(false);
-    return;
+    }
 }
 
 void Group::addMember(std::shared_ptr<Player> player) {

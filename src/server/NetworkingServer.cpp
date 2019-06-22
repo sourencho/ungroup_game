@@ -143,7 +143,6 @@ void NetworkingServer::RealtimeServer() {
     }
 }
 
-
 void NetworkingServer::Move(sf::Packet command_packet, sf::Uint32 client_id, sf::Uint32 tick) {
 
     float x_dir;

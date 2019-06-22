@@ -10,7 +10,7 @@
 
 
 NetworkingClient::NetworkingClient()
-    :mAcceptingNetworkGameObjectsRead{true}, mAcceptingDirectionRead(true), mDirection(0.f, 0.f)
+    :mAcceptingNetworkGameObjectsRead(true), mAcceptingDirectionRead(true), mDirection(0.f, 0.f)
 {
     mApiClient = create_api_client();
     mRealtimeClient = create_realtime_client();
@@ -36,8 +36,7 @@ NetworkingClient::NetworkingClient()
     SyncServerState_thread.detach();
 }
 
-NetworkingClient::~NetworkingClient() {
-}
+NetworkingClient::~NetworkingClient() {}
 
 std::vector<client_group_update> NetworkingClient::getClientGroupUpdates() {
     if (mAcceptingNetworkGameObjectsRead) {
