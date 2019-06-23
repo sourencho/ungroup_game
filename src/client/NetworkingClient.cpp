@@ -9,9 +9,7 @@
 #include "NetworkingClient.hpp"
 
 
-NetworkingClient::NetworkingClient()
-    :mAcceptingNetworkGameObjectsRead(true), mAcceptingDirectionRead(true), mDirection(0.f, 0.f)
-{
+NetworkingClient::NetworkingClient():mDirection(0.f, 0.f) {
     mApiClient = create_api_client();
     mRealtimeClient = create_realtime_client();
     RegisterNetworkingClient();   // Sets mClientId, mCurrentTick, mIsRegistered
@@ -39,16 +37,11 @@ NetworkingClient::NetworkingClient()
 NetworkingClient::~NetworkingClient() {}
 
 std::vector<client_group_update> NetworkingClient::getClientGroupUpdates() {
-    if (mAcceptingNetworkGameObjectsRead) {
-        return mClientGroupUpdates;
-    }
-    return std::vector<client_group_update> {};
+    return mClientGroupUpdates.copy();
 }
 
 void NetworkingClient::setDirection(sf::Vector2f direction) {
-    mAcceptingDirectionRead = false;
-    mDirection = direction;
-    mAcceptingDirectionRead = true;
+    mDirection.set(direction);
 }
 
 void NetworkingClient::ReadRegistrationResponse() {
@@ -99,7 +92,6 @@ void NetworkingClient::RealtimeClientRecv() {
         mRealtimeClient->receive(packet, sender, port);
         // fetch state updates for now
         if (packet >> server_tick) {
-            mAcceptingNetworkGameObjectsRead = false;
             mClientGroupUpdates.clear();
             while (packet >> client_id >> x_pos >> y_pos >> size) {
                 client_group_update cgu = {client_id, x_pos, y_pos, size};
@@ -108,7 +100,6 @@ void NetworkingClient::RealtimeClientRecv() {
             // Im not sure what kind of synchronization needs to happen here.
             // If this tick is the most up-to-date we've ever seen, maybe we set the game to it?
             mCurrentTick = server_tick;
-            mAcceptingNetworkGameObjectsRead = true;
         } else {
             std::cout << "Failed to read server tick from new packet" << std::endl;
         }
@@ -117,16 +108,15 @@ void NetworkingClient::RealtimeClientRecv() {
 
 void NetworkingClient::RealtimeClientSend() {
     while (true) {
-        if (mAcceptingDirectionRead) {
-            sf::Packet packet;
-            sf::Uint32 move_cmd = (sf::Uint32)RealtimeCommand::move;
-            if (packet << mClientId << move_cmd << mCurrentTick << mDirection.x << mDirection.y) {
-                mRealtimeClient->send(packet, SERVER_IP, 4888);
-            } else {
-                std::cout << "Failed to form packet" << std::endl;
-            }
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        sf::Packet packet;
+        sf::Uint32 move_cmd = (sf::Uint32)RealtimeCommand::move;
+        sf::Vector2f direction = mDirection.copy();
+        if (packet << mClientId << move_cmd << mCurrentTick << direction.x << direction.y) {
+            mRealtimeClient->send(packet, SERVER_IP, 4888);
+        } else {
+            std::cout << "Failed to form packet" << std::endl;
         }
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 }
 
