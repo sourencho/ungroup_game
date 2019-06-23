@@ -10,33 +10,33 @@ class ThreadSafeVector {
     std::mutex write_lock;
 
     public:
-        std::vector<T> copy() {
-            std::vector<T> vector_copy;
-            write_lock.lock();
-            std::copy(mVector.begin(), mVector.end(), std::back_inserter(vector_copy));
-            write_lock.unlock();
-            return vector_copy;
-        }
-        void clear() {
-            write_lock.lock();
-            mVector.clear();
-            write_lock.unlock();
-        }
-        void push_back(T element) {
-            write_lock.lock();
-            mVector.push_back(element);
-            write_lock.unlock();
-        }
-        std::vector<T> forceCopy() {
-            std::vector<T> vector_copy;
-            std::copy(mVector.begin(), mVector.end(), std::back_inserter(vector_copy));
-            return vector_copy;
-        }
         void lock() {
             write_lock.lock();
         }
         void unlock() {
             write_lock.unlock();
+        }
+        std::vector<T> copy() {
+            std::vector<T> vector_copy;
+            lock();
+            std::copy(mVector.begin(), mVector.end(), std::back_inserter(vector_copy));
+            unlock();
+            return vector_copy;
+        }
+        void clear() {
+            lock();
+            mVector.clear();
+            unlock();
+        }
+        void push_back(T element) {
+            lock();
+            mVector.push_back(element);
+            unlock();
+        }
+        std::vector<T> forceCopy() {
+            std::vector<T> vector_copy;
+            std::copy(mVector.begin(), mVector.end(), std::back_inserter(vector_copy));
+            return vector_copy;
         }
 
     private:

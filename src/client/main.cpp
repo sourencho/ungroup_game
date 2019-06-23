@@ -29,7 +29,7 @@ int main(int, char const**)
     }
 
     // Play the music
-    music.play();
+    // music.play();
 
     // Window
     window.setVerticalSyncEnabled(true);

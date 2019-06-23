@@ -5,6 +5,8 @@
 #include <atomic>
 #include <SFML/Network.hpp>
 #include "../common/game_def.hpp"
+#include "../common/ThreadSafeVector.hpp"
+#include "../common/ThreadSafeVector2f.hpp"
 
 
 class NetworkingClient {
@@ -55,10 +57,8 @@ class NetworkingClient {
         sf::TcpSocket* mApiClient;
         sf::UdpSocket* mRealtimeClient;
 
-        std::atomic<bool> mAcceptingNetworkGameObjectsRead;
-        std::vector<client_group_update> mClientGroupUpdates;
-        std::atomic<bool> mAcceptingDirectionRead;
-        sf::Vector2f mDirection;
+        ThreadSafeVector<client_group_update> mClientGroupUpdates;
+        ThreadSafeVector2f mDirection;
 };
 
 #endif /* NetworkingClient_hpp */
