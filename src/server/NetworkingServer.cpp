@@ -1,9 +1,6 @@
 #include "NetworkingServer.hpp"
 
 NetworkingServer::NetworkingServer():mCurrTick(0) {
-    mClientInputsWriteLock.unlock();
-    mClientGroupUpdatesWriteLock.unlock();
-
     std::cout << "Starting ungroup game server.\n";
     std::thread api_thread(&NetworkingServer::ApiServer, this);
     std::thread realtime_thread(&NetworkingServer::RealtimeServer, this);
@@ -13,92 +10,6 @@ NetworkingServer::NetworkingServer():mCurrTick(0) {
 
 NetworkingServer::~NetworkingServer() {}
 
-/**
-    Thread safe way to read mClientGroupUpdates.
-*/
-std::vector<client_group_update> NetworkingServer::getClientGroupUpdatesCopy() {
-    std::vector<client_group_update> client_group_updates_copy;
-    mClientGroupUpdatesWriteLock.lock();
-    std::copy(
-        mClientGroupUpdates.begin(),
-        mClientGroupUpdates.end(),
-        std::back_inserter(client_group_updates_copy)
-    );
-    mClientGroupUpdatesWriteLock.unlock();
-    return client_group_updates_copy;
-}
-
-/**
-    Thread safe way to clear mClientGroupUpdates.
-*/
-void NetworkingServer::clearClientGroupUpdates() {
-    mClientGroupUpdatesWriteLock.lock();
-    mClientGroupUpdates.clear();
-    mClientGroupUpdatesWriteLock.unlock();
-}
-
-/**
-    Thread safe way to add to mClientGroupUpdates.
-*/
-void NetworkingServer::addToClientGroupUpdates(client_group_update cgu) {
-    mClientGroupUpdatesWriteLock.lock();
-    mClientGroupUpdates.push_back(cgu);
-    mClientGroupUpdatesWriteLock.unlock();
-}
-
-/**
-    Thread safe way to write to mClientMoves.
-*/
-void NetworkingServer::updateClientMoves(sf::Uint32 client_id, float x_dir, float y_dir) {
-    mClientInputsWriteLock.lock();
-    if(mClientMoves.find(client_id) != mClientMoves.end()) {
-        // if entry exists, update
-        mClientMoves[client_id][0] = x_dir;
-        mClientMoves[client_id][1] = y_dir;
-    } else {
-        mClientMoves[client_id] = new float[2]{x_dir, y_dir};
-    }
-    mClientInputsWriteLock.unlock();
-}
-
-/**
-    Thread safe way to erase from mClientMoves.
-*/
-void NetworkingServer::eraseFromClientMoves(sf::Uint32 client_id) {
-    mClientInputsWriteLock.lock();
-    mClientMoves.erase(client_id);
-    mClientInputsWriteLock.unlock();
-}
-
-/**
-    Thread safe way to erase from mClientMoves.
-*/
-void NetworkingServer::eraseFromClientSocketsToIds(sf::TcpSocket* client) {
-    mClientInputsWriteLock.lock();
-    mClientSocketsToIds.erase(client);
-    mClientInputsWriteLock.unlock();
-}
-
-/**
-    Thread safe way to set mClientSocketsToIds entry.
-*/
-void NetworkingServer::writeToClientSocketsToIds(sf::TcpSocket* client, sf::Uint32 id) {
-    mClientInputsWriteLock.lock();
-    mClientSocketsToIds[client] = id;
-    mClientInputsWriteLock.unlock();
-}
-
-
-/**
-    Thread safe way to get mClientSocketsToIds entry.
-*/
-sf::Uint32 NetworkingServer::readFromClientSocketsToIds(sf::TcpSocket* client) {
-    sf::Uint32 id;
-    mClientInputsWriteLock.lock();
-    id = mClientSocketsToIds[client];
-    mClientInputsWriteLock.unlock();
-    return id;
-}
 
 // RealtimeServer Thread Methods
 
@@ -127,7 +38,7 @@ void NetworkingServer::RealtimeServer() {
                     //std::cout << "Sending game state to client: " << sender << " " << port << std::endl;
                     // sample current state every 100 ms, this simply packages and returns it
                     game_state_packet << ct; // should have error handling for <<
-                    for(const auto client_group_update: getClientGroupUpdatesCopy()) {
+                    for(const auto client_group_update: mClientGroupUpdates.copy()) {
                         game_state_packet << client_group_update.client_id
                             << client_group_update.x_pos
                             << client_group_update.y_pos
@@ -151,7 +62,8 @@ void NetworkingServer::Move(sf::Packet command_packet, sf::Uint32 client_id, sf:
         int drift = std::abs((int)((mCurrTick - tick)));
         if (drift < CMD_DRIFT_THRESHOLD) {
             // your newest commands will overwrite old ones
-            updateClientMoves(client_id, x_dir, y_dir);
+            direction d = {x_dir, y_dir};
+            mClientMoves.set(client_id, d);
         } else {
             std::cout << "Receive move command with tick drifted past drift threshold. Drift value is: "
                 << drift << std::endl;
@@ -239,8 +151,8 @@ void NetworkingServer::ApiServer() {
 
 void NetworkingServer::DeleteClient(sf::TcpSocket* client, sf::SocketSelector selector) {
     delete client;
-    eraseFromClientMoves(readFromClientSocketsToIds(client));
-    eraseFromClientSocketsToIds(client);
+    mClientMoves.erase(mClientSocketsToIds.get(client));
+    mClientSocketsToIds.erase(client);
 }
 
 void NetworkingServer::RegisterClient(sf::TcpSocket& client) {
@@ -249,7 +161,7 @@ void NetworkingServer::RegisterClient(sf::TcpSocket& client) {
     if(response_packet << api_command << mClientIdCounter << (sf::Uint32) mCurrTick) {
         client.send(response_packet);
         std::cout << "Received client registration. Issued client ID " << mClientIdCounter << std::endl;
-        writeToClientSocketsToIds(&client, mClientIdCounter);
+        mClientSocketsToIds.set(&client, mClientIdCounter);
         mClientIdCounter++;
     }
 }
@@ -259,9 +171,11 @@ void NetworkingServer::RegisterClient(sf::TcpSocket& client) {
 
 client_inputs NetworkingServer::collectClientInputs() {
     // Give clients a window to write inputs
-    mClientInputsWriteLock.unlock();
+    mClientSocketsToIds.unlock();
+    mClientMoves.unlock();
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    mClientInputsWriteLock.lock();
+    mClientSocketsToIds.lock();
+    mClientMoves.lock();
 
     // Get client inputs
     std::vector<int> client_ids = getClientIds();
@@ -271,27 +185,21 @@ client_inputs NetworkingServer::collectClientInputs() {
     return cis;
 }
 
-/**
-    This function assumes that mClientInputsWriteLock will be locked and thus reading
-    mClientSocketsToIds is safe.
-*/
 std::vector<int> NetworkingServer::getClientIds() {
     std::vector<int> client_ids;
+    auto client_sockets_to_ids = mClientSocketsToIds.forceCopy();
     std::transform(
-        mClientSocketsToIds.begin(), mClientSocketsToIds.end(), std::back_inserter(client_ids),
+        client_sockets_to_ids.begin(), client_sockets_to_ids.end(), std::back_inserter(client_ids),
         [](std::pair<sf::TcpSocket*, sf::Int32> pair){return pair.second;}
     );
     return client_ids;
 }
 
-/**
-    This function assumes that mClientInputsWriteLock will be locked and thus reading
-    mClientMoves is safe without modifying the lock.
-*/
 std::vector<client_direction_update> NetworkingServer::getClientDirectionUpdates() {
     std::vector<client_direction_update> client_direction_updates;
-    for(const auto& client_move : mClientMoves) {
-        client_direction_update cd = {client_move.first, client_move.second[0], client_move.second[1]};
+    for (const auto& client_move : mClientMoves.forceCopy()) {
+        client_direction_update cd = {
+            client_move.first, client_move.second.x_dir, client_move.second.y_dir};
         client_direction_updates.push_back(cd);
     }
 
@@ -300,13 +208,13 @@ std::vector<client_direction_update> NetworkingServer::getClientDirectionUpdates
 
 
 void NetworkingServer::setState(std::vector<std::shared_ptr<Group>> active_groups) {
-    clearClientGroupUpdates();
+    mClientGroupUpdates.clear();
     for(const auto active_group: active_groups) {
         sf::Uint32 client_id = active_group->getId();
         sf::Vector2f position = active_group->getCircle()->getPosition();
         float size = active_group->getCircle()->getRadius();
         client_group_update cgu = {client_id, position.x, position.y, size};
-        addToClientGroupUpdates(cgu);
+        mClientGroupUpdates.push_back(cgu);
     }
 }
 
