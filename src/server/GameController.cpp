@@ -11,7 +11,7 @@ GameController::GameController(int max_player_count) {
 
     // Initialize Groups
     for (int i=0; i < max_player_count; i++) {
-        mGroups.push_back(std::shared_ptr<Group>(new Group(i, sf::Vector2f(20.f * i, 20.f * i))));
+        mGroups.push_back(std::shared_ptr<Group>(new Group(i, sf::Vector2f(20.f * i, 0.f))));
     }
 
     // Start Network Server

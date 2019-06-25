@@ -2,6 +2,7 @@
 #define Circle_hpp
 
 #include <SFML/Graphics.hpp>
+#include <memory>
 #include <stdio.h>
 
 class Circle {

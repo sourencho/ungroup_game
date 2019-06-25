@@ -67,7 +67,7 @@ int main(int, char const**)
         client_1.update();
 
         // Display
-        window.clear(sf::Color::White);
+        window.clear(sf::Color::Black);
         client_1.draw(window);
         window.display();
     }

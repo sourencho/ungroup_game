@@ -31,7 +31,8 @@ class NetworkingServer {
     private:
         void RealtimeServer();
         void ApiServer();
-        void DeleteClient(sf::TcpSocket* client, sf::SocketSelector selector);
+
+        void DeleteClient(sf::TcpSocket* client, sf::SocketSelector selector, std::list<sf::TcpSocket*> clients);
         void Move(sf::Packet command_packet, sf::Uint32 client_id, sf::Uint32 tick);
         void RegisterClient(sf::TcpSocket& client);
 
