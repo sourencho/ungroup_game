@@ -2,6 +2,7 @@
 #define util_hpp
 
 #include <stdio.h>
+#include <memory>
 #include <SFML/Graphics.hpp>
 
 sf::Vector2f normalize(const sf::Vector2f& source);

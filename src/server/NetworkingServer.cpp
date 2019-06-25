@@ -131,12 +131,12 @@ void NetworkingServer::ApiServer() {
                             case sf::TcpSocket::Error:
                                 std::cout << "TCP client encountered error. Removing client." << std::endl;
                                  selector.remove(client);
-                                DeleteClient(&client, selector);
+                                DeleteClient(&client, selector, clients);
                                 break;
                             case sf::TcpSocket::Disconnected:
                                 std::cout << "TCP client disconnected. Removing client. " << std::endl;
                                 selector.remove(client);
-                                DeleteClient(&client, selector);
+                                DeleteClient(&client, selector, clients);
                                 break;
                             default:
                                 std::cout << "TCP client sent unkown signal." << std::endl;
@@ -149,8 +149,8 @@ void NetworkingServer::ApiServer() {
     }
 }
 
-void NetworkingServer::DeleteClient(sf::TcpSocket* client, sf::SocketSelector selector) {
-    delete client;
+void NetworkingServer::DeleteClient(sf::TcpSocket* client, sf::SocketSelector selector, std::list<sf::TcpSocket*> clients) {
+    clients.remove(client);
     mClientMoves.erase(mClientSocketsToIds.get(client));
     mClientSocketsToIds.erase(client);
 }
