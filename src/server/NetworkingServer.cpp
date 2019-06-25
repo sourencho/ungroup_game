@@ -114,7 +114,7 @@ void NetworkingServer::ApiServer() {
                     sf::TcpSocket& client = **it;
                     if (selector.isReady(client)) {
                         // The client has sent some data, we can receive it
-                        HandleApiCommand(selector, client);
+                        HandleApiCommand(selector, client, clients);
                     }
                 }
             }
@@ -122,7 +122,7 @@ void NetworkingServer::ApiServer() {
     }
 }
 
-void NetworkingServer::HandleApiCommand(sf::SocketSelector selector, sf::TcpSocket& client) {
+void NetworkingServer::HandleApiCommand(sf::SocketSelector& selector, sf::TcpSocket& client, const std::list<sf::TcpSocket*> clients) {
     sf::Packet packet;
     sf::Uint32 api_command_type;
     switch (client.receive(packet)) {
@@ -134,13 +134,13 @@ void NetworkingServer::HandleApiCommand(sf::SocketSelector selector, sf::TcpSock
             break;
         case sf::TcpSocket::Error:
             std::cout << "TCP client encountered error. Removing client." << std::endl;
-             selector.remove(client);
-            DeleteClient(&client, selector);
+            selector.remove(client);
+            DeleteClient(&client, clients);
             break;
         case sf::TcpSocket::Disconnected:
             std::cout << "TCP client disconnected. Removing client. " << std::endl;
             selector.remove(client);
-            DeleteClient(&client, selector);
+            DeleteClient(&client, clients);
             break;
         default:
             std::cout << "TCP client sent unkown signal." << std::endl;
@@ -148,8 +148,8 @@ void NetworkingServer::HandleApiCommand(sf::SocketSelector selector, sf::TcpSock
     }
 }
 
-void NetworkingServer::DeleteClient(sf::TcpSocket* client, sf::SocketSelector selector) {
-    delete client;
+void NetworkingServer::DeleteClient(sf::TcpSocket* client, std::list<sf::TcpSocket*> clients) {
+    clients.remove(client);
     mClientMoves.erase(mClientSocketsToIds.get(client));
     mClientSocketsToIds.erase(client);
 }
