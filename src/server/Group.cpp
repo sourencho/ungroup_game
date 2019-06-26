@@ -1,19 +1,18 @@
 #include <stdio.h>
+#include <vector>
+#include <memory>
 #include <iostream>
 #include <numeric>
 #include "Group.hpp"
 #include "../common/collision.hpp"
 
 Group::Group(int id, sf::Vector2f position)
-    :mCircle(std::shared_ptr<Circle>(new Circle(0.f, position)))
-{
+    :mCircle(std::shared_ptr<Circle>(new Circle(0.f, position))) {
     mId = id;
     mSize = 0;
 }
 
-Group::~Group() {
-    //dtor
-}
+Group::~Group() {}
 
 void Group::update() {
     refresh();
@@ -26,13 +25,11 @@ void Group::update() {
             sf::Vector2f(0.f, 0.f),
             [](sf::Vector2f curr_vel, std::shared_ptr<Player> player) {
                 return curr_vel + player->getDirection();
-            }
-        );
+            });
         mCircle->setVelocity(new_velocity);
 
         // Update position
         mCircle->move();
-
     }
 }
 
@@ -42,8 +39,7 @@ void Group::update() {
 void Group::refresh() {
     bool any_active_members = std::any_of(
         mMembers.begin(), mMembers.end(),
-        [](std::shared_ptr<Player> player){return player->isActive();}
-    );
+        [](std::shared_ptr<Player> player){return player->isActive();});
     if (any_active_members) {
         setActive(true);
     } else {
@@ -69,7 +65,6 @@ void Group::handleCollisions(std::vector<std::shared_ptr<Group>>& groups) {
     std::vector<std::shared_ptr<Circle>> circles;
     std::transform(
         groups.begin(), groups.end(), std::back_inserter(circles),
-        [](std::shared_ptr<Group> group){return group->getCircle();}
-    );
+        [](std::shared_ptr<Group> group){return group->getCircle();});
     handle_circle_collision(circles);
 }
