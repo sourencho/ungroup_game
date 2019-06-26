@@ -38,7 +38,7 @@ class NetworkingClient {
         NetworkingClient();
         ~NetworkingClient();
 
-        std::vector<client_group_update> getClientGroupUpdates();
+        std::vector<ClientGroupUpdate> getClientGroupUpdates();
         void setDirection(sf::Vector2f direction);
 
     private:
@@ -57,7 +57,7 @@ class NetworkingClient {
         sf::TcpSocket* mApiClient;
         sf::UdpSocket* mRealtimeClient;
 
-        ThreadSafeVector<client_group_update> mClientGroupUpdates;
+        ThreadSafeVector<ClientGroupUpdate> mClientGroupUpdates;
         ThreadSafeVector2f mDirection;
 };
 

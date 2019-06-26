@@ -34,7 +34,7 @@ class Client {
         sf::Uint32 initNetworking();
         int createClientGroup();
         void refreshClientGroups(std::vector<int> client_ids);
-        void updateClientGroups(std::vector<client_group_update> client_group_updates);
+        void updateClientGroups(std::vector<ClientGroupUpdate> client_group_updates);
 
         // Variables
         std::vector<ClientGroup*> mClientGroups;

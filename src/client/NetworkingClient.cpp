@@ -7,6 +7,7 @@
 #include <chrono>
 #include <ctime>
 #include "NetworkingClient.hpp"
+#include "../common/network_util.hpp"
 
 
 NetworkingClient::NetworkingClient():mDirection(0.f, 0.f) {
@@ -36,7 +37,7 @@ NetworkingClient::NetworkingClient():mDirection(0.f, 0.f) {
 
 NetworkingClient::~NetworkingClient() {}
 
-std::vector<client_group_update> NetworkingClient::getClientGroupUpdates() {
+std::vector<ClientGroupUpdate> NetworkingClient::getClientGroupUpdates() {
     return mClientGroupUpdates.copy();
 }
 
@@ -47,17 +48,20 @@ void NetworkingClient::setDirection(sf::Vector2f direction) {
 void NetworkingClient::ReadRegistrationResponse() {
     // read registration data
     sf::Packet registration_response;
-    sf::Uint32 api_command;
-    sf::Uint32 client_id;
-    sf::Uint32 tick;
+    ApiCommand api_command;
 
     if (mApiClient->receive(registration_response) == sf::Socket::Done) {
-        if (registration_response >> api_command >> client_id >> tick &&
-            api_command == (sf::Uint32)APICommand::register_client) {
-            std::cout << "Registered with ID and current tick: " << client_id << " " << tick << std::endl;
+        if (registration_response >> api_command &&
+            api_command.command == (sf::Uint32)APICommandType::register_client) {
+            std::cout
+                << "Registered with ID and current tick: "
+                << api_command.client_id
+                << " "
+                << api_command.tick
+                << std::endl;
             // TODO: have this function return these values instead of setting them
-            mClientId = client_id;
-            mCurrentTick = tick;
+            mClientId = api_command.client_id;
+            mCurrentTick = api_command.tick;
             mIsRegistered = true;
         }
     }
@@ -66,7 +70,7 @@ void NetworkingClient::ReadRegistrationResponse() {
 void NetworkingClient::RegisterNetworkingClient()
 {
     sf::Packet registration_request;
-    if(registration_request << (sf::Uint32)APICommand::register_client) {
+    if(registration_request << (sf::Uint32)APICommandType::register_client) {
         mApiClient->send(registration_request);
         ReadRegistrationResponse();
     }
@@ -81,9 +85,6 @@ void NetworkingClient::RegisterNetworkingClient()
 void NetworkingClient::RealtimeClientRecv() {
     sf::Uint32 server_tick;
     sf::Uint32 client_id;
-    float x_pos;
-    float y_pos;
-    float size;
 
     while (true) {
         sf::Packet packet;
@@ -93,9 +94,9 @@ void NetworkingClient::RealtimeClientRecv() {
         // fetch state updates for now
         if (packet >> server_tick) {
             mClientGroupUpdates.clear();
-            while (packet >> client_id >> x_pos >> y_pos >> size) {
-                client_group_update cgu = {client_id, x_pos, y_pos, size};
-                mClientGroupUpdates.push_back(cgu);
+            ClientGroupUpdate client_group_update;
+            while (packet >> client_group_update) {
+                mClientGroupUpdates.push_back(client_group_update);
             }
             // Im not sure what kind of synchronization needs to happen here.
             // If this tick is the most up-to-date we've ever seen, maybe we set the game to it?
@@ -109,9 +110,10 @@ void NetworkingClient::RealtimeClientRecv() {
 void NetworkingClient::RealtimeClientSend() {
     while (true) {
         sf::Packet packet;
-        sf::Uint32 move_cmd = (sf::Uint32)RealtimeCommand::move;
+        sf::Uint32 move_cmd = (sf::Uint32)RealtimeCommandType::move;
         sf::Vector2f direction = mDirection.copy();
-        if (packet << mClientId << move_cmd << mCurrentTick << direction.x << direction.y) {
+        RealtimeCommand realtime_command = {mClientId, move_cmd, mCurrentTick};
+        if (packet << realtime_command << direction) {
             mRealtimeClient->send(packet, SERVER_IP, 4888);
         } else {
             std::cout << "Failed to form packet" << std::endl;
@@ -123,13 +125,15 @@ void NetworkingClient::RealtimeClientSend() {
 // this probably should just be in RealtimeClientSend and RealtimeClientSend
 // should poll client state to see if the current tick has a move AND if the move has
 // been sent to the server yet. If both are true, then it should try to communicate the move.
-// This would decouple local move setting commands from the network communication. They'd be happening
-// in different threads, which is a Good Thing(tm) to avoid blocking in the client on network IO.
+// This would decouple local move setting commands from the network communication. They'd be
+// happening in different threads, which is a Good Thing(tm) to avoid blocking in the client on
+// network IO.
 void NetworkingClient::SyncServerState() {
     while (true) {
         sf::Packet packet;
-        sf::Uint32 fetch_state_cmd = (sf::Uint32)RealtimeCommand::fetch_state;
-        if (packet << mClientId << fetch_state_cmd << mCurrentTick) {
+        sf::Uint32 fetch_state_cmd = (sf::Uint32)RealtimeCommandType::fetch_state;
+        RealtimeCommand realtime_command = {mClientId, fetch_state_cmd, mCurrentTick};
+        if (packet << realtime_command) {
             mRealtimeClient->send(packet, SERVER_IP, 4888);
         } else {
             std::cout << "Failed to form packet" << std::endl;

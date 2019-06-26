@@ -31,14 +31,13 @@ class NetworkingServer {
     private:
         void RealtimeServer();
         void ApiServer();
-
-        void DeleteClient(sf::TcpSocket* client, sf::SocketSelector selector, std::list<sf::TcpSocket*> clients);
+        void DeleteClient(sf::TcpSocket* client, sf::SocketSelector selector);
         void Move(sf::Packet command_packet, sf::Uint32 client_id, sf::Uint32 tick);
         void RegisterClient(sf::TcpSocket& client);
 
         ThreadSafeMap<sf::TcpSocket*, sf::Int32> mClientSocketsToIds;
-        ThreadSafeVector<client_group_update> mClientGroupUpdates;
-        ThreadSafeMap<sf::Uint32, direction> mClientMoves; 
+        ThreadSafeVector<ClientGroupUpdate> mClientGroupUpdates;
+        ThreadSafeMap<sf::Uint32, sf::Vector2f> mClientMoves;
 
         sf::Uint32 mClientIdCounter = 0;
         std::atomic<uint> mCurrTick;

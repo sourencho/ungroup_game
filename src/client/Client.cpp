@@ -32,11 +32,11 @@ void Client::draw(sf::RenderTarget& target) {
 
 void Client::update() {
     // Get group circle updates
-    std::vector<client_group_update> client_group_updates = mNetworkingClient->getClientGroupUpdates();
+    std::vector<ClientGroupUpdate> client_group_updates = mNetworkingClient->getClientGroupUpdates();
     std::vector<int> client_ids;
     std::transform(
         client_group_updates.begin(), client_group_updates.end(), std::back_inserter(client_ids),
-        [](client_group_update cgu){return cgu.client_id;}
+        [](ClientGroupUpdate cgu){return cgu.client_id;}
     );
 
     // Update state
@@ -71,7 +71,7 @@ void Client::refreshClientGroups(std::vector<int> client_ids) {
 /**
     Updates the properties of group circles based on updates recieved from the server.
 */
-void Client::updateClientGroups(std::vector<client_group_update> client_group_updates) {
+void Client::updateClientGroups(std::vector<ClientGroupUpdate> client_group_updates) {
     // Update group circles
     for(const auto client_group_update: client_group_updates) {
         int group_circle_id = mClientToClientGroup[client_group_update.client_id];
