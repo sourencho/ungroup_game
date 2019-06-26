@@ -10,8 +10,7 @@
 #include "../common/game_def.hpp"
 
 
-int main(int, char const**)
-{
+int main(int, char const**) {
     // Create the main window
     sf::RenderWindow window(sf::VideoMode(800, 600), "SFML window");
 
@@ -37,16 +36,15 @@ int main(int, char const**)
     window.setTitle("Ungroup");
 
     // Create client
-    sf::Keyboard::Key keys[] = {sf::Keyboard::Up, sf::Keyboard::Down, sf::Keyboard::Right, sf::Keyboard::Left};
+    sf::Keyboard::Key keys[] = {sf::Keyboard::Up, sf::Keyboard::Down, sf::Keyboard::Right,
+        sf::Keyboard::Left};
     Client client_1(MAX_PLAYER_COUNT, keys);
 
     // Start the game loop
-    while (window.isOpen())
-    {
+    while (window.isOpen()) {
         // Process events
         sf::Event event;
-        while (window.pollEvent(event))
-        {
+        while (window.pollEvent(event)) {
             // Close window: exit
             if (event.type == sf::Event::Closed) {
                 window.close();

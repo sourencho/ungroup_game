@@ -1,14 +1,10 @@
 #include "Player.hpp"
-#include "../common/util.hpp"
 #include <iostream>
+#include "../common/util.hpp"
 
-Player::Player():mDirection(0.0, 0.0) {
-    //ctor
-}
+Player::Player():mDirection(0.0, 0.0) {}
 
-Player::~Player() {
-    //dtor
-}
+Player::~Player() {}
 
 void Player::setDirection(sf::Vector2f direction) {
     mDirection = direction;

@@ -6,9 +6,7 @@ ClientGroup::ClientGroup(sf::Vector2f position) {
     mCircle = new Circle(0.f, position);
 }
 
-ClientGroup::~ClientGroup() {
-    //dtor
-}
+ClientGroup::~ClientGroup() {}
 
 Circle* ClientGroup::getCircle() {
     return mCircle;

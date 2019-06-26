@@ -1,13 +1,13 @@
 #include <SFML/Network.hpp>
-
+#include "NetworkingClient.hpp"
+#include "../common/network_util.hpp"
 #include <iostream>
 #include <list>
 #include <thread>
 #include <mutex>
 #include <chrono>
 #include <ctime>
-#include "NetworkingClient.hpp"
-#include "../common/network_util.hpp"
+#include <vector>
 
 
 NetworkingClient::NetworkingClient():mDirection(0.f, 0.f) {
@@ -59,7 +59,6 @@ void NetworkingClient::ReadRegistrationResponse() {
                 << " "
                 << api_command.tick
                 << std::endl;
-            // TODO: have this function return these values instead of setting them
             mClientId = api_command.client_id;
             mCurrentTick = api_command.tick;
             mIsRegistered = true;
@@ -67,10 +66,9 @@ void NetworkingClient::ReadRegistrationResponse() {
     }
 }
 
-void NetworkingClient::RegisterNetworkingClient()
-{
+void NetworkingClient::RegisterNetworkingClient() {
     sf::Packet registration_request;
-    if(registration_request << (sf::Uint32)APICommandType::register_client) {
+    if (registration_request << (sf::Uint32)APICommandType::register_client) {
         mApiClient->send(registration_request);
         ReadRegistrationResponse();
     }
@@ -78,14 +76,10 @@ void NetworkingClient::RegisterNetworkingClient()
     if (!mIsRegistered) {
         throw std::runtime_error("Failed to register. Exiting.");
     }
-
-    // TODO: my_client_id should be local and passed to the threads on creation
 }
 
 void NetworkingClient::RealtimeClientRecv() {
     sf::Uint32 server_tick;
-    sf::Uint32 client_id;
-
     while (true) {
         sf::Packet packet;
         sf::IpAddress sender;
