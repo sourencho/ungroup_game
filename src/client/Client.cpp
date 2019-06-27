@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <vector>
 #include <iostream>
 #include "Client.hpp"
 
@@ -17,13 +18,11 @@ Client::Client(int max_player_count, sf::Keyboard::Key keys[4]):mDirection(1.0, 
     mNetworkingClient = new NetworkingClient();
 }
 
-Client::~Client() {
-    //dtor
-}
+Client::~Client() {}
 
 void Client::draw(sf::RenderTarget& target) {
     // Draw active groupShapes
-    for (auto group_circle: mClientGroups) {
+    for (auto group_circle : mClientGroups) {
         if (group_circle->isActive()) {
             group_circle->getCircle()->draw(target);
         }
@@ -32,12 +31,12 @@ void Client::draw(sf::RenderTarget& target) {
 
 void Client::update() {
     // Get group circle updates
-    std::vector<client_group_update> client_group_updates = mNetworkingClient->getClientGroupUpdates();
+    std::vector<ClientGroupUpdate> client_group_updates =
+        mNetworkingClient->getClientGroupUpdates();
     std::vector<int> client_ids;
     std::transform(
         client_group_updates.begin(), client_group_updates.end(), std::back_inserter(client_ids),
-        [](client_group_update cgu){return cgu.client_id;}
-    );
+        [](ClientGroupUpdate cgu){return cgu.client_id;});
 
     // Update state
     refreshClientGroups(client_ids);
@@ -57,7 +56,7 @@ void Client::refreshClientGroups(std::vector<int> client_ids) {
     }
 
     // Update group circles
-    for(const auto client_id: client_ids) {
+    for (const auto client_id : client_ids) {
         if (mClientToClientGroup.find(client_id) == mClientToClientGroup.end()) {
             // Client doesn't have group
             mClientToClientGroup[client_id] = createClientGroup();
@@ -71,9 +70,9 @@ void Client::refreshClientGroups(std::vector<int> client_ids) {
 /**
     Updates the properties of group circles based on updates recieved from the server.
 */
-void Client::updateClientGroups(std::vector<client_group_update> client_group_updates) {
+void Client::updateClientGroups(std::vector<ClientGroupUpdate> client_group_updates) {
     // Update group circles
-    for(const auto client_group_update: client_group_updates) {
+    for (const auto client_group_update : client_group_updates) {
         int group_circle_id = mClientToClientGroup[client_group_update.client_id];
         ClientGroup* group_circle = mClientGroups[group_circle_id];
 
@@ -107,18 +106,18 @@ sf::Uint32 Client::getId() const {
 
 void Client::handleEvents(sf::Event& event) {
     if (event.type == sf::Event::KeyPressed) {
-        mDirection = sf::Vector2f(0.f,0.f);
-        if(sf::Keyboard::isKeyPressed(mKeys.up)) {
-            mDirection += sf::Vector2f(0.f,-1.f);
+        mDirection = sf::Vector2f(0.f, 0.f);
+        if (sf::Keyboard::isKeyPressed(mKeys.up)) {
+            mDirection += sf::Vector2f(0.f, -1.f);
         }
-        if(sf::Keyboard::isKeyPressed(mKeys.down)) {
-            mDirection += sf::Vector2f(0.f,1.f);
+        if (sf::Keyboard::isKeyPressed(mKeys.down)) {
+            mDirection += sf::Vector2f(0.f, 1.f);
         }
-        if(sf::Keyboard::isKeyPressed(mKeys.left)) {
-            mDirection += sf::Vector2f(-1.f,0.f);
+        if (sf::Keyboard::isKeyPressed(mKeys.left)) {
+            mDirection += sf::Vector2f(-1.f, 0.f);
         }
-        if(sf::Keyboard::isKeyPressed(mKeys.right)) {
-            mDirection += sf::Vector2f(1.f,0.f);
+        if (sf::Keyboard::isKeyPressed(mKeys.right)) {
+            mDirection += sf::Vector2f(1.f, 0.f);
         }
         mDirection = normalize(mDirection);
     }

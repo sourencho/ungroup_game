@@ -1,18 +1,19 @@
 #include <stdio.h>
+#include <random>
 #include <iostream>
+#include <utility>
+
 #include "Circle.hpp"
 
 Circle::Circle(float size, sf::Vector2f position):mCircleShape(size) {
     mCircleShape.setPosition(position);
+    unsigned int seed = time(NULL);
     mCircleShape.setFillColor(
-        sf::Color(rand() % 255, rand() % 255, rand() % 255)
-    );
+        sf::Color(rand_r(&seed) % 255, rand_r(&seed) % 255, rand_r(&seed) % 255));
     mVelocity = sf::Vector2f(0.f, 0.f);
 }
 
-Circle::~Circle() {
-    //dtor
-}
+Circle::~Circle() {}
 
 void Circle::draw(sf::RenderTarget& target) {
     target.draw(mCircleShape);

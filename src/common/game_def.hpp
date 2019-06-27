@@ -9,7 +9,20 @@ struct keys {
     sf::Keyboard::Key up, down, left, right;
 };
 
-struct client_group_update {
+struct RealtimeCommand {
+    sf::Uint32 client_id;
+    sf::Uint32 command;
+    sf::Uint32 tick;
+};
+
+
+struct ApiCommand {
+    sf::Uint32 client_id;
+    sf::Uint32 command;
+    sf::Uint32 tick;
+};
+
+struct ClientGroupUpdate {
     sf::Uint32 client_id;
     float x_pos;
     float y_pos;
@@ -32,7 +45,7 @@ struct client_inputs {
     std::vector<client_direction_update> client_direction_updates;
 };
 
-enum APICommand { register_client, group, ungroup };
-enum RealtimeCommand { move, fetch_state };
+enum APICommandType { register_client, group, ungroup };
+enum RealtimeCommandType { move, fetch_state };
 
 #endif /* game_def_hpp */

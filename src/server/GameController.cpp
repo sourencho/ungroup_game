@@ -1,6 +1,8 @@
 #include <iostream>
 #include <algorithm>
 #include <cstdlib>
+#include <vector>
+#include <memory>
 #include "GameController.hpp"
 
 GameController::GameController(int max_player_count) {
@@ -32,8 +34,8 @@ client_inputs GameController::collectInputs() {
 }
 
 void GameController::computeGameState(
-    std::vector<int>& client_ids,
-    std::vector<client_direction_update>& client_direction_updates
+    const std::vector<int>& client_ids,
+    const std::vector<client_direction_update>& client_direction_updates
 ) {
     refreshPlayers(client_ids);
     updatePlayers(client_direction_updates);
@@ -81,7 +83,7 @@ void GameController::updatePlayers(std::vector<client_direction_update> client_d
 */
 void GameController::refreshAndUpdateGroups() {
     // Update groups
-    for(auto group: mGroups) {
+    for (auto group : mGroups) {
         group->update();
     }
 
@@ -113,7 +115,6 @@ std::vector<std::shared_ptr<Group>> GameController::getActiveGroups() {
     std::vector<std::shared_ptr<Group>> active_groups;
     std::copy_if(
         mGroups.begin(), mGroups.end(), std::back_inserter(active_groups),
-        [](std::shared_ptr<Group> group){return group->isActive();}
-    );
+        [](std::shared_ptr<Group> group){return group->isActive();});
     return active_groups;
 }
