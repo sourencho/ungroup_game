@@ -110,37 +110,41 @@ void NetworkingServer::ApiServer() {
                 }
             } else {
                 // The listener socket is not ready, test all other sockets (the clients)
-                for (std::list<sf::TcpSocket*>::iterator it = clients.begin(); it != clients.end(); ++it) {
+                for (auto it = clients.begin(); it != clients.end(); ++it) {
                     sf::TcpSocket& client = **it;
                     if (selector.isReady(client)) {
                         // The client has sent some data, we can receive it
-                        sf::Packet packet;
-                        sf::Uint32 api_command_type;
-                        switch (client.receive(packet)) {
-                            case sf::Socket::Done:
-                                if (packet >> api_command_type &&
-                                        api_command_type == (sf::Uint32)APICommandType::register_client) {
-                                    RegisterClient(client);
-                                }
-                                break;
-                            case sf::TcpSocket::Error:
-                                std::cout << "TCP client encountered error. Removing client." << std::endl;
-                                 selector.remove(client);
-                                DeleteClient(&client, selector);
-                                break;
-                            case sf::TcpSocket::Disconnected:
-                                std::cout << "TCP client disconnected. Removing client. " << std::endl;
-                                selector.remove(client);
-                                DeleteClient(&client, selector);
-                                break;
-                            default:
-                                std::cout << "TCP client sent unkown signal." << std::endl;
-                                break;
-                        }
+                        HandleApiCommand(selector, client);
                     }
                 }
             }
         }
+    }
+}
+
+void NetworkingServer::HandleApiCommand(sf::SocketSelector selector, sf::TcpSocket& client) {
+    sf::Packet packet;
+    sf::Uint32 api_command_type;
+    switch (client.receive(packet)) {
+        case sf::Socket::Done:
+            if (packet >> api_command_type &&
+                api_command_type == (sf::Uint32)APICommandType::register_client) {
+                RegisterClient(client);
+            }
+            break;
+        case sf::TcpSocket::Error:
+            std::cout << "TCP client encountered error. Removing client." << std::endl;
+             selector.remove(client);
+            DeleteClient(&client, selector);
+            break;
+        case sf::TcpSocket::Disconnected:
+            std::cout << "TCP client disconnected. Removing client. " << std::endl;
+            selector.remove(client);
+            DeleteClient(&client, selector);
+            break;
+        default:
+            std::cout << "TCP client sent unkown signal." << std::endl;
+            break;
     }
 }
 

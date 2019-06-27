@@ -1,5 +1,8 @@
 #include "collision.hpp"
+
 #include <iostream>
+#include <vector>
+#include <memory>
 
 /**
     Handles collision between circles by pairs.
@@ -8,8 +11,8 @@
     amount needed such that the circles are touching but not intersecting.
 */
 void handle_circle_collision(std::vector<std::shared_ptr<Circle>>& circles) {
-    for(std::shared_ptr<Circle> circle_a: circles) {
-        for(std::shared_ptr<Circle> circle_b: circles) {
+    for (std::shared_ptr<Circle> circle_a : circles) {
+        for (std::shared_ptr<Circle> circle_b : circles) {
             if (circle_a == circle_b) {
                 continue;
             }
