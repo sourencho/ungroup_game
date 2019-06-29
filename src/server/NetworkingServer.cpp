@@ -20,38 +20,44 @@ NetworkingServer::~NetworkingServer() {}
 void NetworkingServer::RealtimeServer() {
     sf::UdpSocket rt_server;
     rt_server.bind(4888);
+    sf::Packet command_packet;
 
     while (true) {
-        sf::Uint32 ct = mCurrTick;
-        sf::Packet game_state_packet;
-        sf::Packet command_packet;
         sf::IpAddress sender;
         unsigned short port;
-        rt_server.receive(command_packet, sender, port);
+        sf::Socket::Status status = rt_server.receive(command_packet, sender, port);
+        HandleRealtimeCommand(status, command_packet, rt_server, sender, port);
+    }
+}
 
-        // Extract the variables contained in the command_packet
-        RealtimeCommand realtime_command;
-        if (command_packet >> realtime_command) {
-            switch (realtime_command.command) {
-                case (sf::Uint32)RealtimeCommandType::move:
-                    Move(command_packet, realtime_command.client_id, realtime_command.tick);
-                    break;
-                case (sf::Uint32)RealtimeCommandType::fetch_state:
-                    // sample current state every 100 ms, this simply packages and returns it
-                    game_state_packet << ct;  // should have error handling for <<
-                    for (const auto client_group_update : mClientGroupUpdates.copy()) {
-                        game_state_packet << client_group_update;
-                    }
-                    rt_server.send(game_state_packet, sender, port);
-                    break;
-                default:
-                    std::cout
-                        << "Unknown command code sent: "
-                        << realtime_command.command
-                        << std::endl;
-                    break;
+void NetworkingServer::HandleRealtimeCommand(
+    sf::Socket::Status status,
+    sf::Packet command_packet,
+    sf::UdpSocket& rt_server,
+    sf::IpAddress& sender,
+    unsigned short port
+) {
+    RealtimeCommand realtime_command;
+    sf::Packet game_state_packet;
+    command_packet >> realtime_command;
+    switch (realtime_command.command) {
+        case (sf::Uint32)RealtimeCommandType::move:
+            Move(command_packet, realtime_command.client_id, realtime_command.tick);
+            break;
+        case (sf::Uint32)RealtimeCommandType::fetch_state:
+            // sample current state every 100 ms, this simply packages and returns it
+            game_state_packet << static_cast<sf::Uint32>(mCurrTick);
+            for (const auto client_group_update : mClientGroupUpdates.copy()) {
+                game_state_packet << client_group_update;
             }
-        }
+            rt_server.send(game_state_packet, sender, port);
+            break;
+        default:
+            std::cout
+                << "Unknown command code sent: "
+                << realtime_command.command
+                << std::endl;
+            break;
     }
 }
 
@@ -81,11 +87,11 @@ void NetworkingServer::ApiServer() {
     // API socket
     listener.listen(4844);
 
-    // Create a vector to store the future clients
-    std::list<sf::TcpSocket*> clients;
-
     // Create a selector
     sf::SocketSelector selector;
+
+    // Create a vector to store the future clients
+    std::list<sf::TcpSocket*> clients;
 
     // Add the listener to the selector
     selector.add(listener);
@@ -100,7 +106,8 @@ void NetworkingServer::ApiServer() {
                 sf::TcpSocket* client = new sf::TcpSocket;
                 if (listener.accept(*client) == sf::Socket::Done) {
                     // Add the new client to the clients list
-                    clients.push_back(client);
+                    mClients.push_back(client);
+                    std::cout << client << std::endl;
                     // Add the new client to the selector so that we will
                     // be notified when he sends something
                     selector.add(*client);
@@ -110,11 +117,13 @@ void NetworkingServer::ApiServer() {
                 }
             } else {
                 // The listener socket is not ready, test all other sockets (the clients)
-                for (auto it = clients.begin(); it != clients.end(); ++it) {
+                for (auto it = mClients.begin(); it != mClients.end(); ++it) {
                     sf::TcpSocket& client = **it;
                     if (selector.isReady(client)) {
                         // The client has sent some data, we can receive it
-                        HandleApiCommand(selector, client, clients);
+                        sf::Packet command_packet;
+                        sf::Socket::Status status = client.receive(command_packet);
+                        HandleApiCommand(status, command_packet, selector, client, clients);
                     }
                 }
             }
@@ -122,12 +131,17 @@ void NetworkingServer::ApiServer() {
     }
 }
 
-void NetworkingServer::HandleApiCommand(sf::SocketSelector& selector, sf::TcpSocket& client, const std::list<sf::TcpSocket*> clients) {
-    sf::Packet packet;
+void NetworkingServer::HandleApiCommand(
+    sf::Socket::Status status,
+    sf::Packet command_packet,
+    sf::SocketSelector& selector,
+    sf::TcpSocket& client,
+    std::list<sf::TcpSocket*>& clients
+) {
     sf::Uint32 api_command_type;
-    switch (client.receive(packet)) {
+    switch (status) {
         case sf::Socket::Done:
-            if (packet >> api_command_type &&
+            if (command_packet >> api_command_type &&
                 api_command_type == (sf::Uint32)APICommandType::register_client) {
                 RegisterClient(client);
             }

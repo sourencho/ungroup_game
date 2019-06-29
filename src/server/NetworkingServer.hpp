@@ -37,7 +37,18 @@ class NetworkingServer {
      void DeleteClient(sf::TcpSocket* client, std::list<sf::TcpSocket*> clients);
      void Move(sf::Packet command_packet, sf::Uint32 client_id, sf::Uint32 tick);
      void RegisterClient(sf::TcpSocket& client);
-     void HandleApiCommand(sf::SocketSelector& selector, sf::TcpSocket& client, std::list<sf::TcpSocket*> clients);
+     void HandleApiCommand(
+        sf::Socket::Status status,
+        sf::Packet command_packet,
+        sf::SocketSelector& selector,
+        sf::TcpSocket& client,
+        std::list<sf::TcpSocket*>& clients);
+    void HandleRealtimeCommand(
+        sf::Socket::Status status,
+        sf::Packet command_packet,
+        sf::UdpSocket& rt_server,
+        sf::IpAddress& sender,
+        unsigned short port);
 
      ThreadSafeMap<sf::TcpSocket*, sf::Int32> mClientSocketsToIds;
      ThreadSafeVector<ClientGroupUpdate> mClientGroupUpdates;
@@ -45,6 +56,7 @@ class NetworkingServer {
 
      sf::Uint32 mClientIdCounter = 0;
      std::atomic<uint> mCurrTick;
+     std::list<sf::TcpSocket*> mClients;
 };
 
 #endif /* NetworkingServer_hpp */
