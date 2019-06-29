@@ -14,7 +14,6 @@ ifeq ($(detected_OS),Darwin)        # Mac OS X
 	CFLAGS = -Wall -Weffc++ -Werror -pedantic -g
 else
 	CFLAGS = -Wall -Weffc++ -Werror -pedantic -g -fsanitize=address -fno-omit-frame-pointer
-	LDFLAGS = -lasan
 endif
 
 CMN_DIR = ./common
@@ -29,13 +28,21 @@ SERVER_SRC_DIR = ./server
 SERVER_SRC_LIST = $(wildcard $(CMN_DIR)/*.cpp) $(wildcard $(SERVER_SRC_DIR)/*.cpp)
 SERVER_OBJ_LIST = $(SERVER_SRC_LIST:.cpp=.o)
 
-all: ug-server ug-client
+COMMON_TESTS_LDFLAGS = -lsfml-system -lsfml-graphics -lsfml-network
+COMMON_TESTS_SRC_DIR = ./common
+COMMON_TESTS_SRC_LIST = $(wildcard $(CMN_DIR)/*.cpp) ./tests/tests-main.cpp ./tests/common/tests-common.cpp
+COMMON_TESTS_OBJ_LIST = $(COMMON_TESTS_SRC_LIST:.cpp=.o)
+
+all: ug-server ug-client ug-test
 
 ug-server: $(SERVER_OBJ_LIST)
 	$(CXX) $(CFLAG) -o $@ $^ $(LDFLAGS) $(SERVER_LDFLAGS)
 
 ug-client: $(CLIENT_OBJ_LIST)
 	$(CXX) $(CFLAG) -o $@ $^ $(LDFLAGS) $(CLIENT_LDFLAGS)
+
+ug-test: $(COMMON_TESTS_OBJ_LIST)
+	$(CXX) $(CFLAG) -o $@ $^ $(LDFLAGS) $(COMMON_TESTS_LDFLAGS)
 
 .PHONY: clean
 clean:
