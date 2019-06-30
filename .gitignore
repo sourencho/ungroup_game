@@ -33,7 +33,7 @@
 *.app
 ug-client
 ug-server
-ug-demo-client
+ug-test
 
 # vscode
 .vscode

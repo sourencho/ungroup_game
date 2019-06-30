@@ -11,7 +11,7 @@ class Circle {
         Circle(float size, sf::Vector2f position);
         ~Circle();
 
-        void draw(sf::RenderTarget& target);
+        void draw(sf::RenderTarget& target, sf::Shader* shader);
         void move();
         void move(sf::Vector2f offset);
 

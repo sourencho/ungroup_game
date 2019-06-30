@@ -19,7 +19,7 @@ class Client {
      Client& operator=(const Client& temp_obj) = delete;
 
      // Methods
-     void draw(sf::RenderTarget& target);
+     void draw(sf::RenderTarget& target, sf::Shader* shader);
      void update();
      void handleEvents(sf::Event& event);
 

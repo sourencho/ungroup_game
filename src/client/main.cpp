@@ -35,6 +35,31 @@ int main(int, char const**) {
     window.setFramerateLimit(60);
     window.setTitle("Ungroup");
 
+    // Setup the shaders
+    sf::Shader shader;
+
+    if (!sf::Shader::isAvailable())
+    {
+        std::cerr << "Shaders are not available." << std::endl;
+        return EXIT_FAILURE;
+    }
+
+    // load only the vertex shader
+    if (!shader.loadFromFile("shaders/vertex_shader.vert", sf::Shader::Vertex))
+    {
+        // error...
+        std::cout << "Error: Could not load vertex shader" << std::endl;
+    }
+
+    // load only the fragment shader
+    if (!shader.loadFromFile("shaders/fragment_shader.frag", sf::Shader::Fragment))
+    {
+        // error...
+        std::cout << "Error: Could not load fragment shader" << std::endl;
+    }
+
+    // shader.setUniform("texture", sf::Shader::CurrentTexture);
+
     // Create client
     sf::Keyboard::Key keys[] = {sf::Keyboard::Up, sf::Keyboard::Down, sf::Keyboard::Right,
         sf::Keyboard::Left};
@@ -66,7 +91,7 @@ int main(int, char const**) {
 
         // Display
         window.clear(sf::Color::Black);
-        client_1.draw(window);
+        client_1.draw(window, &shader);
         window.display();
     }
 

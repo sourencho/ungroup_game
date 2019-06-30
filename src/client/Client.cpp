@@ -20,11 +20,11 @@ Client::Client(int max_player_count, sf::Keyboard::Key keys[4]):mDirection(1.0, 
 
 Client::~Client() {}
 
-void Client::draw(sf::RenderTarget& target) {
+void Client::draw(sf::RenderTarget& target, sf::Shader* shader) {
     // Draw active groupShapes
     for (auto group_circle : mClientGroups) {
         if (group_circle->isActive()) {
-            group_circle->getCircle()->draw(target);
+            group_circle->getCircle()->draw(target, shader);
         }
     }
 }

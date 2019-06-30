@@ -15,8 +15,8 @@ Circle::Circle(float size, sf::Vector2f position):mCircleShape(size) {
 
 Circle::~Circle() {}
 
-void Circle::draw(sf::RenderTarget& target) {
-    target.draw(mCircleShape);
+void Circle::draw(sf::RenderTarget& target, sf::Shader* shader) {
+    target.draw(mCircleShape, shader);
 }
 
 sf::Vector2f Circle::getVelocity() const {
