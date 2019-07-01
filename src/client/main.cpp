@@ -12,7 +12,8 @@
 
 int main(int, char const**) {
     // Create the main window
-    sf::RenderWindow window(sf::VideoMode(800, 600), "SFML window");
+    sf::Vector2f WINDOW_RESOLUTION(800, 600);
+    sf::RenderWindow window(sf::VideoMode(WINDOW_RESOLUTION.x, WINDOW_RESOLUTION.y), "SFML window");
 
     // Set the Icon
     sf::Image icon;
@@ -38,27 +39,26 @@ int main(int, char const**) {
     // Setup the shaders
     sf::Shader shader;
 
-    if (!sf::Shader::isAvailable())
-    {
+    if (!sf::Shader::isAvailable()) {
         std::cerr << "Shaders are not available." << std::endl;
         return EXIT_FAILURE;
     }
 
-    // load only the vertex shader
-    if (!shader.loadFromFile("shaders/vertex_shader.vert", sf::Shader::Vertex))
-    {
-        // error...
+    // load deafult vertex shader
+    const std::string DEFAULT_VERTEX_SHADER_PATH = "shaders/vertex_shader.frag";
+    if (!shader.loadFromFile(DEFAULT_VERTEX_SHADER_PATH, sf::Shader::Vertex)) {
         std::cout << "Error: Could not load vertex shader" << std::endl;
     }
 
-    // load only the fragment shader
-    if (!shader.loadFromFile("shaders/fragment_shader.frag", sf::Shader::Fragment))
-    {
-        // error...
+    // load default fragment shader
+    const std::string DEFAULT_FRAGMENT_SHADER_PATH = "shaders/fragment_shader.frag";
+    const std::string CIRCLE_GRADIENT_FRAGMENT_SHADER_PATH = "shaders/circle_gradient.frag";
+    if (!shader.loadFromFile(DEFAULT_FRAGMENT_SHADER_PATH, sf::Shader::Fragment)) {
         std::cout << "Error: Could not load fragment shader" << std::endl;
     }
 
-    // shader.setUniform("texture", sf::Shader::CurrentTexture);
+    // Pass resolution to shader
+    shader.setUniform("u_resolution", WINDOW_RESOLUTION);
 
     // Create client
     sf::Keyboard::Key keys[] = {sf::Keyboard::Up, sf::Keyboard::Down, sf::Keyboard::Right,
