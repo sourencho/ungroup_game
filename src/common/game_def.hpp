@@ -3,8 +3,6 @@
 
 #include <SFML/Graphics.hpp>
 
-const int MAX_PLAYER_COUNT = 10;
-
 struct keys {
     sf::Keyboard::Key up, down, left, right;
 };
