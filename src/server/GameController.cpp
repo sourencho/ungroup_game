@@ -88,7 +88,8 @@ void GameController::refreshAndUpdateGroups() {
     }
 
     // Detect and handle group collisions
-    Group::handleCollisions(mGroups);
+    std::vector<std::shared_ptr<Group>> active_groups = getActiveGroups();
+    Group::handleCollisions(active_groups);
 }
 
 void GameController::setNetworkState() {

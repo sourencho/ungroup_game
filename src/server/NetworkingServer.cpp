@@ -107,7 +107,6 @@ void NetworkingServer::ApiServer() {
                 if (listener.accept(*client) == sf::Socket::Done) {
                     // Add the new client to the clients list
                     mClients.push_back(client);
-                    std::cout << client << std::endl;
                     // Add the new client to the selector so that we will
                     // be notified when he sends something
                     selector.add(*client);

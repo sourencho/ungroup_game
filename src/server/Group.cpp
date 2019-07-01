@@ -5,6 +5,7 @@
 #include <numeric>
 #include "Group.hpp"
 #include "../common/collision.hpp"
+#include "../common/game_settings.hpp"
 
 Group::Group(int id, sf::Vector2f position)
     :mCircle(std::shared_ptr<Circle>(new Circle(0.f, position))) {
@@ -26,7 +27,7 @@ void Group::update() {
             [](sf::Vector2f curr_vel, std::shared_ptr<Player> player) {
                 return curr_vel + player->getDirection();
             });
-        mCircle->setVelocity(new_velocity);
+        mCircle->setVelocity(new_velocity * GROUP_SPEED);
 
         // Update position
         mCircle->move();
@@ -50,7 +51,7 @@ void Group::refresh() {
 void Group::addMember(std::shared_ptr<Player> player) {
     mMembers.push_back(player);
     mSize = mMembers.size();
-    mCircle->setRadius(mSize * 10.f);
+    mCircle->setRadius(mSize * GROUP_SIZE);
 }
 
 int Group::getId() const {
