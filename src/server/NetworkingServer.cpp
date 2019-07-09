@@ -3,6 +3,7 @@
 #include <vector>
 #include <memory>
 #include "../common/network_util.hpp"
+#include "../common/game_state.hpp"
 
 NetworkingServer::NetworkingServer():mCurrTick(0) {
     std::cout << "Starting ungroup game server.\n";
@@ -39,6 +40,7 @@ void NetworkingServer::HandleRealtimeCommand(
 ) {
     RealtimeCommand realtime_command;
     sf::Packet game_state_packet;
+    GameState game_state;
     command_packet >> realtime_command;
     switch (realtime_command.command) {
         case (sf::Uint32)RealtimeCommandType::move:
@@ -46,10 +48,8 @@ void NetworkingServer::HandleRealtimeCommand(
             break;
         case (sf::Uint32)RealtimeCommandType::fetch_state:
             // sample current state every 100 ms, this simply packages and returns it
-            game_state_packet << static_cast<sf::Uint32>(mCurrTick);
-            for (const auto client_group_update : mClientGroupUpdates.copy()) {
-                game_state_packet << client_group_update;
-            }
+            game_state = {static_cast<sf::Uint32>(mCurrTick), mClientGroupUpdates.copy()};
+            game_state_packet = pack_game_state(game_state);
             rt_server.send(game_state_packet, sender, port);
             break;
         default:

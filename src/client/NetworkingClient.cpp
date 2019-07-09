@@ -1,6 +1,5 @@
-#include <SFML/Network.hpp>
 #include "NetworkingClient.hpp"
-#include "../common/network_util.hpp"
+
 #include <iostream>
 #include <list>
 #include <thread>
@@ -8,6 +7,11 @@
 #include <chrono>
 #include <ctime>
 #include <vector>
+
+#include <SFML/Network.hpp>
+
+#include "../common/network_util.hpp"
+#include "../common/game_state.hpp"
 
 
 NetworkingClient::NetworkingClient():mDirection(0.f, 0.f) {
@@ -79,24 +83,16 @@ void NetworkingClient::RegisterNetworkingClient() {
 }
 
 void NetworkingClient::RealtimeClientRecv() {
-    sf::Uint32 server_tick;
     while (true) {
         sf::Packet packet;
         sf::IpAddress sender;
         unsigned short port;
         mRealtimeClient->receive(packet, sender, port);
-        // fetch state updates for now
-        if (packet >> server_tick) {
-            mClientGroupUpdates.clear();
-            ClientGroupUpdate client_group_update;
-            while (packet >> client_group_update) {
-                mClientGroupUpdates.push_back(client_group_update);
-            }
-            // Im not sure what kind of synchronization needs to happen here.
-            // If this tick is the most up-to-date we've ever seen, maybe we set the game to it?
-            mCurrentTick = server_tick;
-        } else {
-            std::cout << "Failed to read server tick from new packet" << std::endl;
+        GameState game_state = unpack_game_state(packet);
+        mClientGroupUpdates.clear();
+        mCurrentTick = game_state.tick;
+        for (const auto client_group_update : game_state.client_group_updates) {
+            mClientGroupUpdates.push_back(client_group_update);
         }
     }
 }

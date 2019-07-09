@@ -6,6 +6,7 @@
 #include <atomic>
 
 #include <SFML/Network.hpp>
+
 #include "../common/game_def.hpp"
 #include "../common/ThreadSafeVector.hpp"
 #include "../common/ThreadSafeVector2f.hpp"
