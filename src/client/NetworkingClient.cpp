@@ -92,7 +92,7 @@ void NetworkingClient::RealtimeClientRecv() {
         mClientGroupUpdates.clear();
         mCurrentTick = game_state.tick;
         for (const auto client_group_update : game_state.client_group_updates) {
-            mClientGroupUpdates.push_back(client_group_update);
+            mClientGroupUpdates.add(client_group_update);
         }
     }
 }

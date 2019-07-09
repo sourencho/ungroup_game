@@ -21,7 +21,7 @@ GameState unpack_game_state(sf::Packet game_state_packet) {
     game_state_packet >> client_group_updates_size;
 
     for (int i=0; i < client_group_updates_size; ++i) {
-        ClientGroupUpdate cgu;
+        ClientGroupUpdate cgu = {};
         game_state_packet >> cgu;
         client_group_updates.push_back(cgu);
     }
