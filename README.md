@@ -6,11 +6,11 @@ TODO
 
 ## Building and Running
 **Linux**
-1. `Clone this repo`
-2. `Install SFML-devel package`
-3. `Change directory to source directory, currently ./ungroup_sfml/ungroup_sfml`
-4. `run make`
-5. `./ungroup_client`
+1. Clone this repo
+2. Install SFML-devel package
+3. Change directory to `src/`
+4. Run `make`
+5. `./ungroup_server` and `./ungroup_client`
 
 ## Mechanics
 
