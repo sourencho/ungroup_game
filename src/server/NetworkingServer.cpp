@@ -229,7 +229,7 @@ void NetworkingServer::setState(std::vector<std::shared_ptr<Group>> active_group
         sf::Vector2f position = active_group->getCircle()->getPosition();
         float size = active_group->getCircle()->getRadius();
         ClientGroupUpdate client_group_update = {client_id, position.x, position.y, size};
-        mClientGroupUpdates.push_back(client_group_update);
+        mClientGroupUpdates.add(client_group_update);
     }
 }
 

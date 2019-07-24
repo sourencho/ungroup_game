@@ -28,7 +28,7 @@ class ThreadSafeVector {
             mVector.clear();
             unlock();
         }
-        void push_back(T element) {
+        void add(T element) {
             lock();
             mVector.push_back(element);
             unlock();
