@@ -41,8 +41,12 @@ NetworkingClient::NetworkingClient():mDirection(0.f, 0.f) {
 
 NetworkingClient::~NetworkingClient() {}
 
-std::vector<ClientGroupUpdate> NetworkingClient::getClientGroupUpdates() {
-    return mClientGroupUpdates.copy();
+std::vector<GroupUpdate> NetworkingClient::getGroupUpdates() {
+    return mGroupUpdates.copy();
+}
+
+std::vector<MineUpdate> NetworkingClient::getMineUpdates() {
+    return mMineUpdates.copy();
 }
 
 void NetworkingClient::setDirection(sf::Vector2f direction) {
@@ -89,10 +93,20 @@ void NetworkingClient::RealtimeClientRecv() {
         unsigned short port;
         mRealtimeClient->receive(packet, sender, port);
         GameState game_state = unpack_game_state(packet);
-        mClientGroupUpdates.clear();
+
+        // Tick
         mCurrentTick = game_state.tick;
-        for (const auto client_group_update : game_state.client_group_updates) {
-            mClientGroupUpdates.add(client_group_update);
+
+        // Group updates
+        mGroupUpdates.clear();
+        for (const auto group_update : game_state.group_updates) {
+            mGroupUpdates.add(group_update);
+        }
+
+        // Mine updates
+        mMineUpdates.clear();
+        for (const auto mine_update : game_state.mine_updates) {
+            mMineUpdates.add(mine_update);
         }
     }
 }

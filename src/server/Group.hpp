@@ -8,6 +8,7 @@
 #include <SFML/Graphics.hpp>
 #include "Player.hpp"
 #include "../common/Circle.hpp"
+#include "../common/GameObject.hpp"
 
 class Group : public GameObject {
  public:
@@ -18,7 +19,8 @@ class Group : public GameObject {
 
      void update();
      void addMember(std::shared_ptr<Player> player);
-     static void handleCollisions(std::vector<std::shared_ptr<Group>>& groups);
+     static std::vector<std::shared_ptr<Circle>> getCircles(std::vector<std::shared_ptr<Group>>& groups);
+     static std::vector<std::shared_ptr<Group>> getActiveGroups(std::vector<std::shared_ptr<Group>>& groups);
 
      // Getters
      int getId() const;
@@ -26,7 +28,6 @@ class Group : public GameObject {
 
  private:
      int mId;
-     float mSize;
      std::vector<std::shared_ptr<Player>> mMembers;
      void refresh();
      std::shared_ptr<Circle> mCircle;

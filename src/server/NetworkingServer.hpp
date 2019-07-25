@@ -15,6 +15,7 @@
 #include "../common/game_def.hpp"
 #include "../common/ThreadSafeVector.hpp"
 #include "Group.hpp"
+#include "Mine.hpp"
 #include <SFML/Network.hpp>
 
 
@@ -26,7 +27,9 @@ class NetworkingServer {
      ~NetworkingServer();
 
      client_inputs collectClientInputs();
-     void setState(std::vector<std::shared_ptr<Group>> active_groups);
+     void setState(
+        std::vector<std::shared_ptr<Group>> active_groups,
+        std::vector<std::shared_ptr<Mine>> active_mines);
      void incrementTick();
      std::vector<client_direction_update> getClientDirectionUpdates();
      std::vector<int> getClientIds();
@@ -51,7 +54,8 @@ class NetworkingServer {
         unsigned short port);
 
      ThreadSafeMap<sf::TcpSocket*, sf::Int32> mClientSocketsToIds;
-     ThreadSafeVector<ClientGroupUpdate> mClientGroupUpdates;
+     ThreadSafeVector<GroupUpdate> mGroupUpdates;
+     ThreadSafeVector<MineUpdate> mMineUpdates;
      ThreadSafeMap<sf::Uint32, sf::Vector2f> mClientMoves;
 
      sf::Uint32 mClientIdCounter = 0;
