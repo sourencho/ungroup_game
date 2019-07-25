@@ -4,20 +4,14 @@
 #include <stdio.h>
 
 #include <SFML/Graphics.hpp>
-#include "../common/Circle.hpp"
-#include "../common/GameObject.hpp"
+#include "../common/CircleGameObject.hpp"
 
-class ClientMine : public GameObject {
+class ClientMine : public CircleGameObject {
  public:
      explicit ClientMine(sf::Vector2f position);
      ~ClientMine();
      ClientMine(const ClientMine& temp_obj) = delete;  // TODO(sourenp): define this
      ClientMine& operator=(const ClientMine& temp_obj) = delete;  // TODO(sourenp): define this
-
-     Circle* getCircle();
-
- private:
-     Circle* mCircle;
 };
 
 #endif /* ClientMine_hpp */

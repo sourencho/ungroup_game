@@ -2,12 +2,5 @@
 #include <iostream>
 #include "ClientMine.hpp"
 
-ClientMine::ClientMine(sf::Vector2f position) {
-    mCircle = new Circle(0.f, position);
-}
-
+ClientMine::ClientMine(sf::Vector2f position):CircleGameObject(0, position, 0.f) {}
 ClientMine::~ClientMine() {}
-
-Circle* ClientMine::getCircle() {
-    return mCircle;
-}

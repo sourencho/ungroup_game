@@ -7,10 +7,7 @@
 #include "../common/collision.hpp"
 #include "../common/game_settings.hpp"
 
-Group::Group(int id, sf::Vector2f position)
-    :mCircle(std::shared_ptr<Circle>(new Circle(0.f, position))) {
-    mId = id;
-}
+Group::Group(int id, sf::Vector2f position):CircleGameObject(id, position, 0.f) {}
 
 Group::~Group() {}
 
@@ -51,15 +48,6 @@ void Group::addMember(std::shared_ptr<Player> player) {
     mMembers.push_back(player);
     mCircle->setRadius(mMembers.size() * GROUP_SIZE);
 }
-
-int Group::getId() const {
-    return mId;
-}
-
-std::shared_ptr<Circle> Group::getCircle() {
-    return mCircle;
-}
-
 
 std::vector<std::shared_ptr<Group>> Group::getActiveGroups(std::vector<std::shared_ptr<Group>>& groups) {
     std::vector<std::shared_ptr<Group>> active_groups;

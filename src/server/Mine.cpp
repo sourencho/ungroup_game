@@ -7,20 +7,10 @@
 #include "../common/collision.hpp"
 #include "../common/game_settings.hpp"
 
-Mine::Mine(int id, sf::Vector2f position, float size)
-    :mCircle(std::shared_ptr<Circle>(new Circle(size, position))) {
-    mId = id;
-}
+Mine::Mine(unsigned int id, sf::Vector2f position, float size)
+    :CircleGameObject(id, position, size) {}
 
 Mine::~Mine() {}
-
-int Mine::getId() const {
-    return mId;
-}
-
-std::shared_ptr<Circle> Mine::getCircle() {
-    return mCircle;
-}
 
 std::vector<std::shared_ptr<Mine>> Mine::getActiveMines(std::vector<std::shared_ptr<Mine>>& mines) {
     std::vector<std::shared_ptr<Mine>> active_mines;
