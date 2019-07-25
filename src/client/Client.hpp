@@ -38,7 +38,7 @@ class Client {
      int createClientMine();
      void refreshClientGroups(std::vector<int> group_ids);
      void updateClientGroups(std::vector<GroupUpdate> group_updates);
-     void refreshClientMines(std::vector<int> group_ids);
+     void refreshClientMines(std::vector<int> mine_ids);
      void updateClientMines(std::vector<MineUpdate> mine_updates);
 
      // Variables
