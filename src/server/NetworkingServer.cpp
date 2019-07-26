@@ -231,8 +231,8 @@ void NetworkingServer::setState(
     for (const auto active_group : active_groups) {
         sf::Uint32 group_id = active_group->getId();
         sf::Vector2f position = active_group->getCircle()->getPosition();
-        float size = active_group->getCircle()->getRadius();
-        GroupUpdate group_update = {group_id, position.x, position.y, size};
+        float radius = active_group->getCircle()->getRadius();
+        GroupUpdate group_update = {group_id, position.x, position.y, radius};
         mGroupUpdates.add(group_update);
     }
 
@@ -240,8 +240,8 @@ void NetworkingServer::setState(
     for (const auto active_mine : active_mines) {
         sf::Uint32 mine_id = active_mine->getId();
         sf::Vector2f position = active_mine->getCircle()->getPosition();
-        float size = active_mine->getCircle()->getRadius();
-        MineUpdate mine_update = {mine_id, position.x, position.y, size};
+        float radius = active_mine->getCircle()->getRadius();
+        MineUpdate mine_update = {mine_id, position.x, position.y, radius};
         mMineUpdates.add(mine_update);
     }
 }

@@ -67,15 +67,12 @@ void Client::update() {
 }
 
 /**
-    Updates the mapping of group ids to client group and active status of client groups.
+    Updates the active status of client groups and the mapping of group ids to client groups.
 */
 void Client::refreshClientGroups(std::vector<int> group_ids) {
-    // Reset client groups
     for (auto client_group : mClientGroups) {
         client_group->setActive(false);
     }
-
-    // Update client groups
     for (const auto group_id : group_ids) {
         if (mGroupIdToClientGroup.find(group_id) == mGroupIdToClientGroup.end()) {
             // id doesn't have matching group
@@ -88,30 +85,26 @@ void Client::refreshClientGroups(std::vector<int> group_ids) {
 }
 
 /**
-    Updates the properties of client groups based on updates recieved from the server.
+    Updates the properties of client groups based on updates received from the server.
 */
 void Client::updateClientGroups(std::vector<GroupUpdate> group_updates) {
-    // Update client groups
     for (const auto group_update : group_updates) {
         int client_group_id = mGroupIdToClientGroup[group_update.group_id];
         ClientGroup* client_group = mClientGroups[client_group_id];
 
         client_group->getCircle()->setPosition(
                 sf::Vector2f(group_update.x_pos, group_update.y_pos));
-        client_group->getCircle()->setRadius(group_update.size);
+        client_group->getCircle()->setRadius(group_update.radius);
     }
 }
 
 /**
-    Updates the mapping of mine ids to client mine and active status of client mines.
+    Updates the active status of client mines and the mapping of mine ids to client mines.
 */
 void Client::refreshClientMines(std::vector<int> mine_ids) {
-    // Reset client mines
     for (auto client_mine : mClientMines) {
         client_mine->setActive(false);
     }
-
-    // Update client mines
     for (const auto mine_id : mine_ids) {
         if (mMineIdToClientMine.find(mine_id) == mMineIdToClientMine.end()) {
             // id doesn't have matching mine
@@ -127,14 +120,13 @@ void Client::refreshClientMines(std::vector<int> mine_ids) {
     Updates the properties of client mines based on updates recieved from the server.
 */
 void Client::updateClientMines(std::vector<MineUpdate> mine_updates) {
-    // Update client mines
     for (const auto mine_update : mine_updates) {
         int client_mine_id = mMineIdToClientMine[mine_update.mine_id];
         ClientMine* client_mine = mClientMines[client_mine_id];
 
         client_mine->getCircle()->setPosition(
                 sf::Vector2f(mine_update.x_pos, mine_update.y_pos));
-        client_mine->getCircle()->setRadius(mine_update.size);
+        client_mine->getCircle()->setRadius(mine_update.radius);
     }
 }
 

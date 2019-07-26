@@ -94,16 +94,13 @@ void NetworkingClient::RealtimeClientRecv() {
         mRealtimeClient->receive(packet, sender, port);
         GameState game_state = unpack_game_state(packet);
 
-        // Tick
         mCurrentTick = game_state.tick;
 
-        // Group updates
         mGroupUpdates.clear();
         for (const auto group_update : game_state.group_updates) {
             mGroupUpdates.add(group_update);
         }
 
-        // Mine updates
         mMineUpdates.clear();
         for (const auto mine_update : game_state.mine_updates) {
             mMineUpdates.add(mine_update);

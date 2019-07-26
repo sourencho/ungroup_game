@@ -46,7 +46,7 @@ sf::Packet& operator <<(sf::Packet& packet, const GroupUpdate& group_update) {
         << group_update.group_id
         << group_update.x_pos
         << group_update.y_pos
-        << group_update.size;
+        << group_update.radius;
 }
 
 sf::Packet& operator >>(sf::Packet& packet, GroupUpdate& group_update) {
@@ -54,7 +54,7 @@ sf::Packet& operator >>(sf::Packet& packet, GroupUpdate& group_update) {
         >> group_update.group_id
         >> group_update.x_pos
         >> group_update.y_pos
-        >> group_update.size;
+        >> group_update.radius;
 }
 
 sf::Packet& operator <<(sf::Packet& packet, const MineUpdate& mine_update) {
@@ -62,7 +62,7 @@ sf::Packet& operator <<(sf::Packet& packet, const MineUpdate& mine_update) {
         << mine_update.mine_id
         << mine_update.x_pos
         << mine_update.y_pos
-        << mine_update.size;
+        << mine_update.radius;
 }
 
 sf::Packet& operator >>(sf::Packet& packet, MineUpdate& mine_update) {
@@ -70,5 +70,5 @@ sf::Packet& operator >>(sf::Packet& packet, MineUpdate& mine_update) {
         >> mine_update.mine_id
         >> mine_update.x_pos
         >> mine_update.y_pos
-        >> mine_update.size;
+        >> mine_update.radius;
 }

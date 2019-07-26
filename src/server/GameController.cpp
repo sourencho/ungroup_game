@@ -5,6 +5,7 @@
 #include <memory>
 #include "GameController.hpp"
 #include "../common/collision.hpp"
+#include "../common/game_settings.hpp"
 
 
 GameController::GameController(size_t max_player_count, size_t max_mine_count) {
@@ -15,13 +16,14 @@ GameController::GameController(size_t max_player_count, size_t max_mine_count) {
 
     // Initialize Groups
     for (int i=0; i < max_player_count; i++) {
-        mGroups.push_back(std::shared_ptr<Group>(new Group(i, sf::Vector2f(20.f * i, 0.f))));
+        mGroups.push_back(std::shared_ptr<Group>(
+            new Group(i, sf::Vector2f(GROUP_START_OFFSET_X * (i+1), GROUP_START_OFFSET_Y))));
     }
 
     // Initialize Mines
     for (int i=0; i < max_mine_count; i++) {
         std::shared_ptr<Mine> new_mine = std::shared_ptr<Mine>(
-            new Mine(i, sf::Vector2f(50.f, 50.f + (50.f * i)), 20.f));
+            new Mine(i, sf::Vector2f(MINE_START_OFFSET_X, MINE_START_OFFSET_Y * (i+1)), MINE_SIZE));
         new_mine->setActive(true);
         mMines.push_back(new_mine);
     }
