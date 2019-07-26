@@ -39,7 +39,7 @@ int main(int, char const**) {
     // Create client
     sf::Keyboard::Key keys[] = {sf::Keyboard::Up, sf::Keyboard::Down, sf::Keyboard::Right,
         sf::Keyboard::Left};
-    Client client_1(MAX_PLAYER_COUNT, keys);
+    Client client(MAX_PLAYER_COUNT, keys);
 
     // Start the game loop
     while (window.isOpen()) {
@@ -59,15 +59,15 @@ int main(int, char const**) {
             }
 
             // Handle game controller events
-            client_1.handleEvents(event);
+            client.handleEvents(event);
         }
 
         // Update
-        client_1.update();
+        client.update();
 
         // Display
         window.clear(sf::Color::Black);
-        client_1.draw(window, &shader, USE_SHADER);
+        client.draw(window, &shader, USE_SHADER);
         window.display();
     }
 
