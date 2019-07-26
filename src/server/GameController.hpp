@@ -8,12 +8,13 @@
 
 #include "Player.hpp"
 #include "Group.hpp"
+#include "Mine.hpp"
 #include "NetworkingServer.hpp"
 
 
 class GameController {
  public:
-     explicit GameController(int max_player_count);
+     explicit GameController(size_t max_player_count, size_t max_mine_count);
      ~GameController();
      GameController(const GameController& temp_obj) = delete;
      GameController& operator=(const GameController& temp_obj) = delete;
@@ -30,10 +31,11 @@ class GameController {
      void refreshAndUpdateGroups();
      void setNetworkState();
      void incrementTick();
-     std::vector<std::shared_ptr<Group>> getActiveGroups();
+     void handleCollision();
 
      std::vector<std::shared_ptr<Player>> mPlayers;
      std::vector<std::shared_ptr<Group>> mGroups;
+     std::vector<std::shared_ptr<Mine>> mMines;
      std::unique_ptr<NetworkingServer> mNetworkingServer;
      std::unordered_map<sf::Uint32, int> mClientToPlayer;
      size_t mNextPlayerId = 0;

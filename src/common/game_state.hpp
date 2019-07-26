@@ -8,7 +8,8 @@
 
 struct GameState {
     sf::Uint32 tick;
-    std::vector<ClientGroupUpdate> client_group_updates;
+    std::vector<GroupUpdate> group_updates;
+    std::vector<MineUpdate> mine_updates;
 };
 
 sf::Packet pack_game_state(GameState game_state);

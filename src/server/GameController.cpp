@@ -4,8 +4,11 @@
 #include <vector>
 #include <memory>
 #include "GameController.hpp"
+#include "../common/collision.hpp"
+#include "../common/game_settings.hpp"
 
-GameController::GameController(int max_player_count) {
+
+GameController::GameController(size_t max_player_count, size_t max_mine_count) {
     // Initialize Players
     for (int i=0; i < max_player_count; i++) {
         mPlayers.push_back(std::shared_ptr<Player>(new Player()));
@@ -13,7 +16,16 @@ GameController::GameController(int max_player_count) {
 
     // Initialize Groups
     for (int i=0; i < max_player_count; i++) {
-        mGroups.push_back(std::shared_ptr<Group>(new Group(i, sf::Vector2f(20.f * i, 0.f))));
+        mGroups.push_back(std::shared_ptr<Group>(
+            new Group(i, sf::Vector2f(GROUP_START_OFFSET_X * (i+1), GROUP_START_OFFSET_Y))));
+    }
+
+    // Initialize Mines
+    for (int i=0; i < max_mine_count; i++) {
+        std::shared_ptr<Mine> new_mine = std::shared_ptr<Mine>(
+            new Mine(i, sf::Vector2f(MINE_START_OFFSET_X, MINE_START_OFFSET_Y * (i+1)), MINE_SIZE));
+        new_mine->setActive(true);
+        mMines.push_back(new_mine);
     }
 
     // Start Network Server
@@ -87,13 +99,30 @@ void GameController::refreshAndUpdateGroups() {
         group->update();
     }
 
-    // Detect and handle group collisions
-    std::vector<std::shared_ptr<Group>> active_groups = getActiveGroups();
-    Group::handleCollisions(active_groups);
+    handleCollision();
+}
+
+void GameController::handleCollision() {
+    // Get active group and mine circles
+    std::vector<std::shared_ptr<Group>> active_groups = Group::getActiveGroups(mGroups);
+    std::vector<std::shared_ptr<Mine>> active_mines = Mine::getActiveMines(mMines);
+    std::vector<std::shared_ptr<Circle>> active_group_circles = Group::getCircles(active_groups);
+    std::vector<std::shared_ptr<Circle>> active_mine_circles = Mine::getCircles(active_mines);
+    std::vector<std::shared_ptr<Circle>> active_circles;
+
+    // Concat active group and mine circles
+    active_circles.reserve(active_group_circles.size() + active_mine_circles.size());
+    active_circles.insert(
+        active_circles.end(), active_group_circles.begin(), active_group_circles.end());
+    active_circles.insert(
+            active_circles.end(), active_mine_circles.begin(), active_mine_circles.end());
+
+    // Detect and handle collision
+    handle_circle_collision(active_circles);
 }
 
 void GameController::setNetworkState() {
-    mNetworkingServer->setState(getActiveGroups());
+    mNetworkingServer->setState(Group::getActiveGroups(mGroups), Mine::getActiveMines(mMines));
 }
 
 int GameController::createPlayer() {
@@ -110,12 +139,4 @@ int GameController::createPlayer() {
     mGroups[new_player_id]->addMember(mPlayers[new_player_id]);
 
     return new_player_id;
-}
-
-std::vector<std::shared_ptr<Group>> GameController::getActiveGroups() {
-    std::vector<std::shared_ptr<Group>> active_groups;
-    std::copy_if(
-        mGroups.begin(), mGroups.end(), std::back_inserter(active_groups),
-        [](std::shared_ptr<Group> group){return group->isActive();});
-    return active_groups;
 }
