@@ -39,25 +39,27 @@ void NetworkingServer::HandleRealtimeCommand(
     unsigned short port
 ) {
     RealtimeCommand realtime_command;
-    sf::Packet game_state_packet;
-    GameState game_state;
     command_packet >> realtime_command;
     switch (realtime_command.command) {
-        case (sf::Uint32)RealtimeCommandType::move:
+        case (sf::Uint32)RealtimeCommandType::move: {
             Move(command_packet, realtime_command.client_id, realtime_command.tick);
             break;
-        case (sf::Uint32)RealtimeCommandType::fetch_state:
+        }
+        case (sf::Uint32)RealtimeCommandType::fetch_state: {
             // sample current state every 100 ms, this simply packages and returns it
-            game_state = {static_cast<sf::Uint32>(mCurrTick), mClientGroupUpdates.copy()};
-            game_state_packet = pack_game_state(game_state);
+            GameState game_state = {
+                static_cast<sf::Uint32>(mCurrTick), mGroupUpdates.copy(), mMineUpdates.copy()};
+            sf::Packet game_state_packet = pack_game_state(game_state);
             rt_server.send(game_state_packet, sender, port);
             break;
-        default:
+        }
+        default: {
             std::cout
                 << "Unknown command code sent: "
                 << realtime_command.command
                 << std::endl;
             break;
+        }
     }
 }
 
@@ -222,14 +224,25 @@ std::vector<client_direction_update> NetworkingServer::getClientDirectionUpdates
 }
 
 
-void NetworkingServer::setState(std::vector<std::shared_ptr<Group>> active_groups) {
-    mClientGroupUpdates.clear();
+void NetworkingServer::setState(
+    std::vector<std::shared_ptr<Group>> active_groups,
+    std::vector<std::shared_ptr<Mine>> active_mines) {
+    mGroupUpdates.clear();
     for (const auto active_group : active_groups) {
-        sf::Uint32 client_id = active_group->getId();
+        sf::Uint32 group_id = active_group->getId();
         sf::Vector2f position = active_group->getCircle()->getPosition();
-        float size = active_group->getCircle()->getRadius();
-        ClientGroupUpdate client_group_update = {client_id, position.x, position.y, size};
-        mClientGroupUpdates.add(client_group_update);
+        float radius = active_group->getCircle()->getRadius();
+        GroupUpdate group_update = {group_id, position.x, position.y, radius};
+        mGroupUpdates.add(group_update);
+    }
+
+    mMineUpdates.clear();
+    for (const auto active_mine : active_mines) {
+        sf::Uint32 mine_id = active_mine->getId();
+        sf::Vector2f position = active_mine->getCircle()->getPosition();
+        float radius = active_mine->getCircle()->getRadius();
+        MineUpdate mine_update = {mine_id, position.x, position.y, radius};
+        mMineUpdates.add(mine_update);
     }
 }
 

@@ -9,11 +9,12 @@
 #include "../common/game_def.hpp"
 #include "NetworkingClient.hpp"
 #include "ClientGroup.hpp"
+#include "ClientMine.hpp"
 #include <SFML/Graphics.hpp>
 
 class Client {
  public:
-     Client(int max_player_count, sf::Keyboard::Key keys[4]);
+     Client(int max_player_count, int max_mine_count, sf::Keyboard::Key keys[4]);
      ~Client();
      Client(const Client& temp_obj) = delete;
      Client& operator=(const Client& temp_obj) = delete;
@@ -34,17 +35,23 @@ class Client {
      // Methods
      sf::Uint32 initNetworking();
      int createClientGroup();
-     void refreshClientGroups(std::vector<int> client_ids);
-     void updateClientGroups(std::vector<ClientGroupUpdate> client_group_updates);
+     int createClientMine();
+     void refreshClientGroups(std::vector<int> group_ids);
+     void updateClientGroups(std::vector<GroupUpdate> group_updates);
+     void refreshClientMines(std::vector<int> mine_ids);
+     void updateClientMines(std::vector<MineUpdate> mine_updates);
 
      // Variables
      std::vector<ClientGroup*> mClientGroups;
+     std::vector<ClientMine*> mClientMines;
      sf::Vector2f mDirection;
      keys mKeys;
      sf::Uint32 mId;
      NetworkingClient* mNetworkingClient;
-     std::unordered_map<sf::Uint32, int> mClientToClientGroup;
+     std::unordered_map<sf::Uint32, int> mGroupIdToClientGroup;
+     std::unordered_map<sf::Uint32, int> mMineIdToClientMine;
      size_t mNextClientGroupId = 0;
+     size_t mNextClientMineId = 0;
 };
 
 #endif /* Client_hpp */

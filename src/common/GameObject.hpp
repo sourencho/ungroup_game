@@ -3,6 +3,10 @@
 
 class GameObject {
     public:
+        GameObject(unsigned int id) {
+            mId = id;
+        }
+
         void setActive(bool is_active) {
             mIsActive = is_active;
         }
@@ -11,7 +15,12 @@ class GameObject {
             return mIsActive;
         }
 
+        int getId() const {
+            return mId;
+        }
+
     protected:
+        unsigned int mId;
         bool mIsActive = false;
 };
 

@@ -7,11 +7,7 @@
 #include "../common/collision.hpp"
 #include "../common/game_settings.hpp"
 
-Group::Group(int id, sf::Vector2f position)
-    :mCircle(std::shared_ptr<Circle>(new Circle(0.f, position))) {
-    mId = id;
-    mSize = 0;
-}
+Group::Group(int id, sf::Vector2f position):CircleGameObject(id, position, 0.f) {}
 
 Group::~Group() {}
 
@@ -50,22 +46,21 @@ void Group::refresh() {
 
 void Group::addMember(std::shared_ptr<Player> player) {
     mMembers.push_back(player);
-    mSize = mMembers.size();
-    mCircle->setRadius(mSize * GROUP_SIZE);
+    mCircle->setRadius(mMembers.size() * GROUP_MEMBER_SIZE);
 }
 
-int Group::getId() const {
-    return mId;
+std::vector<std::shared_ptr<Group>> Group::getActiveGroups(std::vector<std::shared_ptr<Group>>& groups) {
+    std::vector<std::shared_ptr<Group>> active_groups;
+    std::copy_if(
+        groups.begin(), groups.end(), std::back_inserter(active_groups),
+        [](std::shared_ptr<Group> group){return group->isActive();});
+    return active_groups;
 }
 
-std::shared_ptr<Circle> Group::getCircle() {
-    return mCircle;
-}
-
-void Group::handleCollisions(std::vector<std::shared_ptr<Group>>& groups) {
+std::vector<std::shared_ptr<Circle>> Group::getCircles(std::vector<std::shared_ptr<Group>>& groups) {
     std::vector<std::shared_ptr<Circle>> circles;
     std::transform(
         groups.begin(), groups.end(), std::back_inserter(circles),
         [](std::shared_ptr<Group> group){return group->getCircle();});
-    handle_circle_collision(circles);
+    return circles;
 }

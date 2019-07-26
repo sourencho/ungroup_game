@@ -20,11 +20,18 @@ struct ApiCommand {
     sf::Uint32 tick;
 };
 
-struct ClientGroupUpdate {
-    sf::Uint32 client_id;
+struct GroupUpdate {
+    sf::Uint32 group_id;
     float x_pos;
     float y_pos;
-    float size;
+    float radius;
+};
+
+struct MineUpdate {
+    sf::Uint32 mine_id;
+    float x_pos;
+    float y_pos;
+    float radius;
 };
 
 struct client_direction_update {

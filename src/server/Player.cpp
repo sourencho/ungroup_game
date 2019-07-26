@@ -2,7 +2,7 @@
 #include <iostream>
 #include "../common/util.hpp"
 
-Player::Player():mDirection(0.0, 0.0) {}
+Player::Player():GameObject(0), mDirection(0.0, 0.0) {}
 
 Player::~Player() {}
 
