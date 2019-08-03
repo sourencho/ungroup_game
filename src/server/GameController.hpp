@@ -10,6 +10,7 @@
 #include "Group.hpp"
 #include "Mine.hpp"
 #include "NetworkingServer.hpp"
+#include "../common/PhysicsController.hpp"
 
 
 class GameController {
@@ -22,21 +23,24 @@ class GameController {
 
  private:
      int createPlayer();
+     Group* createGroup(int id, sf::Vector2f position);
+     Mine* createMine(int id, sf::Vector2f position, float size);
      client_inputs collectInputs();
      void computeGameState(
          const std::vector<int>& client_ids,
          const std::vector<client_direction_update>& client_direction_updates);
      void refreshPlayers(std::vector<int> client_ids);
      void updatePlayers(std::vector<client_direction_update> client_direction_updates);
-     void refreshAndUpdateGroups();
+     void updateGroups();
      void setNetworkState();
      void incrementTick();
-     void handleCollision();
+     void matchRigid();
 
      std::vector<std::shared_ptr<Player>> mPlayers;
      std::vector<std::shared_ptr<Group>> mGroups;
      std::vector<std::shared_ptr<Mine>> mMines;
      std::unique_ptr<NetworkingServer> mNetworkingServer;
+     std::unique_ptr<PhysicsController> mPhysicsController;
      std::unordered_map<sf::Uint32, int> mClientToPlayer;
      size_t mNextPlayerId = 0;
 };

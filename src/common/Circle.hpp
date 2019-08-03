@@ -12,17 +12,17 @@ class Circle {
         ~Circle();
 
         void draw(sf::RenderTarget& target, sf::Shader* shader, bool use_shader);
+
+        sf::Vector2f getPosition() const;
+        void setPosition(sf::Vector2f position);
+
+        float getRadius() const;
+        void setRadius(int size);
+
+        // TODO(souren): On client use rigid body instead of these to move circles
         void move();
         void move(sf::Vector2f offset);
-
-        // Getters
-        sf::Vector2f getPosition() const;
-        float getRadius() const;
         sf::Vector2f getVelocity() const;
-
-        // Setters
-        void setPosition(sf::Vector2f position);
-        void setRadius(int size);
         void setVelocity(sf::Vector2f velocity);
 
     private:

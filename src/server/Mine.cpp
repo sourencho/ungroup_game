@@ -19,11 +19,3 @@ std::vector<std::shared_ptr<Mine>> Mine::getActiveMines(std::vector<std::shared_
         [](std::shared_ptr<Mine> mine){return mine->isActive();});
     return active_mines;
 }
-
-std::vector<std::shared_ptr<Circle>> Mine::getCircles(std::vector<std::shared_ptr<Mine>>& mines) {
-    std::vector<std::shared_ptr<Circle>> circles;
-    std::transform(
-        mines.begin(), mines.end(), std::back_inserter(circles),
-        [](std::shared_ptr<Mine> mine){return mine->getCircle();});
-    return circles;
-}

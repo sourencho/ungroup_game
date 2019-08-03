@@ -1,20 +1,37 @@
-#include "collision.hpp"
-
-#include <iostream>
 #include <vector>
 #include <memory>
+#include <iostream>
+
+#include "PhysicsController.hpp"
 
 #include "../common/util.hpp"
 
+PhysicsController::PhysicsController() {}
+
+void PhysicsController::addCircleRigidBody(std::shared_ptr<CircleRigidBody> crb) {
+    mCircleRigidBodies.push_back(crb);
+}
+
+void PhysicsController::step() {
+    for (auto crb : mCircleRigidBodies) {
+        crb->step();
+    }
+}
+
 /**
-    Handles collision between circles by pairs.
+    Handles collision between CircleRigidBodies by pairs.
     To handle the collision between circle A and B, circle B is moved in the direction
     of the vector spanning from the center of cirlce A to the center of circle B by the
     amount needed such that the circles are touching but not intersecting.
 */
-void handle_circle_collision(std::vector<std::shared_ptr<Circle>>& circles) {
-    for (std::shared_ptr<Circle> circle_a : circles) {
-        for (std::shared_ptr<Circle> circle_b : circles) {
+void PhysicsController::handleCollision() {
+    std::vector<std::shared_ptr<CircleRigidBody>> active_circles;
+    std::copy_if(
+        mCircleRigidBodies.begin(), mCircleRigidBodies.end(), std::back_inserter(active_circles),
+        [](std::shared_ptr<CircleRigidBody> circle){return circle->isActive();});
+
+    for (std::shared_ptr<CircleRigidBody> circle_a : active_circles) {
+        for (std::shared_ptr<CircleRigidBody> circle_b : active_circles) {
             if (circle_a == circle_b) {
                 continue;
             }
@@ -29,8 +46,6 @@ void handle_circle_collision(std::vector<std::shared_ptr<Circle>>& circles) {
                 sf::Vector2f between_norm = normalize(between);
                 between_norm *= radius_sum - distance_between;
                 circle_b->move(between_norm);
-            } else {
-                // Do nothing if there is no collision
             }
         }
     }

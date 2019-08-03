@@ -23,10 +23,7 @@ void Group::update() {
             [](sf::Vector2f curr_vel, std::shared_ptr<Player> player) {
                 return curr_vel + player->getDirection();
             });
-        mCircle->setVelocity(new_velocity * GROUP_SPEED);
-
-        // Update position
-        mCircle->move();
+        setVelocity(new_velocity * GROUP_SPEED);
     }
 }
 
@@ -46,7 +43,7 @@ void Group::refresh() {
 
 void Group::addMember(std::shared_ptr<Player> player) {
     mMembers.push_back(player);
-    mCircle->setRadius(mMembers.size() * GROUP_MEMBER_SIZE);
+    setRadius(mMembers.size() * GROUP_MEMBER_SIZE);
 }
 
 std::vector<std::shared_ptr<Group>> Group::getActiveGroups(std::vector<std::shared_ptr<Group>>& groups) {
@@ -55,12 +52,4 @@ std::vector<std::shared_ptr<Group>> Group::getActiveGroups(std::vector<std::shar
         groups.begin(), groups.end(), std::back_inserter(active_groups),
         [](std::shared_ptr<Group> group){return group->isActive();});
     return active_groups;
-}
-
-std::vector<std::shared_ptr<Circle>> Group::getCircles(std::vector<std::shared_ptr<Group>>& groups) {
-    std::vector<std::shared_ptr<Circle>> circles;
-    std::transform(
-        groups.begin(), groups.end(), std::back_inserter(circles),
-        [](std::shared_ptr<Group> group){return group->getCircle();});
-    return circles;
 }
