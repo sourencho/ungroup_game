@@ -5,7 +5,6 @@
 #include <memory>
 
 #include "GameController.hpp"
-#include "../common/collision.hpp"
 #include "../common/game_settings.hpp"
 
 

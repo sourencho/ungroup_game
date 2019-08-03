@@ -3,8 +3,8 @@
 #include <memory>
 #include <iostream>
 #include <numeric>
+
 #include "Mine.hpp"
-#include "../common/collision.hpp"
 #include "../common/game_settings.hpp"
 
 Mine::Mine(unsigned int id, sf::Vector2f position, float size)

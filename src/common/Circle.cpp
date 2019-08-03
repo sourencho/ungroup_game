@@ -41,23 +41,3 @@ void Circle::setPosition(sf::Vector2f position) {
 void Circle::setRadius(int size) {
     mCircleShape.setRadius(size);
 }
-
-// TODO(souren): On client use rigid body instead of this
-void Circle::move() {
-    mCircleShape.setPosition(mCircleShape.getPosition() + mVelocity);
-}
-
-// TODO(souren): On client use rigid body instead of this
-void Circle::move(sf::Vector2f offset) {
-    mCircleShape.setPosition(mCircleShape.getPosition() + offset);
-}
-
-// TODO(souren): On client use rigid body instead of this
-sf::Vector2f Circle::getVelocity() const {
-    return mVelocity;
-}
-
-// TODO(souren): On client use rigid body instead of this
-void Circle::setVelocity(sf::Vector2f velocity) {
-    mVelocity = velocity;
-}

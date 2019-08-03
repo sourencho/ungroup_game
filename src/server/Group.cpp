@@ -3,8 +3,8 @@
 #include <memory>
 #include <iostream>
 #include <numeric>
+
 #include "Group.hpp"
-#include "../common/collision.hpp"
 #include "../common/game_settings.hpp"
 
 Group::Group(int id, sf::Vector2f position):CircleGameObject(id, position, 0.f) {}
