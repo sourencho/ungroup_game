@@ -45,7 +45,7 @@ void GameController::loadLevel(size_t max_player_count, size_t max_mine_count) {
     }
 }
 
-void GameController::update() {
+void GameController::step() {
     client_inputs cis = collectInputs();
     computeGameState(cis.client_ids, cis.client_direction_updates);
     setNetworkState();
@@ -59,7 +59,7 @@ void GameController::computeGameState(
     updateGameObjects(client_ids, client_direction_updates);
     mPhysicsController->step();
     mPhysicsController->handleCollision();
-    matchRigid();
+    updateGameObjectsPostPhysics();
 }
 
 client_inputs GameController::collectInputs() {
@@ -120,7 +120,7 @@ void GameController::updateGroups() {
     }
 }
 
-void GameController::matchRigid() {
+void GameController::updateGameObjectsPostPhysics() {
     for (auto group : mGroups) {
         group->matchRigid();
     }

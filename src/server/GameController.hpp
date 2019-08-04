@@ -19,7 +19,8 @@ class GameController {
      ~GameController();
      GameController(const GameController& temp_obj) = delete;
      GameController& operator=(const GameController& temp_obj) = delete;
-     void update();
+
+     void step();
 
  private:
      void loadLevel(size_t max_player_count, size_t max_mine_count);
@@ -28,22 +29,23 @@ class GameController {
      void computeGameState(
          const std::vector<int>& client_ids,
          const std::vector<client_direction_update>& client_direction_updates);
+     void setNetworkState();
+     void incrementTick();
 
-     void refreshPlayers(std::vector<int> client_ids);
-     void updatePlayers(std::vector<client_direction_update> client_direction_updates);
-
-     void updateGroups();
      void updateGameObjects(
          const std::vector<int>& client_ids,
          const std::vector<client_direction_update>& client_direction_updates);
-     void setNetworkState();
-     void incrementTick();
-     void matchRigid();
+     void updateGameObjectsPostPhysics();
+
+     void refreshPlayers(std::vector<int> client_ids);
+     void updatePlayers(std::vector<client_direction_update> client_direction_updates);
+     void updateGroups();
 
      unsigned int assignPlayer();
 
      std::unique_ptr<NetworkingServer> mNetworkingServer;
      std::unique_ptr<PhysicsController> mPhysicsController;
+
      std::unordered_map<sf::Uint32, int> mClientToPlayer;
 
      std::vector<std::shared_ptr<Player>> mPlayers;
