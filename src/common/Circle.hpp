@@ -19,15 +19,8 @@ class Circle {
         float getRadius() const;
         void setRadius(int size);
 
-        // TODO(souren): On client use rigid body instead of these to move circles
-        void move();
-        void move(sf::Vector2f offset);
-        sf::Vector2f getVelocity() const;
-        void setVelocity(sf::Vector2f velocity);
-
     private:
         sf::CircleShape mCircleShape;
-        sf::Vector2f mVelocity;
 
 };
 

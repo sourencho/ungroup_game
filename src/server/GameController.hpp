@@ -32,6 +32,9 @@ class GameController {
      void refreshPlayers(std::vector<int> client_ids);
      void updatePlayers(std::vector<client_direction_update> client_direction_updates);
      void updateGroups();
+     void updateGameObjects(
+         const std::vector<int>& client_ids,
+         const std::vector<client_direction_update>& client_direction_updates);
      void setNetworkState();
      void incrementTick();
      void matchRigid();

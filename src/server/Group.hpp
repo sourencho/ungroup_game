@@ -19,7 +19,6 @@ class Group : public CircleGameObject {
 
      void update();
      void addMember(std::shared_ptr<Player> player);
-     static std::vector<std::shared_ptr<Circle>> getCircles(std::vector<std::shared_ptr<Group>>& groups);
      static std::vector<std::shared_ptr<Group>> getActiveGroups(std::vector<std::shared_ptr<Group>>& groups);
 
  private:

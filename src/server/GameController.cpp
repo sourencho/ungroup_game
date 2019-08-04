@@ -8,9 +8,8 @@
 #include "../common/game_settings.hpp"
 
 
-GameController::GameController(size_t max_player_count, size_t max_mine_count) {
-    mPhysicsController = std::unique_ptr<PhysicsController>(new PhysicsController());
-    mNetworkingServer = std::unique_ptr<NetworkingServer>(new NetworkingServer());
+GameController::GameController(size_t max_player_count, size_t max_mine_count)
+    :mNetworkingServer(new NetworkingServer()), mPhysicsController(new PhysicsController()) {
 
     // Initialize Players
     for (int i=0; i < max_player_count; i++) {
@@ -61,23 +60,22 @@ void GameController::computeGameState(
     const std::vector<int>& client_ids,
     const std::vector<client_direction_update>& client_direction_updates
 ) {
-    // Update game objects
-    refreshPlayers(client_ids);
-    updatePlayers(client_direction_updates);
-    updateGroups();
-
-    // Step rigid bodies
+    updateGameObjects(client_ids, client_direction_updates);
     mPhysicsController->step();
-
-    // Handle collision
     mPhysicsController->handleCollision();
-
-    // Update game objects to match rigid bodies
     matchRigid();
 }
 
 void GameController::incrementTick() {
     mNetworkingServer->incrementTick();
+}
+
+void GameController::updateGameObjects(
+    const std::vector<int>& client_ids,
+    const std::vector<client_direction_update>& client_direction_updates) {
+    refreshPlayers(client_ids);
+    updatePlayers(client_direction_updates);
+    updateGroups();
 }
 
 /**

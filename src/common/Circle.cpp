@@ -10,7 +10,6 @@ Circle::Circle(float size, sf::Vector2f position):mCircleShape(size) {
     unsigned int seed = time(NULL);
     mCircleShape.setFillColor(
         sf::Color(rand_r(&seed) % 255, rand_r(&seed) % 255, rand_r(&seed) % 255));
-    mVelocity = sf::Vector2f(0.f, 0.f);
 }
 
 Circle::~Circle() {}
