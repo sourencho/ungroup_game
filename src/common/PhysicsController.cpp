@@ -8,8 +8,11 @@
 
 PhysicsController::PhysicsController() {}
 
-void PhysicsController::addCircleRigidBody(std::shared_ptr<CircleRigidBody> crb) {
+std::shared_ptr<CircleRigidBody> PhysicsController::createCRB() {
+    std::shared_ptr<CircleRigidBody> crb = std::shared_ptr<CircleRigidBody>(
+        new CircleRigidBody(0.f, sf::Vector2f(0.f, 0.f)));
     mCircleRigidBodies.push_back(crb);
+    return crb;
 }
 
 void PhysicsController::step() {

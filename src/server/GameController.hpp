@@ -22,15 +22,16 @@ class GameController {
      void update();
 
  private:
-     int createPlayer();
-     Group* createGroup(int id, sf::Vector2f position);
-     Mine* createMine(int id, sf::Vector2f position, float size);
+     void loadLevel(size_t max_player_count, size_t max_mine_count);
+
      client_inputs collectInputs();
      void computeGameState(
          const std::vector<int>& client_ids,
          const std::vector<client_direction_update>& client_direction_updates);
+
      void refreshPlayers(std::vector<int> client_ids);
      void updatePlayers(std::vector<client_direction_update> client_direction_updates);
+
      void updateGroups();
      void updateGameObjects(
          const std::vector<int>& client_ids,
@@ -39,13 +40,17 @@ class GameController {
      void incrementTick();
      void matchRigid();
 
-     std::vector<std::shared_ptr<Player>> mPlayers;
-     std::vector<std::shared_ptr<Group>> mGroups;
-     std::vector<std::shared_ptr<Mine>> mMines;
+     unsigned int assignPlayer();
+
      std::unique_ptr<NetworkingServer> mNetworkingServer;
      std::unique_ptr<PhysicsController> mPhysicsController;
      std::unordered_map<sf::Uint32, int> mClientToPlayer;
-     size_t mNextPlayerId = 0;
+
+     std::vector<std::shared_ptr<Player>> mPlayers;
+     std::vector<std::shared_ptr<Group>> mGroups;
+     std::vector<std::shared_ptr<Mine>> mMines;
+
+     unsigned int mNextPlayerId = 0;
 };
 
 #endif /* GameController_hpp */

@@ -10,6 +10,15 @@
 
 GameController::GameController(size_t max_player_count, size_t max_mine_count)
     :mNetworkingServer(new NetworkingServer()), mPhysicsController(new PhysicsController()) {
+    loadLevel(max_player_count, max_mine_count);
+}
+
+GameController::~GameController() {}
+
+void GameController::loadLevel(size_t max_player_count, size_t max_mine_count) {
+    mPlayers.reserve(max_player_count);
+    mGroups.reserve(max_player_count);
+    mMines.reserve(max_mine_count);
 
     // Initialize Players
     for (int i=0; i < max_player_count; i++) {
@@ -18,31 +27,22 @@ GameController::GameController(size_t max_player_count, size_t max_mine_count)
 
     // Initialize Groups
     for (int i=0; i < max_player_count; i++) {
-        mGroups.push_back(std::shared_ptr<Group>(
-            createGroup(i, sf::Vector2f(GROUP_START_OFFSET_X * (i+1), GROUP_START_OFFSET_Y))));
+        mGroups.push_back(std::shared_ptr<Group>(new Group(
+            i,
+            sf::Vector2f(GROUP_START_OFFSET_X * (i+1), GROUP_START_OFFSET_Y),
+            mPhysicsController->createCRB())));
     }
 
     // Initialize Mines
     for (int i=0; i < max_mine_count; i++) {
-        mMines.push_back(std::shared_ptr<Mine>(
-            createMine(
-                i, sf::Vector2f(MINE_START_OFFSET_X, MINE_START_OFFSET_Y * (i+1)), MINE_SIZE)));
+        std::shared_ptr<Mine> new_mine = std::shared_ptr<Mine>(new Mine(
+            i,
+            sf::Vector2f(MINE_START_OFFSET_X, MINE_START_OFFSET_Y * (i+1)),
+            MINE_SIZE,
+            mPhysicsController->createCRB()));
+        new_mine->setActive(true);
+        mMines.push_back(new_mine);
     }
-}
-
-GameController::~GameController() {}
-
-Group* GameController::createGroup(int id, sf::Vector2f position) {
-    Group* new_group = new Group(id, position);
-    mPhysicsController->addCircleRigidBody(new_group->getCircleRigidBody());
-    return new_group;
-}
-
-Mine* GameController::createMine(int id, sf::Vector2f position, float size) {
-    Mine* new_mine = new Mine(id, position, size);
-    new_mine->setActive(true);
-    mPhysicsController->addCircleRigidBody(new_mine->getCircleRigidBody());
-    return new_mine;
 }
 
 void GameController::update() {
@@ -50,10 +50,6 @@ void GameController::update() {
     computeGameState(cis.client_ids, cis.client_direction_updates);
     setNetworkState();
     incrementTick();
-}
-
-client_inputs GameController::collectInputs() {
-    return mNetworkingServer->collectClientInputs();
 }
 
 void GameController::computeGameState(
@@ -64,6 +60,10 @@ void GameController::computeGameState(
     mPhysicsController->step();
     mPhysicsController->handleCollision();
     matchRigid();
+}
+
+client_inputs GameController::collectInputs() {
+    return mNetworkingServer->collectClientInputs();
 }
 
 void GameController::incrementTick() {
@@ -91,7 +91,7 @@ void GameController::refreshPlayers(std::vector<int> client_ids) {
     for (const int client_id : client_ids) {
         if (mClientToPlayer.find(client_id) == mClientToPlayer.end()) {
             // Client doesn't have player
-            mClientToPlayer[client_id] = createPlayer();
+            mClientToPlayer[client_id] = assignPlayer();
         } else {
             mPlayers[mClientToPlayer[client_id]]->setActive(true);
         }
@@ -134,7 +134,7 @@ void GameController::setNetworkState() {
     mNetworkingServer->setState(Group::getActiveGroups(mGroups), Mine::getActiveMines(mMines));
 }
 
-int GameController::createPlayer() {
+unsigned int GameController::assignPlayer() {
     int new_player_id = mNextPlayerId++;
     if (new_player_id >= mPlayers.size() || new_player_id >= mGroups.size()) {
         throw std::runtime_error("Create players or groups with id out of range");

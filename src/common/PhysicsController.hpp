@@ -11,7 +11,7 @@
 class PhysicsController{
  public:
      PhysicsController();
-     void addCircleRigidBody(std::shared_ptr<CircleRigidBody> crb);
+     std::shared_ptr<CircleRigidBody> createCRB();
      void step();
      void handleCollision();
  private:

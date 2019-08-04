@@ -4,13 +4,18 @@
 #include "Client.hpp"
 
 Client::Client(
-    int max_player_count, int max_mine_count, sf::Keyboard::Key keys[4]):mDirection(1.0, 1.0) {
+    int max_player_count, int max_mine_count, sf::Keyboard::Key keys[4]):
+    mDirection(1.0, 1.0),
+    mPhysicsController(new PhysicsController()),
+    mNetworkingClient(new NetworkingClient()) {
     for (int i=0; i < max_player_count; i++) {
-        mClientGroups.push_back(new ClientGroup(sf::Vector2f(10.f, 10.f)));
+        mClientGroups.push_back(new ClientGroup(
+            sf::Vector2f(10.f, 10.f), mPhysicsController->createCRB()));
     }
 
     for (int i=0; i < max_mine_count; i++) {
-        mClientMines.push_back(new ClientMine(sf::Vector2f(10.f, 10.f)));
+        mClientMines.push_back(new ClientMine(
+            sf::Vector2f(10.f, 10.f), mPhysicsController->createCRB()));
     }
 
     // Set up input
@@ -18,9 +23,6 @@ Client::Client(
     mKeys.down = keys[1];
     mKeys.right = keys[2];
     mKeys.left = keys[3];
-
-    // Networking
-    mNetworkingClient = new NetworkingClient();
 }
 
 Client::~Client() {}
@@ -92,7 +94,7 @@ void Client::updateClientGroups(std::vector<GroupUpdate> group_updates) {
         int client_group_id = mGroupIdToClientGroup[group_update.group_id];
         ClientGroup* client_group = mClientGroups[client_group_id];
 
-        client_group->getCircle()->setPosition(
+        client_group->setPosition(
                 sf::Vector2f(group_update.x_pos, group_update.y_pos));
         client_group->getCircle()->setRadius(group_update.radius);
     }
@@ -124,7 +126,7 @@ void Client::updateClientMines(std::vector<MineUpdate> mine_updates) {
         int client_mine_id = mMineIdToClientMine[mine_update.mine_id];
         ClientMine* client_mine = mClientMines[client_mine_id];
 
-        client_mine->getCircle()->setPosition(
+        client_mine->setPosition(
                 sf::Vector2f(mine_update.x_pos, mine_update.y_pos));
         client_mine->getCircle()->setRadius(mine_update.radius);
     }

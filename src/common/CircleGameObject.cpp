@@ -1,10 +1,14 @@
 #include "CircleGameObject.hpp"
 
 
-CircleGameObject::CircleGameObject(unsigned int id, sf::Vector2f position, float radius)
-    :GameObject(id),
+CircleGameObject::CircleGameObject(
+    unsigned int id, sf::Vector2f position, float radius, std::shared_ptr<CircleRigidBody> crb):
+    GameObject(id),
     mCircle(std::shared_ptr<Circle>(new Circle(radius, position))),
-    mCircleRigidBody(std::shared_ptr<CircleRigidBody>(new CircleRigidBody(radius, position))) {}
+    mCircleRigidBody(crb) {
+    crb->setPosition(position);
+    crb->setRadius(radius);
+}
 
 std::shared_ptr<Circle> CircleGameObject::getCircle() {
     return mCircle;
@@ -26,6 +30,11 @@ void CircleGameObject::setVelocity(sf::Vector2f velocity) {
 void CircleGameObject::setRadius(float radius) {
     mCircle->setRadius(radius);
     mCircleRigidBody->setRadius(radius);
+}
+
+void CircleGameObject::setPosition(sf::Vector2f position) {
+    mCircle->setPosition(position);
+    mCircleRigidBody->setPosition(position);
 }
 
 void CircleGameObject::matchRigid() {

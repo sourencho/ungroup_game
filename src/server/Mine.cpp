@@ -7,8 +7,8 @@
 #include "Mine.hpp"
 #include "../common/game_settings.hpp"
 
-Mine::Mine(unsigned int id, sf::Vector2f position, float size)
-    :CircleGameObject(id, position, size) {}
+Mine::Mine(unsigned int id, sf::Vector2f position, float size, std::shared_ptr<CircleRigidBody> crb)
+    :CircleGameObject(id, position, size, crb) {}
 
 Mine::~Mine() {}
 
