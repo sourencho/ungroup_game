@@ -14,10 +14,6 @@ std::shared_ptr<Circle> CircleGameObject::getCircle() {
     return mCircle;
 }
 
-std::shared_ptr<CircleRigidBody> CircleGameObject::getCircleRigidBody() {
-    return mCircleRigidBody;
-}
-
 void CircleGameObject::setActive(bool is_active) {
     mIsActive = is_active;
     mCircleRigidBody->setActive(is_active);
