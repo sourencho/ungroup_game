@@ -38,7 +38,7 @@ int main(int, char const**) {
 
     // Create client
     sf::Keyboard::Key keys[] = {sf::Keyboard::Up, sf::Keyboard::Down, sf::Keyboard::Right,
-        sf::Keyboard::Left};
+        sf::Keyboard::Left, sf::Keyboard::G};
     Client client(MAX_PLAYER_COUNT, MAX_MINE_COUNT, keys);
 
     // Start the game loop

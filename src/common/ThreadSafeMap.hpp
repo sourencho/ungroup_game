@@ -26,6 +26,12 @@ class ThreadSafeMap {
             write_lock.unlock();
             return value;
         }
+        Value has_key(Key k) {
+            write_lock.lock();
+            bool contains_key = mMap.find(k) != mMap.end();
+            write_lock.unlock();
+            return contains_key;
+        }
         std::unordered_map<Key, Value> forceCopy() {
             std::unordered_map<Key, Value> map_copy;
             map_copy.insert(mMap.begin(), mMap.end());

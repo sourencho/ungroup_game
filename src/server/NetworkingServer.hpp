@@ -32,6 +32,7 @@ class NetworkingServer {
         std::vector<std::shared_ptr<Mine>> active_mines);
      void incrementTick();
      std::vector<client_direction_update> getClientDirectionUpdates();
+     std::vector<client_groupability_update> getClientGroupabilityUpdates();
      std::vector<int> getClientIds();
 
  private:
@@ -39,6 +40,7 @@ class NetworkingServer {
      void ApiServer();
      void DeleteClient(sf::TcpSocket* client, std::list<sf::TcpSocket*> clients);
      void Move(sf::Packet command_packet, sf::Uint32 client_id, sf::Uint32 tick);
+     void SetGroupable(sf::TcpSocket& client);
      void RegisterClient(sf::TcpSocket& client);
      void HandleApiCommand(
         sf::Socket::Status status,
@@ -57,6 +59,7 @@ class NetworkingServer {
      ThreadSafeVector<GroupUpdate> mGroupUpdates;
      ThreadSafeVector<MineUpdate> mMineUpdates;
      ThreadSafeMap<sf::Uint32, sf::Vector2f> mClientMoves;
+     ThreadSafeMap<sf::Uint32, bool> mClientGroupable;
 
      sf::Uint32 mClientIdCounter = 0;
      std::atomic<uint> mCurrTick;

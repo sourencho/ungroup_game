@@ -25,6 +25,17 @@ void Group::update() {
             });
         mCircle->setVelocity(new_velocity * GROUP_SPEED);
 
+        // group is groupable if any member player wants to group
+        // should probably switch to voting functionality later
+        bool groupable = std::accumulate(
+            mMembers.begin(),
+            mMembers.end(),
+            false,
+            [](bool curr, std::shared_ptr<Player> player) {
+                return curr || + player->getGroupable();
+            });
+
+        mGroupable = groupable;
         // Update position
         mCircle->move();
     }
@@ -42,6 +53,10 @@ void Group::refresh() {
     } else {
         setActive(false);
     }
+}
+
+bool Group::getGroupable() {
+    return mGroupable;
 }
 
 void Group::addMember(std::shared_ptr<Player> player) {

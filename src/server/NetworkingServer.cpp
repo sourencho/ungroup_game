@@ -142,9 +142,14 @@ void NetworkingServer::HandleApiCommand(
     sf::Uint32 api_command_type;
     switch (status) {
         case sf::Socket::Done:
-            if (command_packet >> api_command_type &&
-                api_command_type == (sf::Uint32)APICommandType::register_client) {
+            if (command_packet >> api_command_type) {
+              if (api_command_type == (sf::Uint32)APICommandType::register_client) {
                 RegisterClient(client);
+              }
+
+              if (api_command_type == (sf::Uint32)APICommandType::group) {
+                SetGroupable(client);
+              }
             }
             break;
         case sf::TcpSocket::Error:
@@ -165,8 +170,28 @@ void NetworkingServer::HandleApiCommand(
 
 void NetworkingServer::DeleteClient(sf::TcpSocket* client, std::list<sf::TcpSocket*> clients) {
     clients.remove(client);
+    mClientGroupable.erase(mClientSocketsToIds.get(client));
     mClientMoves.erase(mClientSocketsToIds.get(client));
     mClientSocketsToIds.erase(client);
+}
+
+void NetworkingServer::SetGroupable(sf::TcpSocket& client) {
+    sf::Packet response_packet;
+    sf::Uint32 group_cmd = (sf::Uint32)APICommandType::group;
+    sf::Uint32 client_id = mClientSocketsToIds.get(&client);
+    ApiCommand api_command = {
+      client_id,
+      group_cmd,
+      (sf::Uint32) mCurrTick};
+    if (response_packet << api_command) {
+        client.send(response_packet);
+    }
+    if (!mClientGroupable.has_key(client_id)) {
+        mClientGroupable.set(client_id, true);
+    } else {
+        bool groupable = 1 ^ mClientGroupable.get(client_id);
+        mClientGroupable.set(client_id, groupable);
+    }
 }
 
 void NetworkingServer::RegisterClient(sf::TcpSocket& client) {
@@ -198,8 +223,9 @@ client_inputs NetworkingServer::collectClientInputs() {
     // Get client inputs
     std::vector<int> client_ids = getClientIds();
     std::vector<client_direction_update> client_direction_updates = getClientDirectionUpdates();
+    std::vector<client_groupability_update> client_groupability_updates = getClientGroupabilityUpdates();
 
-    client_inputs cis = {client_ids, client_direction_updates};
+    client_inputs cis = {client_ids, client_direction_updates, client_groupability_updates};
     return cis;
 }
 
@@ -223,6 +249,16 @@ std::vector<client_direction_update> NetworkingServer::getClientDirectionUpdates
     return client_direction_updates;
 }
 
+std::vector<client_groupability_update> NetworkingServer::getClientGroupabilityUpdates() {
+    std::vector<client_groupability_update> client_groupability_updates;
+    for (const auto& client_groupable: mClientGroupable.forceCopy()) {
+        client_groupability_update cgu = {
+            client_groupable.first, client_groupable.second};
+        client_groupability_updates.push_back(cgu);
+    }
+
+    return client_groupability_updates;
+}
 
 void NetworkingServer::setState(
     std::vector<std::shared_ptr<Group>> active_groups,
@@ -231,8 +267,9 @@ void NetworkingServer::setState(
     for (const auto active_group : active_groups) {
         sf::Uint32 group_id = active_group->getId();
         sf::Vector2f position = active_group->getCircle()->getPosition();
+        bool groupable = active_group->getGroupable();
         float radius = active_group->getCircle()->getRadius();
-        GroupUpdate group_update = {group_id, position.x, position.y, radius};
+        GroupUpdate group_update = {group_id, position.x, position.y, radius, groupable};
         mGroupUpdates.add(group_update);
     }
 

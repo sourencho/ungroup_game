@@ -42,6 +42,7 @@ class NetworkingClient {
      std::vector<GroupUpdate> getGroupUpdates();
      std::vector<MineUpdate> getMineUpdates();
      void setDirection(sf::Vector2f direction);
+     void setGroupable(bool groupable);
 
  private:
      // Methods
@@ -49,12 +50,16 @@ class NetworkingClient {
      void RegisterNetworkingClient();
      void RealtimeClientSend();
      void RealtimeClientRecv();
+     void ApiClientSend();
+     void ApiClientRecv();
      void SyncServerState();
 
      // Variables
      sf::Uint32 mClientId;
      sf::Uint32 mCurrentTick;
      bool mIsRegistered = false;
+     bool mGroupable = false;
+     bool mNeedsGroupStateSync = false;
 
      sf::TcpSocket* mApiClient;
      sf::UdpSocket* mRealtimeClient;

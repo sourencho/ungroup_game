@@ -36,7 +36,7 @@ GameController::~GameController() {}
 
 void GameController::update() {
     client_inputs cis = collectInputs();
-    computeGameState(cis.client_ids, cis.client_direction_updates);
+    computeGameState(cis.client_ids, cis.client_direction_updates, cis.client_groupability_updates);
     setNetworkState();
     incrementTick();
 }
@@ -47,10 +47,11 @@ client_inputs GameController::collectInputs() {
 
 void GameController::computeGameState(
     const std::vector<int>& client_ids,
-    const std::vector<client_direction_update>& client_direction_updates
+    const std::vector<client_direction_update>& client_direction_updates,
+    const std::vector<client_groupability_update>& client_groupability_updates
 ) {
     refreshPlayers(client_ids);
-    updatePlayers(client_direction_updates);
+    updatePlayers(client_direction_updates, client_groupability_updates);
     refreshAndUpdateGroups();
 }
 
@@ -81,12 +82,19 @@ void GameController::refreshPlayers(std::vector<int> client_ids) {
 /**
     Updates the properties of players based on updates recieved from the clients.
 */
-void GameController::updatePlayers(std::vector<client_direction_update> client_direction_updates) {
+void GameController::updatePlayers(std::vector<client_direction_update> client_direction_updates,
+        std::vector<client_groupability_update> client_groupability_updates
+    ) {
     // Update player directions
     for (const auto& client_direction_update : client_direction_updates) {
         sf::Uint32 client_id = client_direction_update.client_id;
         mPlayers[mClientToPlayer[client_id]]->setDirection(
                 sf::Vector2f(client_direction_update.x_dir, client_direction_update.y_dir));
+    }
+
+    for (const auto& client_groupability_update : client_groupability_updates) {
+        sf::Uint32 client_id = client_groupability_update.client_id;
+        mPlayers[mClientToPlayer[client_id]]->setGroupable(client_groupability_update.groupable);
     }
 }
 

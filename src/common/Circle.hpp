@@ -24,10 +24,12 @@ class Circle {
         void setPosition(sf::Vector2f position);
         void setRadius(int size);
         void setVelocity(sf::Vector2f velocity);
+        void setColor(sf::Color color);
 
     private:
         sf::CircleShape mCircleShape;
         sf::Vector2f mVelocity;
+        sf::Color mColor;
 
 };
 

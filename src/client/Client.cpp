@@ -4,7 +4,7 @@
 #include "Client.hpp"
 
 Client::Client(
-    int max_player_count, int max_mine_count, sf::Keyboard::Key keys[4]):mDirection(1.0, 1.0) {
+    int max_player_count, int max_mine_count, sf::Keyboard::Key keys[5]):mDirection(1.0, 1.0) {
     for (int i=0; i < max_player_count; i++) {
         mClientGroups.push_back(new ClientGroup(sf::Vector2f(10.f, 10.f)));
     }
@@ -18,6 +18,7 @@ Client::Client(
     mKeys.down = keys[1];
     mKeys.right = keys[2];
     mKeys.left = keys[3];
+    mKeys.group = keys[4];
 
     // Networking
     mNetworkingClient = new NetworkingClient();
@@ -29,7 +30,14 @@ void Client::draw(sf::RenderTarget& target, sf::Shader* shader, bool use_shader)
     // Draw active client groups
     for (auto client_group : mClientGroups) {
         if (client_group->isActive()) {
-            client_group->getCircle()->draw(target, shader, use_shader);
+            bool groupable = client_group->getGroupable();
+            std::shared_ptr<Circle> circle = client_group->getCircle();
+            if (groupable) {
+                circle->setColor(sf::Color(255, 0, 0));
+            } else {
+                circle->setColor(sf::Color(0, 0, 255));
+            }
+            circle->draw(target, shader, use_shader);
         }
     }
 
@@ -64,6 +72,7 @@ void Client::update() {
 
     // Set direction
     mNetworkingClient->setDirection(mDirection);
+    mNetworkingClient->setGroupable(mGroupable);
 }
 
 /**
@@ -95,6 +104,7 @@ void Client::updateClientGroups(std::vector<GroupUpdate> group_updates) {
         client_group->getCircle()->setPosition(
                 sf::Vector2f(group_update.x_pos, group_update.y_pos));
         client_group->getCircle()->setRadius(group_update.radius);
+        client_group->setGroupable(group_update.groupable);
     }
 }
 
@@ -163,6 +173,10 @@ sf::Uint32 Client::getId() const {
 
 void Client::handleEvents(sf::Event& event) {
     if (event.type == sf::Event::KeyPressed) {
+        if (sf::Keyboard::isKeyPressed(mKeys.group)) {
+            mGroupable ^= true;
+            return;
+        }
         mDirection = sf::Vector2f(0.f, 0.f);
         if (sf::Keyboard::isKeyPressed(mKeys.up)) {
             mDirection += sf::Vector2f(0.f, -1.f);
