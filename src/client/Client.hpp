@@ -53,7 +53,7 @@ class Client {
      size_t mNextClientGroupId = 0;
      size_t mNextClientMineId = 0;
 
-     std::unique_ptr<PhysicsController> mPhysicsController;
+     std::shared_ptr<PhysicsController> mPhysicsController;
      std::unique_ptr<NetworkingClient> mNetworkingClient;
 };
 

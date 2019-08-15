@@ -13,7 +13,10 @@
 class CircleGameObject : public GameObject {
  public:
      CircleGameObject(
-        unsigned int id, sf::Vector2f position, float radius, std::shared_ptr<CircleRigidBody> crb);
+        unsigned int id,
+        sf::Vector2f position,
+        float radius,
+        std::shared_ptr<PhysicsController> pc);
      std::shared_ptr<Circle> getCircle();
      void setActive(bool is_active);
      void setVelocity(sf::Vector2f velocity);

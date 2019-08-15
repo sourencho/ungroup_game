@@ -10,12 +10,12 @@ Client::Client(
     mNetworkingClient(new NetworkingClient()) {
     for (int i=0; i < max_player_count; i++) {
         mClientGroups.push_back(new ClientGroup(
-            sf::Vector2f(10.f, 10.f), mPhysicsController->createCRB()));
+            sf::Vector2f(10.f, 10.f), mPhysicsController));
     }
 
     for (int i=0; i < max_mine_count; i++) {
         mClientMines.push_back(new ClientMine(
-            sf::Vector2f(10.f, 10.f), mPhysicsController->createCRB()));
+            sf::Vector2f(10.f, 10.f), mPhysicsController));
     }
 
     // Set up input

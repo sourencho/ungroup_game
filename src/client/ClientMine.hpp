@@ -10,7 +10,7 @@
 
 class ClientMine : public CircleGameObject {
  public:
-     explicit ClientMine(sf::Vector2f position, std::shared_ptr<CircleRigidBody> crb);
+     explicit ClientMine(sf::Vector2f position, std::shared_ptr<PhysicsController> pc);
      ~ClientMine();
      ClientMine(const ClientMine& temp_obj) = delete;  // TODO(sourenp): define this
      ClientMine& operator=(const ClientMine& temp_obj) = delete;  // TODO(sourenp): define this

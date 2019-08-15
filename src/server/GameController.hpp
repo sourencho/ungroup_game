@@ -44,7 +44,7 @@ class GameController {
      unsigned int assignPlayer();
 
      std::unique_ptr<NetworkingServer> mNetworkingServer;
-     std::unique_ptr<PhysicsController> mPhysicsController;
+     std::shared_ptr<PhysicsController> mPhysicsController;
 
      std::unordered_map<sf::Uint32, int> mClientToPlayer;
 

@@ -12,7 +12,7 @@
 
 class Group : public CircleGameObject {
  public:
-     Group(int id, sf::Vector2f position, std::shared_ptr<CircleRigidBody> crb);
+     Group(int id, sf::Vector2f position, std::shared_ptr<PhysicsController> pc);
      ~Group();
      Group(const Group& temp_obj) = delete;  // TODO: define this
      Group& operator=(const Group& temp_obj) = delete;  // TODO: define this

@@ -30,7 +30,7 @@ void GameController::loadLevel(size_t max_player_count, size_t max_mine_count) {
         mGroups.push_back(std::shared_ptr<Group>(new Group(
             i,
             sf::Vector2f(GROUP_START_OFFSET_X * (i+1), GROUP_START_OFFSET_Y),
-            mPhysicsController->createCRB())));
+            mPhysicsController)));
     }
 
     // Initialize Mines
@@ -39,7 +39,7 @@ void GameController::loadLevel(size_t max_player_count, size_t max_mine_count) {
             i,
             sf::Vector2f(MINE_START_OFFSET_X, MINE_START_OFFSET_Y * (i+1)),
             MINE_SIZE,
-            mPhysicsController->createCRB()));
+            mPhysicsController));
         new_mine->setActive(true);
         mMines.push_back(new_mine);
     }
