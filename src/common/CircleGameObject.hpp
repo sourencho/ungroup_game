@@ -9,7 +9,7 @@
 
 class CircleGameObject : public GameObject {
     public:
-        CircleGameObject(unsigned int id, sf::Vector2f position, float size);
+        CircleGameObject(unsigned int id, sf::Vector2f position, float size, sf::Color color);
         std::shared_ptr<Circle> getCircle();
         static std::vector<std::shared_ptr<Circle>> getCircles(
             std::vector<std::shared_ptr<CircleGameObject>>& circle_game_objects);

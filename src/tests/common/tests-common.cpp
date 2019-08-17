@@ -4,7 +4,7 @@
 
 SCENARIO( "Circles move correctly", "[circle]" ) {
   sf::Vector2f position = sf::Vector2f(0.f, 0.f);
-  Circle* circle = new Circle(0.f, position);
+  Circle* circle = new Circle(0.f, position, sf::Color(0, 255, 0));
   GIVEN( "a velocity" ) {
     circle->setVelocity(sf::Vector2f(10.f, 10.f));
     WHEN( "move is called" ) {

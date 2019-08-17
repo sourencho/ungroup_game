@@ -8,7 +8,7 @@
 
 class ClientMine : public CircleGameObject {
  public:
-     explicit ClientMine(sf::Vector2f position);
+     explicit ClientMine(sf::Vector2f position, sf::Color color);
      ~ClientMine();
      ClientMine(const ClientMine& temp_obj) = delete;  // TODO(sourenp): define this
      ClientMine& operator=(const ClientMine& temp_obj) = delete;  // TODO(sourenp): define this

@@ -25,9 +25,11 @@ class GameController {
      client_inputs collectInputs();
      void computeGameState(
          const std::vector<int>& client_ids,
-         const std::vector<client_direction_update>& client_direction_updates);
+         const std::vector<client_direction_update>& client_direction_updates,
+         const std::vector<client_groupability_update>& client_groupability_updates);
      void refreshPlayers(std::vector<int> client_ids);
-     void updatePlayers(std::vector<client_direction_update> client_direction_updates);
+     void updatePlayers(std::vector<client_direction_update> client_direction_updates,
+          std::vector<client_groupability_update> client_groupability_updates);
      void refreshAndUpdateGroups();
      void setNetworkState();
      void incrementTick();

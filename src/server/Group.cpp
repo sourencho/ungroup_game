@@ -7,7 +7,8 @@
 #include "../common/collision.hpp"
 #include "../common/game_settings.hpp"
 
-Group::Group(int id, sf::Vector2f position):CircleGameObject(id, position, 0.f) {}
+Group::Group(int id, sf::Vector2f position, sf::Color color)
+    : CircleGameObject(id, position, 0.f, color) {}
 
 Group::~Group() {}
 
@@ -25,6 +26,17 @@ void Group::update() {
             });
         mCircle->setVelocity(new_velocity * GROUP_SPEED);
 
+        // Group is groupable if any member player wants to group
+        // Should probably switch to voting functionality later
+        bool groupable = std::accumulate(
+            mMembers.begin(),
+            mMembers.end(),
+            false,
+            [](bool curr, std::shared_ptr<Player> player) {
+                return curr || player->getGroupable();
+            });
+
+        mGroupable = groupable;
         // Update position
         mCircle->move();
     }
@@ -42,6 +54,10 @@ void Group::refresh() {
     } else {
         setActive(false);
     }
+}
+
+bool Group::getGroupable() {
+    return mGroupable;
 }
 
 void Group::addMember(std::shared_ptr<Player> player) {

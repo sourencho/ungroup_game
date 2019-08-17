@@ -1,8 +1,8 @@
 #include "CircleGameObject.hpp"
 
 
-CircleGameObject::CircleGameObject(unsigned int id, sf::Vector2f position, float size)
-    :GameObject(id), mCircle(std::shared_ptr<Circle>(new Circle(size, position))) {}
+CircleGameObject::CircleGameObject(unsigned int id, sf::Vector2f position, float size, sf::Color color)
+    : GameObject(id), mCircle(std::shared_ptr<Circle>(new Circle(size, position, color))) {}
 
 std::shared_ptr<Circle> CircleGameObject::getCircle() {
     return mCircle;

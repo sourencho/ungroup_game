@@ -32,21 +32,23 @@ class NetworkingServer {
         std::vector<std::shared_ptr<Mine>> active_mines);
      void incrementTick();
      std::vector<client_direction_update> getClientDirectionUpdates();
+     std::vector<client_groupability_update> getClientGroupabilityUpdates();
      std::vector<int> getClientIds();
 
  private:
-     void RealtimeServer();
-     void ApiServer();
-     void DeleteClient(sf::TcpSocket* client, std::list<sf::TcpSocket*> clients);
-     void Move(sf::Packet command_packet, sf::Uint32 client_id, sf::Uint32 tick);
-     void RegisterClient(sf::TcpSocket& client);
-     void HandleApiCommand(
+     void realtimeServer();
+     void apiServer();
+     void deleteClient(sf::TcpSocket* client, std::list<sf::TcpSocket*> clients);
+     void move(sf::Packet command_packet, sf::Uint32 client_id, sf::Uint32 tick);
+     void updateGroupable(sf::TcpSocket& client);
+     void registerClient(sf::TcpSocket& client);
+     void handleApiCommand(
         sf::Socket::Status status,
         sf::Packet command_packet,
         sf::SocketSelector& selector,
         sf::TcpSocket& client,
         std::list<sf::TcpSocket*>& clients);
-    void HandleRealtimeCommand(
+    void handleRealtimeCommand(
         sf::Socket::Status status,
         sf::Packet command_packet,
         sf::UdpSocket& rt_server,
@@ -57,6 +59,7 @@ class NetworkingServer {
      ThreadSafeVector<GroupUpdate> mGroupUpdates;
      ThreadSafeVector<MineUpdate> mMineUpdates;
      ThreadSafeMap<sf::Uint32, sf::Vector2f> mClientMoves;
+     ThreadSafeMap<sf::Uint32, bool> mClientGroupable;
 
      sf::Uint32 mClientIdCounter = 0;
      std::atomic<uint> mCurrTick;
