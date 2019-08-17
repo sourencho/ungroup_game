@@ -36,19 +36,19 @@ class NetworkingServer {
      std::vector<int> getClientIds();
 
  private:
-     void RealtimeServer();
-     void ApiServer();
-     void DeleteClient(sf::TcpSocket* client, std::list<sf::TcpSocket*> clients);
-     void Move(sf::Packet command_packet, sf::Uint32 client_id, sf::Uint32 tick);
-     void SetGroupable(sf::TcpSocket& client);
-     void RegisterClient(sf::TcpSocket& client);
-     void HandleApiCommand(
+     void realtimeServer();
+     void apiServer();
+     void deleteClient(sf::TcpSocket* client, std::list<sf::TcpSocket*> clients);
+     void move(sf::Packet command_packet, sf::Uint32 client_id, sf::Uint32 tick);
+     void updateGroupable(sf::TcpSocket& client);
+     void registerClient(sf::TcpSocket& client);
+     void handleApiCommand(
         sf::Socket::Status status,
         sf::Packet command_packet,
         sf::SocketSelector& selector,
         sf::TcpSocket& client,
         std::list<sf::TcpSocket*>& clients);
-    void HandleRealtimeCommand(
+    void handleRealtimeCommand(
         sf::Socket::Status status,
         sf::Packet command_packet,
         sf::UdpSocket& rt_server,

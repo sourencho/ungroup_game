@@ -54,7 +54,7 @@ void NetworkingClient::setDirection(sf::Vector2f direction) {
 }
 
 void NetworkingClient::setGroupable(bool groupable) {
-    mNeedsGroupStateSync = mGroupable != groupable;
+    mNeedsGroupableStateSync = mGroupable != groupable;
     mGroupable = groupable;
 }
 
@@ -93,12 +93,12 @@ void NetworkingClient::RegisterNetworkingClient() {
 
 void NetworkingClient::ApiClientRecv() {
     while (true) {
-        sf::Packet group_response;
+        sf::Packet api_response;
         ApiCommand api_command;
 
-        if (mApiClient->receive(group_response) == sf::Socket::Done) {
-            if (group_response >> api_command &&
-                api_command.command == (sf::Uint32)APICommandType::group) {
+        if (mApiClient->receive(api_response) == sf::Socket::Done) {
+            if (api_response >> api_command &&
+                api_command.command == (sf::Uint32)APICommandType::toggle_groupable) {
                 // this is a noop, just a place we can add code for when the server acknowledges
                 // it received our groupability toggle
             }
@@ -108,13 +108,13 @@ void NetworkingClient::ApiClientRecv() {
 
 void NetworkingClient::ApiClientSend() {
     while (true) {
-        if (mNeedsGroupStateSync) {
+        if (mNeedsGroupableStateSync) {
             sf::Packet group_request;
-            if (group_request << (sf::Uint32)APICommandType::group &&
+            if (group_request << (sf::Uint32)APICommandType::toggle_groupable &&
                 group_request << (sf::Uint32)mClientId) {
                 mApiClient->send(group_request);
             }
-            mNeedsGroupStateSync = false;
+            mNeedsGroupableStateSync = false;
         }
     }
 }

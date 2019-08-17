@@ -6,11 +6,11 @@
 Client::Client(
     int max_player_count, int max_mine_count, sf::Keyboard::Key keys[5]):mDirection(1.0, 1.0) {
     for (int i=0; i < max_player_count; i++) {
-        mClientGroups.push_back(new ClientGroup(sf::Vector2f(10.f, 10.f)));
+        mClientGroups.push_back(new ClientGroup(sf::Vector2f(10.f, 10.f), sf::Color(0, 255, 0)));
     }
 
     for (int i=0; i < max_mine_count; i++) {
-        mClientMines.push_back(new ClientMine(sf::Vector2f(10.f, 10.f)));
+        mClientMines.push_back(new ClientMine(sf::Vector2f(10.f, 10.f), sf::Color(0, 0, 255)));
     }
 
     // Set up input
@@ -33,9 +33,9 @@ void Client::draw(sf::RenderTarget& target, sf::Shader* shader, bool use_shader)
             bool groupable = client_group->getGroupable();
             std::shared_ptr<Circle> circle = client_group->getCircle();
             if (groupable) {
-                circle->setColor(sf::Color(255, 0, 0));
+                circle->changeColor(sf::Color(255, 0, 0));
             } else {
-                circle->setColor(sf::Color(0, 0, 255));
+                circle->setColor();
             }
             circle->draw(target, shader, use_shader);
         }
@@ -100,6 +100,7 @@ void Client::updateClientGroups(std::vector<GroupUpdate> group_updates) {
     for (const auto group_update : group_updates) {
         int client_group_id = mGroupIdToClientGroup[group_update.group_id];
         ClientGroup* client_group = mClientGroups[client_group_id];
+
 
         client_group->getCircle()->setPosition(
                 sf::Vector2f(group_update.x_pos, group_update.y_pos));

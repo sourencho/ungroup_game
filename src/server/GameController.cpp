@@ -17,13 +17,13 @@ GameController::GameController(size_t max_player_count, size_t max_mine_count) {
     // Initialize Groups
     for (int i=0; i < max_player_count; i++) {
         mGroups.push_back(std::shared_ptr<Group>(
-            new Group(i, sf::Vector2f(GROUP_START_OFFSET_X * (i+1), GROUP_START_OFFSET_Y))));
+            new Group(i, sf::Vector2f(GROUP_START_OFFSET_X * (i+1), GROUP_START_OFFSET_Y), sf::Color(0, 255, 0))));
     }
 
     // Initialize Mines
     for (int i=0; i < max_mine_count; i++) {
         std::shared_ptr<Mine> new_mine = std::shared_ptr<Mine>(
-            new Mine(i, sf::Vector2f(MINE_START_OFFSET_X, MINE_START_OFFSET_Y * (i+1)), MINE_SIZE));
+            new Mine(i, sf::Vector2f(MINE_START_OFFSET_X, MINE_START_OFFSET_Y * (i+1)), MINE_SIZE, sf::Color(0, 0, 255)));
         new_mine->setActive(true);
         mMines.push_back(new_mine);
     }

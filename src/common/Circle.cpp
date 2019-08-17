@@ -5,10 +5,10 @@
 
 #include "Circle.hpp"
 
-Circle::Circle(float size, sf::Vector2f position):mCircleShape(size) {
+Circle::Circle(float size, sf::Vector2f position, sf::Color color):mCircleShape(size) {
     mCircleShape.setPosition(position);
-    mColor = sf::Color(0, 0, 255);
-    mCircleShape.setFillColor(mColor);
+    mColor = color;
+    mCircleShape.setFillColor(color);
     mVelocity = sf::Vector2f(0.f, 0.f);
 }
 
@@ -38,7 +38,15 @@ float Circle::getRadius() const {
 
 void Circle::setColor(sf::Color color) {
     mColor = color;
+    mCircleShape.setFillColor(color);
+}
+
+void Circle::setColor() {
     mCircleShape.setFillColor(mColor);
+}
+
+void Circle::changeColor(sf::Color color) {
+    mCircleShape.setFillColor(color);
 }
 
 void Circle::setVelocity(sf::Vector2f velocity) {

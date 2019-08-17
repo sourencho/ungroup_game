@@ -8,7 +8,7 @@
 class Circle {
 
     public:
-        Circle(float size, sf::Vector2f position);
+        Circle(float size, sf::Vector2f position, sf::Color color);
         ~Circle();
 
         void draw(sf::RenderTarget& target, sf::Shader* shader, bool use_shader);
@@ -24,7 +24,9 @@ class Circle {
         void setPosition(sf::Vector2f position);
         void setRadius(int size);
         void setVelocity(sf::Vector2f velocity);
+        void setColor();
         void setColor(sf::Color color);
+        void changeColor(sf::Color color);
 
     private:
         sf::CircleShape mCircleShape;
@@ -32,5 +34,4 @@ class Circle {
         sf::Color mColor;
 
 };
-
 #endif /* Circle_hpp */

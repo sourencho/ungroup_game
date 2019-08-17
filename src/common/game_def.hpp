@@ -57,7 +57,7 @@ struct client_inputs {
     std::vector<client_groupability_update> client_groupability_updates;
 };
 
-enum APICommandType { register_client, group, ungroup };
+enum APICommandType { register_client, toggle_groupable};
 enum RealtimeCommandType { move, fetch_state };
 
 #endif /* game_def_hpp */

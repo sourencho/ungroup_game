@@ -59,7 +59,7 @@ class NetworkingClient {
      sf::Uint32 mCurrentTick;
      bool mIsRegistered = false;
      bool mGroupable = false;
-     bool mNeedsGroupStateSync = false;
+     bool mNeedsGroupableStateSync = false;
 
      sf::TcpSocket* mApiClient;
      sf::UdpSocket* mRealtimeClient;

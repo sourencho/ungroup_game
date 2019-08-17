@@ -9,7 +9,7 @@
 
 class ClientGroup : public CircleGameObject {
  public:
-     explicit ClientGroup(sf::Vector2f position);
+     explicit ClientGroup(sf::Vector2f position, sf::Color color);
      ~ClientGroup();
      void setGroupable(bool groupable);
      bool getGroupable();

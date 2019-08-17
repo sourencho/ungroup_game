@@ -7,8 +7,8 @@
 #include "../common/collision.hpp"
 #include "../common/game_settings.hpp"
 
-Mine::Mine(unsigned int id, sf::Vector2f position, float size)
-    :CircleGameObject(id, position, size) {}
+Mine::Mine(unsigned int id, sf::Vector2f position, float size, sf::Color color)
+    :CircleGameObject(id, position, size, color) {}
 
 Mine::~Mine() {}
 
