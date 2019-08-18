@@ -12,10 +12,13 @@ class Player: public GameObject {
      ~Player();
 
      void setDirection(sf::Vector2f direction);
+     void setGroupable(bool groupable);
      sf::Vector2f getDirection() const;
+     bool getGroupable() const;
 
  private:
      sf::Vector2f mDirection;
+     bool mGroupable;
 };
 
 

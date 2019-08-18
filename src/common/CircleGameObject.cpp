@@ -1,14 +1,11 @@
 #include "CircleGameObject.hpp"
 
 
-CircleGameObject::CircleGameObject(
-    unsigned int id,
-    sf::Vector2f position,
-    float radius,
-    std::shared_ptr<PhysicsController> pc):
-    GameObject(id),
-    mCircle(std::shared_ptr<Circle>(new Circle(radius, position))),
-    mCircleRigidBody(pc->createCRB(radius, position)) {}
+CircleGameObject::CircleGameObject(unsigned int id, sf::Vector2f position, float radius,
+    sf::Color color, std::shared_ptr<PhysicsController> pc)
+    : GameObject(id),
+      mCircle(std::shared_ptr<Circle>(new Circle(radius, position, color))),
+      mCircleRigidBody(pc->createCRB(radius, position)) {}
 
 std::shared_ptr<Circle> CircleGameObject::getCircle() {
     return mCircle;

@@ -3,19 +3,18 @@
 #include <iostream>
 #include "Client.hpp"
 
-Client::Client(
-    int max_player_count, int max_mine_count, sf::Keyboard::Key keys[4]):
-    mDirection(1.0, 1.0),
-    mPhysicsController(new PhysicsController()),
-    mNetworkingClient(new NetworkingClient()) {
+Client::Client(int max_player_count, int max_mine_count, sf::Keyboard::Key keys[5])
+    : mDirection(1.0, 1.0),
+      mPhysicsController(new PhysicsController()),
+      mNetworkingClient(new NetworkingClient()) {
     for (int i=0; i < max_player_count; i++) {
-        mClientGroups.push_back(new ClientGroup(
-            sf::Vector2f(10.f, 10.f), mPhysicsController));
+        mClientGroups.push_back(
+            new ClientGroup(sf::Vector2f(10.f, 10.f), sf::Color(0, 255, 0), mPhysicsController));
     }
 
     for (int i=0; i < max_mine_count; i++) {
-        mClientMines.push_back(new ClientMine(
-            sf::Vector2f(10.f, 10.f), mPhysicsController));
+        mClientMines.push_back(
+            new ClientMine(sf::Vector2f(10.f, 10.f), sf::Color(0, 0, 255), mPhysicsController));
     }
 
     // Set up input
@@ -23,6 +22,7 @@ Client::Client(
     mKeys.down = keys[1];
     mKeys.right = keys[2];
     mKeys.left = keys[3];
+    mKeys.group = keys[4];
 }
 
 Client::~Client() {}
@@ -31,7 +31,14 @@ void Client::draw(sf::RenderTarget& target, sf::Shader* shader, bool use_shader)
     // Draw active client groups
     for (auto client_group : mClientGroups) {
         if (client_group->isActive()) {
-            client_group->getCircle()->draw(target, shader, use_shader);
+            bool groupable = client_group->getGroupable();
+            std::shared_ptr<Circle> circle = client_group->getCircle();
+            if (groupable) {
+                circle->changeColor(sf::Color(255, 0, 0));
+            } else {
+                circle->setColor();
+            }
+            circle->draw(target, shader, use_shader);
         }
     }
 
@@ -66,6 +73,7 @@ void Client::update() {
 
     // Set direction
     mNetworkingClient->setDirection(mDirection);
+    mNetworkingClient->setGroupable(mGroupable);
 }
 
 /**
@@ -93,10 +101,9 @@ void Client::updateClientGroups(std::vector<GroupUpdate> group_updates) {
     for (const auto group_update : group_updates) {
         int client_group_id = mGroupIdToClientGroup[group_update.group_id];
         ClientGroup* client_group = mClientGroups[client_group_id];
-
-        client_group->setPosition(
-                sf::Vector2f(group_update.x_pos, group_update.y_pos));
+        client_group->setPosition(sf::Vector2f(group_update.x_pos, group_update.y_pos));
         client_group->getCircle()->setRadius(group_update.radius);
+        client_group->setGroupable(group_update.groupable);
     }
 }
 
@@ -165,6 +172,10 @@ sf::Uint32 Client::getId() const {
 
 void Client::handleEvents(sf::Event& event) {
     if (event.type == sf::Event::KeyPressed) {
+        if (sf::Keyboard::isKeyPressed(mKeys.group)) {
+            mGroupable ^= true;
+            return;
+        }
         mDirection = sf::Vector2f(0.f, 0.f);
         if (sf::Keyboard::isKeyPressed(mKeys.up)) {
             mDirection += sf::Vector2f(0.f, -1.f);

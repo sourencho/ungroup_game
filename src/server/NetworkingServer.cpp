@@ -7,8 +7,8 @@
 
 NetworkingServer::NetworkingServer():mCurrTick(0) {
     std::cout << "Starting ungroup game server.\n";
-    std::thread api_thread(&NetworkingServer::ApiServer, this);
-    std::thread realtime_thread(&NetworkingServer::RealtimeServer, this);
+    std::thread api_thread(&NetworkingServer::apiServer, this);
+    std::thread realtime_thread(&NetworkingServer::realtimeServer, this);
     api_thread.detach();
     realtime_thread.detach();
 }
@@ -18,7 +18,7 @@ NetworkingServer::~NetworkingServer() {}
 
 // RealtimeServer Thread Methods
 
-void NetworkingServer::RealtimeServer() {
+void NetworkingServer::realtimeServer() {
     sf::UdpSocket rt_server;
     rt_server.bind(4888);
     sf::Packet command_packet;
@@ -27,11 +27,11 @@ void NetworkingServer::RealtimeServer() {
         sf::IpAddress sender;
         unsigned short port;
         sf::Socket::Status status = rt_server.receive(command_packet, sender, port);
-        HandleRealtimeCommand(status, command_packet, rt_server, sender, port);
+        handleRealtimeCommand(status, command_packet, rt_server, sender, port);
     }
 }
 
-void NetworkingServer::HandleRealtimeCommand(
+void NetworkingServer::handleRealtimeCommand(
     sf::Socket::Status status,
     sf::Packet command_packet,
     sf::UdpSocket& rt_server,
@@ -42,7 +42,7 @@ void NetworkingServer::HandleRealtimeCommand(
     command_packet >> realtime_command;
     switch (realtime_command.command) {
         case (sf::Uint32)RealtimeCommandType::move: {
-            Move(command_packet, realtime_command.client_id, realtime_command.tick);
+            move(command_packet, realtime_command.client_id, realtime_command.tick);
             break;
         }
         case (sf::Uint32)RealtimeCommandType::fetch_state: {
@@ -63,7 +63,7 @@ void NetworkingServer::HandleRealtimeCommand(
     }
 }
 
-void NetworkingServer::Move(sf::Packet command_packet, sf::Uint32 client_id, sf::Uint32 tick) {
+void NetworkingServer::move(sf::Packet command_packet, sf::Uint32 client_id, sf::Uint32 tick) {
     sf::Vector2f direction;
     if (command_packet >> direction) {
         int drift = std::abs(static_cast<int>((mCurrTick - tick)));
@@ -83,7 +83,7 @@ void NetworkingServer::Move(sf::Packet command_packet, sf::Uint32 client_id, sf:
 
 // ApiServer Thread Methods
 
-void NetworkingServer::ApiServer() {
+void NetworkingServer::apiServer() {
     // Create a socket to listen to new connections
     sf::TcpListener listener;
     // API socket
@@ -124,7 +124,7 @@ void NetworkingServer::ApiServer() {
                         // The client has sent some data, we can receive it
                         sf::Packet command_packet;
                         sf::Socket::Status status = client.receive(command_packet);
-                        HandleApiCommand(status, command_packet, selector, client, clients);
+                        handleApiCommand(status, command_packet, selector, client, clients);
                     }
                 }
             }
@@ -132,7 +132,7 @@ void NetworkingServer::ApiServer() {
     }
 }
 
-void NetworkingServer::HandleApiCommand(
+void NetworkingServer::handleApiCommand(
     sf::Socket::Status status,
     sf::Packet command_packet,
     sf::SocketSelector& selector,
@@ -142,20 +142,23 @@ void NetworkingServer::HandleApiCommand(
     sf::Uint32 api_command_type;
     switch (status) {
         case sf::Socket::Done:
-            if (command_packet >> api_command_type &&
-                api_command_type == (sf::Uint32)APICommandType::register_client) {
-                RegisterClient(client);
+            if (command_packet >> api_command_type) {
+                if (api_command_type == (sf::Uint32)APICommandType::register_client) {
+                    registerClient(client);
+                } else if (api_command_type == (sf::Uint32)APICommandType::toggle_groupable) {
+                    updateGroupable(client);
+                }
             }
             break;
         case sf::TcpSocket::Error:
             std::cout << "TCP client encountered error. Removing client." << std::endl;
             selector.remove(client);
-            DeleteClient(&client, clients);
+            deleteClient(&client, clients);
             break;
         case sf::TcpSocket::Disconnected:
             std::cout << "TCP client disconnected. Removing client. " << std::endl;
             selector.remove(client);
-            DeleteClient(&client, clients);
+            deleteClient(&client, clients);
             break;
         default:
             std::cout << "TCP client sent unkown signal." << std::endl;
@@ -163,13 +166,34 @@ void NetworkingServer::HandleApiCommand(
     }
 }
 
-void NetworkingServer::DeleteClient(sf::TcpSocket* client, std::list<sf::TcpSocket*> clients) {
+void NetworkingServer::deleteClient(sf::TcpSocket* client, std::list<sf::TcpSocket*> clients) {
     clients.remove(client);
+    mClientGroupable.erase(mClientSocketsToIds.get(client));
     mClientMoves.erase(mClientSocketsToIds.get(client));
     mClientSocketsToIds.erase(client);
 }
 
-void NetworkingServer::RegisterClient(sf::TcpSocket& client) {
+void NetworkingServer::updateGroupable(sf::TcpSocket& client) {
+    sf::Packet response_packet;
+    sf::Uint32 toggle_groupable_cmd = (sf::Uint32)APICommandType::toggle_groupable;
+    sf::Uint32 client_id = mClientSocketsToIds.get(&client);
+    ApiCommand api_command = {
+      client_id,
+      toggle_groupable_cmd,
+      (sf::Uint32) mCurrTick
+    };
+    if (response_packet << api_command) {
+        client.send(response_packet);
+    }
+    if (!mClientGroupable.has_key(client_id)) {
+        mClientGroupable.set(client_id, true);
+    } else {
+        bool groupable = 1 ^ mClientGroupable.get(client_id);
+        mClientGroupable.set(client_id, groupable);
+    }
+}
+
+void NetworkingServer::registerClient(sf::TcpSocket& client) {
     sf::Packet response_packet;
     sf::Uint32 register_cmd = (sf::Uint32)APICommandType::register_client;
     ApiCommand api_command = {mClientIdCounter, register_cmd, (sf::Uint32) mCurrTick};
@@ -198,8 +222,10 @@ client_inputs NetworkingServer::collectClientInputs() {
     // Get client inputs
     std::vector<int> client_ids = getClientIds();
     std::vector<client_direction_update> client_direction_updates = getClientDirectionUpdates();
+    std::vector<client_groupability_update> client_groupability_updates =
+        getClientGroupabilityUpdates();
 
-    client_inputs cis = {client_ids, client_direction_updates};
+    client_inputs cis = {client_ids, client_direction_updates, client_groupability_updates};
     return cis;
 }
 
@@ -223,6 +249,16 @@ std::vector<client_direction_update> NetworkingServer::getClientDirectionUpdates
     return client_direction_updates;
 }
 
+std::vector<client_groupability_update> NetworkingServer::getClientGroupabilityUpdates() {
+    std::vector<client_groupability_update> client_groupability_updates;
+    for (const auto& client_groupable : mClientGroupable.forceCopy()) {
+        client_groupability_update cgu = {
+            client_groupable.first, client_groupable.second};
+        client_groupability_updates.push_back(cgu);
+    }
+
+    return client_groupability_updates;
+}
 
 void NetworkingServer::setState(
     std::vector<std::shared_ptr<Group>> active_groups,
@@ -231,8 +267,9 @@ void NetworkingServer::setState(
     for (const auto active_group : active_groups) {
         sf::Uint32 group_id = active_group->getId();
         sf::Vector2f position = active_group->getCircle()->getPosition();
+        bool groupable = active_group->getGroupable();
         float radius = active_group->getCircle()->getRadius();
-        GroupUpdate group_update = {group_id, position.x, position.y, radius};
+        GroupUpdate group_update = {group_id, position.x, position.y, radius, groupable};
         mGroupUpdates.add(group_update);
     }
 

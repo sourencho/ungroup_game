@@ -46,7 +46,8 @@ class Client {
      std::vector<ClientGroup*> mClientGroups;
      std::vector<ClientMine*> mClientMines;
      sf::Vector2f mDirection;
-     keys mKeys;
+     Keys mKeys;
+     bool mGroupable = false;
      sf::Uint32 mId;
      std::unordered_map<sf::Uint32, int> mGroupIdToClientGroup;
      std::unordered_map<sf::Uint32, int> mMineIdToClientMine;

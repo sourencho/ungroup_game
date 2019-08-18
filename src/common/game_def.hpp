@@ -3,8 +3,8 @@
 
 #include <SFML/Graphics.hpp>
 
-struct keys {
-    sf::Keyboard::Key up, down, left, right;
+struct Keys {
+    sf::Keyboard::Key up, down, left, right, group;
 };
 
 struct RealtimeCommand {
@@ -25,6 +25,7 @@ struct GroupUpdate {
     float x_pos;
     float y_pos;
     float radius;
+    bool groupable;
 };
 
 struct MineUpdate {
@@ -40,6 +41,11 @@ struct client_direction_update {
     float y_dir;
 };
 
+struct client_groupability_update{
+    sf::Uint32 client_id;
+    bool groupable;
+};
+
 struct direction {
     float x_dir;
     float y_dir;
@@ -48,9 +54,10 @@ struct direction {
 struct client_inputs {
     std::vector<int> client_ids;
     std::vector<client_direction_update> client_direction_updates;
+    std::vector<client_groupability_update> client_groupability_updates;
 };
 
-enum APICommandType { register_client, group, ungroup };
+enum APICommandType { register_client, toggle_groupable};
 enum RealtimeCommandType { move, fetch_state };
 
 #endif /* game_def_hpp */

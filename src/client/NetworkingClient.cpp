@@ -21,11 +21,9 @@ NetworkingClient::NetworkingClient():mDirection(0.f, 0.f) {
 
     std::cout << "Starting ungroup demo client." << std::endl;
 
-    /*
     // api
-    std::thread api_client_recv_thread(api_client_recv, &api_client);
-    std::thread api_client_send_thread(api_client_send, &api_client);
-    */
+    std::thread ApiClientRecv_thread(&NetworkingClient::ApiClientRecv, this);
+    std::thread ApiClientSend_thread(&NetworkingClient::ApiClientSend, this);
 
     // realtime
     std::thread RealtimeClientRecv_thread(&NetworkingClient::RealtimeClientRecv, this);
@@ -34,6 +32,8 @@ NetworkingClient::NetworkingClient():mDirection(0.f, 0.f) {
     // syncs authoritative sever state to client at a regular interval
     std::thread SyncServerState_thread(&NetworkingClient::SyncServerState, this);
 
+    ApiClientRecv_thread.detach();
+    ApiClientSend_thread.detach();
     RealtimeClientRecv_thread.detach();
     RealtimeClientSend_thread.detach();
     SyncServerState_thread.detach();
@@ -51,6 +51,11 @@ std::vector<MineUpdate> NetworkingClient::getMineUpdates() {
 
 void NetworkingClient::setDirection(sf::Vector2f direction) {
     mDirection.set(direction);
+}
+
+void NetworkingClient::setGroupable(bool groupable) {
+    mNeedsGroupableStateSync = mGroupable != groupable;
+    mGroupable = groupable;
 }
 
 void NetworkingClient::ReadRegistrationResponse() {
@@ -83,6 +88,34 @@ void NetworkingClient::RegisterNetworkingClient() {
 
     if (!mIsRegistered) {
         throw std::runtime_error("Failed to register. Exiting.");
+    }
+}
+
+void NetworkingClient::ApiClientRecv() {
+    while (true) {
+        sf::Packet api_response;
+        ApiCommand api_command;
+
+        if (mApiClient->receive(api_response) == sf::Socket::Done) {
+            if (api_response >> api_command &&
+                api_command.command == (sf::Uint32)APICommandType::toggle_groupable) {
+                // this is a noop, just a place we can add code for when the server acknowledges
+                // it received our groupability toggle
+            }
+        }
+    }
+}
+
+void NetworkingClient::ApiClientSend() {
+    while (true) {
+        if (mNeedsGroupableStateSync) {
+            sf::Packet group_request;
+            if (group_request << (sf::Uint32)APICommandType::toggle_groupable &&
+                group_request << (sf::Uint32)mClientId) {
+                mApiClient->send(group_request);
+            }
+            mNeedsGroupableStateSync = false;
+        }
     }
 }
 
