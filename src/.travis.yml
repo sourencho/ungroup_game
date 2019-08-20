@@ -1,0 +1,18 @@
+env:
+  global:
+   # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
+   #   via the "travis encrypt" command using the project repo's public key
+   - secure: "FQWNIsrzKku3RKWtT2BM0wzZN1uGM8mPboWPxShfZZcYkkNxVS6lGc2MjKan932ZCxBdkMeL0utIGGGQ+xau6Jd/ItRi/x2PKj/1boBzSvwxH4rma55PFuPRwEfqieEqni1R9+CtPqveEY/p+3uMHuQ+SnHhBujxSZG2+qZMnKB9OqhE20iJlrswI3YfufmA3ZnbieWp3yif45VqglPw5iCUsAhT+tplV4XucntiUiS5LLqXBur4A4A9/kWoYxMNvXU06AtqLQzSG9I8EOO8CS3A31d1ZJ4hovlfHnYv9nCFFQlXcVjvlQI7S1atWbElFXvTliWS4x/VMY++jU5YXKD9vzODLQv8qvb4cN8xMaTkKqV/Uc6V398Mwe5qolrx0+dUYVj1k+UPvbfU2vssg339EqhXmD9bEPphMeNGJwiCogpfb0HvCXPZq3/A2cCmzzTQjQQzXW3SScPbymXqpew0Rk/qsQ+nyJKIsjUlI63PpP46iezi7D259hoabvJNmXIE3xC6nks8H9GomgCvWlzGGN9V6VbzIXO/bwDFjObeEeoPLrgO04HsWQkRnFwRI6Wdm4azMiyUxMlhqol1D6VYh6j35NBtYR06FjrLraChHpHFg73Zn33zg3GEdiaM6yuN5p46J270V/atspTtYSaP/oRaZB76/X1xu0h1VoE="
+
+before_install:
+  - echo -n | openssl s_client -connect https://scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
+
+addons:
+  coverity_scan:
+    project:
+      name: "ungroup/ungroup_game"
+      description: "circles group circles ungroup"
+    notification_email: haygastourian@gmail.com
+    build_command_prepend: "cd src; make clean"
+    build_command: "cd src; make"
+    branch_pattern: coverity_scan
