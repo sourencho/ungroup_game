@@ -12,6 +12,9 @@ before_install:
 language: cpp
 compiler: clang
 
+dist: bionic
+script: cd src; make; ./ug-test
+
 addons:
   coverity_scan:
     project:
