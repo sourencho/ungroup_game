@@ -10,6 +10,7 @@
 #include "Group.hpp"
 #include "Mine.hpp"
 #include "NetworkingServer.hpp"
+#include "../common/PhysicsController.hpp"
 
 
 class GameController {
@@ -18,10 +19,12 @@ class GameController {
      ~GameController();
      GameController(const GameController& temp_obj) = delete;
      GameController& operator=(const GameController& temp_obj) = delete;
-     void update();
+
+     void step();
 
  private:
-     int createPlayer();
+     void loadLevel(size_t max_player_count, size_t max_mine_count);
+
      client_inputs collectInputs();
      void computeGameState(
          const std::vector<int>& client_ids,
@@ -33,14 +36,27 @@ class GameController {
      void refreshAndUpdateGroups();
      void setNetworkState();
      void incrementTick();
-     void handleCollision();
+
+     void updateGameObjects(
+         const std::vector<int>& client_ids,
+         const std::vector<client_direction_update>& client_direction_updates,
+         const std::vector<client_groupability_update>& client_groupability_updates);
+     void updateGameObjectsPostPhysics();
+
+     void updateGroups();
+
+     unsigned int assignPlayer();
+
+     std::unique_ptr<NetworkingServer> mNetworkingServer;
+     std::shared_ptr<PhysicsController> mPhysicsController;
+
+     std::unordered_map<sf::Uint32, int> mClientToPlayer;
 
      std::vector<std::shared_ptr<Player>> mPlayers;
      std::vector<std::shared_ptr<Group>> mGroups;
      std::vector<std::shared_ptr<Mine>> mMines;
-     std::unique_ptr<NetworkingServer> mNetworkingServer;
-     std::unordered_map<sf::Uint32, int> mClientToPlayer;
-     size_t mNextPlayerId = 0;
+
+     unsigned int mNextPlayerId = 0;
 };
 
 #endif /* GameController_hpp */

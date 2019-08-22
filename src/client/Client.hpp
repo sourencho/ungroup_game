@@ -7,6 +7,7 @@
 
 #include "../common/util.hpp"
 #include "../common/game_def.hpp"
+#include "../common/PhysicsController.hpp"
 #include "NetworkingClient.hpp"
 #include "ClientGroup.hpp"
 #include "ClientMine.hpp"
@@ -48,11 +49,13 @@ class Client {
      Keys mKeys;
      bool mGroupable = false;
      sf::Uint32 mId;
-     NetworkingClient* mNetworkingClient;
      std::unordered_map<sf::Uint32, int> mGroupIdToClientGroup;
      std::unordered_map<sf::Uint32, int> mMineIdToClientMine;
      size_t mNextClientGroupId = 0;
      size_t mNextClientMineId = 0;
+
+     std::shared_ptr<PhysicsController> mPhysicsController;
+     std::unique_ptr<NetworkingClient> mNetworkingClient;
 };
 
 #endif /* Client_hpp */

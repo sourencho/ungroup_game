@@ -9,7 +9,6 @@ Circle::Circle(float size, sf::Vector2f position, sf::Color color):mCircleShape(
     mCircleShape.setPosition(position);
     mColor = color;
     mCircleShape.setFillColor(color);
-    mVelocity = sf::Vector2f(0.f, 0.f);
 }
 
 Circle::~Circle() {}
@@ -24,9 +23,6 @@ void Circle::draw(sf::RenderTarget& target, sf::Shader* shader, bool use_shader)
     }
 }
 
-sf::Vector2f Circle::getVelocity() const {
-    return mVelocity;
-}
 
 sf::Vector2f Circle::getPosition() const {
     return mCircleShape.getPosition();
@@ -49,22 +45,10 @@ void Circle::changeColor(sf::Color color) {
     mCircleShape.setFillColor(color);
 }
 
-void Circle::setVelocity(sf::Vector2f velocity) {
-    mVelocity = velocity;
-}
-
 void Circle::setPosition(sf::Vector2f position) {
     mCircleShape.setPosition(position);
 }
 
 void Circle::setRadius(int size) {
     mCircleShape.setRadius(size);
-}
-
-void Circle::move() {
-    mCircleShape.setPosition(mCircleShape.getPosition() + mVelocity);
-}
-
-void Circle::move(sf::Vector2f offset) {
-    mCircleShape.setPosition(mCircleShape.getPosition() + offset);
 }

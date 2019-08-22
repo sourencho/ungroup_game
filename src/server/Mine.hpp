@@ -11,14 +11,14 @@
 
 class Mine : public CircleGameObject {
  public:
-     Mine(unsigned int id, sf::Vector2f position, float size, sf::Color color);
+     Mine(unsigned int id, sf::Vector2f position, float size, sf::Color color,
+        std::shared_ptr<PhysicsController> pc);
      ~Mine();
      Mine(const Mine& temp_obj) = delete;  // TODO: define this
      Mine& operator=(const Mine& temp_obj) = delete;  // TODO: define this
 
      void update();
      static std::vector<std::shared_ptr<Mine>> getActiveMines(std::vector<std::shared_ptr<Mine>>& mines);
-     static std::vector<std::shared_ptr<Circle>> getCircles(std::vector<std::shared_ptr<Mine>>& mines);
 };
 
 #endif /* Mine_hpp */

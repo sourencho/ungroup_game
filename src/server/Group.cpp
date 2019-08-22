@@ -3,12 +3,12 @@
 #include <memory>
 #include <iostream>
 #include <numeric>
+
 #include "Group.hpp"
-#include "../common/collision.hpp"
 #include "../common/game_settings.hpp"
 
-Group::Group(int id, sf::Vector2f position, sf::Color color)
-    : CircleGameObject(id, position, 0.f, color) {}
+Group::Group(int id, sf::Vector2f position, sf::Color color, std::shared_ptr<PhysicsController> pc)
+    : CircleGameObject(id, position, 0.f, color, pc) {}
 
 Group::~Group() {}
 
@@ -24,7 +24,7 @@ void Group::update() {
             [](sf::Vector2f curr_vel, std::shared_ptr<Player> player) {
                 return curr_vel + player->getDirection();
             });
-        mCircle->setVelocity(new_velocity * GROUP_SPEED);
+        setVelocity(new_velocity * GROUP_SPEED);
 
         // Group is groupable if any member player wants to group
         // Should probably switch to voting functionality later
@@ -37,8 +37,6 @@ void Group::update() {
             });
 
         mGroupable = groupable;
-        // Update position
-        mCircle->move();
     }
 }
 
@@ -62,21 +60,14 @@ bool Group::getGroupable() {
 
 void Group::addMember(std::shared_ptr<Player> player) {
     mMembers.push_back(player);
-    mCircle->setRadius(mMembers.size() * GROUP_MEMBER_SIZE);
+    setRadius(mMembers.size() * GROUP_MEMBER_SIZE);
 }
 
-std::vector<std::shared_ptr<Group>> Group::getActiveGroups(std::vector<std::shared_ptr<Group>>& groups) {
+std::vector<std::shared_ptr<Group>> Group::getActiveGroups(
+    std::vector<std::shared_ptr<Group>>& groups) {
     std::vector<std::shared_ptr<Group>> active_groups;
     std::copy_if(
         groups.begin(), groups.end(), std::back_inserter(active_groups),
         [](std::shared_ptr<Group> group){return group->isActive();});
     return active_groups;
-}
-
-std::vector<std::shared_ptr<Circle>> Group::getCircles(std::vector<std::shared_ptr<Group>>& groups) {
-    std::vector<std::shared_ptr<Circle>> circles;
-    std::transform(
-        groups.begin(), groups.end(), std::back_inserter(circles),
-        [](std::shared_ptr<Group> group){return group->getCircle();});
-    return circles;
 }
