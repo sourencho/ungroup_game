@@ -112,10 +112,9 @@ void GameController::updateGameObjectsPostPhysics() {
 }
 
 void GameController::setNetworkState() {
-    std::vector<std::shared_ptr<Group>> groups = mLevelController->getGroups();
-    std::vector<std::shared_ptr<Mine>> mines = mLevelController->getMines();
-    mNetworkingServer->setState(
-        Group::getActiveGroups(groups), Mine::getActiveMines(mines));
+    std::vector<std::shared_ptr<Group>> active_groups = mLevelController->getActiveGroups();
+    std::vector<std::shared_ptr<Mine>> active_mines = mLevelController->getActiveMines();
+    mNetworkingServer->setState(active_groups, active_mines);
 }
 
 unsigned int GameController::assignPlayer() {

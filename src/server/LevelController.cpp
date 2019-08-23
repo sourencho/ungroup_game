@@ -87,3 +87,19 @@ std::vector<std::shared_ptr<Group>> LevelController::getGroups() {
 std::vector<std::shared_ptr<Mine>> LevelController::getMines() {
     return mMines;
 }
+
+std::vector<std::shared_ptr<Group>> LevelController::getActiveGroups() {
+    std::vector<std::shared_ptr<Group>> active_groups;
+    std::copy_if(
+        mGroups.begin(), mGroups.end(), std::back_inserter(active_groups),
+        [](std::shared_ptr<Group> group){return group->isActive();});
+    return active_groups;
+}
+
+std::vector<std::shared_ptr<Mine>> LevelController::getActiveMines() {
+    std::vector<std::shared_ptr<Mine>> active_mines;
+    std::copy_if(
+        mMines.begin(), mMines.end(), std::back_inserter(active_mines),
+        [](std::shared_ptr<Mine> mine){return mine->isActive();});
+    return active_mines;
+}
