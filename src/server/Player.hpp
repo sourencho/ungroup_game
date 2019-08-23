@@ -8,7 +8,7 @@
 
 class Player: public GameObject {
  public:
-     Player();
+     explicit Player(int id);
      ~Player();
 
      void setDirection(sf::Vector2f direction);

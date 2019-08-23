@@ -10,6 +10,7 @@
 #include "Group.hpp"
 #include "Mine.hpp"
 #include "NetworkingServer.hpp"
+#include "LevelController.hpp"
 #include "../common/PhysicsController.hpp"
 
 
@@ -49,14 +50,10 @@ class GameController {
 
      std::unique_ptr<NetworkingServer> mNetworkingServer;
      std::shared_ptr<PhysicsController> mPhysicsController;
+     std::unique_ptr<LevelController> mLevelController;
 
      std::unordered_map<sf::Uint32, int> mClientToPlayer;
 
-     std::vector<std::shared_ptr<Player>> mPlayers;
-     std::vector<std::shared_ptr<Group>> mGroups;
-     std::vector<std::shared_ptr<Mine>> mMines;
-
-     unsigned int mNextPlayerId = 0;
 };
 
 #endif /* GameController_hpp */
