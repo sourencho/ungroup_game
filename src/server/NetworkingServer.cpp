@@ -6,7 +6,7 @@
 #include "../common/game_state.hpp"
 
 NetworkingServer::NetworkingServer():mCurrTick(0) {
-    std::cout << "Starting ungroup game server.\n";
+    std::cout << "Starting ungroup game server." << std::endl;;
     std::thread api_thread(&NetworkingServer::apiServer, this);
     std::thread realtime_thread(&NetworkingServer::realtimeServer, this);
     api_thread.detach();
