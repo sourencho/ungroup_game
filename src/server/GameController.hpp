@@ -24,11 +24,8 @@ class GameController {
      void step();
 
  private:
-     void loadLevel(size_t max_player_count, size_t max_mine_count);
-
      client_inputs collectInputs();
      void computeGameState(const client_inputs& cis);
-     void updatePlayers(const client_inputs& cis);
      void refreshAndUpdateGroups();
      void setNetworkState();
      void incrementTick();
@@ -36,9 +33,10 @@ class GameController {
      void updateGameObjects(const client_inputs& cis);
      void updateGameObjectsPostPhysics();
 
+     void updatePlayers(const client_inputs& cis);
      void updateGroups();
 
-     unsigned int assignPlayer();
+     unsigned int createPlayerWithGroup();
 
      std::unique_ptr<NetworkingServer> mNetworkingServer;
      std::shared_ptr<PhysicsController> mPhysicsController;

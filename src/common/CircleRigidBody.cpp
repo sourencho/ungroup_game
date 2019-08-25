@@ -39,3 +39,9 @@ void CircleRigidBody::move(sf::Vector2f offset) {
 void CircleRigidBody::step() {
     mPosition += mVelocity;
 }
+
+sf::Vector2f CircleRigidBody::getCenter() {
+    sf::Vector2f position = getPosition();
+    float radius = getRadius();
+    return sf::Vector2f(position.x + radius, position.y + radius);
+}

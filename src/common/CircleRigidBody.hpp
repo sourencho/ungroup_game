@@ -22,6 +22,8 @@ class CircleRigidBody {
 
     void setVelocity(sf::Vector2f velocity);
 
+    sf::Vector2f getCenter();
+
     void move(sf::Vector2f offset);
     void step();
 

@@ -28,21 +28,22 @@ void PhysicsController::step() {
     amount needed such that the circles are touching but not intersecting.
 */
 void PhysicsController::handleCollision() {
-    std::vector<std::shared_ptr<CircleRigidBody>> active_circles;
-    std::copy_if(
-        mCircleRigidBodies.begin(), mCircleRigidBodies.end(), std::back_inserter(active_circles),
-        [](std::shared_ptr<CircleRigidBody> circle){return circle->isActive();});
-
-    for (std::shared_ptr<CircleRigidBody> circle_a : active_circles) {
-        for (std::shared_ptr<CircleRigidBody> circle_b : active_circles) {
+    for (std::shared_ptr<CircleRigidBody> circle_a : mCircleRigidBodies) {
+        if (!circle_a->isActive()) {
+            continue;
+        }
+        for (std::shared_ptr<CircleRigidBody> circle_b : mCircleRigidBodies) {
+            if (!circle_b->isActive()) {
+                continue;
+            }
             if (circle_a == circle_b) {
                 continue;
             }
             // Detect collision
-            float dist = distance(circle_a->getPosition(), circle_b->getPosition());
+            float dist = distance(circle_a->getCenter(), circle_b->getCenter());
             if (dist < circle_a->getRadius() + circle_b->getRadius()) {
                 // Handle collision
-                sf::Vector2f between = getVector(circle_a->getPosition(), circle_b->getPosition());
+                sf::Vector2f between = getVector(circle_a->getCenter(), circle_b->getCenter());
                 float radius_sum = circle_a->getRadius() + circle_b->getRadius();
                 float distance_between = length(between);
 
