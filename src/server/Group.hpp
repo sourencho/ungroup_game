@@ -21,8 +21,6 @@ class Group : public CircleGameObject {
      bool getGroupable();
      void setGroupable(bool);
      void addMember(std::shared_ptr<Player> player);
-     static std::vector<std::shared_ptr<Group>> getActiveGroups(
-        std::vector<std::shared_ptr<Group>>& groups);
 
  private:
      std::vector<std::shared_ptr<Player>> mMembers;

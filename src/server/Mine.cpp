@@ -12,11 +12,3 @@ Mine::Mine(unsigned int id, sf::Vector2f position, float size, sf::Color color,
     : CircleGameObject(id, position, size, color, pc) {}
 
 Mine::~Mine() {}
-
-std::vector<std::shared_ptr<Mine>> Mine::getActiveMines(std::vector<std::shared_ptr<Mine>>& mines) {
-    std::vector<std::shared_ptr<Mine>> active_mines;
-    std::copy_if(
-        mines.begin(), mines.end(), std::back_inserter(active_mines),
-        [](std::shared_ptr<Mine> mine){return mine->isActive();});
-    return active_mines;
-}

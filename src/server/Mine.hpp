@@ -16,9 +16,6 @@ class Mine : public CircleGameObject {
      ~Mine();
      Mine(const Mine& temp_obj) = delete;  // TODO: define this
      Mine& operator=(const Mine& temp_obj) = delete;  // TODO: define this
-
-     void update();
-     static std::vector<std::shared_ptr<Mine>> getActiveMines(std::vector<std::shared_ptr<Mine>>& mines);
 };
 
 #endif /* Mine_hpp */

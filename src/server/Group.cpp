@@ -62,12 +62,3 @@ void Group::addMember(std::shared_ptr<Player> player) {
     mMembers.push_back(player);
     setRadius(mMembers.size() * GROUP_MEMBER_SIZE);
 }
-
-std::vector<std::shared_ptr<Group>> Group::getActiveGroups(
-    std::vector<std::shared_ptr<Group>>& groups) {
-    std::vector<std::shared_ptr<Group>> active_groups;
-    std::copy_if(
-        groups.begin(), groups.end(), std::back_inserter(active_groups),
-        [](std::shared_ptr<Group> group){return group->isActive();});
-    return active_groups;
-}

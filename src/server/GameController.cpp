@@ -8,44 +8,15 @@
 #include "../common/game_settings.hpp"
 
 
-GameController::GameController(size_t max_player_count, size_t max_mine_count)
-    :mNetworkingServer(new NetworkingServer()), mPhysicsController(new PhysicsController()) {
-    loadLevel(max_player_count, max_mine_count);
+GameController::GameController(size_t max_player_count, size_t max_mine_count):
+  mNetworkingServer(new NetworkingServer()),
+  mPhysicsController(new PhysicsController()),
+  mLevelController(new LevelController(mPhysicsController)) {
+    mLevelController->loadLevel(max_player_count, max_mine_count);
 }
 
 GameController::~GameController() {}
 
-void GameController::loadLevel(size_t max_player_count, size_t max_mine_count) {
-    mPlayers.reserve(max_player_count);
-    mGroups.reserve(max_player_count);
-    mMines.reserve(max_mine_count);
-
-    // Initialize Players
-    for (int i=0; i < max_player_count; i++) {
-        mPlayers.push_back(std::shared_ptr<Player>(new Player()));
-    }
-
-    // Initialize Groups
-    for (int i=0; i < max_player_count; i++) {
-        mGroups.push_back(std::shared_ptr<Group>(new Group(
-            i,
-            sf::Vector2f(GROUP_START_OFFSET_X * (i+1), GROUP_START_OFFSET_Y),
-            sf::Color(0, 255, 0),
-            mPhysicsController)));
-    }
-
-    // Initialize Mines
-    for (int i=0; i < max_mine_count; i++) {
-        std::shared_ptr<Mine> new_mine = std::shared_ptr<Mine>(new Mine(
-            i,
-            sf::Vector2f(MINE_START_OFFSET_X, MINE_START_OFFSET_Y * (i+1)),
-            MINE_SIZE,
-            sf::Color(0, 0, 255),
-            mPhysicsController));
-        new_mine->setActive(true);
-        mMines.push_back(new_mine);
-    }
-}
 
 void GameController::step() {
     client_inputs cis = collectInputs();
@@ -86,8 +57,8 @@ void GameController::updateGameObjects(const std::vector<int>& client_ids,
 */
 void GameController::refreshPlayers(std::vector<int> client_ids) {
     // Reset players
-    for (std::shared_ptr<Player> player : mPlayers) {
-        player->setActive(false);
+    for (int player_id : mLevelController->getPlayerIds()) {
+        mLevelController->setPlayerActive(player_id, false);
     }
 
     // Create new players for clients without a player
@@ -96,7 +67,7 @@ void GameController::refreshPlayers(std::vector<int> client_ids) {
             // Client doesn't have player
             mClientToPlayer[client_id] = assignPlayer();
         } else {
-            mPlayers[mClientToPlayer[client_id]]->setActive(true);
+            mLevelController->setPlayerActive(mClientToPlayer[client_id], true);
         }
     }
 }
@@ -107,16 +78,17 @@ void GameController::refreshPlayers(std::vector<int> client_ids) {
 void GameController::updatePlayers(std::vector<client_direction_update> client_direction_updates,
         std::vector<client_groupability_update> client_groupability_updates
     ) {
+    std::vector<std::shared_ptr<Player>> players = mLevelController->getPlayers();
     // Update player directions
     for (const auto& client_direction_update : client_direction_updates) {
         sf::Uint32 client_id = client_direction_update.client_id;
-        mPlayers[mClientToPlayer[client_id]]->setDirection(
+        players[mClientToPlayer[client_id]]->setDirection(
                 sf::Vector2f(client_direction_update.x_dir, client_direction_update.y_dir));
     }
 
     for (const auto& client_groupability_update : client_groupability_updates) {
         sf::Uint32 client_id = client_groupability_update.client_id;
-        mPlayers[mClientToPlayer[client_id]]->setGroupable(client_groupability_update.groupable);
+        players[mClientToPlayer[client_id]]->setGroupable(client_groupability_update.groupable);
     }
 }
 
@@ -124,38 +96,30 @@ void GameController::updatePlayers(std::vector<client_direction_update> client_d
     Updates the active status and properties of groups.
 */
 void GameController::updateGroups() {
-    // Update groups
-    for (auto group : mGroups) {
+    for (auto group : mLevelController->getGroups()) {
         group->update();
     }
 }
 
 void GameController::updateGameObjectsPostPhysics() {
-    for (auto group : mGroups) {
+    for (auto group : mLevelController->getGroups()) {
         group->matchRigid();
     }
 
-    for (auto mine : mMines) {
+    for (auto mine : mLevelController->getMines()) {
         mine->matchRigid();
     }
 }
 
 void GameController::setNetworkState() {
-    mNetworkingServer->setState(Group::getActiveGroups(mGroups), Mine::getActiveMines(mMines));
+    std::vector<std::shared_ptr<Group>> active_groups = mLevelController->getActiveGroups();
+    std::vector<std::shared_ptr<Mine>> active_mines = mLevelController->getActiveMines();
+    mNetworkingServer->setState(active_groups, active_mines);
 }
 
 unsigned int GameController::assignPlayer() {
-    int new_player_id = mNextPlayerId++;
-    if (new_player_id >= mPlayers.size() || new_player_id >= mGroups.size()) {
-        throw std::runtime_error("Create players or groups with id out of range");
-    }
-
-    mPlayers[new_player_id]->setActive(true);
-    std::cout << "Created Player " << new_player_id << std::endl;
-
-    // Create group for player
-    mGroups[new_player_id]->setActive(true);
-    mGroups[new_player_id]->addMember(mPlayers[new_player_id]);
+    int new_player_id = mLevelController->createPlayer();
+    mLevelController->createGroup(new_player_id);
 
     return new_player_id;
 }
