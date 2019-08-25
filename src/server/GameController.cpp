@@ -18,15 +18,13 @@ GameController::~GameController() {}
 
 void GameController::step() {
     client_inputs cis = collectInputs();
-    computeGameState(cis.client_ids, cis.client_direction_updates, cis.client_groupability_updates);
+    computeGameState(cis);
     setNetworkState();
     incrementTick();
 }
 
-void GameController::computeGameState(const std::vector<int>& client_ids,
-  const std::vector<client_direction_update>& client_direction_updates,
-  const std::vector<client_groupability_update>& client_groupability_updates) {
-    updateGameObjects(client_ids, client_direction_updates, client_groupability_updates);
+void GameController::computeGameState(const client_inputs& cis) {
+    updateGameObjects(cis);
     mPhysicsController->step();
     mPhysicsController->handleCollision();
     updateGameObjectsPostPhysics();
@@ -40,50 +38,34 @@ void GameController::incrementTick() {
     mNetworkingServer->incrementTick();
 }
 
-void GameController::updateGameObjects(const std::vector<int>& client_ids,
-  const std::vector<client_direction_update>& client_direction_updates,
-  const std::vector<client_groupability_update>& client_groupability_updates) {
-    refreshPlayers(client_ids);
-    updatePlayers(client_direction_updates, client_groupability_updates);
+void GameController::updateGameObjects(const client_inputs& cis) {
+    updatePlayers(cis);
     updateGroups();
-}
-
-/**
-    Updates the mapping of clients to players and the active status of players.
-*/
-void GameController::refreshPlayers(std::vector<int> client_ids) {
-    // Reset players
-    for (int player_id : mLevelController->getPlayerIds()) {
-        mLevelController->setPlayerActive(player_id, false);
-    }
-
-    // Create new players for clients without a player
-    for (const int client_id : client_ids) {
-        if (mClientToPlayer.find(client_id) == mClientToPlayer.end()) {
-            // Client doesn't have player
-            mClientToPlayer[client_id] = assignPlayer();
-        } else {
-            mLevelController->setPlayerActive(mClientToPlayer[client_id], true);
-        }
-    }
 }
 
 /**
     Updates the properties of players based on updates recieved from the clients.
 */
-void GameController::updatePlayers(std::vector<client_direction_update> client_direction_updates,
-  std::vector<client_groupability_update> client_groupability_updates) {
-    std::vector<std::shared_ptr<Player>> players = mLevelController->getPlayers();
-    // Update player directions
-    for (const auto& client_direction_update : client_direction_updates) {
-        sf::Uint32 client_id = client_direction_update.client_id;
-        players[mClientToPlayer[client_id]]->setDirection(
-                sf::Vector2f(client_direction_update.x_dir, client_direction_update.y_dir));
+void GameController::updatePlayers(const client_inputs& cis) {
+    for (const auto& new_client_id : cis.new_client_ids) {
+        mClientToPlayer[new_client_id] = assignPlayer();
     }
 
-    for (const auto& client_groupability_update : client_groupability_updates) {
+    for (const auto& removed_client_id : cis.removed_client_ids) {
+        mLevelController->setPlayerActive(mClientToPlayer[removed_client_id], false);
+    }
+
+    // Update player directions
+    for (const auto& client_direction_update : cis.client_direction_updates) {
+        sf::Uint32 client_id = client_direction_update.client_id;
+        mLevelController->getPlayer(mClientToPlayer[client_id])->setDirection(
+          sf::Vector2f(client_direction_update.x_dir, client_direction_update.y_dir));
+    }
+
+    for (const auto& client_groupability_update : cis.client_groupability_updates) {
         sf::Uint32 client_id = client_groupability_update.client_id;
-        players[mClientToPlayer[client_id]]->setGroupable(client_groupability_update.groupable);
+        mLevelController->getPlayer(mClientToPlayer[client_id])->setGroupable(
+          client_groupability_update.groupable);
     }
 }
 

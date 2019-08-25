@@ -23,10 +23,13 @@ class LevelController {
 
      std::vector<int> getPlayerIds();
 
+     std::shared_ptr<Player> getPlayer(int player_id);
+
      std::vector<std::shared_ptr<Player>> getPlayers();
      std::vector<std::shared_ptr<Group>> getGroups();
      std::vector<std::shared_ptr<Mine>> getMines();
 
+     std::vector<std::shared_ptr<Player>> getActivePlayers();
      std::vector<std::shared_ptr<Group>> getActiveGroups();
      std::vector<std::shared_ptr<Mine>> getActiveMines();
 

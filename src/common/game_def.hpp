@@ -52,7 +52,8 @@ struct direction {
 };
 
 struct client_inputs {
-    std::vector<int> client_ids;
+    std::vector<int> new_client_ids;
+    std::vector<int> removed_client_ids;
     std::vector<client_direction_update> client_direction_updates;
     std::vector<client_groupability_update> client_groupability_updates;
 };

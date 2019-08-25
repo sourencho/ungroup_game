@@ -78,6 +78,10 @@ std::vector<int> LevelController::getPlayerIds() {
     return player_ids;
 }
 
+std::shared_ptr<Player> LevelController::getPlayer(int player_id) {
+    return mPlayers[player_id];
+}
+
 std::vector<std::shared_ptr<Player>> LevelController::getPlayers() {
     return mPlayers;
 }
@@ -88,6 +92,14 @@ std::vector<std::shared_ptr<Group>> LevelController::getGroups() {
 
 std::vector<std::shared_ptr<Mine>> LevelController::getMines() {
     return mMines;
+}
+
+std::vector<std::shared_ptr<Player>> LevelController::getActivePlayers() {
+    std::vector<std::shared_ptr<Player>> active_players;
+    std::copy_if(
+        mPlayers.begin(), mPlayers.end(), std::back_inserter(active_players),
+        [](std::shared_ptr<Player> player){return player->isActive();});
+    return active_players;
 }
 
 std::vector<std::shared_ptr<Group>> LevelController::getActiveGroups() {
