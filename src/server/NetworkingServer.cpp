@@ -5,8 +5,7 @@
 #include "../common/network_util.hpp"
 #include "../common/game_state.hpp"
 
-NetworkingServer::NetworkingServer():
-  mCurrTick(0) {
+NetworkingServer::NetworkingServer():mCurrTick(0) {
     std::cout << "Starting ungroup game server." << std::endl;;
     std::thread api_thread(&NetworkingServer::apiServer, this);
     std::thread realtime_thread(&NetworkingServer::realtimeServer, this);
@@ -32,10 +31,13 @@ void NetworkingServer::realtimeServer() {
     }
 }
 
-void NetworkingServer::handleRealtimeCommand(sf::Socket::Status status, sf::Packet command_packet,
-  sf::UdpSocket& rt_server,
-  sf::IpAddress& sender,
-  unsigned short port) {
+void NetworkingServer::handleRealtimeCommand(
+    sf::Socket::Status status,
+    sf::Packet command_packet,
+    sf::UdpSocket& rt_server,
+    sf::IpAddress& sender,
+    unsigned short port
+) {
     RealtimeCommand realtime_command;
     command_packet >> realtime_command;
     switch (realtime_command.command) {
@@ -130,10 +132,13 @@ void NetworkingServer::apiServer() {
     }
 }
 
-void NetworkingServer::handleApiCommand(sf::Socket::Status status, sf::Packet command_packet,
-  sf::SocketSelector& selector,
-  sf::TcpSocket& client,
-  std::list<sf::TcpSocket*>& clients) {
+void NetworkingServer::handleApiCommand(
+    sf::Socket::Status status,
+    sf::Packet command_packet,
+    sf::SocketSelector& selector,
+    sf::TcpSocket& client,
+    std::list<sf::TcpSocket*>& clients
+) {
     sf::Uint32 api_command_type;
     switch (status) {
         case sf::Socket::Done:
@@ -255,8 +260,9 @@ std::vector<client_groupability_update> NetworkingServer::getClientGroupabilityU
     return client_groupability_updates;
 }
 
-void NetworkingServer::setState(std::vector<std::shared_ptr<Group>> active_groups,
-  std::vector<std::shared_ptr<Mine>> active_mines) {
+void NetworkingServer::setState(
+    std::vector<std::shared_ptr<Group>> active_groups,
+    std::vector<std::shared_ptr<Mine>> active_mines) {
     mGroupUpdates.clear();
     for (const auto active_group : active_groups) {
         sf::Uint32 group_id = active_group->getId();

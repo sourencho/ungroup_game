@@ -4,9 +4,7 @@
 #include "LevelController.hpp"
 #include "../common/game_settings.hpp"
 
-LevelController::LevelController(std::shared_ptr<PhysicsController> pc):
-  mPhysicsController(pc) {}
-
+LevelController::LevelController(std::shared_ptr<PhysicsController> pc):mPhysicsController(pc) {}
 LevelController::~LevelController() {}
 
 void LevelController::loadLevel(size_t max_player_count, size_t max_mine_count) {

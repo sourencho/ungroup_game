@@ -3,9 +3,10 @@
 #include <iostream>
 #include "Client.hpp"
 
-Client::Client(int max_player_count, int max_mine_count, sf::Keyboard::Key keys[5]):
-  mDirection(1.0, 1.0), mPhysicsController(new PhysicsController()),
-  mNetworkingClient(new NetworkingClient()) {
+Client::Client(int max_player_count, int max_mine_count, sf::Keyboard::Key keys[5])
+    : mDirection(1.0, 1.0),
+      mPhysicsController(new PhysicsController()),
+      mNetworkingClient(new NetworkingClient()) {
     for (int i=0; i < max_player_count; i++) {
         mClientGroups.push_back(
             new ClientGroup(sf::Vector2f(10.f, 10.f), sf::Color(0, 255, 0), mPhysicsController));
