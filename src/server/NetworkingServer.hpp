@@ -31,9 +31,6 @@ class NetworkingServer {
         std::vector<std::shared_ptr<Group>> active_groups,
         std::vector<std::shared_ptr<Mine>> active_mines);
      void incrementTick();
-     std::vector<client_direction_update> getClientDirectionUpdates();
-     std::vector<client_groupability_update> getClientGroupabilityUpdates();
-     std::vector<int> getClientIds();
 
  private:
      void realtimeServer();
@@ -55,7 +52,15 @@ class NetworkingServer {
         sf::IpAddress& sender,
         unsigned short port);
 
+     std::vector<client_direction_update> getClientDirectionUpdates();
+     std::vector<client_groupability_update> getClientGroupabilityUpdates();
+     std::vector<int> getClientIds();
+     std::vector<int> popNewClientIds();
+     std::vector<int> popRemovedClientIds();
+
      ThreadSafeMap<sf::TcpSocket*, sf::Int32> mClientSocketsToIds;
+     ThreadSafeVector<int> mNewClientIds;
+     ThreadSafeVector<int> mRemovedClientIds;
      ThreadSafeVector<GroupUpdate> mGroupUpdates;
      ThreadSafeVector<MineUpdate> mMineUpdates;
      ThreadSafeMap<sf::Uint32, sf::Vector2f> mClientMoves;

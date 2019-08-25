@@ -38,6 +38,9 @@ class ThreadSafeVector {
             std::copy(mVector.begin(), mVector.end(), std::back_inserter(vector_copy));
             return vector_copy;
         }
+        void forceClear() {
+            mVector.clear();
+        }
 
     private:
         std::vector<T> mVector;

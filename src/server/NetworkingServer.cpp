@@ -162,10 +162,12 @@ void NetworkingServer::handleApiCommand(sf::Socket::Status status, sf::Packet co
 }
 
 void NetworkingServer::deleteClient(sf::TcpSocket* client, std::list<sf::TcpSocket*> clients) {
+    int client_id = mClientSocketsToIds.get(client);
     clients.remove(client);
     mClientGroupable.erase(mClientSocketsToIds.get(client));
     mClientMoves.erase(mClientSocketsToIds.get(client));
     mClientSocketsToIds.erase(client);
+    mRemovedClientIds.add(client_id);
 }
 
 void NetworkingServer::updateGroupable(sf::TcpSocket& client) {
@@ -198,7 +200,9 @@ void NetworkingServer::registerClient(sf::TcpSocket& client) {
             << "Received client registration. Issued client ID "
             << mClientIdCounter
             << std::endl;
-        mClientSocketsToIds.set(&client, mClientIdCounter);
+        int new_client_id = mClientIdCounter++;
+        mClientSocketsToIds.set(&client, new_client_id);
+        mNewClientIds.add(new_client_id);
         mClientIdCounter++;
     }
 }
@@ -210,27 +214,29 @@ client_inputs NetworkingServer::collectClientInputs() {
     // Give clients a window to write inputs
     mClientSocketsToIds.unlock();
     mClientMoves.unlock();
+    mClientGroupable.unlock();
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     mClientSocketsToIds.lock();
     mClientMoves.lock();
+    mClientGroupable.lock();
 
     // Get client inputs
-    std::vector<int> client_ids = getClientIds();
-    std::vector<client_direction_update> client_direction_updates = getClientDirectionUpdates();
-    std::vector<client_groupability_update> client_groupability_updates =
-        getClientGroupabilityUpdates();
-
-    client_inputs cis = {client_ids, client_direction_updates, client_groupability_updates};
+    client_inputs cis = {
+        popNewClientIds(), popRemovedClientIds(), getClientDirectionUpdates(),
+        getClientGroupabilityUpdates()};
     return cis;
 }
 
-std::vector<int> NetworkingServer::getClientIds() {
-    std::vector<int> client_ids;
-    auto client_sockets_to_ids = mClientSocketsToIds.forceCopy();
-    std::transform(
-        client_sockets_to_ids.begin(), client_sockets_to_ids.end(), std::back_inserter(client_ids),
-        [](std::pair<sf::TcpSocket*, sf::Int32> pair){return pair.second;});
-    return client_ids;
+std::vector<int> NetworkingServer::popNewClientIds() {
+    std::vector<int> new_client_ids = mNewClientIds.forceCopy();
+    mNewClientIds.forceClear();
+    return new_client_ids;
+}
+
+std::vector<int> NetworkingServer::popRemovedClientIds() {
+    std::vector<int> removed_client_ids = mRemovedClientIds.forceCopy();
+    mRemovedClientIds.forceClear();
+    return removed_client_ids;
 }
 
 std::vector<client_direction_update> NetworkingServer::getClientDirectionUpdates() {
