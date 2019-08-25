@@ -2,7 +2,8 @@
 #include <iostream>
 #include "../common/util.hpp"
 
-Player::Player(int id):GameObject(id), mDirection(0.0, 0.0), mGroupable(false) {}
+Player::Player(int id):
+  GameObject(id), mDirection(0.0, 0.0), mGroupable(false) {}
 
 Player::~Player() {}
 
