@@ -9,14 +9,12 @@
 
 
 GameController::GameController(size_t max_player_count, size_t max_mine_count):
-  mNetworkingServer(new NetworkingServer()),
-  mPhysicsController(new PhysicsController()),
+  mNetworkingServer(new NetworkingServer()), mPhysicsController(new PhysicsController()),
   mLevelController(new LevelController(mPhysicsController)) {
     mLevelController->loadLevel(max_player_count, max_mine_count);
 }
 
 GameController::~GameController() {}
-
 
 void GameController::step() {
     client_inputs cis = collectInputs();
@@ -25,11 +23,9 @@ void GameController::step() {
     incrementTick();
 }
 
-void GameController::computeGameState(
-    const std::vector<int>& client_ids,
-    const std::vector<client_direction_update>& client_direction_updates,
-    const std::vector<client_groupability_update>& client_groupability_updates
-) {
+void GameController::computeGameState(const std::vector<int>& client_ids,
+  const std::vector<client_direction_update>& client_direction_updates,
+  const std::vector<client_groupability_update>& client_groupability_updates) {
     updateGameObjects(client_ids, client_direction_updates, client_groupability_updates);
     mPhysicsController->step();
     mPhysicsController->handleCollision();
@@ -45,8 +41,8 @@ void GameController::incrementTick() {
 }
 
 void GameController::updateGameObjects(const std::vector<int>& client_ids,
-    const std::vector<client_direction_update>& client_direction_updates,
-    const std::vector<client_groupability_update>& client_groupability_updates) {
+  const std::vector<client_direction_update>& client_direction_updates,
+  const std::vector<client_groupability_update>& client_groupability_updates) {
     refreshPlayers(client_ids);
     updatePlayers(client_direction_updates, client_groupability_updates);
     updateGroups();
@@ -76,8 +72,7 @@ void GameController::refreshPlayers(std::vector<int> client_ids) {
     Updates the properties of players based on updates recieved from the clients.
 */
 void GameController::updatePlayers(std::vector<client_direction_update> client_direction_updates,
-        std::vector<client_groupability_update> client_groupability_updates
-    ) {
+  std::vector<client_groupability_update> client_groupability_updates) {
     std::vector<std::shared_ptr<Player>> players = mLevelController->getPlayers();
     // Update player directions
     for (const auto& client_direction_update : client_direction_updates) {

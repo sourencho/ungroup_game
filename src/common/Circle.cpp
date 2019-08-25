@@ -5,7 +5,8 @@
 
 #include "Circle.hpp"
 
-Circle::Circle(float size, sf::Vector2f position, sf::Color color):mCircleShape(size) {
+Circle::Circle(float size, sf::Vector2f position, sf::Color color):
+  mCircleShape(size) {
     mCircleShape.setPosition(position);
     mColor = color;
     mCircleShape.setFillColor(color);
