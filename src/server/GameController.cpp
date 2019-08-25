@@ -23,6 +23,10 @@ void GameController::step() {
     incrementTick();
 }
 
+client_inputs GameController::collectInputs() {
+    return mNetworkingServer->collectClientInputs();
+}
+
 void GameController::computeGameState(const client_inputs& cis) {
     updateGameObjects(cis);
     mPhysicsController->step();
@@ -30,13 +34,6 @@ void GameController::computeGameState(const client_inputs& cis) {
     updateGameObjectsPostPhysics();
 }
 
-client_inputs GameController::collectInputs() {
-    return mNetworkingServer->collectClientInputs();
-}
-
-void GameController::incrementTick() {
-    mNetworkingServer->incrementTick();
-}
 
 void GameController::updateGameObjects(const client_inputs& cis) {
     updatePlayers(cis);
@@ -44,11 +41,11 @@ void GameController::updateGameObjects(const client_inputs& cis) {
 }
 
 /**
-    Updates the properties of players based on updates recieved from the clients.
+    Updates the active status and  properties of players based on updates recieved from the clients.
 */
 void GameController::updatePlayers(const client_inputs& cis) {
     for (const auto& new_client_id : cis.new_client_ids) {
-        mClientToPlayer[new_client_id] = assignPlayer();
+        mClientToPlayer[new_client_id] = createPlayerWithGroup();
     }
 
     for (const auto& removed_client_id : cis.removed_client_ids) {
@@ -94,9 +91,13 @@ void GameController::setNetworkState() {
     mNetworkingServer->setState(active_groups, active_mines);
 }
 
-unsigned int GameController::assignPlayer() {
+unsigned int GameController::createPlayerWithGroup() {
     int new_player_id = mLevelController->createPlayer();
     mLevelController->createGroup(new_player_id);
 
     return new_player_id;
+}
+
+void GameController::incrementTick() {
+    mNetworkingServer->incrementTick();
 }
