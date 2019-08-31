@@ -31,8 +31,6 @@ class LevelController {
      std::vector<std::shared_ptr<Mine>> getMines();
 
      std::vector<std::shared_ptr<Player>> getActivePlayers();
-     std::vector<std::shared_ptr<Group>> getActiveGroups();
-     std::vector<std::shared_ptr<Mine>> getActiveMines();
 
  private:
      std::vector<std::shared_ptr<Player>> mPlayers;
