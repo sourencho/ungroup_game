@@ -6,9 +6,9 @@
 #include <memory>
 #include <unordered_map>
 
-#include "Player.hpp"
-#include "Group.hpp"
-#include "Mine.hpp"
+#include "../common/Player.hpp"
+#include "../common/Group.hpp"
+#include "../common/Mine.hpp"
 #include "NetworkingServer.hpp"
 #include "LevelController.hpp"
 #include "../common/PhysicsController.hpp"

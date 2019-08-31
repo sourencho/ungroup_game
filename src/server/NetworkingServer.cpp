@@ -3,7 +3,6 @@
 #include <vector>
 #include <memory>
 #include "../common/network_util.hpp"
-#include "../common/game_state.hpp"
 
 NetworkingServer::NetworkingServer():
   mCurrTick(0) {
@@ -45,8 +44,7 @@ void NetworkingServer::handleRealtimeCommand(sf::Socket::Status status, sf::Pack
         }
         case (sf::Uint32)RealtimeCommandType::fetch_state: {
             // sample current state every 100 ms, this simply packages and returns it
-            GameState game_state = {
-                static_cast<sf::Uint32>(mCurrTick), mGroupUpdates.copy(), mMineUpdates.copy()};
+            GameState game_state = mGameState.get();
             sf::Packet game_state_packet = pack_game_state(game_state);
             rt_server.send(game_state_packet, sender, port);
             break;
@@ -261,26 +259,20 @@ std::vector<client_groupability_update> NetworkingServer::getClientGroupabilityU
     return client_groupability_updates;
 }
 
-void NetworkingServer::setState(std::vector<std::shared_ptr<Group>> active_groups,
-  std::vector<std::shared_ptr<Mine>> active_mines) {
-    mGroupUpdates.clear();
-    for (const auto active_group : active_groups) {
-        sf::Uint32 group_id = active_group->getId();
-        sf::Vector2f position = active_group->getCircle()->getPosition();
-        bool groupable = active_group->getGroupable();
-        float radius = active_group->getCircle()->getRadius();
-        GroupUpdate group_update = {group_id, position.x, position.y, radius, groupable};
-        mGroupUpdates.add(group_update);
-    }
+void NetworkingServer::setState(std::vector<std::shared_ptr<Group>> groups,
+  std::vector<std::shared_ptr<Mine>> mines) {
+    std::vector<GroupUpdate> group_updates;
+    std::vector<MineUpdate> mine_updates;
+    GameState gs = {mCurrTick, group_updates, mine_updates};
+    std::transform(
+        groups.begin(), groups.end(), std::back_inserter(gs.group_updates),
+        [](std::shared_ptr<Group> group){return group->getUpdate();});
 
-    mMineUpdates.clear();
-    for (const auto active_mine : active_mines) {
-        sf::Uint32 mine_id = active_mine->getId();
-        sf::Vector2f position = active_mine->getCircle()->getPosition();
-        float radius = active_mine->getCircle()->getRadius();
-        MineUpdate mine_update = {mine_id, position.x, position.y, radius};
-        mMineUpdates.add(mine_update);
-    }
+    std::transform(
+        mines.begin(), mines.end(), std::back_inserter(gs.mine_updates),
+        [](std::shared_ptr<Mine> mine){return mine->getUpdate();});
+
+    mGameState.set(gs);
 }
 
 void NetworkingServer::incrementTick() {

@@ -11,7 +11,6 @@
 #include <SFML/Network.hpp>
 
 #include "../common/network_util.hpp"
-#include "../common/game_state.hpp"
 
 
 NetworkingClient::NetworkingClient():mDirection(0.f, 0.f) {
@@ -41,12 +40,8 @@ NetworkingClient::NetworkingClient():mDirection(0.f, 0.f) {
 
 NetworkingClient::~NetworkingClient() {}
 
-std::vector<GroupUpdate> NetworkingClient::getGroupUpdates() {
-    return mGroupUpdates.copy();
-}
-
-std::vector<MineUpdate> NetworkingClient::getMineUpdates() {
-    return mMineUpdates.copy();
+GameState NetworkingClient::getGameState() {
+    return mGameState.get();
 }
 
 void NetworkingClient::setDirection(sf::Vector2f direction) {
@@ -127,17 +122,8 @@ void NetworkingClient::RealtimeClientRecv() {
         mRealtimeClient->receive(packet, sender, port);
         GameState game_state = unpack_game_state(packet);
 
+        mGameState.set(game_state);
         mCurrentTick = game_state.tick;
-
-        mGroupUpdates.clear();
-        for (const auto group_update : game_state.group_updates) {
-            mGroupUpdates.add(group_update);
-        }
-
-        mMineUpdates.clear();
-        for (const auto mine_update : game_state.mine_updates) {
-            mMineUpdates.add(mine_update);
-        }
     }
 }
 

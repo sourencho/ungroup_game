@@ -9,7 +9,9 @@
 
 #include "../common/game_def.hpp"
 #include "../common/ThreadSafeVector.hpp"
+#include "../common/ThreadSafeData.hpp"
 #include "../common/ThreadSafeVector2f.hpp"
+#include "../common/game_state.hpp"
 
 
 class NetworkingClient {
@@ -39,10 +41,9 @@ class NetworkingClient {
      NetworkingClient();
      ~NetworkingClient();
 
-     std::vector<GroupUpdate> getGroupUpdates();
-     std::vector<MineUpdate> getMineUpdates();
      void setDirection(sf::Vector2f direction);
      void setGroupable(bool groupable);
+     GameState getGameState();
 
  private:
      // Methods
@@ -64,9 +65,8 @@ class NetworkingClient {
      sf::TcpSocket* mApiClient;
      sf::UdpSocket* mRealtimeClient;
 
-     ThreadSafeVector<GroupUpdate> mGroupUpdates;
-     ThreadSafeVector<MineUpdate> mMineUpdates;
      ThreadSafeVector2f mDirection;
+     ThreadSafeData<GameState> mGameState;
 };
 
 #endif /* NetworkingClient_hpp */

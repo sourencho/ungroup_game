@@ -1,9 +1,10 @@
 #ifndef LevelController_hpp
 #define LevelController_hpp
 
-#include "Player.hpp"
-#include "Group.hpp"
-#include "Mine.hpp"
+#include "../common/Player.hpp"
+#include "../common/Group.hpp"
+#include "../common/Mine.hpp"
+
 
 class LevelController {
  public:

@@ -3,8 +3,12 @@
 
 #include <stdio.h>
 #include <vector>
-#include "game_def.hpp"
+
 #include <SFML/Network.hpp>
+
+#include "../common/Group.hpp"
+#include "../common/Mine.hpp"
+
 
 struct GameState {
     sf::Uint32 tick;

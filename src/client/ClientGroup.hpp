@@ -5,8 +5,12 @@
 #include <memory>
 
 #include <SFML/Graphics.hpp>
+
 #include "../common/Circle.hpp"
 #include "../common/CircleGameObject.hpp"
+#include "../common/game_def.hpp"
+#include "../common/Group.hpp"
+
 
 class ClientGroup : public CircleGameObject {
  public:
@@ -17,6 +21,8 @@ class ClientGroup : public CircleGameObject {
      bool getGroupable();
      ClientGroup(const ClientGroup& temp_obj) = delete;  // TODO(sourenp): define this
      ClientGroup& operator=(const ClientGroup& temp_obj) = delete;  // TODO(sourenp): define this
+
+     void applyUpdate(GroupUpdate gu);
 
  private:
      bool mGroupable = false;

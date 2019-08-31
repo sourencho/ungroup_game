@@ -11,12 +11,15 @@
 #include <future>
 #include <unordered_map>
 
+#include <SFML/Network.hpp>
+
 #include "../common/ThreadSafeMap.hpp"
 #include "../common/game_def.hpp"
 #include "../common/ThreadSafeVector.hpp"
-#include "Group.hpp"
-#include "Mine.hpp"
-#include <SFML/Network.hpp>
+#include "../common/ThreadSafeData.hpp"
+#include "../common/game_state.hpp"
+#include "../common/Group.hpp"
+#include "../common/Mine.hpp"
 
 
 class NetworkingServer {
@@ -61,10 +64,10 @@ class NetworkingServer {
      ThreadSafeMap<sf::TcpSocket*, sf::Int32> mClientSocketsToIds;
      ThreadSafeVector<int> mNewClientIds;
      ThreadSafeVector<int> mRemovedClientIds;
-     ThreadSafeVector<GroupUpdate> mGroupUpdates;
-     ThreadSafeVector<MineUpdate> mMineUpdates;
      ThreadSafeMap<sf::Uint32, sf::Vector2f> mClientMoves;
      ThreadSafeMap<sf::Uint32, bool> mClientGroupable;
+
+     ThreadSafeData<GameState> mGameState;
 
      sf::Uint32 mClientIdCounter = 0;
      std::atomic<uint> mCurrTick;

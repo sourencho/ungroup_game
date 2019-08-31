@@ -1,5 +1,4 @@
 #include "game_state.hpp"
-#include "network_util.hpp"
 
 
 sf::Packet pack_game_state(GameState game_state) {
