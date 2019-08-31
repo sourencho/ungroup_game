@@ -65,7 +65,6 @@ void Client::update() {
 
     for (auto mu : game_state.mine_updates) {
         mClientMines[mu.mine_id]->applyUpdate(mu);
-        std::cout << mu.is_active << std::endl;
     }
 
     // Set direction

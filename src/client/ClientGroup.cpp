@@ -19,9 +19,6 @@ bool ClientGroup::getGroupable() {
 
 void ClientGroup::applyUpdate(GroupUpdate gu) {
     setActive(gu.is_active);
-    if (gu.is_active) {
-        std::cout << "active group" << std::endl;
-    }
     setPosition(sf::Vector2f(gu.x_pos, gu.y_pos));
     setRadius(gu.radius);
     setGroupable(gu.groupable);

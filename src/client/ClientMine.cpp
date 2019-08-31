@@ -8,9 +8,6 @@ ClientMine::ClientMine(sf::Vector2f position, sf::Color color,
 ClientMine::~ClientMine() {}
 
 void ClientMine::applyUpdate(MineUpdate mu) {
-    if (mu.is_active) {
-        std::cout << "active group" << std::endl;
-    }
     setActive(mu.is_active);
     setPosition(sf::Vector2f(mu.x_pos, mu.y_pos));
     setRadius(mu.radius);
