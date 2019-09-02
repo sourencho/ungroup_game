@@ -43,4 +43,14 @@ GameState unpack_game_state(sf::Packet game_state_packet) {
 
     GameState game_state = {tick, group_updates, mine_updates};
     return game_state;
-};
+}
+
+sf::Packet& operator <<(sf::Packet& packet, const ClientUpdate& client_update) {
+    return packet
+        << client_update.player_update;
+}
+
+sf::Packet& operator >>(sf::Packet& packet, ClientUpdate& client_update) {
+    return packet
+        >> client_update.player_update;
+}

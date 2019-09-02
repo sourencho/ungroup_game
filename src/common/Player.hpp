@@ -2,15 +2,20 @@
 #define Player_hpp
 
 #include <stdio.h>
-
 #include <SFML/Graphics.hpp>
+#include <SFML/Network.hpp>
+
 #include "../common/GameObject.hpp"
 
+
 struct PlayerUpdate {
-    int id;
+    sf::Uint32 player_id;
     sf::Vector2f direction;
     bool groupable;
 };
+
+sf::Packet& operator <<(sf::Packet& packet, const PlayerUpdate& player_update);
+sf::Packet& operator >>(sf::Packet& packet, PlayerUpdate& player_update);
 
 class Player: public GameObject {
  public:
@@ -21,10 +26,14 @@ class Player: public GameObject {
      void setGroupable(bool groupable);
      sf::Vector2f getDirection() const;
      bool getGroupable() const;
+     void toggleGroupable();
+
+     PlayerUpdate getUpdate() const;
+     void applyUpdate(const PlayerUpdate& pu);
 
  private:
      sf::Vector2f mDirection;
-     bool mGroupable;
+     bool mGroupable = false;
 };
 
 

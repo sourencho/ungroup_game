@@ -19,6 +19,9 @@ class ThreadSafeData {
             mData = data;
             unlock();
         }
+        void forceSet(T data) {
+            mData = data;
+        }
         T get() {
             T data_copy;
             lock();

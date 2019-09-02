@@ -41,9 +41,10 @@ class NetworkingClient {
      NetworkingClient();
      ~NetworkingClient();
 
-     void setDirection(sf::Vector2f direction);
-     void setGroupable(bool groupable);
      GameState getGameState();
+     int getPlayerId();
+
+     void setClientUpdate(ClientUpdate client_update);
 
  private:
      // Methods
@@ -59,14 +60,14 @@ class NetworkingClient {
      sf::Uint32 mClientId;
      sf::Uint32 mCurrentTick;
      bool mIsRegistered = false;
-     bool mGroupable = false;
-     bool mNeedsGroupableStateSync = false;
+     bool mIsReadyToSyncState = false;
 
      sf::TcpSocket* mApiClient;
      sf::UdpSocket* mRealtimeClient;
 
-     ThreadSafeVector2f mDirection;
      ThreadSafeData<GameState> mGameState;
+     ThreadSafeData<ClientUpdate> mClientUpdate;
+     ThreadSafeData<int> mPlayerId;
 };
 
 #endif /* NetworkingClient_hpp */

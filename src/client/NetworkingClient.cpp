@@ -13,7 +13,9 @@
 #include "../common/network_util.hpp"
 
 
-NetworkingClient::NetworkingClient():mDirection(0.f, 0.f) {
+NetworkingClient::NetworkingClient() {
+    mPlayerId.set(-1);
+
     mApiClient = create_api_client();
     mRealtimeClient = create_realtime_client();
     RegisterNetworkingClient();   // Sets mClientId, mCurrentTick, mIsRegistered
@@ -44,13 +46,13 @@ GameState NetworkingClient::getGameState() {
     return mGameState.get();
 }
 
-void NetworkingClient::setDirection(sf::Vector2f direction) {
-    mDirection.set(direction);
+int NetworkingClient::getPlayerId() {
+    return mPlayerId.get();
 }
 
-void NetworkingClient::setGroupable(bool groupable) {
-    mNeedsGroupableStateSync = mGroupable != groupable;
-    mGroupable = groupable;
+void NetworkingClient::setClientUpdate(ClientUpdate client_update) {
+    mClientUpdate.set(client_update);
+    mIsReadyToSyncState = true;
 }
 
 void NetworkingClient::ReadRegistrationResponse() {
@@ -90,27 +92,26 @@ void NetworkingClient::ApiClientRecv() {
     while (true) {
         sf::Packet api_response;
         ApiCommand api_command;
-
         if (mApiClient->receive(api_response) == sf::Socket::Done) {
-            if (api_response >> api_command &&
-                api_command.command == (sf::Uint32)APICommandType::toggle_groupable) {
-                // this is a noop, just a place we can add code for when the server acknowledges
-                // it received our groupability toggle
+            api_response >> api_command;
+            if (api_command.command == (sf::Uint32) APICommandType::player_id) {
+                PlayerId pi;
+                api_response >> pi;
+                mPlayerId.set(static_cast<int>(pi.player_id));
             }
         }
     }
 }
 
+
 void NetworkingClient::ApiClientSend() {
     while (true) {
-        if (mNeedsGroupableStateSync) {
-            sf::Packet group_request;
-            if (group_request << (sf::Uint32)APICommandType::toggle_groupable &&
-                group_request << (sf::Uint32)mClientId) {
-                mApiClient->send(group_request);
-            }
-            mNeedsGroupableStateSync = false;
+        if (mPlayerId.get() == -1) {
+            sf::Packet player_id_request;
+            player_id_request << (sf::Uint32)APICommandType::player_id;
+            mApiClient->send(player_id_request);
         }
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 }
 
@@ -129,14 +130,17 @@ void NetworkingClient::RealtimeClientRecv() {
 
 void NetworkingClient::RealtimeClientSend() {
     while (true) {
-        sf::Packet packet;
-        sf::Uint32 move_cmd = (sf::Uint32)RealtimeCommandType::move;
-        sf::Vector2f direction = mDirection.copy();
-        RealtimeCommand realtime_command = {mClientId, move_cmd, mCurrentTick};
-        if (packet << realtime_command << direction) {
+        if (mIsReadyToSyncState) {
+            sf::Packet packet;
+            sf::Uint32 client_update_cmd = (sf::Uint32) RealtimeCommandType::client_update;
+            RealtimeCommand realtime_command = {
+                mClientId,
+                client_update_cmd,
+                mCurrentTick,
+            };
+            packet << realtime_command;
+            packet << mClientUpdate.get();
             mRealtimeClient->send(packet, SERVER_IP, 4888);
-        } else {
-            std::cout << "Failed to form packet" << std::endl;
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }

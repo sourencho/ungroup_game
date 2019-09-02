@@ -3,6 +3,8 @@
 
 #include <unordered_map>
 #include <mutex>
+#include <iostream>
+
 
 template <class Key, class Value>
 class ThreadSafeMap {
@@ -10,26 +12,29 @@ class ThreadSafeMap {
 
     public:
         void erase(Key key) {
-            write_lock.lock();
+            lock();
             mMap.erase(key);
-            write_lock.unlock();
+            unlock();
         }
         void set(Key key, Value value) {
-            write_lock.lock();
+            lock();
             mMap[key] = value;
-            write_lock.unlock();
+            unlock();
+        }
+        void forceSet(Key key, Value value) {
+            mMap[key] = value;
         }
         Value get(Key k) {
             Value value;
-            write_lock.lock();
+            lock();
             value = mMap[k];
-            write_lock.unlock();
+            unlock();
             return value;
         }
         Value has_key(Key k) {
-            write_lock.lock();
+            lock();
             bool contains_key = mMap.find(k) != mMap.end();
-            write_lock.unlock();
+            unlock();
             return contains_key;
         }
         std::unordered_map<Key, Value> forceCopy() {

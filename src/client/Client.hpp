@@ -26,13 +26,6 @@ class Client {
      void update();
      void handleEvents(sf::Event& event);
 
-     // Setters
-     void setId(sf::Uint32 id);
-
-     // Getters
-     sf::Uint32 getId() const;
-     sf::Vector2f getDirection() const;
-
  private:
      // Methods
      sf::Uint32 initNetworking();
@@ -42,10 +35,8 @@ class Client {
      std::vector<ClientMine*> mClientMines;
      std::vector<Player*> mPlayers;
 
-     sf::Vector2f mDirection;
      Keys mKeys;
-     bool mGroupable = false;
-     sf::Uint32 mId;
+     int mPlayerId = -1;
 
      std::shared_ptr<PhysicsController> mPhysicsController;
      std::unique_ptr<NetworkingClient> mNetworkingClient;
