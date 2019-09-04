@@ -14,11 +14,10 @@
 #include <SFML/Network.hpp>
 
 #include "../common/ThreadSafeMap.hpp"
-#include "../common/game_def.hpp"
 #include "../common/ThreadSafeVector.hpp"
 #include "../common/ThreadSafeData.hpp"
-#include "../common/game_state.hpp"
 #include "../common/Group.hpp"
+#include "../common/game_state.hpp"
 #include "../common/Mine.hpp"
 
 
@@ -42,6 +41,7 @@ class NetworkingServer {
      void deleteClient(sf::TcpSocket* client, std::list<sf::TcpSocket*> clients);
      void registerClient(sf::TcpSocket& client);
      void sendPlayerId(sf::TcpSocket& client);
+     void sendState(sf::UdpSocket& rt_server, sf::IpAddress& sender, unsigned short port);
      void handleApiCommand(
         sf::Socket::Status status,
         sf::Packet command_packet,
@@ -54,17 +54,17 @@ class NetworkingServer {
         sf::UdpSocket& rt_server,
         sf::IpAddress& sender,
         unsigned short port);
+    void setClientTCPUpdate(sf::Packet packet, int client_id);
+    void setClientUDPUpdate(sf::Packet packet, int client_id, int client_tick);
 
      std::vector<int> getClientIds();
-     std::vector<int> popNewClientIds();
-     std::vector<int> popRemovedClientIds();
-     std::vector<PlayerUpdate> popPlayerUpdates();
 
      ThreadSafeMap<sf::TcpSocket*, sf::Int32> mClientSocketsToIds;
      ThreadSafeMap<int, int> mClientToPlayerIds;
      ThreadSafeVector<int> mNewClientIds;
      ThreadSafeVector<int> mRemovedClientIds;
-     ThreadSafeVector<PlayerUpdate> mPlayerUpdates;
+     ThreadSafeVector<ClientIdAndUDPUpdate> mClientIdAndUDPUpdates;
+     ThreadSafeVector<ClientIdAndTCPUpdate> mClientIdAndTCPUpdates;
 
      ThreadSafeData<GameState> mGameState;
 

@@ -44,29 +44,34 @@ class NetworkingClient {
      GameState getGameState();
      int getPlayerId();
 
-     void setClientUpdate(ClientUpdate client_update);
+     void setClientUDPUpdate(ClientUDPUpdate client_udp_update);
+     void setClientTCPUpdate(ClientTCPUpdate client_tcp_update);
 
  private:
      // Methods
-     void ReadRegistrationResponse();
-     void RegisterNetworkingClient();
-     void RealtimeClientSend();
-     void RealtimeClientRecv();
-     void ApiClientSend();
-     void ApiClientRecv();
-     void SyncServerState();
+     void readRegistrationResponse();
+     void registerNetworkingClient();
+     void realtimeClientSend();
+     void realtimeClientRecv();
+     void apiClientSend();
+     void apiClientRecv();
+     void syncServerState();
+
+     void sendClientUDPUpdate();
+     void sendClientTCPUpdate();
+     void sendPlayerIdRequest();
 
      // Variables
      sf::Uint32 mClientId;
      sf::Uint32 mCurrentTick;
      bool mIsRegistered = false;
-     bool mIsReadyToSyncState = false;
 
      sf::TcpSocket* mApiClient;
      sf::UdpSocket* mRealtimeClient;
 
      ThreadSafeData<GameState> mGameState;
-     ThreadSafeData<ClientUpdate> mClientUpdate;
+     ThreadSafeData<ClientUDPUpdate> mClientUDPUpdate;
+     ThreadSafeData<ClientTCPUpdate> mClientTCPUpdate;
      ThreadSafeData<int> mPlayerId;
 };
 

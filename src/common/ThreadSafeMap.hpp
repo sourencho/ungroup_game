@@ -42,6 +42,12 @@ class ThreadSafeMap {
             map_copy.insert(mMap.begin(), mMap.end());
             return map_copy;
         }
+        std::unordered_map<Key, Value> forceGetAndClear() {
+            std::unordered_map<Key, Value> map_copy;
+            map_copy.insert(mMap.begin(), mMap.end());
+            mMap.clear();
+            return map_copy;
+        }
         void lock() {
             write_lock.lock();
         }

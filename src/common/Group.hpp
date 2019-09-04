@@ -8,7 +8,6 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Network.hpp>
 #include "../common/Player.hpp"
-#include "../common/game_def.hpp"
 #include "../common/Circle.hpp"
 #include "../common/CircleGameObject.hpp"
 

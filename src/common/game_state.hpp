@@ -8,7 +8,6 @@
 
 #include "../common/Group.hpp"
 #include "../common/Mine.hpp"
-#include "../common/Player.hpp"
 
 
 struct GameState {
@@ -20,11 +19,35 @@ struct GameState {
 sf::Packet pack_game_state(GameState game_state);
 GameState unpack_game_state(sf::Packet game_state_packet);
 
-struct ClientUpdate {
-    PlayerUpdate player_update;
+struct ClientUDPUpdate {
+    sf::Vector2f direction = sf::Vector2f(0.f, 0.f);
 };
 
-sf::Packet& operator <<(sf::Packet& packet, const ClientUpdate& client_update);
-sf::Packet& operator >>(sf::Packet& packet, ClientUpdate& client_update);
+struct ClientTCPUpdate {
+    bool groupable = false;
+};
+
+struct ClientIdAndUDPUpdate {
+    int client_id;
+    ClientUDPUpdate client_udp_update;
+};
+
+struct ClientIdAndTCPUpdate {
+    int client_id;
+    ClientTCPUpdate client_tcp_update;
+};
+
+struct ClientInputs {
+    std::vector<int> new_client_ids;
+    std::vector<int> removed_client_ids;
+    std::vector<ClientIdAndUDPUpdate> client_id_and_udp_updates;
+    std::vector<ClientIdAndTCPUpdate> client_id_and_tcp_updates;
+};
+
+sf::Packet& operator <<(sf::Packet& packet, const ClientTCPUpdate& client_tcp_update);
+sf::Packet& operator >>(sf::Packet& packet, ClientTCPUpdate& client_tcp_update);
+
+sf::Packet& operator <<(sf::Packet& packet, const ClientUDPUpdate& client_udp_update);
+sf::Packet& operator >>(sf::Packet& packet, ClientUDPUpdate& client_udp_update);
 
 #endif /* game_state_hpp */

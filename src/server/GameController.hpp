@@ -32,6 +32,8 @@ class GameController {
 
      void updateGameObjects(const ClientInputs& cis);
      void updateGameObjectsPostPhysics();
+     PlayerUpdate clientUpdateToPlayerUpdate(ClientUDPUpdate client_udp_update,
+       ClientTCPUpdate client_tcp_update);
 
      void updatePlayers(const ClientInputs& cis);
      void updateGroups();

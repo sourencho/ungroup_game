@@ -40,9 +40,6 @@ void GameController::updateGameObjects(const ClientInputs& cis) {
     updateGroups();
 }
 
-/**
-    Updates the active status and  properties of players based on updates recieved from the clients.
-*/
 void GameController::updatePlayers(const ClientInputs& cis) {
     for (const auto& new_client_id : cis.new_client_ids) {
         int new_player_id = mClientToPlayer[new_client_id] = createPlayerWithGroup();
@@ -53,14 +50,18 @@ void GameController::updatePlayers(const ClientInputs& cis) {
         mLevelController->setPlayerActive(mClientToPlayer[removed_client_id], false);
     }
 
-    for (const auto& player_update : cis.player_updates) {
-        mLevelController->getPlayer(player_update.player_id)->applyUpdate(player_update);
+    for (const auto& client_id_and_udp_update : cis.client_id_and_udp_updates) {
+        int player_id = mClientToPlayer[client_id_and_udp_update.client_id];
+        std::shared_ptr<Player> player = mLevelController->getPlayer(player_id);
+        player->setDirection(client_id_and_udp_update.client_udp_update.direction);
+    }
+    for (const auto& client_id_and_tcp_update : cis.client_id_and_tcp_updates) {
+        int player_id = mClientToPlayer[client_id_and_tcp_update.client_id];
+        std::shared_ptr<Player> player = mLevelController->getPlayer(player_id);
+        player->setGroupable(client_id_and_tcp_update.client_tcp_update.groupable);
     }
 }
 
-/**
-    Updates the active status and properties of groups.
-*/
 void GameController::updateGroups() {
     for (auto group : mLevelController->getGroups()) {
         group->update();

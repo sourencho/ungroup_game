@@ -1,5 +1,7 @@
 #include "game_state.hpp"
 
+#include "network_util.hpp"
+
 
 sf::Packet pack_game_state(GameState game_state) {
     sf::Packet packet;
@@ -45,12 +47,22 @@ GameState unpack_game_state(sf::Packet game_state_packet) {
     return game_state;
 }
 
-sf::Packet& operator <<(sf::Packet& packet, const ClientUpdate& client_update) {
+sf::Packet& operator <<(sf::Packet& packet, const ClientUDPUpdate& client_udp_update) {
     return packet
-        << client_update.player_update;
+        << client_udp_update.direction;
 }
 
-sf::Packet& operator >>(sf::Packet& packet, ClientUpdate& client_update) {
+sf::Packet& operator >>(sf::Packet& packet, ClientUDPUpdate& client_udp_update) {
     return packet
-        >> client_update.player_update;
+        >> client_udp_update.direction;
+}
+
+sf::Packet& operator <<(sf::Packet& packet, const ClientTCPUpdate& client_tcp_update) {
+    return packet
+        << client_tcp_update.groupable;
+}
+
+sf::Packet& operator >>(sf::Packet& packet, ClientTCPUpdate& client_tcp_update) {
+    return packet
+        >> client_tcp_update.groupable;
 }

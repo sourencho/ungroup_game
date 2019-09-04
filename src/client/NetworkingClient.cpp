@@ -18,20 +18,20 @@ NetworkingClient::NetworkingClient() {
 
     mApiClient = create_api_client();
     mRealtimeClient = create_realtime_client();
-    RegisterNetworkingClient();   // Sets mClientId, mCurrentTick, mIsRegistered
+    registerNetworkingClient();   // Sets mClientId, mCurrentTick, mIsRegistered
 
     std::cout << "Starting ungroup demo client." << std::endl;
 
     // api
-    std::thread ApiClientRecv_thread(&NetworkingClient::ApiClientRecv, this);
-    std::thread ApiClientSend_thread(&NetworkingClient::ApiClientSend, this);
+    std::thread ApiClientRecv_thread(&NetworkingClient::apiClientRecv, this);
+    std::thread ApiClientSend_thread(&NetworkingClient::apiClientSend, this);
 
     // realtime
-    std::thread RealtimeClientRecv_thread(&NetworkingClient::RealtimeClientRecv, this);
-    std::thread RealtimeClientSend_thread(&NetworkingClient::RealtimeClientSend, this);
+    std::thread RealtimeClientRecv_thread(&NetworkingClient::realtimeClientRecv, this);
+    std::thread RealtimeClientSend_thread(&NetworkingClient::realtimeClientSend, this);
 
     // syncs authoritative sever state to client at a regular interval
-    std::thread SyncServerState_thread(&NetworkingClient::SyncServerState, this);
+    std::thread SyncServerState_thread(&NetworkingClient::syncServerState, this);
 
     ApiClientRecv_thread.detach();
     ApiClientSend_thread.detach();
@@ -50,12 +50,15 @@ int NetworkingClient::getPlayerId() {
     return mPlayerId.get();
 }
 
-void NetworkingClient::setClientUpdate(ClientUpdate client_update) {
-    mClientUpdate.set(client_update);
-    mIsReadyToSyncState = true;
+void NetworkingClient::setClientUDPUpdate(ClientUDPUpdate client_udp_update) {
+    mClientUDPUpdate.set(client_udp_update);
 }
 
-void NetworkingClient::ReadRegistrationResponse() {
+void NetworkingClient::setClientTCPUpdate(ClientTCPUpdate client_tcp_update) {
+    mClientTCPUpdate.set(client_tcp_update);
+}
+
+void NetworkingClient::readRegistrationResponse() {
     // read registration data
     sf::Packet registration_response;
     ApiCommand api_command;
@@ -76,11 +79,11 @@ void NetworkingClient::ReadRegistrationResponse() {
     }
 }
 
-void NetworkingClient::RegisterNetworkingClient() {
+void NetworkingClient::registerNetworkingClient() {
     sf::Packet registration_request;
     if (registration_request << (sf::Uint32)APICommandType::register_client) {
         mApiClient->send(registration_request);
-        ReadRegistrationResponse();
+        readRegistrationResponse();
     }
 
     if (!mIsRegistered) {
@@ -88,7 +91,7 @@ void NetworkingClient::RegisterNetworkingClient() {
     }
 }
 
-void NetworkingClient::ApiClientRecv() {
+void NetworkingClient::apiClientRecv() {
     while (true) {
         sf::Packet api_response;
         ApiCommand api_command;
@@ -104,18 +107,30 @@ void NetworkingClient::ApiClientRecv() {
 }
 
 
-void NetworkingClient::ApiClientSend() {
+void NetworkingClient::apiClientSend() {
     while (true) {
-        if (mPlayerId.get() == -1) {
-            sf::Packet player_id_request;
-            player_id_request << (sf::Uint32)APICommandType::player_id;
-            mApiClient->send(player_id_request);
-        }
+        sendPlayerIdRequest();
+        sendClientTCPUpdate();
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 }
 
-void NetworkingClient::RealtimeClientRecv() {
+void NetworkingClient::sendClientTCPUpdate() {
+    sf::Packet packet;
+    packet << (sf::Uint32)APICommandType::client_tcp_update;
+    packet << mClientTCPUpdate.get();
+    mApiClient->send(packet);
+}
+
+void NetworkingClient::sendPlayerIdRequest() {
+    if (mPlayerId.get() == -1) {
+        sf::Packet packet;
+        packet << (sf::Uint32)APICommandType::player_id;
+        mApiClient->send(packet);
+    }
+}
+
+void NetworkingClient::realtimeClientRecv() {
     while (true) {
         sf::Packet packet;
         sf::IpAddress sender;
@@ -128,31 +143,33 @@ void NetworkingClient::RealtimeClientRecv() {
     }
 }
 
-void NetworkingClient::RealtimeClientSend() {
+void NetworkingClient::realtimeClientSend() {
     while (true) {
-        if (mIsReadyToSyncState) {
-            sf::Packet packet;
-            sf::Uint32 client_update_cmd = (sf::Uint32) RealtimeCommandType::client_update;
-            RealtimeCommand realtime_command = {
-                mClientId,
-                client_update_cmd,
-                mCurrentTick,
-            };
-            packet << realtime_command;
-            packet << mClientUpdate.get();
-            mRealtimeClient->send(packet, SERVER_IP, 4888);
-        }
+        sendClientUDPUpdate();
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 }
 
-// this probably should just be in RealtimeClientSend and RealtimeClientSend
+void NetworkingClient::sendClientUDPUpdate() {
+    sf::Packet packet;
+    sf::Uint32 client_udp_update_cmd = (sf::Uint32) RealtimeCommandType::client_udp_update;
+    RealtimeCommand realtime_command = {
+        mClientId,
+        client_udp_update_cmd,
+        mCurrentTick,
+    };
+    packet << realtime_command;
+    packet << mClientUDPUpdate.get();
+    mRealtimeClient->send(packet, SERVER_IP, 4888);
+}
+
+// this probably should just be in realtimeClientSend and realtimeClientSend
 // should poll client state to see if the current tick has a move AND if the move has
 // been sent to the server yet. If both are true, then it should try to communicate the move.
 // This would decouple local move setting commands from the network communication. They'd be
 // happening in different threads, which is a Good Thing(tm) to avoid blocking in the client on
 // network IO.
-void NetworkingClient::SyncServerState() {
+void NetworkingClient::syncServerState() {
     while (true) {
         sf::Packet packet;
         sf::Uint32 fetch_state_cmd = (sf::Uint32)RealtimeCommandType::fetch_state;

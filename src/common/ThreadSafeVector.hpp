@@ -33,6 +33,12 @@ class ThreadSafeVector {
             mVector.push_back(element);
             unlock();
         }
+        std::vector<T> forceGetAndClear() {
+            std::vector<T> vector_copy;
+            std::copy(mVector.begin(), mVector.end(), std::back_inserter(vector_copy));
+            mVector.clear();
+            return vector_copy;
+        }
         std::vector<T> forceCopy() {
             std::vector<T> vector_copy;
             std::copy(mVector.begin(), mVector.end(), std::back_inserter(vector_copy));

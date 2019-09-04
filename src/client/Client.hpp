@@ -27,13 +27,11 @@ class Client {
      void handleEvents(sf::Event& event);
 
  private:
-     // Methods
-     sf::Uint32 initNetworking();
-
-     // Variables
      std::vector<ClientGroup*> mClientGroups;
      std::vector<ClientMine*> mClientMines;
      std::vector<Player*> mPlayers;
+     ClientTCPUpdate mClientTCPUpdate;
+     ClientUDPUpdate mClientUDPUpdate;
 
      Keys mKeys;
      int mPlayerId = -1;

@@ -63,10 +63,8 @@ void Client::update() {
     }
 
     // Send updates
-    if (mPlayerId != -1) {
-        ClientUpdate client_update = {mPlayers[mPlayerId]->getUpdate()};
-        mNetworkingClient->setClientUpdate(client_update);
-    }
+    mNetworkingClient->setClientTCPUpdate(mClientTCPUpdate);
+    mNetworkingClient->setClientUDPUpdate(mClientUDPUpdate);
 
     // Apply updates
     for (auto gu : game_state.group_updates) {
@@ -79,13 +77,10 @@ void Client::update() {
 }
 
 void Client::handleEvents(sf::Event& event) {
-    if (mPlayerId == -1) {
-        return;
-    }
     if (event.type == sf::Event::KeyPressed) {
         // Groupable
         if (sf::Keyboard::isKeyPressed(mKeys.group)) {
-            mPlayers[mPlayerId]->toggleGroupable();
+            mClientTCPUpdate.groupable ^= true;
             return;
         }
 
@@ -104,6 +99,6 @@ void Client::handleEvents(sf::Event& event) {
             direction += sf::Vector2f(1.f, 0.f);
         }
         direction = normalize(direction);
-        mPlayers[mPlayerId]->setDirection(direction);
+        mClientUDPUpdate.direction = direction;
     }
 }

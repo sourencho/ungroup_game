@@ -39,17 +39,3 @@ sf::Vector2f Player::getDirection() const {
 bool Player::getGroupable() const {
     return mGroupable;
 }
-
-void Player::toggleGroupable() {
-    mGroupable ^= true;
-}
-
-PlayerUpdate Player::getUpdate() const {
-    PlayerUpdate pu = {(sf::Uint32) getId(), getDirection(), getGroupable()};
-    return pu;
-}
-
-void Player::applyUpdate(const PlayerUpdate& pu) {
-    setDirection(pu.direction);
-    setGroupable(pu.groupable);
-}

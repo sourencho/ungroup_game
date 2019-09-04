@@ -26,10 +26,6 @@ class Player: public GameObject {
      void setGroupable(bool groupable);
      sf::Vector2f getDirection() const;
      bool getGroupable() const;
-     void toggleGroupable();
-
-     PlayerUpdate getUpdate() const;
-     void applyUpdate(const PlayerUpdate& pu);
 
  private:
      sf::Vector2f mDirection;

@@ -10,7 +10,6 @@
 
 #include "../common/Circle.hpp"
 #include "../common/CircleGameObject.hpp"
-#include "../common/game_def.hpp"
 
 
 struct MineUpdate {

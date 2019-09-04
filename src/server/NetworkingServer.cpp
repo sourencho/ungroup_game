@@ -33,32 +33,16 @@ void NetworkingServer::realtimeServer() {
 }
 
 void NetworkingServer::handleRealtimeCommand(sf::Socket::Status status, sf::Packet command_packet,
-  sf::UdpSocket& rt_server,
-  sf::IpAddress& sender,
-  unsigned short port) {
-    ClientUpdate client_update;
+  sf::UdpSocket& rt_server, sf::IpAddress& sender, unsigned short port) {
     RealtimeCommand realtime_command;
     command_packet >> realtime_command;
     switch (realtime_command.command) {
-        case (sf::Uint32) RealtimeCommandType::client_update: {
-            int drift = std::abs(static_cast<int>((mCurrTick - realtime_command.tick)));
-            if (drift < CMD_DRIFT_THRESHOLD) {
-                command_packet >> client_update;
-                mPlayerUpdates.add(client_update.player_update);
-            } else {
-                std::cout
-                    << "Receive client_update command with tick drifted past drift threshold. "
-                    << "Drift value is: "
-                    << drift
-                    << std::endl;
-            }
+        case (sf::Uint32) RealtimeCommandType::client_udp_update: {
+            setClientUDPUpdate(command_packet, realtime_command.client_id, realtime_command.tick);
             break;
         }
         case (sf::Uint32)RealtimeCommandType::fetch_state: {
-            // sample current state every 100 ms, this simply packages and returns it
-            GameState game_state = mGameState.get();
-            sf::Packet game_state_packet = pack_game_state(game_state);
-            rt_server.send(game_state_packet, sender, port);
+            sendState(rt_server, sender, port);
             break;
         }
         default: {
@@ -68,6 +52,30 @@ void NetworkingServer::handleRealtimeCommand(sf::Socket::Status status, sf::Pack
                 << std::endl;
             break;
         }
+    }
+}
+
+void NetworkingServer::sendState(sf::UdpSocket& rt_server, sf::IpAddress& sender,
+  unsigned short port) {
+    // sample current state every 100 ms, this simply packages and returns it
+    GameState game_state = mGameState.get();
+    sf::Packet game_state_packet = pack_game_state(game_state);
+    rt_server.send(game_state_packet, sender, port);
+}
+
+void NetworkingServer::setClientUDPUpdate(sf::Packet packet, int client_id, int client_tick) {
+    int drift = std::abs(static_cast<int>((mCurrTick - client_tick)));
+    if (drift < CMD_DRIFT_THRESHOLD) {
+        ClientUDPUpdate client_udp_update;
+        packet >> client_udp_update;
+        ClientIdAndUDPUpdate client_id_and_udp_update = {client_id, client_udp_update};
+        mClientIdAndUDPUpdates.add(client_id_and_udp_update);
+    } else {
+        std::cout
+            << "Receive client_update command with tick drifted past drift threshold. "
+            << "Drift value is: "
+            << drift
+            << std::endl;
     }
 }
 
@@ -134,6 +142,8 @@ void NetworkingServer::handleApiCommand(sf::Socket::Status status, sf::Packet co
                     registerClient(client);
                 } else if (api_command_type == (sf::Uint32) APICommandType::player_id) {
                     sendPlayerId(client);
+                } else if (api_command_type == (sf::Uint32) APICommandType::client_tcp_update) {
+                    setClientTCPUpdate(command_packet, mClientSocketsToIds.get(&client));
                 }
             }
             break;
@@ -177,6 +187,13 @@ void NetworkingServer::sendPlayerId(sf::TcpSocket& client) {
     client.send(packet);
 }
 
+void NetworkingServer::setClientTCPUpdate(sf::Packet packet, int client_id) {
+    ClientTCPUpdate client_tcp_update;
+    packet >> client_tcp_update;
+    ClientIdAndTCPUpdate client_id_and_tcp_update = {client_id, client_tcp_update};
+    mClientIdAndTCPUpdates.add(client_id_and_tcp_update);
+}
+
 void NetworkingServer::registerClient(sf::TcpSocket& client) {
     sf::Packet response_packet;
     sf::Uint32 register_cmd = (sf::Uint32)APICommandType::register_client;
@@ -198,40 +215,23 @@ void NetworkingServer::registerClient(sf::TcpSocket& client) {
 
 ClientInputs NetworkingServer::collectClientInputs() {
     // Give clients a window to write inputs
-    mClientSocketsToIds.unlock();
     mNewClientIds.unlock();
     mRemovedClientIds.unlock();
-    mPlayerUpdates.unlock();
+    mClientIdAndUDPUpdates.unlock();
+    mClientIdAndTCPUpdates.unlock();
     mGameState.unlock();
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    mClientSocketsToIds.lock();
     mNewClientIds.lock();
     mRemovedClientIds.lock();
-    mPlayerUpdates.lock();
+    mClientIdAndUDPUpdates.lock();
+    mClientIdAndTCPUpdates.lock();
     mGameState.lock();
 
     // Get client inputs
     ClientInputs cis = {
-        popNewClientIds(), popRemovedClientIds(), popPlayerUpdates()};
+        mNewClientIds.forceGetAndClear(), mRemovedClientIds.forceGetAndClear(),
+        mClientIdAndUDPUpdates.forceGetAndClear(), mClientIdAndTCPUpdates.forceGetAndClear()};
     return cis;
-}
-
-std::vector<int> NetworkingServer::popNewClientIds() {
-    std::vector<int> new_client_ids = mNewClientIds.forceCopy();
-    mNewClientIds.forceClear();
-    return new_client_ids;
-}
-
-std::vector<int> NetworkingServer::popRemovedClientIds() {
-    std::vector<int> removed_client_ids = mRemovedClientIds.forceCopy();
-    mRemovedClientIds.forceClear();
-    return removed_client_ids;
-}
-
-std::vector<PlayerUpdate> NetworkingServer::popPlayerUpdates() {
-    std::vector<PlayerUpdate> player_updates = mPlayerUpdates.forceCopy();
-    mPlayerUpdates.forceClear();
-    return player_updates;
 }
 
 void NetworkingServer::setClientToPlayerId(sf::Int32 client_id, int player_id) {
