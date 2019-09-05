@@ -2,6 +2,7 @@
 #include <utility>
 #include <vector>
 #include <memory>
+
 #include "../common/network_util.hpp"
 
 NetworkingServer::NetworkingServer():
@@ -32,21 +33,16 @@ void NetworkingServer::realtimeServer() {
 }
 
 void NetworkingServer::handleRealtimeCommand(sf::Socket::Status status, sf::Packet command_packet,
-  sf::UdpSocket& rt_server,
-  sf::IpAddress& sender,
-  unsigned short port) {
+  sf::UdpSocket& rt_server, sf::IpAddress& sender, unsigned short port) {
     RealtimeCommand realtime_command;
     command_packet >> realtime_command;
     switch (realtime_command.command) {
-        case (sf::Uint32)RealtimeCommandType::move: {
-            move(command_packet, realtime_command.client_id, realtime_command.tick);
+        case (sf::Uint32) RealtimeCommandType::client_udp_update: {
+            setClientUDPUpdate(command_packet, realtime_command.client_id, realtime_command.tick);
             break;
         }
         case (sf::Uint32)RealtimeCommandType::fetch_state: {
-            // sample current state every 100 ms, this simply packages and returns it
-            GameState game_state = mGameState.get();
-            sf::Packet game_state_packet = pack_game_state(game_state);
-            rt_server.send(game_state_packet, sender, port);
+            sendState(rt_server, sender, port);
             break;
         }
         default: {
@@ -59,23 +55,29 @@ void NetworkingServer::handleRealtimeCommand(sf::Socket::Status status, sf::Pack
     }
 }
 
-void NetworkingServer::move(sf::Packet command_packet, sf::Uint32 client_id, sf::Uint32 tick) {
-    sf::Vector2f direction;
-    if (command_packet >> direction) {
-        int drift = std::abs(static_cast<int>((mCurrTick - tick)));
-        if (drift < CMD_DRIFT_THRESHOLD) {
-            // your newest commands will overwrite old ones
-            mClientMoves.set(client_id, direction);
-        } else {
-            std::cout
-                << "Receive move command with tick drifted past drift threshold. "
-                << "Drift value is: "
-                << drift
-                << std::endl;
-        }
-    }
+void NetworkingServer::sendState(sf::UdpSocket& rt_server, sf::IpAddress& sender,
+  unsigned short port) {
+    // sample current state every 100 ms, this simply packages and returns it
+    GameState game_state = mGameState.get();
+    sf::Packet game_state_packet = pack_game_state(game_state);
+    rt_server.send(game_state_packet, sender, port);
 }
 
+void NetworkingServer::setClientUDPUpdate(sf::Packet packet, int client_id, int client_tick) {
+    int drift = std::abs(static_cast<int>((mCurrTick - client_tick)));
+    if (drift < CMD_DRIFT_THRESHOLD) {
+        ClientUDPUpdate client_udp_update;
+        packet >> client_udp_update;
+        ClientIdAndUDPUpdate client_id_and_udp_update = {client_id, client_udp_update};
+        mClientIdAndUDPUpdates.add(client_id_and_udp_update);
+    } else {
+        std::cout
+            << "Receive client_update command with tick drifted past drift threshold. "
+            << "Drift value is: "
+            << drift
+            << std::endl;
+    }
+}
 
 // ApiServer Thread Methods
 
@@ -136,10 +138,12 @@ void NetworkingServer::handleApiCommand(sf::Socket::Status status, sf::Packet co
     switch (status) {
         case sf::Socket::Done:
             if (command_packet >> api_command_type) {
-                if (api_command_type == (sf::Uint32)APICommandType::register_client) {
+                if (api_command_type == (sf::Uint32) APICommandType::register_client) {
                     registerClient(client);
-                } else if (api_command_type == (sf::Uint32)APICommandType::toggle_groupable) {
-                    updateGroupable(client);
+                } else if (api_command_type == (sf::Uint32) APICommandType::player_id) {
+                    sendPlayerId(client);
+                } else if (api_command_type == (sf::Uint32) APICommandType::client_tcp_update) {
+                    setClientTCPUpdate(command_packet, mClientSocketsToIds.get(&client));
                 }
             }
             break;
@@ -162,30 +166,32 @@ void NetworkingServer::handleApiCommand(sf::Socket::Status status, sf::Packet co
 void NetworkingServer::deleteClient(sf::TcpSocket* client, std::list<sf::TcpSocket*> clients) {
     int client_id = mClientSocketsToIds.get(client);
     clients.remove(client);
-    mClientGroupable.erase(mClientSocketsToIds.get(client));
-    mClientMoves.erase(mClientSocketsToIds.get(client));
     mClientSocketsToIds.erase(client);
     mRemovedClientIds.add(client_id);
 }
 
-void NetworkingServer::updateGroupable(sf::TcpSocket& client) {
-    sf::Packet response_packet;
-    sf::Uint32 toggle_groupable_cmd = (sf::Uint32)APICommandType::toggle_groupable;
-    sf::Uint32 client_id = mClientSocketsToIds.get(&client);
+void NetworkingServer::sendPlayerId(sf::TcpSocket& client) {
+    int client_id = mClientSocketsToIds.get(&client);
+    if (!mClientToPlayerIds.has_key(client_id)) {
+        return;
+    }
+    sf::Packet packet;
+    int player_id_cmd = APICommandType::player_id;
+    PlayerId pi = {(sf::Uint32) mClientToPlayerIds.get(client_id)};
     ApiCommand api_command = {
-      client_id,
-      toggle_groupable_cmd,
-      (sf::Uint32) mCurrTick
+        (sf::Uint32) client_id,
+        (sf::Uint32) player_id_cmd,
+        (sf::Uint32) mCurrTick
     };
-    if (response_packet << api_command) {
-        client.send(response_packet);
-    }
-    if (!mClientGroupable.has_key(client_id)) {
-        mClientGroupable.set(client_id, true);
-    } else {
-        bool groupable = 1 ^ mClientGroupable.get(client_id);
-        mClientGroupable.set(client_id, groupable);
-    }
+    packet << api_command << pi;
+    client.send(packet);
+}
+
+void NetworkingServer::setClientTCPUpdate(sf::Packet packet, int client_id) {
+    ClientTCPUpdate client_tcp_update;
+    packet >> client_tcp_update;
+    ClientIdAndTCPUpdate client_id_and_tcp_update = {client_id, client_tcp_update};
+    mClientIdAndTCPUpdates.add(client_id_and_tcp_update);
 }
 
 void NetworkingServer::registerClient(sf::TcpSocket& client) {
@@ -201,62 +207,35 @@ void NetworkingServer::registerClient(sf::TcpSocket& client) {
         int new_client_id = mClientIdCounter++;
         mClientSocketsToIds.set(&client, new_client_id);
         mNewClientIds.add(new_client_id);
-        mClientIdCounter++;
     }
 }
 
 
 // Main Thread Methods
 
-client_inputs NetworkingServer::collectClientInputs() {
+ClientInputs NetworkingServer::collectClientInputs() {
     // Give clients a window to write inputs
-    mClientSocketsToIds.unlock();
-    mClientMoves.unlock();
-    mClientGroupable.unlock();
+    mNewClientIds.unlock();
+    mRemovedClientIds.unlock();
+    mClientIdAndUDPUpdates.unlock();
+    mClientIdAndTCPUpdates.unlock();
+    mGameState.unlock();
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    mClientSocketsToIds.lock();
-    mClientMoves.lock();
-    mClientGroupable.lock();
+    mNewClientIds.lock();
+    mRemovedClientIds.lock();
+    mClientIdAndUDPUpdates.lock();
+    mClientIdAndTCPUpdates.lock();
+    mGameState.lock();
 
     // Get client inputs
-    client_inputs cis = {
-        popNewClientIds(), popRemovedClientIds(), getClientDirectionUpdates(),
-        getClientGroupabilityUpdates()};
+    ClientInputs cis = {
+        mNewClientIds.forceGetAndClear(), mRemovedClientIds.forceGetAndClear(),
+        mClientIdAndUDPUpdates.forceGetAndClear(), mClientIdAndTCPUpdates.forceGetAndClear()};
     return cis;
 }
 
-std::vector<int> NetworkingServer::popNewClientIds() {
-    std::vector<int> new_client_ids = mNewClientIds.forceCopy();
-    mNewClientIds.forceClear();
-    return new_client_ids;
-}
-
-std::vector<int> NetworkingServer::popRemovedClientIds() {
-    std::vector<int> removed_client_ids = mRemovedClientIds.forceCopy();
-    mRemovedClientIds.forceClear();
-    return removed_client_ids;
-}
-
-std::vector<client_direction_update> NetworkingServer::getClientDirectionUpdates() {
-    std::vector<client_direction_update> client_direction_updates;
-    for (const auto& client_move : mClientMoves.forceCopy()) {
-        client_direction_update cd = {
-            client_move.first, client_move.second.x, client_move.second.y};
-        client_direction_updates.push_back(cd);
-    }
-
-    return client_direction_updates;
-}
-
-std::vector<client_groupability_update> NetworkingServer::getClientGroupabilityUpdates() {
-    std::vector<client_groupability_update> client_groupability_updates;
-    for (const auto& client_groupable : mClientGroupable.forceCopy()) {
-        client_groupability_update cgu = {
-            client_groupable.first, client_groupable.second};
-        client_groupability_updates.push_back(cgu);
-    }
-
-    return client_groupability_updates;
+void NetworkingServer::setClientToPlayerId(sf::Int32 client_id, int player_id) {
+    mClientToPlayerIds.forceSet(client_id, player_id);
 }
 
 void NetworkingServer::setState(std::vector<std::shared_ptr<Group>> groups,
@@ -272,7 +251,7 @@ void NetworkingServer::setState(std::vector<std::shared_ptr<Group>> groups,
         mines.begin(), mines.end(), std::back_inserter(gs.mine_updates),
         [](std::shared_ptr<Mine> mine){return mine->getUpdate();});
 
-    mGameState.set(gs);
+    mGameState.forceSet(gs);
 }
 
 void NetworkingServer::incrementTick() {

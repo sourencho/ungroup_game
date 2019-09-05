@@ -24,16 +24,18 @@ class GameController {
      void step();
 
  private:
-     client_inputs collectInputs();
-     void computeGameState(const client_inputs& cis);
+     ClientInputs collectInputs();
+     void computeGameState(const ClientInputs& cis);
      void refreshAndUpdateGroups();
      void setNetworkState();
      void incrementTick();
 
-     void updateGameObjects(const client_inputs& cis);
+     void updateGameObjects(const ClientInputs& cis);
      void updateGameObjectsPostPhysics();
+     PlayerUpdate clientUpdateToPlayerUpdate(ClientUDPUpdate client_udp_update,
+       ClientTCPUpdate client_tcp_update);
 
-     void updatePlayers(const client_inputs& cis);
+     void updatePlayers(const ClientInputs& cis);
      void updateGroups();
 
      unsigned int createPlayerWithGroup();

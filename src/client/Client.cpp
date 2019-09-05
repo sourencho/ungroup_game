@@ -5,8 +5,7 @@
 #include "Client.hpp"
 
 Client::Client(int max_player_count, int max_mine_count, sf::Keyboard::Key keys[5]):
-  mDirection(1.0, 1.0), mPhysicsController(new PhysicsController()),
-  mNetworkingClient(new NetworkingClient()) {
+  mPhysicsController(new PhysicsController()), mNetworkingClient(new NetworkingClient()) {
     mPlayers.reserve(max_player_count);
 
     for (int i=0; i < max_player_count; i++) {
@@ -57,8 +56,17 @@ void Client::draw(sf::RenderTarget& target, sf::Shader* shader, bool use_shader)
 }
 
 void Client::update() {
+    // Get updates
     GameState game_state =  mNetworkingClient->getGameState();
+    if (mPlayerId == -1) {
+        mPlayerId = mNetworkingClient->getPlayerId();
+    }
 
+    // Send updates
+    mNetworkingClient->setClientTCPUpdate(mClientTCPUpdate);
+    mNetworkingClient->setClientUDPUpdate(mClientUDPUpdate);
+
+    // Apply updates
     for (auto gu : game_state.group_updates) {
         mClientGroups[gu.group_id]->applyUpdate(gu);
     }
@@ -66,44 +74,31 @@ void Client::update() {
     for (auto mu : game_state.mine_updates) {
         mClientMines[mu.mine_id]->applyUpdate(mu);
     }
-
-    // Set direction
-    mNetworkingClient->setDirection(mDirection);
-    mNetworkingClient->setGroupable(mGroupable);
-}
-
-sf::Vector2f Client::getDirection() const {
-    return mDirection;
-}
-
-void Client::setId(sf::Uint32 id) {
-    mId = id;
-}
-
-
-sf::Uint32 Client::getId() const {
-    return mId;
 }
 
 void Client::handleEvents(sf::Event& event) {
     if (event.type == sf::Event::KeyPressed) {
+        // Groupable
         if (sf::Keyboard::isKeyPressed(mKeys.group)) {
-            mGroupable ^= true;
+            mClientTCPUpdate.groupable ^= true;
             return;
         }
-        mDirection = sf::Vector2f(0.f, 0.f);
+
+        // Direction
+        sf::Vector2f direction = sf::Vector2f(0.f, 0.f);
         if (sf::Keyboard::isKeyPressed(mKeys.up)) {
-            mDirection += sf::Vector2f(0.f, -1.f);
+            direction += sf::Vector2f(0.f, -1.f);
         }
         if (sf::Keyboard::isKeyPressed(mKeys.down)) {
-            mDirection += sf::Vector2f(0.f, 1.f);
+            direction += sf::Vector2f(0.f, 1.f);
         }
         if (sf::Keyboard::isKeyPressed(mKeys.left)) {
-            mDirection += sf::Vector2f(-1.f, 0.f);
+            direction += sf::Vector2f(-1.f, 0.f);
         }
         if (sf::Keyboard::isKeyPressed(mKeys.right)) {
-            mDirection += sf::Vector2f(1.f, 0.f);
+            direction += sf::Vector2f(1.f, 0.f);
         }
-        mDirection = normalize(mDirection);
+        direction = normalize(direction);
+        mClientUDPUpdate.direction = direction;
     }
 }

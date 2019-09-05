@@ -14,11 +14,10 @@
 #include <SFML/Network.hpp>
 
 #include "../common/ThreadSafeMap.hpp"
-#include "../common/game_def.hpp"
 #include "../common/ThreadSafeVector.hpp"
 #include "../common/ThreadSafeData.hpp"
-#include "../common/game_state.hpp"
 #include "../common/Group.hpp"
+#include "../common/game_state.hpp"
 #include "../common/Mine.hpp"
 
 
@@ -29,19 +28,20 @@ class NetworkingServer {
      NetworkingServer();
      ~NetworkingServer();
 
-     client_inputs collectClientInputs();
+     ClientInputs collectClientInputs();
      void setState(
         std::vector<std::shared_ptr<Group>> groups,
         std::vector<std::shared_ptr<Mine>> mines);
+     void setClientToPlayerId(int client_id, int player_id);
      void incrementTick();
 
  private:
      void realtimeServer();
      void apiServer();
      void deleteClient(sf::TcpSocket* client, std::list<sf::TcpSocket*> clients);
-     void move(sf::Packet command_packet, sf::Uint32 client_id, sf::Uint32 tick);
-     void updateGroupable(sf::TcpSocket& client);
      void registerClient(sf::TcpSocket& client);
+     void sendPlayerId(sf::TcpSocket& client);
+     void sendState(sf::UdpSocket& rt_server, sf::IpAddress& sender, unsigned short port);
      void handleApiCommand(
         sf::Socket::Status status,
         sf::Packet command_packet,
@@ -54,18 +54,17 @@ class NetworkingServer {
         sf::UdpSocket& rt_server,
         sf::IpAddress& sender,
         unsigned short port);
+    void setClientTCPUpdate(sf::Packet packet, int client_id);
+    void setClientUDPUpdate(sf::Packet packet, int client_id, int client_tick);
 
-     std::vector<client_direction_update> getClientDirectionUpdates();
-     std::vector<client_groupability_update> getClientGroupabilityUpdates();
      std::vector<int> getClientIds();
-     std::vector<int> popNewClientIds();
-     std::vector<int> popRemovedClientIds();
 
      ThreadSafeMap<sf::TcpSocket*, sf::Int32> mClientSocketsToIds;
+     ThreadSafeMap<int, int> mClientToPlayerIds;
      ThreadSafeVector<int> mNewClientIds;
      ThreadSafeVector<int> mRemovedClientIds;
-     ThreadSafeMap<sf::Uint32, sf::Vector2f> mClientMoves;
-     ThreadSafeMap<sf::Uint32, bool> mClientGroupable;
+     ThreadSafeVector<ClientIdAndUDPUpdate> mClientIdAndUDPUpdates;
+     ThreadSafeVector<ClientIdAndTCPUpdate> mClientIdAndTCPUpdates;
 
      ThreadSafeData<GameState> mGameState;
 
