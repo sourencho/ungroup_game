@@ -8,6 +8,7 @@
 #include "../common/util.hpp"
 #include "../common/game_def.hpp"
 #include "../common/PhysicsController.hpp"
+#include "../common/Player.hpp"
 #include "NetworkingClient.hpp"
 #include "ClientGroup.hpp"
 #include "ClientMine.hpp"
@@ -25,34 +26,15 @@ class Client {
      void update();
      void handleEvents(sf::Event& event);
 
-     // Setters
-     void setId(sf::Uint32 id);
-
-     // Getters
-     sf::Uint32 getId() const;
-     sf::Vector2f getDirection() const;
-
  private:
-     // Methods
-     sf::Uint32 initNetworking();
-     int createClientGroup();
-     int createClientMine();
-     void refreshClientGroups(std::vector<int> group_ids);
-     void updateClientGroups(std::vector<GroupUpdate> group_updates);
-     void refreshClientMines(std::vector<int> mine_ids);
-     void updateClientMines(std::vector<MineUpdate> mine_updates);
-
-     // Variables
      std::vector<ClientGroup*> mClientGroups;
      std::vector<ClientMine*> mClientMines;
-     sf::Vector2f mDirection;
+     std::vector<Player*> mPlayers;
+     ClientReliableUpdate mClientReliableUpdate;
+     ClientUnreliableUpdate mClientUnreliableUpdate;
+
      Keys mKeys;
-     bool mGroupable = false;
-     sf::Uint32 mId;
-     std::unordered_map<sf::Uint32, int> mGroupIdToClientGroup;
-     std::unordered_map<sf::Uint32, int> mMineIdToClientMine;
-     size_t mNextClientGroupId = 0;
-     size_t mNextClientMineId = 0;
+     int mPlayerId = -1;
 
      std::shared_ptr<PhysicsController> mPhysicsController;
      std::unique_ptr<NetworkingClient> mNetworkingClient;

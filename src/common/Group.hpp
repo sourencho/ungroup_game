@@ -6,9 +6,23 @@
 #include <memory>
 
 #include <SFML/Graphics.hpp>
-#include "Player.hpp"
+#include <SFML/Network.hpp>
+#include "../common/Player.hpp"
 #include "../common/Circle.hpp"
 #include "../common/CircleGameObject.hpp"
+
+
+struct GroupUpdate {
+    sf::Uint32 group_id;
+    bool is_active;
+    float x_pos;
+    float y_pos;
+    float radius;
+    bool groupable;
+};
+
+sf::Packet& operator <<(sf::Packet& packet, const GroupUpdate& group_update);
+sf::Packet& operator >>(sf::Packet& packet, GroupUpdate& group_update);
 
 class Group : public CircleGameObject {
  public:
@@ -21,6 +35,8 @@ class Group : public CircleGameObject {
      bool getGroupable();
      void setGroupable(bool);
      void addMember(std::shared_ptr<Player> player);
+
+     GroupUpdate getUpdate();
 
  private:
      std::vector<std::shared_ptr<Player>> mMembers;

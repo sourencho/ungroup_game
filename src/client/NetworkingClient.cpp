@@ -7,83 +7,87 @@
 #include <chrono>
 #include <ctime>
 #include <vector>
-
 #include <SFML/Network.hpp>
 
 #include "../common/network_util.hpp"
-#include "../common/game_state.hpp"
 
 
-NetworkingClient::NetworkingClient():mDirection(0.f, 0.f) {
-    mApiClient = create_api_client();
-    mRealtimeClient = create_realtime_client();
-    RegisterNetworkingClient();   // Sets mClientId, mCurrentTick, mIsRegistered
+int UNRELIABLE_UPDATE_SEND_SLEEP = 100;
+int RELIABLE_UPDATE_SEND_SLEEP = 100;
+int SYNC_SERVER_STATE_SLEEP = 100;
+
+
+NetworkingClient::NetworkingClient() {
+    mPlayerId.set(-1);
+
+    mReliableClient = create_reliable_client();
+    mUnreliableClient = create_unreliable_client();
+    registerNetworkingClient();   // Sets mClientId, mCurrentTick, mIsRegistered
 
     std::cout << "Starting ungroup demo client." << std::endl;
 
-    // api
-    std::thread ApiClientRecv_thread(&NetworkingClient::ApiClientRecv, this);
-    std::thread ApiClientSend_thread(&NetworkingClient::ApiClientSend, this);
+    // reliable
+    std::thread ReliableClientRecv_thread(&NetworkingClient::reliableClientRecv, this);
+    std::thread ReliableClientSend_thread(&NetworkingClient::reliableClientSend, this);
 
-    // realtime
-    std::thread RealtimeClientRecv_thread(&NetworkingClient::RealtimeClientRecv, this);
-    std::thread RealtimeClientSend_thread(&NetworkingClient::RealtimeClientSend, this);
+    // unreliable
+    std::thread UnreliableClientRecv_thread(&NetworkingClient::unreliableClientRecv, this);
+    std::thread UnreliableClientSend_thread(&NetworkingClient::unreliableClientSend, this);
 
     // syncs authoritative sever state to client at a regular interval
-    std::thread SyncServerState_thread(&NetworkingClient::SyncServerState, this);
+    std::thread SyncServerState_thread(&NetworkingClient::syncServerState, this);
 
-    ApiClientRecv_thread.detach();
-    ApiClientSend_thread.detach();
-    RealtimeClientRecv_thread.detach();
-    RealtimeClientSend_thread.detach();
+    ReliableClientRecv_thread.detach();
+    ReliableClientSend_thread.detach();
+    UnreliableClientRecv_thread.detach();
+    UnreliableClientSend_thread.detach();
     SyncServerState_thread.detach();
 }
 
 NetworkingClient::~NetworkingClient() {}
 
-std::vector<GroupUpdate> NetworkingClient::getGroupUpdates() {
-    return mGroupUpdates.copy();
+GameState NetworkingClient::getGameState() {
+    return mGameState.get();
 }
 
-std::vector<MineUpdate> NetworkingClient::getMineUpdates() {
-    return mMineUpdates.copy();
+int NetworkingClient::getPlayerId() {
+    return mPlayerId.get();
 }
 
-void NetworkingClient::setDirection(sf::Vector2f direction) {
-    mDirection.set(direction);
+void NetworkingClient::setClientUnreliableUpdate(ClientUnreliableUpdate client_unreliable_update) {
+    mClientUnreliableUpdate.set(client_unreliable_update);
 }
 
-void NetworkingClient::setGroupable(bool groupable) {
-    mNeedsGroupableStateSync = mGroupable != groupable;
-    mGroupable = groupable;
+void NetworkingClient::setClientReliableUpdate(ClientReliableUpdate client_reliable_update) {
+    mClientReliableUpdate.set(client_reliable_update);
 }
 
-void NetworkingClient::ReadRegistrationResponse() {
+void NetworkingClient::readRegistrationResponse() {
     // read registration data
     sf::Packet registration_response;
-    ApiCommand api_command;
+    ReliableCommand reliable_command;
 
-    if (mApiClient->receive(registration_response) == sf::Socket::Done) {
-        if (registration_response >> api_command &&
-            api_command.command == (sf::Uint32)APICommandType::register_client) {
+    if (mReliableClient->receive(registration_response) == sf::Socket::Done) {
+        if (registration_response >> reliable_command &&
+            reliable_command.command == ReliableCommandType::register_client) {
             std::cout
                 << "Registered with ID and current tick: "
-                << api_command.client_id
+                << reliable_command.client_id
                 << " "
-                << api_command.tick
+                << reliable_command.tick
                 << std::endl;
-            mClientId = api_command.client_id;
-            mCurrentTick = api_command.tick;
+            mClientId = reliable_command.client_id;
+            mCurrentTick = reliable_command.tick;
             mIsRegistered = true;
         }
     }
 }
 
-void NetworkingClient::RegisterNetworkingClient() {
+void NetworkingClient::registerNetworkingClient() {
     sf::Packet registration_request;
-    if (registration_request << (sf::Uint32)APICommandType::register_client) {
-        mApiClient->send(registration_request);
-        ReadRegistrationResponse();
+    if (registration_request << ReliableCommandType::register_client) {
+        mReliableClient->send(registration_request);
+        readRegistrationResponse();
     }
 
     if (!mIsRegistered) {
@@ -91,88 +95,104 @@ void NetworkingClient::RegisterNetworkingClient() {
     }
 }
 
-void NetworkingClient::ApiClientRecv() {
+void NetworkingClient::reliableClientRecv() {
     while (true) {
-        sf::Packet api_response;
-        ApiCommand api_command;
-
-        if (mApiClient->receive(api_response) == sf::Socket::Done) {
-            if (api_response >> api_command &&
-                api_command.command == (sf::Uint32)APICommandType::toggle_groupable) {
-                // this is a noop, just a place we can add code for when the server acknowledges
-                // it received our groupability toggle
+        sf::Packet reliable_response;
+        ReliableCommand reliable_command;
+        if (mReliableClient->receive(reliable_response) == sf::Socket::Done) {
+            reliable_response >> reliable_command;
+            if (reliable_command.command == ReliableCommandType::player_id) {
+                PlayerId pi;
+                reliable_response >> pi;
+                mPlayerId.set(static_cast<int>(pi.player_id));
             }
         }
     }
 }
 
-void NetworkingClient::ApiClientSend() {
+
+void NetworkingClient::reliableClientSend() {
     while (true) {
-        if (mNeedsGroupableStateSync) {
-            sf::Packet group_request;
-            if (group_request << (sf::Uint32)APICommandType::toggle_groupable &&
-                group_request << (sf::Uint32)mClientId) {
-                mApiClient->send(group_request);
-            }
-            mNeedsGroupableStateSync = false;
+        sendPlayerIdRequest();
+        // TODO(souren|#59): Don't spam server with TCP calls, optimize when updates are sent
+        sendClientReliableUpdate();
+        std::this_thread::sleep_for(std::chrono::milliseconds(RELIABLE_UPDATE_SEND_SLEEP));
+    }
+}
+
+void NetworkingClient::sendClientReliableUpdate() {
+    sf::Packet packet;
+    if (packet << ReliableCommandType::client_reliable_update &&
+        packet << mClientReliableUpdate.get()) {
+        mReliableClient->send(packet);
+    } else {
+        std::cout << "Failed to form packet" << std::endl;
+    }
+}
+
+void NetworkingClient::sendPlayerIdRequest() {
+    if (mPlayerId.get() == -1) {
+        sf::Packet packet;
+        if (packet << (sf::Uint32) ReliableCommandType::player_id) {
+            mReliableClient->send(packet);
+        } else {
+            std::cout << "Failed to form packet" << std::endl;
         }
     }
 }
 
-void NetworkingClient::RealtimeClientRecv() {
+void NetworkingClient::unreliableClientRecv() {
     while (true) {
         sf::Packet packet;
         sf::IpAddress sender;
         unsigned short port;
-        mRealtimeClient->receive(packet, sender, port);
+        mUnreliableClient->receive(packet, sender, port);
         GameState game_state = unpack_game_state(packet);
 
+        mGameState.set(game_state);
         mCurrentTick = game_state.tick;
-
-        mGroupUpdates.clear();
-        for (const auto group_update : game_state.group_updates) {
-            mGroupUpdates.add(group_update);
-        }
-
-        mMineUpdates.clear();
-        for (const auto mine_update : game_state.mine_updates) {
-            mMineUpdates.add(mine_update);
-        }
     }
 }
 
-void NetworkingClient::RealtimeClientSend() {
+void NetworkingClient::unreliableClientSend() {
     while (true) {
-        sf::Packet packet;
-        sf::Uint32 move_cmd = (sf::Uint32)RealtimeCommandType::move;
-        sf::Vector2f direction = mDirection.copy();
-        RealtimeCommand realtime_command = {mClientId, move_cmd, mCurrentTick};
-        if (packet << realtime_command << direction) {
-            mRealtimeClient->send(packet, SERVER_IP, 4888);
-        } else {
-            std::cout << "Failed to form packet" << std::endl;
-        }
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        sendClientUnreliableUpdate();
+        std::this_thread::sleep_for(std::chrono::milliseconds(UNRELIABLE_UPDATE_SEND_SLEEP));
     }
 }
 
-// this probably should just be in RealtimeClientSend and RealtimeClientSend
+void NetworkingClient::sendClientUnreliableUpdate() {
+    sf::Packet packet;
+    sf::Uint32 client_unreliable_update_cmd = UnreliableCommandType::client_unreliable_update;
+    UnreliableCommand unreliable_command = {
+        mClientId,
+        client_unreliable_update_cmd,
+        mCurrentTick,
+    };
+    if (packet << unreliable_command && packet << mClientUnreliableUpdate.get()) {
+        mUnreliableClient->send(packet, SERVER_IP, 4888);
+    } else {
+        std::cout << "Failed to form packet" << std::endl;
+    }
+}
+
+// this probably should just be in unreliableClientSend and unreliableClientSend
 // should poll client state to see if the current tick has a move AND if the move has
 // been sent to the server yet. If both are true, then it should try to communicate the move.
 // This would decouple local move setting commands from the network communication. They'd be
 // happening in different threads, which is a Good Thing(tm) to avoid blocking in the client on
 // network IO.
-void NetworkingClient::SyncServerState() {
+void NetworkingClient::syncServerState() {
     while (true) {
         sf::Packet packet;
-        sf::Uint32 fetch_state_cmd = (sf::Uint32)RealtimeCommandType::fetch_state;
-        RealtimeCommand realtime_command = {mClientId, fetch_state_cmd, mCurrentTick};
-        if (packet << realtime_command) {
-            mRealtimeClient->send(packet, SERVER_IP, 4888);
+        sf::Uint32 fetch_state_cmd = UnreliableCommandType::fetch_state;
+        UnreliableCommand unreliable_command = {mClientId, fetch_state_cmd, mCurrentTick};
+        if (packet << unreliable_command) {
+            mUnreliableClient->send(packet, SERVER_IP, 4888);
         } else {
             std::cout << "Failed to form packet" << std::endl;
         }
         // fetch state constantly
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        std::this_thread::sleep_for(std::chrono::milliseconds(SYNC_SERVER_STATE_SLEEP));
     }
 }

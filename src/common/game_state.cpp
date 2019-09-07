@@ -1,19 +1,26 @@
 #include "game_state.hpp"
+
 #include "network_util.hpp"
 
 
 sf::Packet pack_game_state(GameState game_state) {
     sf::Packet packet;
-    packet << game_state.tick;
 
-    packet << static_cast<sf::Uint32>(game_state.group_updates.size());
+    if (!(packet << game_state.tick && packet << static_cast<sf::Uint32>(
+        game_state.group_updates.size()))) {
+        std::cout << "Failed to form packet" << std::endl;
+    }
     for (const auto group_update : game_state.group_updates) {
-        packet << group_update;
+        if (!(packet << group_update)) {
+            std::cout << "Failed to form packet" << std::endl;
+        }
     }
 
     packet << static_cast<sf::Uint32>(game_state.mine_updates.size());
     for (const auto mine_update : game_state.mine_updates) {
-        packet << mine_update;
+        if (!(packet << mine_update)) {
+            std::cout << "Failed to form packet" << std::endl;
+        }
     }
 
     return packet;
@@ -44,4 +51,25 @@ GameState unpack_game_state(sf::Packet game_state_packet) {
 
     GameState game_state = {tick, group_updates, mine_updates};
     return game_state;
-};
+}
+
+sf::Packet& operator <<(sf::Packet& packet,
+  const ClientUnreliableUpdate& client_unreliable_update) {
+    return packet
+        << client_unreliable_update.direction;
+}
+
+sf::Packet& operator >>(sf::Packet& packet, ClientUnreliableUpdate& client_unreliable_update) {
+    return packet
+        >> client_unreliable_update.direction;
+}
+
+sf::Packet& operator <<(sf::Packet& packet, const ClientReliableUpdate& client_reliable_update) {
+    return packet
+        << client_reliable_update.groupable;
+}
+
+sf::Packet& operator >>(sf::Packet& packet, ClientReliableUpdate& client_reliable_update) {
+    return packet
+        >> client_reliable_update.groupable;
+}

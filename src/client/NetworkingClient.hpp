@@ -9,7 +9,9 @@
 
 #include "../common/game_def.hpp"
 #include "../common/ThreadSafeVector.hpp"
+#include "../common/ThreadSafeData.hpp"
 #include "../common/ThreadSafeVector2f.hpp"
+#include "../common/game_state.hpp"
 
 
 class NetworkingClient {
@@ -19,54 +21,58 @@ class NetworkingClient {
     // changes not sure it's really necessary, but implementing retry logic for something like
     // ungrouping specifically would be annoying. We're a lot more OK with duplication/out of order
     // sends/dropped datagrams for stuff like moving.
-    void api_client_recv(sf::TcpSocket* api_client) {}
-    void api_client_send(sf::TcpSocket* api_client) {}
+    void reliable_client_recv(sf::TcpSocket* reliable_client) {}
+    void reliable_client_send(sf::TcpSocket* reliable_client) {}
 
 
-    sf::TcpSocket* create_api_client() {
-        sf::TcpSocket* api_client = new sf::TcpSocket;
-        api_client->connect(SERVER_IP, 4844);
-        return api_client;
+    sf::TcpSocket* create_reliable_client() {
+        sf::TcpSocket* reliable_client = new sf::TcpSocket;
+        reliable_client->connect(SERVER_IP, 4844);
+        return reliable_client;
     }
 
-    sf::UdpSocket* create_realtime_client() {
-        sf::UdpSocket* realtime_client = new sf::UdpSocket;
-        realtime_client->bind(0);
-        return realtime_client;
+    sf::UdpSocket* create_unreliable_client() {
+        sf::UdpSocket* unreliable_client = new sf::UdpSocket;
+        unreliable_client->bind(0);
+        return unreliable_client;
     }
 
  public:
      NetworkingClient();
      ~NetworkingClient();
 
-     std::vector<GroupUpdate> getGroupUpdates();
-     std::vector<MineUpdate> getMineUpdates();
-     void setDirection(sf::Vector2f direction);
-     void setGroupable(bool groupable);
+     GameState getGameState();
+     int getPlayerId();
+
+     void setClientUnreliableUpdate(ClientUnreliableUpdate client_unreliable_update);
+     void setClientReliableUpdate(ClientReliableUpdate client_reliable_update);
 
  private:
      // Methods
-     void ReadRegistrationResponse();
-     void RegisterNetworkingClient();
-     void RealtimeClientSend();
-     void RealtimeClientRecv();
-     void ApiClientSend();
-     void ApiClientRecv();
-     void SyncServerState();
+     void readRegistrationResponse();
+     void registerNetworkingClient();
+     void unreliableClientSend();
+     void unreliableClientRecv();
+     void reliableClientSend();
+     void reliableClientRecv();
+     void syncServerState();
+
+     void sendClientUnreliableUpdate();
+     void sendClientReliableUpdate();
+     void sendPlayerIdRequest();
 
      // Variables
      sf::Uint32 mClientId;
      sf::Uint32 mCurrentTick;
      bool mIsRegistered = false;
-     bool mGroupable = false;
-     bool mNeedsGroupableStateSync = false;
 
-     sf::TcpSocket* mApiClient;
-     sf::UdpSocket* mRealtimeClient;
+     sf::TcpSocket* mReliableClient;
+     sf::UdpSocket* mUnreliableClient;
 
-     ThreadSafeVector<GroupUpdate> mGroupUpdates;
-     ThreadSafeVector<MineUpdate> mMineUpdates;
-     ThreadSafeVector2f mDirection;
+     ThreadSafeData<GameState> mGameState;
+     ThreadSafeData<ClientUnreliableUpdate> mClientUnreliableUpdate;
+     ThreadSafeData<ClientReliableUpdate> mClientReliableUpdate;
+     ThreadSafeData<int> mPlayerId;
 };
 
 #endif /* NetworkingClient_hpp */

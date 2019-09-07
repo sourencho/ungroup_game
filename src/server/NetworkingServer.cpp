@@ -2,24 +2,28 @@
 #include <utility>
 #include <vector>
 #include <memory>
+
 #include "../common/network_util.hpp"
-#include "../common/game_state.hpp"
+
+
+int INPUT_WINDOW_SLEEP = 100;
+
 
 NetworkingServer::NetworkingServer():
   mCurrTick(0) {
     std::cout << "Starting ungroup game server." << std::endl;;
-    std::thread api_thread(&NetworkingServer::apiServer, this);
-    std::thread realtime_thread(&NetworkingServer::realtimeServer, this);
-    api_thread.detach();
-    realtime_thread.detach();
+    std::thread reliable_thread(&NetworkingServer::reliableServer, this);
+    std::thread unreliable_thread(&NetworkingServer::unreliableServer, this);
+    reliable_thread.detach();
+    unreliable_thread.detach();
 }
 
 NetworkingServer::~NetworkingServer() {}
 
 
-// RealtimeServer Thread Methods
+// UnreliableServer Thread Methods
 
-void NetworkingServer::realtimeServer() {
+void NetworkingServer::unreliableServer() {
     sf::UdpSocket rt_server;
     rt_server.bind(4888);
     sf::Packet command_packet;
@@ -28,63 +32,63 @@ void NetworkingServer::realtimeServer() {
         sf::IpAddress sender;
         unsigned short port;
         sf::Socket::Status status = rt_server.receive(command_packet, sender, port);
-        handleRealtimeCommand(status, command_packet, rt_server, sender, port);
+        handleUnreliableCommand(status, command_packet, rt_server, sender, port);
     }
 }
 
-void NetworkingServer::handleRealtimeCommand(sf::Socket::Status status, sf::Packet command_packet,
-  sf::UdpSocket& rt_server,
-  sf::IpAddress& sender,
-  unsigned short port) {
-    RealtimeCommand realtime_command;
-    command_packet >> realtime_command;
-    switch (realtime_command.command) {
-        case (sf::Uint32)RealtimeCommandType::move: {
-            move(command_packet, realtime_command.client_id, realtime_command.tick);
+void NetworkingServer::handleUnreliableCommand(sf::Socket::Status status, sf::Packet command_packet,
+  sf::UdpSocket& rt_server, sf::IpAddress& sender, unsigned short port) {
+    UnreliableCommand unreliable_command;
+    command_packet >> unreliable_command;
+    switch (unreliable_command.command) {
+        case (sf::Uint32) UnreliableCommandType::client_unreliable_update: {
+            setClientUnreliableUpdate(command_packet, unreliable_command.client_id, unreliable_command.tick);
             break;
         }
-        case (sf::Uint32)RealtimeCommandType::fetch_state: {
-            // sample current state every 100 ms, this simply packages and returns it
-            GameState game_state = {
-                static_cast<sf::Uint32>(mCurrTick), mGroupUpdates.copy(), mMineUpdates.copy()};
-            sf::Packet game_state_packet = pack_game_state(game_state);
-            rt_server.send(game_state_packet, sender, port);
+        case (sf::Uint32)UnreliableCommandType::fetch_state: {
+            sendState(rt_server, sender, port);
             break;
         }
         default: {
             std::cout
                 << "Unknown command code sent: "
-                << realtime_command.command
+                << unreliable_command.command
                 << std::endl;
             break;
         }
     }
 }
 
-void NetworkingServer::move(sf::Packet command_packet, sf::Uint32 client_id, sf::Uint32 tick) {
-    sf::Vector2f direction;
-    if (command_packet >> direction) {
-        int drift = std::abs(static_cast<int>((mCurrTick - tick)));
-        if (drift < CMD_DRIFT_THRESHOLD) {
-            // your newest commands will overwrite old ones
-            mClientMoves.set(client_id, direction);
-        } else {
-            std::cout
-                << "Receive move command with tick drifted past drift threshold. "
-                << "Drift value is: "
-                << drift
-                << std::endl;
-        }
+void NetworkingServer::sendState(sf::UdpSocket& rt_server, sf::IpAddress& sender,
+  unsigned short port) {
+    // sample current state every 100 ms, this simply packages and returns it
+    GameState game_state = mGameState.get();
+    sf::Packet game_state_packet = pack_game_state(game_state);
+    rt_server.send(game_state_packet, sender, port);
+}
+
+void NetworkingServer::setClientUnreliableUpdate(sf::Packet packet, int client_id, int client_tick) {
+    int drift = std::abs(static_cast<int>((mCurrTick - client_tick)));
+    if (drift < CMD_DRIFT_THRESHOLD) {
+        ClientUnreliableUpdate client_unreliable_update;
+        packet >> client_unreliable_update;
+        ClientIdAndUnreliableUpdate client_id_and_unreliable_update = {client_id, client_unreliable_update};
+        mClientIdAndUnreliableUpdates.add(client_id_and_unreliable_update);
+    } else {
+        std::cout
+            << "Receive client_update command with tick drifted past drift threshold. "
+            << "Drift value is: "
+            << drift
+            << std::endl;
     }
 }
 
+// ReliableServer Thread Methods
 
-// ApiServer Thread Methods
-
-void NetworkingServer::apiServer() {
+void NetworkingServer::reliableServer() {
     // Create a socket to listen to new connections
     sf::TcpListener listener;
-    // API socket
+    // Reliable socket
     listener.listen(4844);
 
     // Create a selector
@@ -122,7 +126,7 @@ void NetworkingServer::apiServer() {
                         // The client has sent some data, we can receive it
                         sf::Packet command_packet;
                         sf::Socket::Status status = client.receive(command_packet);
-                        handleApiCommand(status, command_packet, selector, client, clients);
+                        handleReliableCommand(status, command_packet, selector, client, clients);
                     }
                 }
             }
@@ -130,18 +134,20 @@ void NetworkingServer::apiServer() {
     }
 }
 
-void NetworkingServer::handleApiCommand(sf::Socket::Status status, sf::Packet command_packet,
+void NetworkingServer::handleReliableCommand(sf::Socket::Status status, sf::Packet command_packet,
   sf::SocketSelector& selector,
   sf::TcpSocket& client,
   std::list<sf::TcpSocket*>& clients) {
-    sf::Uint32 api_command_type;
+    sf::Uint32 reliable_command_type;
     switch (status) {
         case sf::Socket::Done:
-            if (command_packet >> api_command_type) {
-                if (api_command_type == (sf::Uint32)APICommandType::register_client) {
+            if (command_packet >> reliable_command_type) {
+                if (reliable_command_type == (sf::Uint32) ReliableCommandType::register_client) {
                     registerClient(client);
-                } else if (api_command_type == (sf::Uint32)APICommandType::toggle_groupable) {
-                    updateGroupable(client);
+                } else if (reliable_command_type == (sf::Uint32) ReliableCommandType::player_id) {
+                    sendPlayerId(client);
+                } else if (reliable_command_type == (sf::Uint32) ReliableCommandType::client_reliable_update) {
+                    setClientReliableUpdate(command_packet, mClientSocketsToIds.get(&client));
                 }
             }
             break;
@@ -164,37 +170,42 @@ void NetworkingServer::handleApiCommand(sf::Socket::Status status, sf::Packet co
 void NetworkingServer::deleteClient(sf::TcpSocket* client, std::list<sf::TcpSocket*> clients) {
     int client_id = mClientSocketsToIds.get(client);
     clients.remove(client);
-    mClientGroupable.erase(mClientSocketsToIds.get(client));
-    mClientMoves.erase(mClientSocketsToIds.get(client));
     mClientSocketsToIds.erase(client);
     mRemovedClientIds.add(client_id);
 }
 
-void NetworkingServer::updateGroupable(sf::TcpSocket& client) {
-    sf::Packet response_packet;
-    sf::Uint32 toggle_groupable_cmd = (sf::Uint32)APICommandType::toggle_groupable;
-    sf::Uint32 client_id = mClientSocketsToIds.get(&client);
-    ApiCommand api_command = {
-      client_id,
-      toggle_groupable_cmd,
-      (sf::Uint32) mCurrTick
+void NetworkingServer::sendPlayerId(sf::TcpSocket& client) {
+    int client_id = mClientSocketsToIds.get(&client);
+    if (!mClientToPlayerIds.has_key(client_id)) {
+        return;
+    }
+    sf::Packet packet;
+    int player_id_cmd = ReliableCommandType::player_id;
+    PlayerId pi = {(sf::Uint32) mClientToPlayerIds.get(client_id)};
+    ReliableCommand reliable_command = {
+        (sf::Uint32) client_id,
+        (sf::Uint32) player_id_cmd,
+        (sf::Uint32) mCurrTick
     };
-    if (response_packet << api_command) {
-        client.send(response_packet);
-    }
-    if (!mClientGroupable.has_key(client_id)) {
-        mClientGroupable.set(client_id, true);
+    if (packet << reliable_command << pi) {
+        client.send(packet);
     } else {
-        bool groupable = 1 ^ mClientGroupable.get(client_id);
-        mClientGroupable.set(client_id, groupable);
+        std::cout << "Failed to form packet" << std::endl;
     }
+}
+
+void NetworkingServer::setClientReliableUpdate(sf::Packet packet, int client_id) {
+    ClientReliableUpdate client_reliable_update;
+    packet >> client_reliable_update;
+    ClientIdAndReliableUpdate client_id_and_reliable_update = {client_id, client_reliable_update};
+    mClientIdAndReliableUpdates.add(client_id_and_reliable_update);
 }
 
 void NetworkingServer::registerClient(sf::TcpSocket& client) {
     sf::Packet response_packet;
-    sf::Uint32 register_cmd = (sf::Uint32)APICommandType::register_client;
-    ApiCommand api_command = {mClientIdCounter, register_cmd, (sf::Uint32) mCurrTick};
-    if (response_packet << api_command) {
+    sf::Uint32 register_cmd = (sf::Uint32)ReliableCommandType::register_client;
+    ReliableCommand reliable_command = {mClientIdCounter, register_cmd, (sf::Uint32) mCurrTick};
+    if (response_packet << reliable_command) {
         client.send(response_packet);
         std::cout
             << "Received client registration. Issued client ID "
@@ -203,84 +214,54 @@ void NetworkingServer::registerClient(sf::TcpSocket& client) {
         int new_client_id = mClientIdCounter++;
         mClientSocketsToIds.set(&client, new_client_id);
         mNewClientIds.add(new_client_id);
-        mClientIdCounter++;
+    } else {
+        std::cout << "Failed to form packet" << std::endl;
     }
 }
 
 
 // Main Thread Methods
 
-client_inputs NetworkingServer::collectClientInputs() {
+ClientInputs NetworkingServer::collectClientInputs() {
     // Give clients a window to write inputs
-    mClientSocketsToIds.unlock();
-    mClientMoves.unlock();
-    mClientGroupable.unlock();
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    mClientSocketsToIds.lock();
-    mClientMoves.lock();
-    mClientGroupable.lock();
+    mNewClientIds.unlock();
+    mRemovedClientIds.unlock();
+    mClientIdAndUnreliableUpdates.unlock();
+    mClientIdAndReliableUpdates.unlock();
+    mGameState.unlock();
+    std::this_thread::sleep_for(std::chrono::milliseconds(INPUT_WINDOW_SLEEP));
+    mNewClientIds.lock();
+    mRemovedClientIds.lock();
+    mClientIdAndUnreliableUpdates.lock();
+    mClientIdAndReliableUpdates.lock();
+    mGameState.lock();
 
     // Get client inputs
-    client_inputs cis = {
-        popNewClientIds(), popRemovedClientIds(), getClientDirectionUpdates(),
-        getClientGroupabilityUpdates()};
+    ClientInputs cis = {
+        mNewClientIds.forceGetAndClear(), mRemovedClientIds.forceGetAndClear(),
+        mClientIdAndUnreliableUpdates.forceGetAndClear(),
+        mClientIdAndReliableUpdates.forceGetAndClear()};
     return cis;
 }
 
-std::vector<int> NetworkingServer::popNewClientIds() {
-    std::vector<int> new_client_ids = mNewClientIds.forceCopy();
-    mNewClientIds.forceClear();
-    return new_client_ids;
+void NetworkingServer::setClientToPlayerId(sf::Int32 client_id, int player_id) {
+    mClientToPlayerIds.forceSet(client_id, player_id);
 }
 
-std::vector<int> NetworkingServer::popRemovedClientIds() {
-    std::vector<int> removed_client_ids = mRemovedClientIds.forceCopy();
-    mRemovedClientIds.forceClear();
-    return removed_client_ids;
-}
+void NetworkingServer::setState(std::vector<std::shared_ptr<Group>> groups,
+  std::vector<std::shared_ptr<Mine>> mines) {
+    std::vector<GroupUpdate> group_updates;
+    std::vector<MineUpdate> mine_updates;
+    GameState gs = {mCurrTick, group_updates, mine_updates};
+    std::transform(
+        groups.begin(), groups.end(), std::back_inserter(gs.group_updates),
+        [](std::shared_ptr<Group> group){return group->getUpdate();});
 
-std::vector<client_direction_update> NetworkingServer::getClientDirectionUpdates() {
-    std::vector<client_direction_update> client_direction_updates;
-    for (const auto& client_move : mClientMoves.forceCopy()) {
-        client_direction_update cd = {
-            client_move.first, client_move.second.x, client_move.second.y};
-        client_direction_updates.push_back(cd);
-    }
+    std::transform(
+        mines.begin(), mines.end(), std::back_inserter(gs.mine_updates),
+        [](std::shared_ptr<Mine> mine){return mine->getUpdate();});
 
-    return client_direction_updates;
-}
-
-std::vector<client_groupability_update> NetworkingServer::getClientGroupabilityUpdates() {
-    std::vector<client_groupability_update> client_groupability_updates;
-    for (const auto& client_groupable : mClientGroupable.forceCopy()) {
-        client_groupability_update cgu = {
-            client_groupable.first, client_groupable.second};
-        client_groupability_updates.push_back(cgu);
-    }
-
-    return client_groupability_updates;
-}
-
-void NetworkingServer::setState(std::vector<std::shared_ptr<Group>> active_groups,
-  std::vector<std::shared_ptr<Mine>> active_mines) {
-    mGroupUpdates.clear();
-    for (const auto active_group : active_groups) {
-        sf::Uint32 group_id = active_group->getId();
-        sf::Vector2f position = active_group->getCircle()->getPosition();
-        bool groupable = active_group->getGroupable();
-        float radius = active_group->getCircle()->getRadius();
-        GroupUpdate group_update = {group_id, position.x, position.y, radius, groupable};
-        mGroupUpdates.add(group_update);
-    }
-
-    mMineUpdates.clear();
-    for (const auto active_mine : active_mines) {
-        sf::Uint32 mine_id = active_mine->getId();
-        sf::Vector2f position = active_mine->getCircle()->getPosition();
-        float radius = active_mine->getCircle()->getRadius();
-        MineUpdate mine_update = {mine_id, position.x, position.y, radius};
-        mMineUpdates.add(mine_update);
-    }
+    mGameState.forceSet(gs);
 }
 
 void NetworkingServer::incrementTick() {

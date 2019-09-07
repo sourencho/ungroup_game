@@ -11,12 +11,14 @@
 #include <future>
 #include <unordered_map>
 
-#include "../common/ThreadSafeMap.hpp"
-#include "../common/game_def.hpp"
-#include "../common/ThreadSafeVector.hpp"
-#include "Group.hpp"
-#include "Mine.hpp"
 #include <SFML/Network.hpp>
+
+#include "../common/ThreadSafeMap.hpp"
+#include "../common/ThreadSafeVector.hpp"
+#include "../common/ThreadSafeData.hpp"
+#include "../common/Group.hpp"
+#include "../common/game_state.hpp"
+#include "../common/Mine.hpp"
 
 
 class NetworkingServer {
@@ -26,45 +28,37 @@ class NetworkingServer {
      NetworkingServer();
      ~NetworkingServer();
 
-     client_inputs collectClientInputs();
+     ClientInputs collectClientInputs();
      void setState(
-        std::vector<std::shared_ptr<Group>> active_groups,
-        std::vector<std::shared_ptr<Mine>> active_mines);
+        std::vector<std::shared_ptr<Group>> groups,
+        std::vector<std::shared_ptr<Mine>> mines);
+     void setClientToPlayerId(int client_id, int player_id);
      void incrementTick();
 
  private:
-     void realtimeServer();
-     void apiServer();
+     void unreliableServer();
+     void reliableServer();
      void deleteClient(sf::TcpSocket* client, std::list<sf::TcpSocket*> clients);
-     void move(sf::Packet command_packet, sf::Uint32 client_id, sf::Uint32 tick);
-     void updateGroupable(sf::TcpSocket& client);
      void registerClient(sf::TcpSocket& client);
-     void handleApiCommand(
-        sf::Socket::Status status,
-        sf::Packet command_packet,
-        sf::SocketSelector& selector,
-        sf::TcpSocket& client,
-        std::list<sf::TcpSocket*>& clients);
-    void handleRealtimeCommand(
-        sf::Socket::Status status,
-        sf::Packet command_packet,
-        sf::UdpSocket& rt_server,
-        sf::IpAddress& sender,
-        unsigned short port);
+     void sendPlayerId(sf::TcpSocket& client);
+     void sendState(sf::UdpSocket& rt_server, sf::IpAddress& sender, unsigned short port);
+     void handleReliableCommand(sf::Socket::Status status, sf::Packet command_packet,
+       sf::SocketSelector& selector, sf::TcpSocket& client, std::list<sf::TcpSocket*>& clients);
+    void handleUnreliableCommand(sf::Socket::Status status, sf::Packet command_packet, 
+      sf::UdpSocket& rt_server, sf::IpAddress& sender, unsigned short port);
+    void setClientReliableUpdate(sf::Packet packet, int client_id);
+    void setClientUnreliableUpdate(sf::Packet packet, int client_id, int client_tick);
 
-     std::vector<client_direction_update> getClientDirectionUpdates();
-     std::vector<client_groupability_update> getClientGroupabilityUpdates();
      std::vector<int> getClientIds();
-     std::vector<int> popNewClientIds();
-     std::vector<int> popRemovedClientIds();
 
      ThreadSafeMap<sf::TcpSocket*, sf::Int32> mClientSocketsToIds;
+     ThreadSafeMap<int, int> mClientToPlayerIds;
      ThreadSafeVector<int> mNewClientIds;
      ThreadSafeVector<int> mRemovedClientIds;
-     ThreadSafeVector<GroupUpdate> mGroupUpdates;
-     ThreadSafeVector<MineUpdate> mMineUpdates;
-     ThreadSafeMap<sf::Uint32, sf::Vector2f> mClientMoves;
-     ThreadSafeMap<sf::Uint32, bool> mClientGroupable;
+     ThreadSafeVector<ClientIdAndUnreliableUpdate> mClientIdAndUnreliableUpdates;
+     ThreadSafeVector<ClientIdAndReliableUpdate> mClientIdAndReliableUpdates;
+
+     ThreadSafeData<GameState> mGameState;
 
      sf::Uint32 mClientIdCounter = 0;
      std::atomic<uint> mCurrTick;

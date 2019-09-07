@@ -1,9 +1,10 @@
 #ifndef LevelController_hpp
 #define LevelController_hpp
 
-#include "Player.hpp"
-#include "Group.hpp"
-#include "Mine.hpp"
+#include "../common/Player.hpp"
+#include "../common/Group.hpp"
+#include "../common/Mine.hpp"
+
 
 class LevelController {
  public:
@@ -30,8 +31,6 @@ class LevelController {
      std::vector<std::shared_ptr<Mine>> getMines();
 
      std::vector<std::shared_ptr<Player>> getActivePlayers();
-     std::vector<std::shared_ptr<Group>> getActiveGroups();
-     std::vector<std::shared_ptr<Mine>> getActiveMines();
 
  private:
      std::vector<std::shared_ptr<Player>> mPlayers;
