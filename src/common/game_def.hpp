@@ -7,13 +7,13 @@ struct Keys {
     sf::Keyboard::Key up, down, left, right, group;
 };
 
-struct RealtimeCommand {
+struct UnreliableCommand {
     sf::Uint32 client_id;
     sf::Uint32 command;
     sf::Uint32 tick;
 };
 
-struct ApiCommand {
+struct ReliableCommand {
     sf::Uint32 client_id;
     sf::Uint32 command;
     sf::Uint32 tick;
@@ -23,7 +23,7 @@ struct PlayerId {
     sf::Uint32 player_id;
 };
 
-enum APICommandType {register_client, toggle_groupable, player_id, client_tcp_update};
-enum RealtimeCommandType {client_udp_update, fetch_state};
+enum ReliableCommandType {register_client, player_id, client_reliable_update};
+enum UnreliableCommandType {client_unreliable_update, fetch_state};
 
 #endif /* game_def_hpp */

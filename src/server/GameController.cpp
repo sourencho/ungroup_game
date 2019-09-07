@@ -50,15 +50,15 @@ void GameController::updatePlayers(const ClientInputs& cis) {
         mLevelController->setPlayerActive(mClientToPlayer[removed_client_id], false);
     }
 
-    for (const auto& client_id_and_udp_update : cis.client_id_and_udp_updates) {
-        int player_id = mClientToPlayer[client_id_and_udp_update.client_id];
+    for (const auto& client_id_and_unreliable_update : cis.client_id_and_unreliable_updates) {
+        int player_id = mClientToPlayer[client_id_and_unreliable_update.client_id];
         std::shared_ptr<Player> player = mLevelController->getPlayer(player_id);
-        player->setDirection(client_id_and_udp_update.client_udp_update.direction);
+        player->setDirection(client_id_and_unreliable_update.client_unreliable_update.direction);
     }
-    for (const auto& client_id_and_tcp_update : cis.client_id_and_tcp_updates) {
-        int player_id = mClientToPlayer[client_id_and_tcp_update.client_id];
+    for (const auto& client_id_and_reliable_update : cis.client_id_and_reliable_updates) {
+        int player_id = mClientToPlayer[client_id_and_reliable_update.client_id];
         std::shared_ptr<Player> player = mLevelController->getPlayer(player_id);
-        player->setGroupable(client_id_and_tcp_update.client_tcp_update.groupable);
+        player->setGroupable(client_id_and_reliable_update.client_reliable_update.groupable);
     }
 }
 

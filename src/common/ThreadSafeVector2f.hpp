@@ -20,7 +20,7 @@ class ThreadSafeVector2f {
             mVector2f = value;
             unlock();
         }
-        sf::Vector2f copy() {
+        sf::Vector2f get() {
             sf::Vector2f vector_copy;
             lock();
             vector_copy = mVector2f;
