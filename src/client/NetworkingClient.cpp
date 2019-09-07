@@ -7,36 +7,40 @@
 #include <chrono>
 #include <ctime>
 #include <vector>
-
 #include <SFML/Network.hpp>
 
 #include "../common/network_util.hpp"
 
 
+int UNRELIABLE_UPDATE_SEND_SLEEP = 100;
+int RELIABLE_UPDATE_SEND_SLEEP = 100;
+int SYNC_SERVER_STATE_SLEEP = 100;
+
+
 NetworkingClient::NetworkingClient() {
     mPlayerId.set(-1);
 
-    mApiClient = create_api_client();
-    mRealtimeClient = create_realtime_client();
+    mReliableClient = create_reliable_client();
+    mUnreliableClient = create_unreliable_client();
     registerNetworkingClient();   // Sets mClientId, mCurrentTick, mIsRegistered
 
     std::cout << "Starting ungroup demo client." << std::endl;
 
-    // api
-    std::thread ApiClientRecv_thread(&NetworkingClient::apiClientRecv, this);
-    std::thread ApiClientSend_thread(&NetworkingClient::apiClientSend, this);
+    // reliable
+    std::thread ReliableClientRecv_thread(&NetworkingClient::reliableClientRecv, this);
+    std::thread ReliableClientSend_thread(&NetworkingClient::reliableClientSend, this);
 
-    // realtime
-    std::thread RealtimeClientRecv_thread(&NetworkingClient::realtimeClientRecv, this);
-    std::thread RealtimeClientSend_thread(&NetworkingClient::realtimeClientSend, this);
+    // unreliable
+    std::thread UnreliableClientRecv_thread(&NetworkingClient::unreliableClientRecv, this);
+    std::thread UnreliableClientSend_thread(&NetworkingClient::unreliableClientSend, this);
 
     // syncs authoritative sever state to client at a regular interval
     std::thread SyncServerState_thread(&NetworkingClient::syncServerState, this);
 
-    ApiClientRecv_thread.detach();
-    ApiClientSend_thread.detach();
-    RealtimeClientRecv_thread.detach();
-    RealtimeClientSend_thread.detach();
+    ReliableClientRecv_thread.detach();
+    ReliableClientSend_thread.detach();
+    UnreliableClientRecv_thread.detach();
+    UnreliableClientSend_thread.detach();
     SyncServerState_thread.detach();
 }
 
@@ -50,30 +54,30 @@ int NetworkingClient::getPlayerId() {
     return mPlayerId.get();
 }
 
-void NetworkingClient::setClientUDPUpdate(ClientUDPUpdate client_udp_update) {
-    mClientUDPUpdate.set(client_udp_update);
+void NetworkingClient::setClientUnreliableUpdate(ClientUnreliableUpdate client_unreliable_update) {
+    mClientUnreliableUpdate.set(client_unreliable_update);
 }
 
-void NetworkingClient::setClientTCPUpdate(ClientTCPUpdate client_tcp_update) {
-    mClientTCPUpdate.set(client_tcp_update);
+void NetworkingClient::setClientReliableUpdate(ClientReliableUpdate client_reliable_update) {
+    mClientReliableUpdate.set(client_reliable_update);
 }
 
 void NetworkingClient::readRegistrationResponse() {
     // read registration data
     sf::Packet registration_response;
-    ApiCommand api_command;
+    ReliableCommand reliable_command;
 
-    if (mApiClient->receive(registration_response) == sf::Socket::Done) {
-        if (registration_response >> api_command &&
-            api_command.command == (sf::Uint32)APICommandType::register_client) {
+    if (mReliableClient->receive(registration_response) == sf::Socket::Done) {
+        if (registration_response >> reliable_command &&
+            reliable_command.command == ReliableCommandType::register_client) {
             std::cout
                 << "Registered with ID and current tick: "
-                << api_command.client_id
+                << reliable_command.client_id
                 << " "
-                << api_command.tick
+                << reliable_command.tick
                 << std::endl;
-            mClientId = api_command.client_id;
-            mCurrentTick = api_command.tick;
+            mClientId = reliable_command.client_id;
+            mCurrentTick = reliable_command.tick;
             mIsRegistered = true;
         }
     }
@@ -81,8 +85,8 @@ void NetworkingClient::readRegistrationResponse() {
 
 void NetworkingClient::registerNetworkingClient() {
     sf::Packet registration_request;
-    if (registration_request << (sf::Uint32)APICommandType::register_client) {
-        mApiClient->send(registration_request);
+    if (registration_request << ReliableCommandType::register_client) {
+        mReliableClient->send(registration_request);
         readRegistrationResponse();
     }
 
@@ -91,15 +95,15 @@ void NetworkingClient::registerNetworkingClient() {
     }
 }
 
-void NetworkingClient::apiClientRecv() {
+void NetworkingClient::reliableClientRecv() {
     while (true) {
-        sf::Packet api_response;
-        ApiCommand api_command;
-        if (mApiClient->receive(api_response) == sf::Socket::Done) {
-            api_response >> api_command;
-            if (api_command.command == (sf::Uint32) APICommandType::player_id) {
+        sf::Packet reliable_response;
+        ReliableCommand reliable_command;
+        if (mReliableClient->receive(reliable_response) == sf::Socket::Done) {
+            reliable_response >> reliable_command;
+            if (reliable_command.command == ReliableCommandType::player_id) {
                 PlayerId pi;
-                api_response >> pi;
+                reliable_response >> pi;
                 mPlayerId.set(static_cast<int>(pi.player_id));
             }
         }
@@ -107,35 +111,42 @@ void NetworkingClient::apiClientRecv() {
 }
 
 
-void NetworkingClient::apiClientSend() {
+void NetworkingClient::reliableClientSend() {
     while (true) {
         sendPlayerIdRequest();
-        sendClientTCPUpdate();
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        // TODO(souren|#59): Don't spam server with TCP calls, optimize when updates are sent
+        sendClientReliableUpdate();
+        std::this_thread::sleep_for(std::chrono::milliseconds(RELIABLE_UPDATE_SEND_SLEEP));
     }
 }
 
-void NetworkingClient::sendClientTCPUpdate() {
+void NetworkingClient::sendClientReliableUpdate() {
     sf::Packet packet;
-    packet << (sf::Uint32)APICommandType::client_tcp_update;
-    packet << mClientTCPUpdate.get();
-    mApiClient->send(packet);
+    if (packet << ReliableCommandType::client_reliable_update &&
+        packet << mClientReliableUpdate.get()) {
+        mReliableClient->send(packet);
+    } else {
+        std::cout << "Failed to form packet" << std::endl;
+    }
 }
 
 void NetworkingClient::sendPlayerIdRequest() {
     if (mPlayerId.get() == -1) {
         sf::Packet packet;
-        packet << (sf::Uint32)APICommandType::player_id;
-        mApiClient->send(packet);
+        if (packet << (sf::Uint32) ReliableCommandType::player_id) {
+            mReliableClient->send(packet);
+        } else {
+            std::cout << "Failed to form packet" << std::endl;
+        }
     }
 }
 
-void NetworkingClient::realtimeClientRecv() {
+void NetworkingClient::unreliableClientRecv() {
     while (true) {
         sf::Packet packet;
         sf::IpAddress sender;
         unsigned short port;
-        mRealtimeClient->receive(packet, sender, port);
+        mUnreliableClient->receive(packet, sender, port);
         GameState game_state = unpack_game_state(packet);
 
         mGameState.set(game_state);
@@ -143,27 +154,29 @@ void NetworkingClient::realtimeClientRecv() {
     }
 }
 
-void NetworkingClient::realtimeClientSend() {
+void NetworkingClient::unreliableClientSend() {
     while (true) {
-        sendClientUDPUpdate();
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        sendClientUnreliableUpdate();
+        std::this_thread::sleep_for(std::chrono::milliseconds(UNRELIABLE_UPDATE_SEND_SLEEP));
     }
 }
 
-void NetworkingClient::sendClientUDPUpdate() {
+void NetworkingClient::sendClientUnreliableUpdate() {
     sf::Packet packet;
-    sf::Uint32 client_udp_update_cmd = (sf::Uint32) RealtimeCommandType::client_udp_update;
-    RealtimeCommand realtime_command = {
+    sf::Uint32 client_unreliable_update_cmd = UnreliableCommandType::client_unreliable_update;
+    UnreliableCommand unreliable_command = {
         mClientId,
-        client_udp_update_cmd,
+        client_unreliable_update_cmd,
         mCurrentTick,
     };
-    packet << realtime_command;
-    packet << mClientUDPUpdate.get();
-    mRealtimeClient->send(packet, SERVER_IP, 4888);
+    if (packet << unreliable_command && packet << mClientUnreliableUpdate.get()) {
+        mUnreliableClient->send(packet, SERVER_IP, 4888);
+    } else {
+        std::cout << "Failed to form packet" << std::endl;
+    }
 }
 
-// this probably should just be in realtimeClientSend and realtimeClientSend
+// this probably should just be in unreliableClientSend and unreliableClientSend
 // should poll client state to see if the current tick has a move AND if the move has
 // been sent to the server yet. If both are true, then it should try to communicate the move.
 // This would decouple local move setting commands from the network communication. They'd be
@@ -172,14 +185,14 @@ void NetworkingClient::sendClientUDPUpdate() {
 void NetworkingClient::syncServerState() {
     while (true) {
         sf::Packet packet;
-        sf::Uint32 fetch_state_cmd = (sf::Uint32)RealtimeCommandType::fetch_state;
-        RealtimeCommand realtime_command = {mClientId, fetch_state_cmd, mCurrentTick};
-        if (packet << realtime_command) {
-            mRealtimeClient->send(packet, SERVER_IP, 4888);
+        sf::Uint32 fetch_state_cmd = UnreliableCommandType::fetch_state;
+        UnreliableCommand unreliable_command = {mClientId, fetch_state_cmd, mCurrentTick};
+        if (packet << unreliable_command) {
+            mUnreliableClient->send(packet, SERVER_IP, 4888);
         } else {
             std::cout << "Failed to form packet" << std::endl;
         }
         // fetch state constantly
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        std::this_thread::sleep_for(std::chrono::milliseconds(SYNC_SERVER_STATE_SLEEP));
     }
 }

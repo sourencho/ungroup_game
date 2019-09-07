@@ -19,35 +19,35 @@ struct GameState {
 sf::Packet pack_game_state(GameState game_state);
 GameState unpack_game_state(sf::Packet game_state_packet);
 
-struct ClientUDPUpdate {
+struct ClientUnreliableUpdate {
     sf::Vector2f direction = sf::Vector2f(0.f, 0.f);
 };
 
-struct ClientTCPUpdate {
+struct ClientReliableUpdate {
     bool groupable = false;
 };
 
-struct ClientIdAndUDPUpdate {
+struct ClientIdAndUnreliableUpdate {
     int client_id;
-    ClientUDPUpdate client_udp_update;
+    ClientUnreliableUpdate client_unreliable_update;
 };
 
-struct ClientIdAndTCPUpdate {
+struct ClientIdAndReliableUpdate {
     int client_id;
-    ClientTCPUpdate client_tcp_update;
+    ClientReliableUpdate client_reliable_update;
 };
 
 struct ClientInputs {
     std::vector<int> new_client_ids;
     std::vector<int> removed_client_ids;
-    std::vector<ClientIdAndUDPUpdate> client_id_and_udp_updates;
-    std::vector<ClientIdAndTCPUpdate> client_id_and_tcp_updates;
+    std::vector<ClientIdAndUnreliableUpdate> client_id_and_unreliable_updates;
+    std::vector<ClientIdAndReliableUpdate> client_id_and_reliable_updates;
 };
 
-sf::Packet& operator <<(sf::Packet& packet, const ClientTCPUpdate& client_tcp_update);
-sf::Packet& operator >>(sf::Packet& packet, ClientTCPUpdate& client_tcp_update);
+sf::Packet& operator <<(sf::Packet& packet, const ClientReliableUpdate& client_reliable_update);
+sf::Packet& operator >>(sf::Packet& packet, ClientReliableUpdate& client_reliable_update);
 
-sf::Packet& operator <<(sf::Packet& packet, const ClientUDPUpdate& client_udp_update);
-sf::Packet& operator >>(sf::Packet& packet, ClientUDPUpdate& client_udp_update);
+sf::Packet& operator <<(sf::Packet& packet, const ClientUnreliableUpdate& client_unreliable_update);
+sf::Packet& operator >>(sf::Packet& packet, ClientUnreliableUpdate& client_unreliable_update);
 
 #endif /* game_state_hpp */

@@ -30,8 +30,8 @@ class Client {
      std::vector<ClientGroup*> mClientGroups;
      std::vector<ClientMine*> mClientMines;
      std::vector<Player*> mPlayers;
-     ClientTCPUpdate mClientTCPUpdate;
-     ClientUDPUpdate mClientUDPUpdate;
+     ClientReliableUpdate mClientReliableUpdate;
+     ClientUnreliableUpdate mClientUnreliableUpdate;
 
      Keys mKeys;
      int mPlayerId = -1;

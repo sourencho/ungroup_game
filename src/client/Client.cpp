@@ -33,7 +33,6 @@ Client::Client(int max_player_count, int max_mine_count, sf::Keyboard::Key keys[
 Client::~Client() {}
 
 void Client::draw(sf::RenderTarget& target, sf::Shader* shader, bool use_shader) {
-    // Draw active client groups
     for (auto client_group : mClientGroups) {
         if (client_group->isActive()) {
             bool groupable = client_group->getGroupable();
@@ -47,7 +46,6 @@ void Client::draw(sf::RenderTarget& target, sf::Shader* shader, bool use_shader)
         }
     }
 
-    // Draw active client mines
     for (auto client_mine : mClientMines) {
         if (client_mine->isActive()) {
             client_mine->getCircle()->draw(target, shader, use_shader);
@@ -56,21 +54,17 @@ void Client::draw(sf::RenderTarget& target, sf::Shader* shader, bool use_shader)
 }
 
 void Client::update() {
-    // Get updates
     GameState game_state =  mNetworkingClient->getGameState();
     if (mPlayerId == -1) {
         mPlayerId = mNetworkingClient->getPlayerId();
     }
 
-    // Send updates
-    mNetworkingClient->setClientTCPUpdate(mClientTCPUpdate);
-    mNetworkingClient->setClientUDPUpdate(mClientUDPUpdate);
+    mNetworkingClient->setClientReliableUpdate(mClientReliableUpdate);
+    mNetworkingClient->setClientUnreliableUpdate(mClientUnreliableUpdate);
 
-    // Apply updates
     for (auto gu : game_state.group_updates) {
         mClientGroups[gu.group_id]->applyUpdate(gu);
     }
-
     for (auto mu : game_state.mine_updates) {
         mClientMines[mu.mine_id]->applyUpdate(mu);
     }
@@ -78,13 +72,11 @@ void Client::update() {
 
 void Client::handleEvents(sf::Event& event) {
     if (event.type == sf::Event::KeyPressed) {
-        // Groupable
         if (sf::Keyboard::isKeyPressed(mKeys.group)) {
-            mClientTCPUpdate.groupable ^= true;
+            mClientReliableUpdate.groupable ^= true;
             return;
         }
 
-        // Direction
         sf::Vector2f direction = sf::Vector2f(0.f, 0.f);
         if (sf::Keyboard::isKeyPressed(mKeys.up)) {
             direction += sf::Vector2f(0.f, -1.f);
@@ -99,6 +91,6 @@ void Client::handleEvents(sf::Event& event) {
             direction += sf::Vector2f(1.f, 0.f);
         }
         direction = normalize(direction);
-        mClientUDPUpdate.direction = direction;
+        mClientUnreliableUpdate.direction = direction;
     }
 }

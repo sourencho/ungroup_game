@@ -1,13 +1,13 @@
 #include "network_util.hpp"
 
-sf::Packet& operator <<(sf::Packet& packet, const RealtimeCommand& realtime_command) {
+sf::Packet& operator <<(sf::Packet& packet, const UnreliableCommand& realtime_command) {
     return packet
         << realtime_command.client_id
         << realtime_command.command
         << realtime_command.tick;
 }
 
-sf::Packet& operator >>(sf::Packet& packet, RealtimeCommand& realtime_command) {
+sf::Packet& operator >>(sf::Packet& packet, UnreliableCommand& realtime_command) {
     return packet
         >> realtime_command.client_id
         >> realtime_command.command
@@ -15,14 +15,14 @@ sf::Packet& operator >>(sf::Packet& packet, RealtimeCommand& realtime_command) {
 }
 
 
-sf::Packet& operator <<(sf::Packet& packet, const ApiCommand& api_command) {
+sf::Packet& operator <<(sf::Packet& packet, const ReliableCommand& api_command) {
     return packet
         << api_command.client_id
         << api_command.command
         << api_command.tick;
 }
 
-sf::Packet& operator >>(sf::Packet& packet, ApiCommand& api_command) {
+sf::Packet& operator >>(sf::Packet& packet, ReliableCommand& api_command) {
     return packet
         >> api_command.client_id
         >> api_command.command
