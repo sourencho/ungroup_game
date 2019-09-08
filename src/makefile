@@ -46,4 +46,4 @@ ug-test: $(COMMON_TESTS_OBJ_LIST)
 
 .PHONY: clean
 clean:
-	rm -rf server/*.o common/*.o client/*.o ug-server ug-client
+	rm -rf server/*.o common/*.o client/*.o ug-server ug-client ug-test
