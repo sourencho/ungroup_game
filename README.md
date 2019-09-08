@@ -9,8 +9,8 @@ TODO
 1. Clone this repo
 2. Install SFML-devel package
 3. Change directory to `src/`
-4. Run `make`
-5. `./ungroup_server` and `./ungroup_client`
+4. Run `make clean && make`
+5. `./ug-server` and `./ug-client`
 
 ## Mechanics
 
