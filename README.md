@@ -2,7 +2,7 @@
 
 ## Intro
 
-TODO
+A
 
 ## Building and Running
 **Linux**
@@ -10,7 +10,7 @@ TODO
 2. Install SFML-devel package
 3. Change directory to `src/`
 4. Run `make clean && make`
-5. `./ug-server` and `./ug-client`
+5. Start the server with `./ug-server` and in a seperate window run `./ug-client`
 
 ## Mechanics
 
