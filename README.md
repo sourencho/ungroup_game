@@ -2,7 +2,7 @@
 
 ## Intro
 
-A
+A game about temporary alliances.
 
 ## Building and Running
 **Linux**
