@@ -6,6 +6,7 @@
 
 #include "GameController.hpp"
 #include "../common/game_settings.hpp"
+#include "../common/events/EventController.hpp"
 
 
 GameController::GameController(size_t max_player_count, size_t max_mine_count):
@@ -32,6 +33,7 @@ void GameController::computeGameState(const ClientInputs& cis) {
     mPhysicsController->step();
     mPhysicsController->handleCollision();
     updateGameObjectsPostPhysics();
+    EventController::getInstance()->processEvents();
 }
 
 
