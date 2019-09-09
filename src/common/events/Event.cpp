@@ -4,6 +4,6 @@ Event::Event(EventType event_type) {
     mEventType = event_type;
 }
 
-EventType Event::getType() {
+const EventType Event::getType() {
     return mEventType;
 }

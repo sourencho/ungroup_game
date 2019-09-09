@@ -5,11 +5,12 @@
 #include <list>
 #include <map>
 #include <queue>
+#include <memory>
 
 #include "Event.hpp"
 
 
-typedef std::function<void(Event*)> EventCallback;
+typedef std::function<void(std::shared_ptr<Event>)> EventCallback;
 
 class EventController {
  public:
@@ -28,13 +29,13 @@ class EventController {
     }
 
     void addEventListener(EventType event_type, EventCallback event_callback);
-    void queueEvent(Event* event);
+    void queueEvent(std::shared_ptr<Event> event);
     void processEvents();
 
  private:
     typedef std::list<EventCallback> EventCallbackList;
     typedef std::map<EventType, EventCallbackList> EventTypeToCallbacks;
-    typedef std::queue<Event*> EventQueue;
+    typedef std::queue<std::shared_ptr<Event>> EventQueue;
 
     EventController();
 

@@ -5,8 +5,6 @@
 #include "PhysicsController.hpp"
 
 #include "util.hpp"
-#include "events/EventController.hpp"
-#include "events/GroupCollisionEvent.hpp"
 
 
 PhysicsController::PhysicsController() {}
@@ -53,9 +51,6 @@ void PhysicsController::handleCollision() {
                 sf::Vector2f between_norm = normalize(between);
                 between_norm *= radius_sum - distance_between;
                 circle_b->move(between_norm);
-
-                GroupCollisionEvent* group_collision_event = new GroupCollisionEvent(1, 2);
-                EventController::getInstance()->queueEvent(group_collision_event);
             }
         }
     }

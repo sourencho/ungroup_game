@@ -38,8 +38,6 @@ struct ClientIdAndReliableUpdate {
 };
 
 struct ClientInputs {
-    std::vector<int> new_client_ids;
-    std::vector<int> removed_client_ids;
     std::vector<ClientIdAndUnreliableUpdate> client_id_and_unreliable_updates;
     std::vector<ClientIdAndReliableUpdate> client_id_and_reliable_updates;
 };

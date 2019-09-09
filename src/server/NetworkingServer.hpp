@@ -53,8 +53,6 @@ class NetworkingServer {
 
      ThreadSafeMap<sf::TcpSocket*, sf::Int32> mClientSocketsToIds;
      ThreadSafeMap<int, int> mClientToPlayerIds;
-     ThreadSafeVector<int> mNewClientIds;
-     ThreadSafeVector<int> mRemovedClientIds;
      ThreadSafeVector<ClientIdAndUnreliableUpdate> mClientIdAndUnreliableUpdates;
      ThreadSafeVector<ClientIdAndReliableUpdate> mClientIdAndReliableUpdates;
 

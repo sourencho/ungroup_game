@@ -12,6 +12,7 @@
 #include "NetworkingServer.hpp"
 #include "LevelController.hpp"
 #include "../common/PhysicsController.hpp"
+#include "../common/events/Event.hpp"
 
 
 class GameController {
@@ -22,6 +23,8 @@ class GameController {
      GameController& operator=(const GameController& temp_obj) = delete;
 
      void step();
+     void clientConnected(std::shared_ptr<Event> event);
+     void clientDisconnected(std::shared_ptr<Event> event);
 
  private:
      ClientInputs collectInputs();
