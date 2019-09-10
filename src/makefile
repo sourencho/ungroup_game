@@ -29,8 +29,8 @@ SERVER_SRC_LIST = $(shell find $(SERVER_SRC_DIR) $(CMN_DIR) -name "*.cpp")
 SERVER_OBJ_LIST = $(SERVER_SRC_LIST:.cpp=.o)
 
 COMMON_TESTS_LDFLAGS = -lsfml-system -lsfml-graphics -lsfml-network
-COMMON_TESTS_SRC_DIR = ./common
-COMMON_TESTS_SRC_LIST = $(shell find $(CMN_DIR) -name "*.cpp") ./tests/tests-main.cpp ./tests/common/tests-common.cpp
+COMMON_TESTS_SRC_DIR = ./tests/common
+COMMON_TESTS_SRC_LIST = $(shell find $(CMN_DIR) -name "*.cpp") $(shell find $(COMMON_TESTS_SRC_DIR) -name "tests-*.cpp")  ./tests/tests-main.cpp
 COMMON_TESTS_OBJ_LIST = $(COMMON_TESTS_SRC_LIST:.cpp=.o)
 
 all: ug-server ug-client ug-test
