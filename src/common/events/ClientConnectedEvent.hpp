@@ -1,3 +1,6 @@
+#ifndef ClientConnectedEvent_hpp
+#define ClientConnectedEvent_hpp
+
 #include "Event.hpp"
 
 
@@ -9,3 +12,5 @@ class ClientConnectedEvent : public Event {
  private:
      int mClientId = -1;
 };
+
+#endif /* ClientConnectedEvent_hpp */
