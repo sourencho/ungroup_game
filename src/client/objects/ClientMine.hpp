@@ -7,9 +7,9 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "../common/CircleGameObject.hpp"
-#include "../common/game_def.hpp"
-#include "../common/Mine.hpp"
+#include "../../common/objects/CircleGameObject.hpp"
+#include "../../common/util/game_def.hpp"
+#include "../../common/objects/Mine.hpp"
 
 
 class ClientMine : public CircleGameObject {

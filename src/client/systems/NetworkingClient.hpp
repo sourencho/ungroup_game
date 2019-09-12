@@ -7,11 +7,11 @@
 
 #include <SFML/Network.hpp>
 
-#include "../common/game_def.hpp"
-#include "../common/ThreadSafeVector.hpp"
-#include "../common/ThreadSafeData.hpp"
-#include "../common/ThreadSafeVector2f.hpp"
-#include "../common/game_state.hpp"
+#include "../../common/util/game_def.hpp"
+#include "../../common/util/ThreadSafeVector.hpp"
+#include "../../common/util/ThreadSafeData.hpp"
+#include "../../common/util/ThreadSafeVector2f.hpp"
+#include "../../common/util/game_state.hpp"
 
 
 class NetworkingClient {

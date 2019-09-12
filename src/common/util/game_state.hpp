@@ -6,8 +6,8 @@
 
 #include <SFML/Network.hpp>
 
-#include "../common/Group.hpp"
-#include "../common/Mine.hpp"
+#include "../objects/Group.hpp"
+#include "../objects/Mine.hpp"
 
 
 struct GameState {

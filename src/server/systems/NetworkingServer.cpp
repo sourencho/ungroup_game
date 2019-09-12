@@ -3,10 +3,10 @@
 #include <vector>
 #include <memory>
 
-#include "../common/network_util.hpp"
-#include "../common/events/EventController.hpp"
-#include "../common/events/ClientConnectedEvent.hpp"
-#include "../common/events/ClientDisconnectedEvent.hpp"
+#include "../../common/util/network_util.hpp"
+#include "../../common/events/EventController.hpp"
+#include "../../common/events/ClientConnectedEvent.hpp"
+#include "../../common/events/ClientDisconnectedEvent.hpp"
 
 
 int INPUT_WINDOW_SLEEP = 100;

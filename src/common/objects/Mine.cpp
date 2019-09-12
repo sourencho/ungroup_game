@@ -5,7 +5,7 @@
 #include <numeric>
 
 #include "Mine.hpp"
-#include "../common/game_settings.hpp"
+#include "../util/game_settings.hpp"
 
 
 sf::Packet& operator <<(sf::Packet& packet, const MineUpdate& mine_update) {

@@ -2,8 +2,9 @@
 
 #include <iostream>
 
-#include "../common/util.hpp"
-#include "../common/network_util.hpp"
+#include "../util/util.hpp"
+#include "../util/network_util.hpp"
+
 
 sf::Packet& operator <<(sf::Packet& packet, const PlayerUpdate& player_update) {
     return packet

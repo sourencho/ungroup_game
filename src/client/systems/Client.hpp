@@ -5,14 +5,15 @@
 #include <vector>
 #include <unordered_map>
 
-#include "../common/util.hpp"
-#include "../common/game_def.hpp"
-#include "../common/PhysicsController.hpp"
-#include "../common/Player.hpp"
+#include "../../common/util/util.hpp"
+#include "../../common/util/game_def.hpp"
+#include "../../common/systems/PhysicsController.hpp"
+#include "../../common/objects/Player.hpp"
+#include "../objects/ClientMine.hpp"
+#include "../objects/ClientGroup.hpp"
 #include "NetworkingClient.hpp"
-#include "ClientGroup.hpp"
-#include "ClientMine.hpp"
 #include <SFML/Graphics.hpp>
+
 
 class Client {
  public:

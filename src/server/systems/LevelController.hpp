@@ -1,9 +1,9 @@
 #ifndef LevelController_hpp
 #define LevelController_hpp
 
-#include "../common/Player.hpp"
-#include "../common/Group.hpp"
-#include "../common/Mine.hpp"
+#include "../../common/objects/Player.hpp"
+#include "../../common/objects/Group.hpp"
+#include "../../common/objects/Mine.hpp"
 
 
 class LevelController {

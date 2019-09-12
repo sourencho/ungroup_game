@@ -5,6 +5,7 @@
 #include <memory>
 #include <stdio.h>
 
+
 class Circle {
  public:
      Circle(float size, sf::Vector2f position, sf::Color color);

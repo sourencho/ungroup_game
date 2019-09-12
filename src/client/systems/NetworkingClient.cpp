@@ -9,7 +9,7 @@
 #include <vector>
 #include <SFML/Network.hpp>
 
-#include "../common/network_util.hpp"
+#include "../../common/util/network_util.hpp"
 
 
 int UNRELIABLE_UPDATE_SEND_SLEEP = 100;

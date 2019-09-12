@@ -8,8 +8,8 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Network.hpp>
 
-#include "../common/Circle.hpp"
-#include "../common/CircleGameObject.hpp"
+#include "Circle.hpp"
+#include "CircleGameObject.hpp"
 
 
 struct MineUpdate {
