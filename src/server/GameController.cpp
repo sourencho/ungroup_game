@@ -15,9 +15,9 @@ GameController::GameController(size_t max_player_count, size_t max_mine_count):
   mNetworkingServer(new NetworkingServer()), mPhysicsController(new PhysicsController()),
   mLevelController(new LevelController(mPhysicsController)) {
     mLevelController->loadLevel(max_player_count, max_mine_count);
-    EventController::getInstance()->addEventListener(EventType::EVENT_TYPE_CLIENT_CONNECTED,
+    EventController::getInstance().addEventListener(EventType::EVENT_TYPE_CLIENT_CONNECTED,
         std::bind(&GameController::clientConnected, this, std::placeholders::_1));
-    EventController::getInstance()->addEventListener(EventType::EVENT_TYPE_CLIENT_DISCONNECTED,
+    EventController::getInstance().addEventListener(EventType::EVENT_TYPE_CLIENT_DISCONNECTED,
         std::bind(&GameController::clientDisconnected, this, std::placeholders::_1));
 }
 
@@ -39,7 +39,7 @@ void GameController::computeGameState(const ClientInputs& cis) {
     mPhysicsController->step();
     mPhysicsController->handleCollision();
     updateGameObjectsPostPhysics();
-    EventController::getInstance()->processEvents();
+    EventController::getInstance().forceProcessEvents();
 }
 
 

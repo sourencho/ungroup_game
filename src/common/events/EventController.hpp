@@ -6,6 +6,7 @@
 #include <map>
 #include <queue>
 #include <memory>
+#include <mutex>
 
 #include "Event.hpp"
 
@@ -14,23 +15,20 @@ typedef std::function<void(std::shared_ptr<Event>)> EventCallback;
 
 class EventController {
  public:
-    static EventController* getInstance() {
-        if (!mInstance)
-            mInstance = new EventController();
-
-        return mInstance;
+    static EventController& getInstance() {
+        static EventController instance;
+        return instance;
     }
 
-    static void destroyInstance() {
-        if (mInstance)
-            delete mInstance;
-
-        mInstance = 0;
-    }
+    // Let's make sure we don't accidentally get copies of the singleton.
+    EventController(EventController const&) = delete;
+    void operator=(EventController const&) = delete;
 
     void addEventListener(EventType event_type, EventCallback event_callback);
     void queueEvent(std::shared_ptr<Event> event);
-    void processEvents();
+    void forceProcessEvents();
+    void lock();
+    void unlock();
 
  private:
     typedef std::list<EventCallback> EventCallbackList;
@@ -39,9 +37,11 @@ class EventController {
 
     EventController();
 
-    static EventController* mInstance;
     static EventTypeToCallbacks mEventCallbackMap;
     static EventQueue mEventQueue;
+
+    static std::mutex mEventQueueLock;
+    static std::mutex mEventMapLock;
 };
 
 #endif /* EventController_hpp */

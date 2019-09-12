@@ -178,7 +178,7 @@ void NetworkingServer::deleteClient(sf::TcpSocket* client, std::list<sf::TcpSock
     int deleted_client_id = mClientSocketsToIds.get(client);
     clients.remove(client);
     mClientSocketsToIds.erase(client);
-    EventController::getInstance()->queueEvent(
+    EventController::getInstance().queueEvent(
         std::shared_ptr<ClientDisconnectedEvent>(new ClientDisconnectedEvent(deleted_client_id)));
 }
 
@@ -222,7 +222,7 @@ void NetworkingServer::registerClient(sf::TcpSocket& client) {
         int new_client_id = mClientIdCounter++;
         mClientSocketsToIds.set(&client, new_client_id);
 
-        EventController::getInstance()->queueEvent(
+        EventController::getInstance().queueEvent(
             std::shared_ptr<ClientConnectedEvent>(new ClientConnectedEvent(new_client_id)));
     } else {
         std::cout << "Failed to form packet" << std::endl;
@@ -234,6 +234,7 @@ void NetworkingServer::registerClient(sf::TcpSocket& client) {
 
 ClientInputs NetworkingServer::collectClientInputs() {
     // Give clients a window to write inputs
+    EventController::getInstance().unlock();
     mClientIdAndUnreliableUpdates.unlock();
     mClientIdAndReliableUpdates.unlock();
     mGameState.unlock();
@@ -241,6 +242,7 @@ ClientInputs NetworkingServer::collectClientInputs() {
     mClientIdAndUnreliableUpdates.lock();
     mClientIdAndReliableUpdates.lock();
     mGameState.lock();
+    EventController::getInstance().lock();
 
     // Get client inputs
     ClientInputs cis = {

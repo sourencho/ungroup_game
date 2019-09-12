@@ -11,18 +11,17 @@ void add_to_the_global(std::shared_ptr<Event> event) {
 }
 
 SCENARIO("EventController processes an event", "[events]") {
-    EventController* event_controller = EventController::getInstance();
-
     GIVEN("an event listener is added") {
         std::function<void(std::shared_ptr<Event>)> add_to_the_global_ptr = add_to_the_global;
-        event_controller->addEventListener(EventType::EVENT_TYPE_TEST, add_to_the_global_ptr);
+        EventController::getInstance().addEventListener(EventType::EVENT_TYPE_TEST,
+            add_to_the_global_ptr);
 
         WHEN("an event is queued") {
             std::shared_ptr<TestEvent> test_event = std::shared_ptr<TestEvent>(new TestEvent(1));
-            event_controller->queueEvent(test_event);
+            EventController::getInstance().queueEvent(test_event);
 
             WHEN("events are processed") {
-                event_controller->processEvents();
+                EventController::getInstance().forceProcessEvents();
                 REQUIRE(THE_GLOBAL == 1);
             }
         }
