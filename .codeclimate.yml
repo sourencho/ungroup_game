@@ -1,3 +1,9 @@
+version: "2"
 plugins:
   cppcheck:
     enabled: true
+exclude_patterns:
+  - "docs/"
+  - "resources/"
+  - "src/tests/"
+  - "src/testing/"

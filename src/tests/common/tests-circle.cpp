@@ -1,4 +1,4 @@
-#include "../catch.hpp"
+#include "../vendor/catch.hpp"
 #include "../../common/CircleRigidBody.hpp"
 
 SCENARIO( "CircleRigidBody changes position", "[circle]" ) {

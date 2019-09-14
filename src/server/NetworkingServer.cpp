@@ -4,6 +4,9 @@
 #include <memory>
 
 #include "../common/network_util.hpp"
+#include "../common/events/EventController.hpp"
+#include "../common/events/ClientConnectedEvent.hpp"
+#include "../common/events/ClientDisconnectedEvent.hpp"
 
 
 int INPUT_WINDOW_SLEEP = 100;
@@ -42,7 +45,8 @@ void NetworkingServer::handleUnreliableCommand(sf::Socket::Status status, sf::Pa
     command_packet >> unreliable_command;
     switch (unreliable_command.command) {
         case (sf::Uint32) UnreliableCommandType::client_unreliable_update: {
-            setClientUnreliableUpdate(command_packet, unreliable_command.client_id, unreliable_command.tick);
+            setClientUnreliableUpdate(command_packet, unreliable_command.client_id,
+                unreliable_command.tick);
             break;
         }
         case (sf::Uint32)UnreliableCommandType::fetch_state: {
@@ -67,12 +71,14 @@ void NetworkingServer::sendState(sf::UdpSocket& rt_server, sf::IpAddress& sender
     rt_server.send(game_state_packet, sender, port);
 }
 
-void NetworkingServer::setClientUnreliableUpdate(sf::Packet packet, int client_id, int client_tick) {
+void NetworkingServer::setClientUnreliableUpdate(sf::Packet packet, int client_id,
+  int client_tick) {
     int drift = std::abs(static_cast<int>((mCurrTick - client_tick)));
     if (drift < CMD_DRIFT_THRESHOLD) {
         ClientUnreliableUpdate client_unreliable_update;
         packet >> client_unreliable_update;
-        ClientIdAndUnreliableUpdate client_id_and_unreliable_update = {client_id, client_unreliable_update};
+        ClientIdAndUnreliableUpdate client_id_and_unreliable_update = {client_id,
+            client_unreliable_update};
         mClientIdAndUnreliableUpdates.add(client_id_and_unreliable_update);
     } else {
         std::cout
@@ -146,7 +152,8 @@ void NetworkingServer::handleReliableCommand(sf::Socket::Status status, sf::Pack
                     registerClient(client);
                 } else if (reliable_command_type == (sf::Uint32) ReliableCommandType::player_id) {
                     sendPlayerId(client);
-                } else if (reliable_command_type == (sf::Uint32) ReliableCommandType::client_reliable_update) {
+                } else if (reliable_command_type == \
+                    (sf::Uint32) ReliableCommandType::client_reliable_update) {
                     setClientReliableUpdate(command_packet, mClientSocketsToIds.get(&client));
                 }
             }
@@ -168,10 +175,11 @@ void NetworkingServer::handleReliableCommand(sf::Socket::Status status, sf::Pack
 }
 
 void NetworkingServer::deleteClient(sf::TcpSocket* client, std::list<sf::TcpSocket*> clients) {
-    int client_id = mClientSocketsToIds.get(client);
+    int deleted_client_id = mClientSocketsToIds.get(client);
     clients.remove(client);
     mClientSocketsToIds.erase(client);
-    mRemovedClientIds.add(client_id);
+    EventController::getInstance().queueEvent(
+        std::shared_ptr<ClientDisconnectedEvent>(new ClientDisconnectedEvent(deleted_client_id)));
 }
 
 void NetworkingServer::sendPlayerId(sf::TcpSocket& client) {
@@ -213,7 +221,9 @@ void NetworkingServer::registerClient(sf::TcpSocket& client) {
             << std::endl;
         int new_client_id = mClientIdCounter++;
         mClientSocketsToIds.set(&client, new_client_id);
-        mNewClientIds.add(new_client_id);
+
+        EventController::getInstance().queueEvent(
+            std::shared_ptr<ClientConnectedEvent>(new ClientConnectedEvent(new_client_id)));
     } else {
         std::cout << "Failed to form packet" << std::endl;
     }
@@ -224,21 +234,18 @@ void NetworkingServer::registerClient(sf::TcpSocket& client) {
 
 ClientInputs NetworkingServer::collectClientInputs() {
     // Give clients a window to write inputs
-    mNewClientIds.unlock();
-    mRemovedClientIds.unlock();
+    EventController::getInstance().unlock();
     mClientIdAndUnreliableUpdates.unlock();
     mClientIdAndReliableUpdates.unlock();
     mGameState.unlock();
     std::this_thread::sleep_for(std::chrono::milliseconds(INPUT_WINDOW_SLEEP));
-    mNewClientIds.lock();
-    mRemovedClientIds.lock();
     mClientIdAndUnreliableUpdates.lock();
     mClientIdAndReliableUpdates.lock();
     mGameState.lock();
+    EventController::getInstance().lock();
 
     // Get client inputs
     ClientInputs cis = {
-        mNewClientIds.forceGetAndClear(), mRemovedClientIds.forceGetAndClear(),
         mClientIdAndUnreliableUpdates.forceGetAndClear(),
         mClientIdAndReliableUpdates.forceGetAndClear()};
     return cis;

@@ -4,7 +4,8 @@
 
 #include "PhysicsController.hpp"
 
-#include "../common/util.hpp"
+#include "util.hpp"
+
 
 PhysicsController::PhysicsController() {}
 
