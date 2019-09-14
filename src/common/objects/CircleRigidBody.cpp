@@ -1,5 +1,6 @@
 #include "CircleRigidBody.hpp"
 
+
 CircleRigidBody::CircleRigidBody(float radius, sf::Vector2f position):
   mRadius(radius), mPosition(position), mVelocity(0.f, 0.f) {}
 

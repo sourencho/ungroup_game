@@ -1,7 +1,7 @@
 #ifndef TestEvent_hpp
 #define TestEvent_hpp
 
-#include "../common/events/Event.hpp"
+#include "../../src/common/events/Event.hpp"
 
 
 class TestEvent : public Event {

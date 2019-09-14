@@ -2,7 +2,7 @@
 #include <vector>
 
 #include "LevelController.hpp"
-#include "../common/game_settings.hpp"
+#include "../../common/util/game_settings.hpp"
 
 LevelController::LevelController(std::shared_ptr<PhysicsController> pc):
   mPhysicsController(pc) {}

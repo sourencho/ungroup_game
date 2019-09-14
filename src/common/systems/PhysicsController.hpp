@@ -6,7 +6,7 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "CircleRigidBody.hpp"
+#include "../objects/CircleRigidBody.hpp"
 
 
 class PhysicsController{

@@ -5,7 +5,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Network.hpp>
 
-#include "../common/GameObject.hpp"
+#include "GameObject.hpp"
 
 
 struct PlayerUpdate {

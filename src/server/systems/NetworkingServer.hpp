@@ -13,12 +13,12 @@
 
 #include <SFML/Network.hpp>
 
-#include "../common/ThreadSafeMap.hpp"
-#include "../common/ThreadSafeVector.hpp"
-#include "../common/ThreadSafeData.hpp"
-#include "../common/Group.hpp"
-#include "../common/game_state.hpp"
-#include "../common/Mine.hpp"
+#include "../../common/util/ThreadSafeMap.hpp"
+#include "../../common/util/ThreadSafeVector.hpp"
+#include "../../common/util/ThreadSafeData.hpp"
+#include "../../common/objects/Group.hpp"
+#include "../../common/util/game_state.hpp"
+#include "../../common/objects/Mine.hpp"
 
 
 class NetworkingServer {

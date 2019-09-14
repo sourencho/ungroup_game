@@ -7,6 +7,7 @@
 #include <SFML/Graphics.hpp>
 #include "GameObject.hpp"
 
+
 class CircleRigidBody {
  public:
     CircleRigidBody(float radius, sf::Vector2f position);

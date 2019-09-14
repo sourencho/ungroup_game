@@ -6,10 +6,10 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "../common/Circle.hpp"
-#include "../common/CircleGameObject.hpp"
-#include "../common/game_def.hpp"
-#include "../common/Group.hpp"
+#include "../../common/objects/Circle.hpp"
+#include "../../common/objects/Group.hpp"
+#include "../../common/objects/CircleGameObject.hpp"
+#include "../../common/util/game_def.hpp"
 
 
 class ClientGroup : public CircleGameObject {

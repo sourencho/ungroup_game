@@ -5,10 +5,10 @@
 #include <memory>
 
 #include "GameController.hpp"
-#include "../common/game_settings.hpp"
-#include "../common/events/EventController.hpp"
-#include "../common/events/ClientConnectedEvent.hpp"
-#include "../common/events/ClientDisconnectedEvent.hpp"
+#include "../../common/util/game_settings.hpp"
+#include "../../common/events/EventController.hpp"
+#include "../../common/events/ClientConnectedEvent.hpp"
+#include "../../common/events/ClientDisconnectedEvent.hpp"
 
 
 GameController::GameController(size_t max_player_count, size_t max_mine_count):

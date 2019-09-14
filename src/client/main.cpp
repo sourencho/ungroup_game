@@ -1,8 +1,8 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
-#include "Client.hpp"
-#include "../common/game_def.hpp"
-#include "../common/game_settings.hpp"
+#include "systems/Client.hpp"
+#include "../common/util/game_def.hpp"
+#include "../common/util/game_settings.hpp"
 
 int main(int, char const**) {
     // Create the main window

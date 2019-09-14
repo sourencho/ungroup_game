@@ -1,4 +1,4 @@
-#include "../../vendor/catch.hpp"
+#include "../../../../vendor/catch.hpp"
 #include "../../../common/events/EventController.hpp"
 #include "../../../common/events/Event.hpp"
 #include "../../../testing/TestEvent.hpp"

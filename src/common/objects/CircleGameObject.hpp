@@ -6,9 +6,9 @@
 #include <iostream>
 
 #include "GameObject.hpp"
-#include "../common/Circle.hpp"
-#include "../common/CircleRigidBody.hpp"
-#include "../common/PhysicsController.hpp"
+#include "Circle.hpp"
+#include "CircleRigidBody.hpp"
+#include "../systems/PhysicsController.hpp"
 
 class CircleGameObject : public GameObject {
  public:

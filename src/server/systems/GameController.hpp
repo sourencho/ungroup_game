@@ -6,13 +6,13 @@
 #include <memory>
 #include <unordered_map>
 
-#include "../common/Player.hpp"
-#include "../common/Group.hpp"
-#include "../common/Mine.hpp"
+#include "../../common/objects/Player.hpp"
+#include "../../common/objects/Group.hpp"
+#include "../../common/objects/Mine.hpp"
+#include "../../common/systems/PhysicsController.hpp"
+#include "../../common/events/Event.hpp"
 #include "NetworkingServer.hpp"
 #include "LevelController.hpp"
-#include "../common/PhysicsController.hpp"
-#include "../common/events/Event.hpp"
 
 
 class GameController {
