@@ -1,11 +1,11 @@
 #include <iostream>
-#include "systems/GameController.hpp"
+#include "systems/ServerGameController.hpp"
 #include "../common/util/game_settings.hpp"
 
 int main(int, char const**) {
-    GameController game_controller(MAX_PLAYER_COUNT, MAX_MINE_COUNT);
+    ServerGameController server_game_controller(MAX_PLAYER_COUNT, MAX_MINE_COUNT);
 
     while (true) {
-        game_controller.step();
+        server_game_controller.step();
     }
 }

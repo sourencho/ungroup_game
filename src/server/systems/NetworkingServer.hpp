@@ -30,8 +30,8 @@ class NetworkingServer {
 
      ClientInputs collectClientInputs();
      void setState(
-        std::vector<std::shared_ptr<Group>> groups,
-        std::vector<std::shared_ptr<Mine>> mines);
+        std::vector<std::shared_ptr<Group>> groups, std::vector<std::shared_ptr<Mine>> mines,
+        std::vector<std::shared_ptr<Player>> players);
      void setClientToPlayerId(int client_id, int player_id);
      void incrementTick();
 

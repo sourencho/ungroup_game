@@ -256,9 +256,10 @@ void NetworkingServer::setClientToPlayerId(sf::Int32 client_id, int player_id) {
 }
 
 void NetworkingServer::setState(std::vector<std::shared_ptr<Group>> groups,
-  std::vector<std::shared_ptr<Mine>> mines) {
+  std::vector<std::shared_ptr<Mine>> mines, std::vector<std::shared_ptr<Player>> players) {
     std::vector<GroupUpdate> group_updates;
     std::vector<MineUpdate> mine_updates;
+    std::vector<PlayerUpdate> player_updates;
     GameState gs = {mCurrTick, group_updates, mine_updates};
     std::transform(
         groups.begin(), groups.end(), std::back_inserter(gs.group_updates),
@@ -267,7 +268,9 @@ void NetworkingServer::setState(std::vector<std::shared_ptr<Group>> groups,
     std::transform(
         mines.begin(), mines.end(), std::back_inserter(gs.mine_updates),
         [](std::shared_ptr<Mine> mine){return mine->getUpdate();});
-
+    std::transform(
+        players.begin(), players.end(), std::back_inserter(gs.player_updates),
+        [](std::shared_ptr<Player> player){return player->getUpdate();});
     mGameState.forceSet(gs);
 }
 

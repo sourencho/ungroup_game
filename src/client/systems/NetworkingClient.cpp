@@ -47,6 +47,7 @@ NetworkingClient::NetworkingClient() {
 NetworkingClient::~NetworkingClient() {}
 
 GameState NetworkingClient::getGameState() {
+    mGameStateIsFresh = false;
     return mGameState.get();
 }
 
@@ -110,7 +111,6 @@ void NetworkingClient::reliableClientRecv() {
     }
 }
 
-
 void NetworkingClient::reliableClientSend() {
     while (true) {
         sendPlayerIdRequest();
@@ -151,6 +151,7 @@ void NetworkingClient::unreliableClientRecv() {
 
         mGameState.set(game_state);
         mCurrentTick = game_state.tick;
+        mGameStateIsFresh = true;
     }
 }
 
@@ -195,4 +196,16 @@ void NetworkingClient::syncServerState() {
         // fetch state constantly
         std::this_thread::sleep_for(std::chrono::milliseconds(SYNC_SERVER_STATE_SLEEP));
     }
+}
+
+sf::Uint32 NetworkingClient::getCurrentTick() const {
+    return mCurrentTick;
+}
+
+sf::Uint32 NetworkingClient::getClientId() const {
+    return mClientId;
+}
+
+sf::Uint32 NetworkingClient::getGameStateIsFresh() const {
+    return mGameStateIsFresh;
 }
