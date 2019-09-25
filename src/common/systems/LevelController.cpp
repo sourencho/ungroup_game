@@ -71,14 +71,6 @@ void LevelController::setMineActive(int mine_id, bool value) {
     mMines[mine_id]->setActive(value);
 }
 
-std::vector<int> LevelController::getPlayerIds() {
-    std::vector<int> player_ids(mPlayers.size());
-    std::transform(
-        mPlayers.begin(), mPlayers.end(), std::back_inserter(player_ids),
-        [](std::shared_ptr<Player> player){return player->getId();});
-    return player_ids;
-}
-
 std::shared_ptr<Player> LevelController::getPlayer(int player_id) {
     return mPlayers[player_id];
 }
@@ -101,28 +93,4 @@ std::vector<std::shared_ptr<Group>> LevelController::getGroups() {
 
 std::vector<std::shared_ptr<Mine>> LevelController::getMines() {
     return mMines;
-}
-
-std::vector<std::shared_ptr<Player>> LevelController::getActivePlayers() {
-    std::vector<std::shared_ptr<Player>> active_players;
-    std::copy_if(
-        mPlayers.begin(), mPlayers.end(), std::back_inserter(active_players),
-        [](std::shared_ptr<Player> player){return player->isActive();});
-    return active_players;
-}
-
-std::vector<std::shared_ptr<Mine>> LevelController::getActiveMines() {
-    std::vector<std::shared_ptr<Mine>> active_mines;
-    std::copy_if(
-        mMines.begin(), mMines.end(), std::back_inserter(active_mines),
-        [](std::shared_ptr<Mine> mine){return mine->isActive();});
-    return active_mines;
-}
-
-std::vector<std::shared_ptr<Group>> LevelController::getActiveGroups() {
-    std::vector<std::shared_ptr<Group>> active_groups;
-    std::copy_if(
-        mGroups.begin(), mGroups.end(), std::back_inserter(active_groups),
-        [](std::shared_ptr<Group> group){return group->isActive();});
-    return active_groups;
 }

@@ -42,7 +42,6 @@ class NetworkingClient {
      ~NetworkingClient();
 
      GameState getGameState();
-     sf::Uint32 getCurrentTick() const;
      sf::Uint32 getClientId() const;
      int getPlayerId();
      sf::Uint32 getGameStateIsFresh() const;

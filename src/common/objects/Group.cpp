@@ -46,8 +46,8 @@ sf::Packet& operator >>(sf::Packet& packet, GroupUpdate& group_update) {
 }
 
 Group::Group(int id, sf::Vector2f position, sf::Color color, std::shared_ptr<PhysicsController> pc,
-  std::vector<std::shared_ptr<Player>> players):CircleGameObject(id, position, 0.f, color, pc), 
-  mPlayers(players) {}
+  const std::vector<std::shared_ptr<Player>>& players)
+  :CircleGameObject(id, position, 0.f, color, pc), mPlayers(players) {}
 
 Group::~Group() {}
 

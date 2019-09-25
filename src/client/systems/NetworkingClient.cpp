@@ -198,10 +198,6 @@ void NetworkingClient::syncServerState() {
     }
 }
 
-sf::Uint32 NetworkingClient::getCurrentTick() const {
-    return mCurrentTick;
-}
-
 sf::Uint32 NetworkingClient::getClientId() const {
     return mClientId;
 }

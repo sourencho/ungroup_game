@@ -25,8 +25,6 @@ class LevelController {
      void setGroupActive(int group_id, bool value);
      void setMineActive(int mine_id, bool value);
 
-     std::vector<int> getPlayerIds();
-
      std::shared_ptr<Player> getPlayer(int player_id);
      std::shared_ptr<Group> getGroup(int group_id);
      std::shared_ptr<Mine> getMine(int mine_id);
@@ -34,10 +32,6 @@ class LevelController {
      std::vector<std::shared_ptr<Player>> getPlayers();
      std::vector<std::shared_ptr<Group>> getGroups();
      std::vector<std::shared_ptr<Mine>> getMines();
-
-     std::vector<std::shared_ptr<Player>> getActivePlayers();
-     std::vector<std::shared_ptr<Group>> getActiveGroups();
-     std::vector<std::shared_ptr<Mine>> getActiveMines();
 
  private:
      std::vector<std::shared_ptr<Player>> mPlayers;

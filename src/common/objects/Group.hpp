@@ -30,7 +30,7 @@ sf::Packet& operator >>(sf::Packet& packet, GroupUpdate& group_update);
 class Group : public CircleGameObject {
  public:
     Group(int id, sf::Vector2f position, sf::Color color, std::shared_ptr<PhysicsController> pc,
-        std::vector<std::shared_ptr<Player>> players);
+        const std::vector<std::shared_ptr<Player>>& players);
     ~Group();
     Group(const Group& temp_obj) = delete;  // TODO: define this
     Group& operator=(const Group& temp_obj) = delete;  // TODO: define this
