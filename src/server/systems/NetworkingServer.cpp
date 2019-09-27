@@ -9,7 +9,7 @@
 #include "../../common/events/ClientDisconnectedEvent.hpp"
 
 
-int INPUT_WINDOW_SLEEP = 100;
+int INPUT_WINDOW_SLEEP = 200;
 
 
 NetworkingServer::NetworkingServer():

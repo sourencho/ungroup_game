@@ -37,8 +37,8 @@ void CircleRigidBody::move(sf::Vector2f offset) {
     mPosition += offset;
 }
 
-void CircleRigidBody::step() {
-    mPosition += mVelocity;
+void CircleRigidBody::step(sf::Int32 delta_ms) {
+    mPosition += mVelocity * static_cast<float>(delta_ms)/1000.f;
 }
 
 sf::Vector2f CircleRigidBody::getCenter() {

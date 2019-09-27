@@ -5,8 +5,6 @@
 #include "../../common/util/util.hpp"
 
 
-int CLIENT_STEP_SLEEP = 60;
-
 ClientGameController::ClientGameController(size_t max_player_count, size_t max_mine_count,
   sf::Keyboard::Key keys[5]): GameController(max_player_count, max_mine_count),
   mNetworkingClient(new NetworkingClient()) {
@@ -93,22 +91,28 @@ void ClientGameController::handleEvents(sf::Event& event) {
     }
 }
 
-void ClientGameController::step() {
+void ClientGameController::update() {
+    fetchPlayerId();
+
+    if (mNetworkingClient->getGameStateIsFresh()) {
+        applyGameState(mNetworkingClient->getGameState());
+    } else {
+        GameController::update();  // interpolate
+    }
+
+    setClientUpdates();
+}
+
+void ClientGameController::fetchPlayerId() {
     if (mPlayerId == -1) {
         mPlayerId = mNetworkingClient->getPlayerId();
         if (mPlayerId != -1) {
             mClientToPlayer[mNetworkingClient->getClientId()] = mPlayerId;
         }
     }
+}
 
-    if (mNetworkingClient->getGameStateIsFresh()) {
-        GameState game_state =  mNetworkingClient->getGameState();
-        applyGameState(game_state);
-    } else {  // interpolate
-        GameController::step();
-    }
-
+void ClientGameController::setClientUpdates() {
     mNetworkingClient->setClientReliableUpdate(mClientReliableUpdate);
     mNetworkingClient->setClientUnreliableUpdate(mClientUnreliableUpdate);
-    std::this_thread::sleep_for(std::chrono::milliseconds(CLIENT_STEP_SLEEP));
 }

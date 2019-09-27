@@ -40,13 +40,13 @@ COMMON_TESTS_OBJ_LIST = $(COMMON_TESTS_SRC_LIST:.cpp=.o)
 all: ug-server ug-client ug-test
 
 ug-server: $(SERVER_OBJ_LIST)
-	$(CXX) $(CFLAG) -o $@ $^ $(LDFLAGS) $(SERVER_LDFLAGS)
+	$(CXX) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(SERVER_LDFLAGS)
 
 ug-client: $(CLIENT_OBJ_LIST)
-	$(CXX) $(CFLAG) -o $@ $^ $(LDFLAGS) $(CLIENT_LDFLAGS)
+	$(CXX) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(CLIENT_LDFLAGS)
 
 ug-test: $(COMMON_TESTS_OBJ_LIST)
-	$(CXX) $(CFLAG) -o $@ $^ $(LDFLAGS) $(COMMON_TESTS_LDFLAGS)
+	$(CXX) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(COMMON_TESTS_LDFLAGS)
 
 .PHONY: clean
 clean:

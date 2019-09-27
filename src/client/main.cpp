@@ -63,7 +63,7 @@ int main(int, char const**) {
         }
 
         // Update
-        client_game_controller.step();
+        client_game_controller.update();
 
         // Display
         window.clear(sf::Color::Black);

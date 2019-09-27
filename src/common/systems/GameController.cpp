@@ -3,6 +3,9 @@
 #include <cstdlib>
 #include <vector>
 #include <memory>
+#include <thread>
+#include <chrono>
+#include <iostream>
 
 #include "GameController.hpp"
 
@@ -10,27 +13,43 @@
 #include "../events/EventController.hpp"
 
 
+// Game state is stepped at least every <MIN_TIME_STEP> milliseconds. 
+sf::Int32 MIN_TIME_STEP = (sf::Int32)((1/60.)*1000.);
+
 GameController::GameController(size_t max_player_count, size_t max_mine_count):
   mPhysicsController(new PhysicsController()),
   mLevelController(new LevelController(mPhysicsController)) {
     mLevelController->loadLevel(max_player_count, max_mine_count);
+    mClock.restart();
 }
 
 GameController::~GameController() {}
 
-void GameController::step() {
+void GameController::update() {
     ClientInputs cis = collectInputs();
-    computeGameState(cis);
+    
+    // Take a variable amount of game state steps depending on how long the last frame took. See:
+    // https://web.archive.org/web/20190403012130/https://gafferongames.com/post/fix_your_timestep/ 
+    sf::Int32 frame_time = mClock.restart().asMilliseconds();
+    mTimeAccumulator += frame_time;
+    while (mTimeAccumulator >= MIN_TIME_STEP) {
+        computeGameState(cis, MIN_TIME_STEP);
+        mTimeAccumulator -= MIN_TIME_STEP;
+        mElapsedTime += MIN_TIME_STEP;
+    }
+
     setNetworkState();
     incrementTick();
+
+    std::cout << "Steps per second: " << static_cast<float>(mStepCount)/(mElapsedTime/1000) << std::endl;
 }
 
-void GameController::computeGameState(const ClientInputs& cis) {
+void GameController::computeGameState(const ClientInputs& cis, sf::Int32 delta_ms) {
     updateGameObjects(cis);
-    mPhysicsController->step();
-    mPhysicsController->handleCollision();
+    mPhysicsController->update(delta_ms);
     updateGameObjectsPostPhysics();
     EventController::getInstance().forceProcessEvents();
+    mStepCount++;
 }
 
 

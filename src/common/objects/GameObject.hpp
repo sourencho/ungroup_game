@@ -5,7 +5,7 @@
 
 class GameObject {
     public:
-        GameObject(int id) {
+        explicit GameObject(int id) {
             mId = id;
         }
 

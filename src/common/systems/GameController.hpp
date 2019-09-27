@@ -16,32 +16,36 @@
 
 class GameController {
  public:
-    explicit GameController(size_t max_player_count, size_t max_mine_count);
-    ~GameController();
-    GameController(const GameController& temp_obj) = delete;
-    GameController& operator=(const GameController& temp_obj) = delete;
+  explicit GameController(size_t max_player_count, size_t max_mine_count);
+  ~GameController();
+  GameController(const GameController& temp_obj) = delete;
+  GameController& operator=(const GameController& temp_obj) = delete;
 
-    void step();
+  virtual void update();
 
  protected:
-    virtual ClientInputs collectInputs() = 0;
-    virtual void setNetworkState() = 0;
-    virtual void incrementTick() = 0;
+  virtual ClientInputs collectInputs() = 0;
+  virtual void setNetworkState() = 0;
+  virtual void incrementTick() = 0;
 
-    void updatePlayers(const ClientInputs& cis);
-    void updateGroups();
+  void updatePlayers(const ClientInputs& cis);
+  void updateGroups();
+  void computeGameState(const ClientInputs& cis, sf::Int32 delta_ms);
+  unsigned int createPlayerWithGroup();
+  void applyGameState(GameState game_state);
+  void updateGameObjects(const ClientInputs& cis);
+  void updateGameObjectsPostPhysics();
+  PlayerUpdate clientUpdateToPlayerUpdate(ClientUnreliableUpdate client_unreliable_update,
+    ClientReliableUpdate client_reliable_update);
 
-    void computeGameState(const ClientInputs& cis);
-    unsigned int createPlayerWithGroup();
-    void applyGameState(GameState game_state);
-    void updateGameObjects(const ClientInputs& cis);
-    void updateGameObjectsPostPhysics();
-    PlayerUpdate clientUpdateToPlayerUpdate(ClientUnreliableUpdate client_unreliable_update,
-      ClientReliableUpdate client_reliable_update);
+  std::shared_ptr<PhysicsController> mPhysicsController;
+  std::unique_ptr<LevelController> mLevelController;
+  std::unordered_map<sf::Uint32, int> mClientToPlayer;
 
-    std::shared_ptr<PhysicsController> mPhysicsController;
-    std::unique_ptr<LevelController> mLevelController;
-    std::unordered_map<sf::Uint32, int> mClientToPlayer;
+  sf::Clock mClock;
+  sf::Int32 mElapsedTime = 0;
+  sf::Int32 mTimeAccumulator = 0;
+  unsigned int mStepCount = 0;
 };
 
 #endif /* GameController_hpp */

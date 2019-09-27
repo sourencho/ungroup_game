@@ -26,13 +26,14 @@ class CircleRigidBody {
     sf::Vector2f getCenter();
 
     void move(sf::Vector2f offset);
-    void step();
+    void step(sf::Int32 delta_ms);
 
  private:
-    bool mIsActive = false;
-    float mRadius;
-    sf::Vector2f mPosition;
-    sf::Vector2f mVelocity;
+   bool mIsActive = false;
+   float mRadius;
+   sf::Vector2f mPosition;
+   sf::Vector2f mVelocity;  // distance/second
+
 };
 
 #endif /* CircleRigidBody_hpp */

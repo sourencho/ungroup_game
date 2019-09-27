@@ -5,8 +5,10 @@
 #include <numeric>
 
 #include "Group.hpp"
-#include "../util/game_settings.hpp"
 
+
+const float GROUP_MEMBER_SIZE = 15.f;
+const float GROUP_SPEED = 100.f;
 
 sf::Packet& operator <<(sf::Packet& packet, const GroupUpdate& group_update) {
     packet
