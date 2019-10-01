@@ -37,8 +37,8 @@ void GameController::update() {
 
     setNetworkState();
 
-    std::cout << "Steps per second: "
-        << static_cast<float>(mStepCount)/(mElapsedTime/1000) << std::endl;
+    //  std::cout << "Steps per second: "
+    //      << static_cast<float>(mStepCount)/(mElapsedTime/1000) << std::endl;
 }
 
 void GameController::computeGameState(const ClientInputs& cis, sf::Int32 delta_ms) {

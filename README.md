@@ -14,7 +14,7 @@ cmake -S . -B build
 ```
 4. To build run:
 ```
-cmake --build build
+cmake --build build -- -j
 ```
 5. To run game run:
 ```

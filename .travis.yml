@@ -6,7 +6,8 @@ compiler: clang
 services: xvfb
 dist: bionic
 script:
-  - cd src
-  - make -j10
-  - bash -c 'if ! ./ug-test; then >&2 echo "Fail"; exit 1; fi'
+  - mkdir build
+  - cmake -S . -B build
+  - cmake --build build -- -j
+  - bash -c 'if ! ./build/tests/ug-test; then >&2 echo "Fail"; exit 1; fi'
   - bash -c 'if ! xvfb-run --server-args="-screen 0 1280x1024x24" -e /dev/stdout -a node tests/integration/smoke_tests.js; then >&2 echo "Fail"; exit 1; fi'

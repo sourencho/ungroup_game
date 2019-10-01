@@ -1,14 +1,18 @@
-# Testing library
+# Download and configure Catch2 for the tests
 FetchContent_Declare(
-catch2
-GIT_REPOSITORY https://github.com/catchorg/Catch2.git
-GIT_TAG        v2.9.1
+    catch2
+    GIT_REPOSITORY https://github.com/catchorg/Catch2
+    GIT_TAG master
 )
 
-# Adds Catch2::Catch2
-FetchContent_MakeAvailable(catch2)
+FetchContent_GetProperties(catch2)
+if (NOT catch2_POPULATED)
+    FetchContent_Populate(catch2)
+    add_subdirectory(${catch2_SOURCE_DIR} ${catch2_BINARY_DIR})
+    list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/contrib)
+    include(Catch)
+endif()
 
-# Tests need to be added as executables first
 add_executable(ug-test
     tests-main.cpp
     common/objects/tests-circle.cpp

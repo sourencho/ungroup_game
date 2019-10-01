@@ -3,8 +3,8 @@
  * client registers successfully. These tests should be ran from src/:
  * node tests/integration/smoke_tests.js */
 var spawn = require('child_process').spawn;
-var server = spawn('./ug-server');
-var client = spawn('./ug-client');
+var server = spawn('./build/src/server/ug-server');
+var client = spawn('./build/src/client/ug-client');
 
 DESIRED_OUTPUT = "Received client registration. Issued client ID 0"
 success = false;
