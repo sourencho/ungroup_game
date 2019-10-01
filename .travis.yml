@@ -5,9 +5,11 @@ language: cpp
 compiler: clang
 services: xvfb
 dist: bionic
+before_script:
+  - mkdir -p build && cd build
+  - cmake ..
+  - cmake --build . -- -j
+  - cd ..
 script:
-  - mkdir build
-  - cmake -S . -B build
-  - cmake --build build -- -j
   - bash -c 'if ! ./build/tests/ug-test; then >&2 echo "Fail"; exit 1; fi'
   - bash -c 'if ! xvfb-run --server-args="-screen 0 1280x1024x24" -e /dev/stdout -a node tests/integration/smoke_tests.js; then >&2 echo "Fail"; exit 1; fi'
