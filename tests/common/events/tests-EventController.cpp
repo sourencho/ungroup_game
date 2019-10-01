@@ -1,7 +1,19 @@
-#include "../../../../vendor/catch.hpp"
-#include "../../../common/events/EventController.hpp"
-#include "../../../common/events/Event.hpp"
-#include "../../../testing/TestEvent.hpp"
+#include <catch2/catch.hpp>
+#include "../../../src/common/events/EventController.hpp"
+#include "../../../src/common/events/Event.hpp"
+
+class TestEvent : public Event {
+ public:
+     explicit TestEvent(int number):Event(EventType::EVENT_TYPE_TEST) {
+         mNumber = number;
+     }
+
+     int getNumber() {
+         return mNumber;
+     }
+ private:
+     int mNumber = -1;
+};
 
 int THE_GLOBAL = 0;
 
