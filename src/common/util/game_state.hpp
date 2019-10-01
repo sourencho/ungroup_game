@@ -11,7 +11,7 @@
 
 
 struct GameState {
-    sf::Uint32 tick;
+    unsigned int tick;
     std::vector<GroupUpdate> group_updates;
     std::vector<MineUpdate> mine_updates;
     std::vector<PlayerUpdate> player_updates;
@@ -41,6 +41,12 @@ struct ClientIdAndReliableUpdate {
 struct ClientInputs {
     std::vector<ClientIdAndUnreliableUpdate> client_id_and_unreliable_updates;
     std::vector<ClientIdAndReliableUpdate> client_id_and_reliable_updates;
+};
+
+struct ClientInputAndTick {
+    ClientUnreliableUpdate cuu;
+    ClientReliableUpdate cru;
+    unsigned int tick;
 };
 
 sf::Packet& operator <<(sf::Packet& packet, const ClientReliableUpdate& client_reliable_update);

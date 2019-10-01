@@ -43,6 +43,9 @@ class NetworkingClient {
 
      GameState getGameState();
      sf::Uint32 getClientId() const;
+     void incrementTick();
+     unsigned int getTick() const;
+     void setTick(unsigned int tick);
      int getPlayerId();
      sf::Uint32 getGameStateIsFresh() const;
 
@@ -65,7 +68,7 @@ class NetworkingClient {
 
      // Variables
      sf::Uint32 mClientId;
-     sf::Uint32 mCurrentTick;
+     std::atomic<uint> mTick;
      bool mIsRegistered = false;
      bool mGameStateIsFresh = true;
 

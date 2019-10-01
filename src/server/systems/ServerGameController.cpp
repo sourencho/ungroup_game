@@ -54,12 +54,17 @@ void ServerGameController::clientDisconnected(std::shared_ptr<Event> event) {
 }
 
 void ServerGameController::setNetworkState() {
-    std::vector<std::shared_ptr<Group>> groups = mLevelController->getGroups();
-    std::vector<std::shared_ptr<Mine>> mines = mLevelController->getMines();
-    std::vector<std::shared_ptr<Player>> players = mLevelController->getPlayers();
-    mNetworkingServer->setState(groups, mines, players);
+    mNetworkingServer->setState(GameController::getGameState());
 }
 
 void ServerGameController::incrementTick() {
     mNetworkingServer->incrementTick();
+}
+
+unsigned int ServerGameController::getTick() {
+    return mNetworkingServer->getTick();
+}
+
+void ServerGameController::setTick(unsigned int tick) {
+    mNetworkingServer->setTick(tick);
 }
