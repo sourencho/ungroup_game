@@ -10,7 +10,7 @@ SCENARIO( "CircleRigidBody changes position", "[circle]" ) {
     circle->setVelocity(sf::Vector2f(10.f, 10.f));
 
     WHEN( "step is called once" ) {
-      circle->step();
+      circle->step(1.0f);
 
       THEN( "the circle is an increment of its velocity away from its starting position" ) {
         sf::Vector2f position = circle->getPosition();
@@ -22,7 +22,7 @@ SCENARIO( "CircleRigidBody changes position", "[circle]" ) {
     WHEN( "step is called twice without changing velocity" ) {
       int number_of_steps = 2;
       for (int i=0; i < number_of_steps; i++) {
-        circle->step();
+        circle->step(1.0f);
       }
 
       THEN( "the circle is the vector of its velocity away from its starting position" ) {
@@ -33,9 +33,9 @@ SCENARIO( "CircleRigidBody changes position", "[circle]" ) {
     }
 
     WHEN( "step is called, the velocity is changed and step is called again" ) {
-      circle->step();
+      circle->step(1.0f);
       circle->setVelocity(sf::Vector2f(20.f, 20.f));
-      circle->step();
+      circle->step(1.0f);
 
       THEN( "the circle is the vector of its velocities away from its starting position" ) {
         sf::Vector2f position = circle->getPosition();
@@ -45,9 +45,9 @@ SCENARIO( "CircleRigidBody changes position", "[circle]" ) {
     }
 
     WHEN( "step is called, the velocity is flipped and step is called again" ) {
-      circle->step();
+      circle->step(1.0f);
       circle->setVelocity(sf::Vector2f(-10.f, -10.f));
-      circle->step();
+      circle->step(1.0f);
 
       THEN( "the circle is the vector of its velocities away from its starting position" ) {
         sf::Vector2f position = circle->getPosition();
@@ -59,7 +59,7 @@ SCENARIO( "CircleRigidBody changes position", "[circle]" ) {
 
   GIVEN( "a velocity is not set on a circle" ) {
     WHEN( "step is called once" ) {
-      circle->step();
+      circle->step(1.0f);
 
       THEN( "the circle's position is the same" ) {
         sf::Vector2f position = circle->getPosition();
@@ -71,7 +71,7 @@ SCENARIO( "CircleRigidBody changes position", "[circle]" ) {
     WHEN( "step is called twice" ) {
       int number_of_steps = 2;
       for (int i=0; i < number_of_steps; i++) {
-        circle->step();
+        circle->step(1.0f);
       }
 
       THEN( "the circle's position is the same" ) {

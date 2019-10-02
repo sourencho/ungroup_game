@@ -16,17 +16,25 @@ std::shared_ptr<CircleRigidBody> PhysicsController::createCRB(float radius, sf::
     return crb;
 }
 
-void PhysicsController::step() {
+void PhysicsController::update(sf::Int32 delta_ms) {
+    step(delta_ms);
+    handleCollision();
+}
+
+/**
+ * Update positions of all physics bodies.
+*/
+void PhysicsController::step(sf::Int32 delta_ms) {
     for (auto crb : mCircleRigidBodies) {
-        crb->step();
+        crb->step(delta_ms);
     }
 }
 
 /**
-    Handles collision between CircleRigidBodies by pairs.
-    To handle the collision between circle A and B, circle B is moved in the direction
-    of the vector spanning from the center of cirlce A to the center of circle B by the
-    amount needed such that the circles are touching but not intersecting.
+ * Handles collision between CircleRigidBodies by pairs.
+ * To handle the collision between circle A and B, circle B is moved in the direction
+ * of the vector spanning from the center of cirlce A to the center of circle B by the
+ * amount needed such that the circles are touching but not intersecting.
 */
 void PhysicsController::handleCollision() {
     for (std::shared_ptr<CircleRigidBody> circle_a : mCircleRigidBodies) {

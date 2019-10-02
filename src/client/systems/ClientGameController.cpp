@@ -3,9 +3,8 @@
 #include "ClientGameController.hpp"
 #include <SFML/Graphics.hpp>
 #include "../../common/util/util.hpp"
+#include "../../common/util/game_state.hpp"
 
-
-int CLIENT_STEP_SLEEP = 60;
 
 ClientGameController::ClientGameController(size_t max_player_count, size_t max_mine_count,
   sf::Keyboard::Key keys[5]): GameController(max_player_count, max_mine_count),
@@ -20,23 +19,7 @@ ClientGameController::ClientGameController(size_t max_player_count, size_t max_m
 ClientGameController::~ClientGameController() {}
 
 ClientInputs ClientGameController::collectInputs() {
-    // TODO(souren): Optimize by reusing vectors instead of allocating new ones every time
-    std::vector<ClientIdAndUnreliableUpdate> client_id_and_unreliable_updates;
-    std::vector<ClientIdAndReliableUpdate> client_id_and_reliable_updates;
-    int client_id = static_cast<int>(mNetworkingClient->getClientId());
-
-    if (mPlayerId != -1) {
-        ClientIdAndUnreliableUpdate client_id_and_unreliable_update = {client_id,
-            mClientUnreliableUpdate};
-        client_id_and_unreliable_updates.push_back(client_id_and_unreliable_update);
-
-        ClientIdAndReliableUpdate client_id_and_reliable_update = {client_id,
-            mClientReliableUpdate};
-        client_id_and_reliable_updates.push_back(client_id_and_reliable_update);
-    }
-
-    ClientInputs client_inputs = {client_id_and_unreliable_updates, client_id_and_reliable_updates};
-    return client_inputs;
+    return getClientInputs(mClientReliableUpdate, mClientUnreliableUpdate);
 }
 
 void ClientGameController::setNetworkState() {
@@ -44,7 +27,7 @@ void ClientGameController::setNetworkState() {
 }
 
 void ClientGameController::incrementTick() {
-    // noop
+    mNetworkingClient->incrementTick();
 }
 
 void ClientGameController::draw(sf::RenderTarget& target, sf::Shader* shader, bool use_shader) {
@@ -93,22 +76,93 @@ void ClientGameController::handleEvents(sf::Event& event) {
     }
 }
 
-void ClientGameController::step() {
+/**
+ * Fetch player id from server and set the client updates to send to the server then update game
+ * state. This is either done via rewind and replay when we have a game state update from the server
+ * or via local interpolation.
+ * Rewind and replay is applying the game state update from the server (rewind because it is likely
+ * for an old tick) and then interpolating up to the current tick via interpolation (replay).
+**/
+void ClientGameController::update() {
+    fetchPlayerId();
+    setClientUpdates();
+    if (mNetworkingClient->getGameStateIsFresh()) {
+        rewindAndReplay();
+        GameController::update();
+    } else {
+        GameController::update();  // interpolate
+    }
+}
+
+void ClientGameController::rewindAndReplay() {
+    // Rewind
+    GameState game_state = mNetworkingClient->getGameState();
+    int tick_delta = getTick() - game_state.tick;
+    applyGameState(game_state);
+
+    // Replay
+    if (tick_delta <= 0) {return;}  // If the client is behind the server we don't need to replay
+
+    // Loop through ticks that need to be replayed and apply client input from cache if present
+    for (int i=0; i < tick_delta; ++i) {
+        ClientInputAndTick client_input_and_tick;
+        unsigned int replay_tick = game_state.tick + i;
+
+        if(mTickToInput.count(replay_tick) > 0) {
+            client_input_and_tick = mTickToInput[replay_tick];
+            GameController::computeGameState(
+                getClientInputs(client_input_and_tick.cru, client_input_and_tick.cuu),
+                GameController::MIN_TIME_STEP
+            );
+        } else {
+            GameController::computeGameState(ClientInputs(), GameController::MIN_TIME_STEP);
+        }
+    }
+    mTickToInput.clear();
+}
+
+void ClientGameController::fetchPlayerId() {
     if (mPlayerId == -1) {
         mPlayerId = mNetworkingClient->getPlayerId();
         if (mPlayerId != -1) {
             mClientToPlayer[mNetworkingClient->getClientId()] = mPlayerId;
         }
     }
+}
 
-    if (mNetworkingClient->getGameStateIsFresh()) {
-        GameState game_state =  mNetworkingClient->getGameState();
-        applyGameState(game_state);
-    } else {  // interpolate
-        GameController::step();
-    }
-
-    mNetworkingClient->setClientReliableUpdate(mClientReliableUpdate);
+void ClientGameController::setClientUpdates() {
+    // Set input to send to server
     mNetworkingClient->setClientUnreliableUpdate(mClientUnreliableUpdate);
-    std::this_thread::sleep_for(std::chrono::milliseconds(CLIENT_STEP_SLEEP));
+    mNetworkingClient->setClientReliableUpdate(mClientReliableUpdate);
+
+    // Save input and state for replay
+    mTickToInput[mNetworkingClient->getTick()] = (ClientInputAndTick){mClientUnreliableUpdate,
+        mClientReliableUpdate, mNetworkingClient->getTick()};
+}
+
+ClientInputs& ClientGameController::getClientInputs(ClientReliableUpdate cru,
+  ClientUnreliableUpdate cuu) {
+    int client_id = static_cast<int>(mNetworkingClient->getClientId());
+
+    if (mClientInputs.client_id_and_reliable_updates.size() == 0) {
+        mClientInputs.client_id_and_reliable_updates.resize(1);
+    }
+    mClientInputs.client_id_and_reliable_updates[0].client_id = client_id;
+    mClientInputs.client_id_and_reliable_updates[0].client_reliable_update = cru;
+
+    if (mClientInputs.client_id_and_unreliable_updates.size() == 0) {
+        mClientInputs.client_id_and_unreliable_updates.resize(1);
+    }
+    mClientInputs.client_id_and_unreliable_updates[0].client_id = client_id;
+    mClientInputs.client_id_and_unreliable_updates[0].client_unreliable_update = cuu;
+
+    return mClientInputs;
+}
+
+unsigned int ClientGameController::getTick() {
+    return mNetworkingClient->getTick();
+}
+
+void ClientGameController::setTick(unsigned int tick) {
+    mNetworkingClient->setTick(tick);
 }

@@ -9,11 +9,10 @@
 #include "../../common/events/ClientDisconnectedEvent.hpp"
 
 
-int INPUT_WINDOW_SLEEP = 100;
-
+int INPUT_WINDOW_SLEEP = 200;
 
 NetworkingServer::NetworkingServer():
-  mCurrTick(0) {
+  mTick(0) {
     std::cout << "Starting ungroup game server." << std::endl;;
     std::thread reliable_thread(&NetworkingServer::reliableServer, this);
     std::thread unreliable_thread(&NetworkingServer::unreliableServer, this);
@@ -66,14 +65,14 @@ void NetworkingServer::handleUnreliableCommand(sf::Socket::Status status, sf::Pa
 void NetworkingServer::sendState(sf::UdpSocket& rt_server, sf::IpAddress& sender,
   unsigned short port) {
     // sample current state every 100 ms, this simply packages and returns it
-    GameState game_state = mGameState.get();
+GameState game_state = mGameState.get();
     sf::Packet game_state_packet = pack_game_state(game_state);
     rt_server.send(game_state_packet, sender, port);
 }
 
 void NetworkingServer::setClientUnreliableUpdate(sf::Packet packet, int client_id,
-  int client_tick) {
-    int drift = std::abs(static_cast<int>((mCurrTick - client_tick)));
+  unsigned int client_tick) {
+    int drift = std::abs(static_cast<int>((mTick - client_tick)));
     if (drift < CMD_DRIFT_THRESHOLD) {
         ClientUnreliableUpdate client_unreliable_update;
         packet >> client_unreliable_update;
@@ -193,7 +192,7 @@ void NetworkingServer::sendPlayerId(sf::TcpSocket& client) {
     ReliableCommand reliable_command = {
         (sf::Uint32) client_id,
         (sf::Uint32) player_id_cmd,
-        (sf::Uint32) mCurrTick
+        (sf::Uint32) mTick
     };
     if (packet << reliable_command << pi) {
         client.send(packet);
@@ -212,7 +211,7 @@ void NetworkingServer::setClientReliableUpdate(sf::Packet packet, int client_id)
 void NetworkingServer::registerClient(sf::TcpSocket& client) {
     sf::Packet response_packet;
     sf::Uint32 register_cmd = (sf::Uint32)ReliableCommandType::register_client;
-    ReliableCommand reliable_command = {mClientIdCounter, register_cmd, (sf::Uint32) mCurrTick};
+    ReliableCommand reliable_command = {mClientIdCounter, register_cmd, (sf::Uint32) mTick};
     if (response_packet << reliable_command) {
         client.send(response_packet);
         std::cout
@@ -255,25 +254,18 @@ void NetworkingServer::setClientToPlayerId(sf::Int32 client_id, int player_id) {
     mClientToPlayerIds.forceSet(client_id, player_id);
 }
 
-void NetworkingServer::setState(std::vector<std::shared_ptr<Group>> groups,
-  std::vector<std::shared_ptr<Mine>> mines, std::vector<std::shared_ptr<Player>> players) {
-    std::vector<GroupUpdate> group_updates;
-    std::vector<MineUpdate> mine_updates;
-    std::vector<PlayerUpdate> player_updates;
-    GameState gs = {mCurrTick, group_updates, mine_updates};
-    std::transform(
-        groups.begin(), groups.end(), std::back_inserter(gs.group_updates),
-        [](std::shared_ptr<Group> group){return group->getUpdate();});
-
-    std::transform(
-        mines.begin(), mines.end(), std::back_inserter(gs.mine_updates),
-        [](std::shared_ptr<Mine> mine){return mine->getUpdate();});
-    std::transform(
-        players.begin(), players.end(), std::back_inserter(gs.player_updates),
-        [](std::shared_ptr<Player> player){return player->getUpdate();});
+void NetworkingServer::setState(GameState gs) {
     mGameState.forceSet(gs);
 }
 
 void NetworkingServer::incrementTick() {
-    mCurrTick++;
+    mTick++;
+}
+
+unsigned int NetworkingServer::getTick() const {
+    return static_cast<unsigned int>(mTick);
+}
+
+void NetworkingServer::setTick(unsigned int tick) {
+    mTick = tick;
 }

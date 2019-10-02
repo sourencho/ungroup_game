@@ -22,6 +22,8 @@ class ServerGameController : public GameController {
      ClientInputs collectInputs() override;
      void setNetworkState() override;
      void incrementTick() override;
+     unsigned int getTick() override;
+     void setTick(unsigned int tick) override;
 
      std::unique_ptr<NetworkingServer> mNetworkingServer;
 };
