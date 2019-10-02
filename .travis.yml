@@ -1,11 +1,19 @@
 addons:
   apt:
     packages:
+    - libpthread-stubs0-dev
+    - libgl1-mesa-dev
+    - libx11-dev
     - libxrandr-dev
     - libudev-dev
     - libfreetype6-dev
     - libopenal-dev
     - libflac-dev
+    - libglew1.5-dev
+    - libjpeg8-dev
+    - libsndfile1-dev
+    - libxcb-image0-dev
+    - libjpeg-dev
 language: cpp
 compiler: clang
 services: xvfb
