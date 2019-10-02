@@ -1,4 +1,4 @@
-#include <catch2/catch.hpp>
+#include <catch.hpp>
 #include "../../../src/common/events/EventController.hpp"
 #include "../../../src/common/events/Event.hpp"
 
