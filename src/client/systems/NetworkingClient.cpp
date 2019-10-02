@@ -17,7 +17,7 @@ int RELIABLE_UPDATE_SEND_SLEEP = 100;
 int SYNC_SERVER_STATE_SLEEP = 100;
 
 
-NetworkingClient::NetworkingClient():mTick(0) {
+NetworkingClient::NetworkingClient():mTick(0), mGameState() {
     mPlayerId.set(-1);
 
     mReliableClient = create_reliable_client();
