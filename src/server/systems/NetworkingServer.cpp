@@ -11,8 +11,7 @@
 
 int INPUT_WINDOW_SLEEP = 200;
 
-NetworkingServer::NetworkingServer():
-  mTick(0) {
+NetworkingServer::NetworkingServer():mTick(0), mGameState() {
     std::cout << "Starting ungroup game server." << std::endl;;
     std::thread reliable_thread(&NetworkingServer::reliableServer, this);
     std::thread unreliable_thread(&NetworkingServer::unreliableServer, this);
