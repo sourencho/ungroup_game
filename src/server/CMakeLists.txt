@@ -4,4 +4,10 @@ add_executable (ug-server
     systems/ServerGameController.cpp
 )
 
-target_link_libraries(ug-server PRIVATE common)
+add_library(server-lib
+    main.cpp
+    systems/NetworkingServer.cpp
+    systems/ServerGameController.cpp
+)
+
+target_link_libraries(ug-server PRIVATE common-lib)

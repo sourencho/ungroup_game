@@ -1,4 +1,4 @@
-add_library(common
+add_library(common-lib
     util/util.cpp
     util/network_util.cpp
     util/game_state.cpp
@@ -17,4 +17,4 @@ add_library(common
     systems/LevelController.cpp
 )
 
-target_link_libraries(common PUBLIC sfml-system sfml-graphics sfml-network)
+target_link_libraries(common-lib PUBLIC sfml-system sfml-graphics sfml-network)

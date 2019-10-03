@@ -22,7 +22,7 @@ void add_to_the_global(std::shared_ptr<Event> event) {
     THE_GLOBAL += test_event->getNumber();
 }
 
-SCENARIO("EventController processes an event", "[events]") {
+SCENARIO("EventController processes an event", "[common, events]") {
     GIVEN("an event listener is added") {
         std::function<void(std::shared_ptr<Event>)> add_to_the_global_ptr = add_to_the_global;
         EventController::getInstance().addEventListener(EventType::EVENT_TYPE_TEST,
