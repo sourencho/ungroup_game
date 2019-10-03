@@ -18,13 +18,13 @@ int SYNC_SERVER_STATE_SLEEP = 100;
 
 
 NetworkingClient::NetworkingClient():mTick(0), mGameState() {
+    std::cout << "Starting ungroup demo client." << std::endl;
+
     mPlayerId.set(-1);
 
     mReliableClient = create_reliable_client();
     mUnreliableClient = create_unreliable_client();
     registerNetworkingClient();   // Sets mClientId, mTick, mIsRegistered
-
-    std::cout << "Starting ungroup demo client." << std::endl;
 
     // reliable
     std::thread ReliableClientRecv_thread(&NetworkingClient::reliableClientRecv, this);
@@ -44,7 +44,10 @@ NetworkingClient::NetworkingClient():mTick(0), mGameState() {
     SyncServerState_thread.detach();
 }
 
-NetworkingClient::~NetworkingClient() {}
+NetworkingClient::~NetworkingClient() {
+    delete mReliableClient;
+    delete mUnreliableClient;
+}
 
 GameState NetworkingClient::getGameState() {
     mGameStateIsFresh = false;
@@ -94,7 +97,8 @@ void NetworkingClient::registerNetworkingClient() {
     }
 
     if (!mIsRegistered) {
-        throw std::runtime_error("Failed to register. Exiting.");
+        // throw std::runtime_error("Failed to register. Exiting.");
+        std::cout << "Failed to register" << std::endl;
     }
 }
 

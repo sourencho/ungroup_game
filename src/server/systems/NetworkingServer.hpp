@@ -38,12 +38,12 @@ class NetworkingServer {
  private:
     void unreliableServer();
     void reliableServer();
-    void deleteClient(sf::TcpSocket* client, std::list<sf::TcpSocket*> clients);
-    void registerClient(sf::TcpSocket& client);
-    void sendPlayerId(sf::TcpSocket& client);
+    void deleteClient(std::shared_ptr<sf::TcpSocket> client);
+    void registerClient(std::shared_ptr<sf::TcpSocket> client);
+    void sendPlayerId(std::shared_ptr<sf::TcpSocket> client);
     void sendState(sf::UdpSocket& rt_server, sf::IpAddress& sender, unsigned short port);
     void handleReliableCommand(sf::Socket::Status status, sf::Packet command_packet,
-      sf::SocketSelector& selector, sf::TcpSocket& client, std::list<sf::TcpSocket*>& clients);
+      sf::SocketSelector& selector, std::shared_ptr<sf::TcpSocket> client);
     void handleUnreliableCommand(sf::Socket::Status status, sf::Packet command_packet,
       sf::UdpSocket& rt_server, sf::IpAddress& sender, unsigned short port);
     void setClientReliableUpdate(sf::Packet packet, int client_id);
@@ -51,7 +51,7 @@ class NetworkingServer {
 
     std::vector<int> getClientIds();
 
-    ThreadSafeMap<sf::TcpSocket*, sf::Int32> mClientSocketsToIds;
+    ThreadSafeMap<std::shared_ptr<sf::TcpSocket>, sf::Int32> mClientSocketsToIds;
     ThreadSafeMap<int, int> mClientToPlayerIds;
     ThreadSafeVector<ClientIdAndUnreliableUpdate> mClientIdAndUnreliableUpdates;
     ThreadSafeVector<ClientIdAndReliableUpdate> mClientIdAndReliableUpdates;
@@ -60,7 +60,7 @@ class NetworkingServer {
 
     sf::Uint32 mClientIdCounter = 0;
     std::atomic<uint> mTick;
-    std::list<sf::TcpSocket*> mClients;
+    std::vector<std::shared_ptr<sf::TcpSocket>> mClients;
 };
 
 #endif /* NetworkingServer_hpp */

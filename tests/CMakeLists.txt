@@ -1,6 +1,6 @@
 add_executable(ug-test
     tests-main.cpp
-    common/objects/tests-circle.cpp
+    common/objects/tests-CircleRigidBody.cpp
     common/events/tests-EventController.cpp
     server/systems/tests-ServerGameController.cpp
     server/systems/tests-NetworkingServer.cpp

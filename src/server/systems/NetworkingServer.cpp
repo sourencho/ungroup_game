@@ -19,7 +19,9 @@ NetworkingServer::NetworkingServer():mTick(0), mGameState() {
     unreliable_thread.detach();
 }
 
-NetworkingServer::~NetworkingServer() {}
+NetworkingServer::~NetworkingServer() {
+    mClients.clear();
+}
 
 
 // UnreliableServer Thread Methods
@@ -64,7 +66,7 @@ void NetworkingServer::handleUnreliableCommand(sf::Socket::Status status, sf::Pa
 void NetworkingServer::sendState(sf::UdpSocket& rt_server, sf::IpAddress& sender,
   unsigned short port) {
     // sample current state every 100 ms, this simply packages and returns it
-GameState game_state = mGameState.get();
+    GameState game_state = mGameState.get();
     sf::Packet game_state_packet = pack_game_state(game_state);
     rt_server.send(game_state_packet, sender, port);
 }
@@ -98,9 +100,6 @@ void NetworkingServer::reliableServer() {
     // Create a selector
     sf::SocketSelector selector;
 
-    // Create a vector to store the future clients
-    std::list<sf::TcpSocket*> clients;
-
     // Add the listener to the selector
     selector.add(listener);
 
@@ -111,7 +110,7 @@ void NetworkingServer::reliableServer() {
             // Test the listener
             if (selector.isReady(listener)) {
                 // The listener is ready: there is a pending connection
-                sf::TcpSocket* client = new sf::TcpSocket;
+                auto client = std::shared_ptr<sf::TcpSocket>(new sf::TcpSocket());
                 if (listener.accept(*client) == sf::Socket::Done) {
                     // Add the new client to the clients list
                     mClients.push_back(client);
@@ -119,18 +118,16 @@ void NetworkingServer::reliableServer() {
                     // be notified when he sends something
                     selector.add(*client);
                 } else {
-                    // Error, we won't get a new connection, delete the socket
-                    delete client;
+                    // Error, we won't get a new connection
                 }
             } else {
                 // The listener socket is not ready, test all other sockets (the clients)
-                for (auto it = mClients.begin(); it != mClients.end(); ++it) {
-                    sf::TcpSocket& client = **it;
-                    if (selector.isReady(client)) {
+                for (auto client : mClients) {
+                    if (selector.isReady(*client)) {
                         // The client has sent some data, we can receive it
                         sf::Packet command_packet;
-                        sf::Socket::Status status = client.receive(command_packet);
-                        handleReliableCommand(status, command_packet, selector, client, clients);
+                        sf::Socket::Status status = client->receive(command_packet);
+                        handleReliableCommand(status, command_packet, selector, client);
                     }
                 }
             }
@@ -139,9 +136,7 @@ void NetworkingServer::reliableServer() {
 }
 
 void NetworkingServer::handleReliableCommand(sf::Socket::Status status, sf::Packet command_packet,
-  sf::SocketSelector& selector,
-  sf::TcpSocket& client,
-  std::list<sf::TcpSocket*>& clients) {
+sf::SocketSelector& selector, std::shared_ptr<sf::TcpSocket> client) {
     sf::Uint32 reliable_command_type;
     switch (status) {
         case sf::Socket::Done:
@@ -152,19 +147,19 @@ void NetworkingServer::handleReliableCommand(sf::Socket::Status status, sf::Pack
                     sendPlayerId(client);
                 } else if (reliable_command_type == \
                     (sf::Uint32) ReliableCommandType::client_reliable_update) {
-                    setClientReliableUpdate(command_packet, mClientSocketsToIds.get(&client));
+                    setClientReliableUpdate(command_packet, mClientSocketsToIds.get(client));
                 }
             }
             break;
         case sf::TcpSocket::Error:
             std::cout << "TCP client encountered error. Removing client." << std::endl;
-            selector.remove(client);
-            deleteClient(&client, clients);
+            selector.remove(*client);
+            deleteClient(client);
             break;
         case sf::TcpSocket::Disconnected:
             std::cout << "TCP client disconnected. Removing client. " << std::endl;
-            selector.remove(client);
-            deleteClient(&client, clients);
+            selector.remove(*client);
+            deleteClient(client);
             break;
         default:
             std::cout << "TCP client sent unkown signal." << std::endl;
@@ -172,16 +167,16 @@ void NetworkingServer::handleReliableCommand(sf::Socket::Status status, sf::Pack
     }
 }
 
-void NetworkingServer::deleteClient(sf::TcpSocket* client, std::list<sf::TcpSocket*> clients) {
+void NetworkingServer::deleteClient(std::shared_ptr<sf::TcpSocket> client) {
     int deleted_client_id = mClientSocketsToIds.get(client);
-    clients.remove(client);
+    mClients.erase(std::remove(mClients.begin(), mClients.end(), client), mClients.end());
     mClientSocketsToIds.erase(client);
     EventController::getInstance().queueEvent(
         std::shared_ptr<ClientDisconnectedEvent>(new ClientDisconnectedEvent(deleted_client_id)));
 }
 
-void NetworkingServer::sendPlayerId(sf::TcpSocket& client) {
-    int client_id = mClientSocketsToIds.get(&client);
+void NetworkingServer::sendPlayerId(std::shared_ptr<sf::TcpSocket> client) {
+    int client_id = mClientSocketsToIds.get(client);
     if (!mClientToPlayerIds.has_key(client_id)) {
         return;
     }
@@ -194,7 +189,7 @@ void NetworkingServer::sendPlayerId(sf::TcpSocket& client) {
         (sf::Uint32) mTick
     };
     if (packet << reliable_command << pi) {
-        client.send(packet);
+        client->send(packet);
     } else {
         std::cout << "Failed to form packet" << std::endl;
     }
@@ -207,18 +202,18 @@ void NetworkingServer::setClientReliableUpdate(sf::Packet packet, int client_id)
     mClientIdAndReliableUpdates.add(client_id_and_reliable_update);
 }
 
-void NetworkingServer::registerClient(sf::TcpSocket& client) {
+void NetworkingServer::registerClient(std::shared_ptr<sf::TcpSocket> client) {
     sf::Packet response_packet;
     sf::Uint32 register_cmd = (sf::Uint32)ReliableCommandType::register_client;
     ReliableCommand reliable_command = {mClientIdCounter, register_cmd, (sf::Uint32) mTick};
     if (response_packet << reliable_command) {
-        client.send(response_packet);
+        client->send(response_packet);
         std::cout
             << "Received client registration. Issued client ID "
             << mClientIdCounter
             << std::endl;
         int new_client_id = mClientIdCounter++;
-        mClientSocketsToIds.set(&client, new_client_id);
+        mClientSocketsToIds.set(client, new_client_id);
 
         EventController::getInstance().queueEvent(
             std::shared_ptr<ClientConnectedEvent>(new ClientConnectedEvent(new_client_id)));

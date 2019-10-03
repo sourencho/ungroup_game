@@ -2,7 +2,7 @@
 #include "../../../src/common/objects/CircleRigidBody.hpp"
 
 
-SCENARIO( "CircleRigidBody changes position", "[common, objects]" ) {
+SCENARIO( "CircleRigidBody changes position", "[common][objects][CircleRigidBody]" ) {
   sf::Vector2f position = sf::Vector2f(0.f, 0.f);
   CircleRigidBody circle = CircleRigidBody(0.f, position);
 
