@@ -8,7 +8,7 @@
 #include <memory>
 #include <chrono>
 #include <thread>
-#include <future>
+#include <utility>
 #include <unordered_map>
 
 #include <SFML/Network.hpp>
@@ -37,21 +37,22 @@ class NetworkingServer {
 
  private:
     void unreliableServer();
+
     void reliableServer();
-    void deleteClient(std::shared_ptr<sf::TcpSocket> client);
-    void registerClient(std::shared_ptr<sf::TcpSocket> client);
-    void sendPlayerId(std::shared_ptr<sf::TcpSocket> client);
-    void sendState(sf::UdpSocket& rt_server, sf::IpAddress& sender, unsigned short port);
+    void clientDisconnect(sf::TcpSocket& client, sf::Uint32 client_id);
+    void registerClient(sf::TcpSocket& client, sf::Uint32 client_id);
+    void sendPlayerId(sf::TcpSocket& socket, sf::Uint32 client_id);
     void handleReliableCommand(sf::Socket::Status status, sf::Packet command_packet,
-      sf::SocketSelector& selector, std::shared_ptr<sf::TcpSocket> client);
+        sf::SocketSelector& selector, sf::TcpSocket& socket, sf::Uint32 client_id);
     void handleUnreliableCommand(sf::Socket::Status status, sf::Packet command_packet,
       sf::UdpSocket& rt_server, sf::IpAddress& sender, unsigned short port);
     void setClientReliableUpdate(sf::Packet packet, int client_id);
     void setClientUnreliableUpdate(sf::Packet packet, int client_id, unsigned int client_tick);
+    void sendState(sf::UdpSocket& rt_server, sf::IpAddress& sender, unsigned short port);
 
     std::vector<int> getClientIds();
+    std::vector<std::pair<sf::Uint32,std::unique_ptr<sf::TcpSocket>>> mClients;
 
-    ThreadSafeMap<std::shared_ptr<sf::TcpSocket>, sf::Int32> mClientSocketsToIds;
     ThreadSafeMap<int, int> mClientToPlayerIds;
     ThreadSafeVector<ClientIdAndUnreliableUpdate> mClientIdAndUnreliableUpdates;
     ThreadSafeVector<ClientIdAndReliableUpdate> mClientIdAndReliableUpdates;
@@ -60,7 +61,11 @@ class NetworkingServer {
 
     sf::Uint32 mClientIdCounter = 0;
     std::atomic<uint> mTick;
-    std::vector<std::shared_ptr<sf::TcpSocket>> mClients;
+
+    std::thread mReliableThread;
+    std::thread mUnreliableThread;
+
+    std::atomic<bool> mStopThreads;
 };
 
 #endif /* NetworkingServer_hpp */

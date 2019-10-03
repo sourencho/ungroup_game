@@ -3,9 +3,7 @@ add_executable(ug-test
     common/objects/tests-CircleRigidBody.cpp
     common/events/tests-EventController.cpp
     server/systems/tests-ServerGameController.cpp
-    server/systems/tests-NetworkingServer.cpp
     client/systems/tests-ClientGameController.cpp
-    client/systems/tests-NetworkingClient.cpp
 )
 
 target_link_libraries(ug-test PRIVATE server-lib common-lib client-lib catch)
