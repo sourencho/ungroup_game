@@ -56,20 +56,6 @@ Set `tasks.json` to:
             "problemMatcher": []
         },
         {
-            "label": "cmake",
-            "type": "shell",
-            "options": {
-                "cwd": "${workspaceRoot}/build"
-            },
-            "command": "cmake",
-            "args": [
-                "${workspaceRoot}"
-            ],
-            "dependsOn": [
-                "dir"
-            ]
-        },
-        {
             "label": "cmake_debug",
             "type": "shell",
             "options": {
@@ -86,17 +72,6 @@ Set `tasks.json` to:
             "problemMatcher": []
         },
         {
-            "label": "make",
-            "type": "shell",
-            "options": {
-                "cwd": "${workspaceRoot}/build"
-            },
-            "command": "make -j",
-            "dependsOn": [
-                "cmake"
-            ]
-        },
-        {
             "label": "make_debug",
             "type": "shell",
             "options": {
@@ -105,20 +80,6 @@ Set `tasks.json` to:
             "command": "make -j VERBOSE=1",
             "dependsOn": [
                 "cmake_debug"
-            ]
-        },
-        {
-            "label": "build",
-            "type": "shell",
-            "options": {
-                "cwd": "${workspaceRoot}/build"
-            },
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "dependsOn": [
-                "make"
             ]
         },
         {
