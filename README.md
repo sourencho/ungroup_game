@@ -160,6 +160,18 @@ Set `launch.json` to:
             "environment": [],
             "externalConsole": false,
             "MIMode": "lldb"
+        },
+        {
+            "name": "(lldb) Launch ug-client",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceRoot}/build/src/client/ug-client",
+            "args": [],
+            "stopAtEntry": true,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "lldb"
         }
     ]
 }
@@ -167,7 +179,9 @@ Set `launch.json` to:
 
 ### 4. Run tasks
 
-Build the task:
-`CMD` + `SHIFT` + `P` >  ` Tasks: Run Task` > `build_debug`
+Debug build:
+- `CMD` + `SHIFT` + `P` >  ` Tasks: Run Task` > `build_debug`
 
-Set breakpoints and run via the bug tab.
+Debug run:
+- Set breakpoints
+- Run `(lldb) Launch ug-server` and/or `(lldb) Launch ug-client` via the debug tab.
