@@ -51,3 +51,12 @@ sf::Packet& operator >>(sf::Packet& packet, PlayerId& player_id) {
     return packet
         >> player_id.player_id;
 }
+
+sf::Socket::Status receiveWithTimeout(sf::TcpSocket& socket, sf::Packet& packet, sf::Time timeout) {
+    sf::SocketSelector selector;
+    selector.add(socket);
+    if (selector.wait(timeout))
+        return socket.receive(packet);
+    else
+        return sf::Socket::NotReady;
+}

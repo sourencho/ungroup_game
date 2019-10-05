@@ -9,13 +9,13 @@
 #include <chrono>
 #include <thread>
 #include <utility>
+#include <future>
+#include <atomic>
 #include <unordered_map>
+#include <mutex>
 
 #include <SFML/Network.hpp>
 
-#include "../../common/util/ThreadSafeMap.hpp"
-#include "../../common/util/ThreadSafeVector.hpp"
-#include "../../common/util/ThreadSafeData.hpp"
 #include "../../common/objects/Group.hpp"
 #include "../../common/util/game_state.hpp"
 #include "../../common/objects/Mine.hpp"
@@ -29,7 +29,7 @@ class NetworkingServer {
     ~NetworkingServer();
 
     ClientInputs collectClientInputs();
-    void setState(GameState gs);
+    void setState(const GameState& gs);
     void setClientToPlayerId(int client_id, int player_id);
     void incrementTick();
     unsigned int getTick() const;
@@ -53,19 +53,25 @@ class NetworkingServer {
     std::vector<int> getClientIds();
     std::vector<std::pair<sf::Uint32,std::unique_ptr<sf::TcpSocket>>> mClients;
 
-    ThreadSafeMap<int, int> mClientToPlayerIds;
-    ThreadSafeVector<ClientIdAndUnreliableUpdate> mClientIdAndUnreliableUpdates;
-    ThreadSafeVector<ClientIdAndReliableUpdate> mClientIdAndReliableUpdates;
+    std::mutex mClientToPlayerIds_lock;
+    std::unordered_map<int, sf::Uint32> mClientToPlayerIds_t;
 
-    ThreadSafeData<GameState> mGameState;
+    std::mutex mClientReliableUpdates_lock;
+    std::vector<ClientIdAndReliableUpdate> mClientReliableUpdates_t;
+
+    std::mutex mClientUnreliableUpdates_lock;
+    std::vector<ClientIdAndUnreliableUpdate> mClientUnreliableUpdates_t;
+
+    std::mutex mGameState_lock;
+    GameState mGameState_t;
 
     sf::Uint32 mClientIdCounter = 0;
-    std::atomic<uint> mTick;
+
+    std::atomic<uint> mTick_ta{0};
+    std::atomic<bool> mStopThreads_ta{false};
 
     std::thread mReliableThread;
     std::thread mUnreliableThread;
-
-    std::atomic<bool> mStopThreads;
 };
 
 #endif /* NetworkingServer_hpp */

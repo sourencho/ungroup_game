@@ -22,6 +22,14 @@ cmake --build build -- -j
 ./build/src/client/ug-client
 ```
 
+## Development
+
+- Class member variables have the style `mCamelCase>`.
+- Class methods have the style `camelCase`.
+- Local variables have the style `snake_case`.
+- Variables with the suffix `_t` are used by multiple threads and have a corresponding `<var>_lock` mutex.
+- Variables with the suffix `_ta` are used by multiple threads but don't have a mutex because they are atomic.
+
 ## Debugging
 
 In vscode on a mac you can debug using `lldb`.
