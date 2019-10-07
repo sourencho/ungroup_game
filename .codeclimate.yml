@@ -5,5 +5,5 @@ plugins:
 exclude_patterns:
   - "docs/"
   - "resources/"
-  - "src/tests/"
-  - "src/testing/"
+  - "tests/"
+  - "extern/"
