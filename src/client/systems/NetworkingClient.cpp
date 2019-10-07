@@ -17,12 +17,12 @@ int RELIABLE_UPDATE_SEND_SLEEP = 100;
 int SYNC_SERVER_STATE_SLEEP = 100;
 
 
-NetworkingClient::NetworkingClient() {
+NetworkingClient::NetworkingClient():mTick(0), mGameState() {
     mPlayerId.set(-1);
 
     mReliableClient = create_reliable_client();
     mUnreliableClient = create_unreliable_client();
-    registerNetworkingClient();   // Sets mClientId, mCurrentTick, mIsRegistered
+    registerNetworkingClient();   // Sets mClientId, mTick, mIsRegistered
 
     std::cout << "Starting ungroup demo client." << std::endl;
 
@@ -47,6 +47,7 @@ NetworkingClient::NetworkingClient() {
 NetworkingClient::~NetworkingClient() {}
 
 GameState NetworkingClient::getGameState() {
+    mGameStateIsFresh = false;
     return mGameState.get();
 }
 
@@ -77,7 +78,9 @@ void NetworkingClient::readRegistrationResponse() {
                 << reliable_command.tick
                 << std::endl;
             mClientId = reliable_command.client_id;
-            mCurrentTick = reliable_command.tick;
+
+            mTick = reliable_command.tick;
+
             mIsRegistered = true;
         }
     }
@@ -109,7 +112,6 @@ void NetworkingClient::reliableClientRecv() {
         }
     }
 }
-
 
 void NetworkingClient::reliableClientSend() {
     while (true) {
@@ -150,7 +152,8 @@ void NetworkingClient::unreliableClientRecv() {
         GameState game_state = unpack_game_state(packet);
 
         mGameState.set(game_state);
-        mCurrentTick = game_state.tick;
+        //mTick = game_state.tick;
+        mGameStateIsFresh = true;
     }
 }
 
@@ -167,7 +170,7 @@ void NetworkingClient::sendClientUnreliableUpdate() {
     UnreliableCommand unreliable_command = {
         mClientId,
         client_unreliable_update_cmd,
-        mCurrentTick,
+        mTick,
     };
     if (packet << unreliable_command && packet << mClientUnreliableUpdate.get()) {
         mUnreliableClient->send(packet, SERVER_IP, 4888);
@@ -186,7 +189,7 @@ void NetworkingClient::syncServerState() {
     while (true) {
         sf::Packet packet;
         sf::Uint32 fetch_state_cmd = UnreliableCommandType::fetch_state;
-        UnreliableCommand unreliable_command = {mClientId, fetch_state_cmd, mCurrentTick};
+        UnreliableCommand unreliable_command = {mClientId, fetch_state_cmd, mTick};
         if (packet << unreliable_command) {
             mUnreliableClient->send(packet, SERVER_IP, 4888);
         } else {
@@ -195,4 +198,24 @@ void NetworkingClient::syncServerState() {
         // fetch state constantly
         std::this_thread::sleep_for(std::chrono::milliseconds(SYNC_SERVER_STATE_SLEEP));
     }
+}
+
+sf::Uint32 NetworkingClient::getClientId() const {
+    return mClientId;
+}
+
+sf::Uint32 NetworkingClient::getGameStateIsFresh() const {
+    return mGameStateIsFresh;
+}
+
+void NetworkingClient::incrementTick() {
+    mTick++;
+}
+
+unsigned int NetworkingClient::getTick() const {
+    return static_cast<unsigned int>(mTick);
+}
+
+void NetworkingClient::setTick(unsigned int tick) {
+    mTick = tick;
 }

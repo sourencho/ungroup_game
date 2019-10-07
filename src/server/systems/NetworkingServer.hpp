@@ -22,45 +22,45 @@
 
 
 class NetworkingServer {
-    const unsigned int CMD_DRIFT_THRESHOLD = 5;
+    const unsigned int CMD_DRIFT_THRESHOLD = 100;
 
  public:
-     NetworkingServer();
-     ~NetworkingServer();
+    NetworkingServer();
+    ~NetworkingServer();
 
-     ClientInputs collectClientInputs();
-     void setState(
-        std::vector<std::shared_ptr<Group>> groups,
-        std::vector<std::shared_ptr<Mine>> mines);
-     void setClientToPlayerId(int client_id, int player_id);
-     void incrementTick();
+    ClientInputs collectClientInputs();
+    void setState(GameState gs);
+    void setClientToPlayerId(int client_id, int player_id);
+    void incrementTick();
+    unsigned int getTick() const;
+    void setTick(unsigned int tick);
 
  private:
-     void unreliableServer();
-     void reliableServer();
-     void deleteClient(sf::TcpSocket* client, std::list<sf::TcpSocket*> clients);
-     void registerClient(sf::TcpSocket& client);
-     void sendPlayerId(sf::TcpSocket& client);
-     void sendState(sf::UdpSocket& rt_server, sf::IpAddress& sender, unsigned short port);
-     void handleReliableCommand(sf::Socket::Status status, sf::Packet command_packet,
-       sf::SocketSelector& selector, sf::TcpSocket& client, std::list<sf::TcpSocket*>& clients);
-    void handleUnreliableCommand(sf::Socket::Status status, sf::Packet command_packet, 
+    void unreliableServer();
+    void reliableServer();
+    void deleteClient(sf::TcpSocket* client, std::list<sf::TcpSocket*> clients);
+    void registerClient(sf::TcpSocket& client);
+    void sendPlayerId(sf::TcpSocket& client);
+    void sendState(sf::UdpSocket& rt_server, sf::IpAddress& sender, unsigned short port);
+    void handleReliableCommand(sf::Socket::Status status, sf::Packet command_packet,
+      sf::SocketSelector& selector, sf::TcpSocket& client, std::list<sf::TcpSocket*>& clients);
+    void handleUnreliableCommand(sf::Socket::Status status, sf::Packet command_packet,
       sf::UdpSocket& rt_server, sf::IpAddress& sender, unsigned short port);
     void setClientReliableUpdate(sf::Packet packet, int client_id);
-    void setClientUnreliableUpdate(sf::Packet packet, int client_id, int client_tick);
+    void setClientUnreliableUpdate(sf::Packet packet, int client_id, unsigned int client_tick);
 
-     std::vector<int> getClientIds();
+    std::vector<int> getClientIds();
 
-     ThreadSafeMap<sf::TcpSocket*, sf::Int32> mClientSocketsToIds;
-     ThreadSafeMap<int, int> mClientToPlayerIds;
-     ThreadSafeVector<ClientIdAndUnreliableUpdate> mClientIdAndUnreliableUpdates;
-     ThreadSafeVector<ClientIdAndReliableUpdate> mClientIdAndReliableUpdates;
+    ThreadSafeMap<sf::TcpSocket*, sf::Int32> mClientSocketsToIds;
+    ThreadSafeMap<int, int> mClientToPlayerIds;
+    ThreadSafeVector<ClientIdAndUnreliableUpdate> mClientIdAndUnreliableUpdates;
+    ThreadSafeVector<ClientIdAndReliableUpdate> mClientIdAndReliableUpdates;
 
-     ThreadSafeData<GameState> mGameState;
+    ThreadSafeData<GameState> mGameState;
 
-     sf::Uint32 mClientIdCounter = 0;
-     std::atomic<uint> mCurrTick;
-     std::list<sf::TcpSocket*> mClients;
+    sf::Uint32 mClientIdCounter = 0;
+    std::atomic<uint> mTick;
+    std::list<sf::TcpSocket*> mClients;
 };
 
 #endif /* NetworkingServer_hpp */

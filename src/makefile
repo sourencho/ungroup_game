@@ -11,7 +11,7 @@ ifeq ($(detected_OS),Darwin)        # Mac OS X
 	CXX = clang++
 	CXXFLAGS = -std=c++11 -stdlib=libc++ -g
 	LDFLAGS = -lstdc++
-	CFLAGS = -Wall -Weffc++ -Werror -pedantic -g
+	CFLAGS = -Wall -Weffc++ -Werror -pedantic -g -fsanitize=address -fno-omit-frame-pointer
 else
 	CFLAGS = -Wall -Weffc++ -Werror -pedantic -g -fsanitize=address -fno-omit-frame-pointer
 endif
@@ -40,13 +40,13 @@ COMMON_TESTS_OBJ_LIST = $(COMMON_TESTS_SRC_LIST:.cpp=.o)
 all: ug-server ug-client ug-test
 
 ug-server: $(SERVER_OBJ_LIST)
-	$(CXX) $(CFLAG) -o $@ $^ $(LDFLAGS) $(SERVER_LDFLAGS)
+	$(CXX) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(SERVER_LDFLAGS)
 
 ug-client: $(CLIENT_OBJ_LIST)
-	$(CXX) $(CFLAG) -o $@ $^ $(LDFLAGS) $(CLIENT_LDFLAGS)
+	$(CXX) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(CLIENT_LDFLAGS)
 
 ug-test: $(COMMON_TESTS_OBJ_LIST)
-	$(CXX) $(CFLAG) -o $@ $^ $(LDFLAGS) $(COMMON_TESTS_LDFLAGS)
+	$(CXX) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(COMMON_TESTS_LDFLAGS)
 
 .PHONY: clean
 clean:

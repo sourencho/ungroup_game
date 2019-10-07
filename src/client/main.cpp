@@ -1,6 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
-#include "systems/Client.hpp"
+#include "systems/ClientGameController.hpp"
 #include "../common/util/game_def.hpp"
 #include "../common/util/game_settings.hpp"
 
@@ -39,7 +39,7 @@ int main(int, char const**) {
     // Create client
     sf::Keyboard::Key keys[] = {sf::Keyboard::Up, sf::Keyboard::Down, sf::Keyboard::Right,
         sf::Keyboard::Left, sf::Keyboard::G};
-    Client client(MAX_PLAYER_COUNT, MAX_MINE_COUNT, keys);
+    ClientGameController client_game_controller(MAX_PLAYER_COUNT, MAX_MINE_COUNT, keys);
 
     // Start the game loop
     while (window.isOpen()) {
@@ -59,15 +59,15 @@ int main(int, char const**) {
             }
 
             // Handle game controller events
-            client.handleEvents(event);
+            client_game_controller.handleEvents(event);
         }
 
         // Update
-        client.update();
+        client_game_controller.update();
 
         // Display
         window.clear(sf::Color::Black);
-        client.draw(window, &shader, USE_SHADER);
+        client_game_controller.draw(window, &shader, USE_SHADER);
         window.display();
     }
 

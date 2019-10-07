@@ -10,6 +10,7 @@
 
 struct PlayerUpdate {
     sf::Uint32 player_id;
+    bool is_active;
     sf::Vector2f direction;
     bool groupable;
 };
@@ -19,17 +20,20 @@ sf::Packet& operator >>(sf::Packet& packet, PlayerUpdate& player_update);
 
 class Player: public GameObject {
  public:
-     explicit Player(int id);
-     ~Player();
+    explicit Player(int id);
+    ~Player();
 
-     void setDirection(sf::Vector2f direction);
-     void setGroupable(bool groupable);
-     sf::Vector2f getDirection() const;
-     bool getGroupable() const;
+    void setDirection(sf::Vector2f direction);
+    void setGroupable(bool groupable);
+    sf::Vector2f getDirection() const;
+    bool getGroupable() const;
+
+    PlayerUpdate getUpdate() const;
+    void applyUpdate(PlayerUpdate pu);
 
  private:
-     sf::Vector2f mDirection;
-     bool mGroupable = false;
+    sf::Vector2f mDirection;
+    bool mGroupable = false;
 };
 
 

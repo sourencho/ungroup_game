@@ -25,7 +25,8 @@ void LevelController::loadLevel(size_t max_player_count, size_t max_mine_count) 
             i,
             sf::Vector2f(GROUP_START_OFFSET_X * (i+1), GROUP_START_OFFSET_Y),
             sf::Color(0, 255, 0),
-            mPhysicsController)));
+            mPhysicsController,
+            mPlayers)));
     }
 
     // Initialize Mines
@@ -53,7 +54,7 @@ int LevelController::createPlayer() {
 int LevelController::createGroup(int player_id) {
     int new_group_id = player_id;
     setGroupActive(new_group_id, true);
-    mGroups[new_group_id]->addMember(mPlayers[player_id]);
+    mGroups[new_group_id]->addMember(player_id);
     return new_group_id;
 }
 
@@ -70,16 +71,16 @@ void LevelController::setMineActive(int mine_id, bool value) {
     mMines[mine_id]->setActive(value);
 }
 
-std::vector<int> LevelController::getPlayerIds() {
-    std::vector<int> player_ids(mPlayers.size());
-    std::transform(
-        mPlayers.begin(), mPlayers.end(), std::back_inserter(player_ids),
-        [](std::shared_ptr<Player> player){return player->getId();});
-    return player_ids;
-}
-
 std::shared_ptr<Player> LevelController::getPlayer(int player_id) {
     return mPlayers[player_id];
+}
+
+std::shared_ptr<Group> LevelController::getGroup(int group_id) {
+    return mGroups[group_id];
+}
+
+std::shared_ptr<Mine> LevelController::getMine(int mine_id) {
+    return mMines[mine_id];
 }
 
 std::vector<std::shared_ptr<Player>> LevelController::getPlayers() {
@@ -92,12 +93,4 @@ std::vector<std::shared_ptr<Group>> LevelController::getGroups() {
 
 std::vector<std::shared_ptr<Mine>> LevelController::getMines() {
     return mMines;
-}
-
-std::vector<std::shared_ptr<Player>> LevelController::getActivePlayers() {
-    std::vector<std::shared_ptr<Player>> active_players;
-    std::copy_if(
-        mPlayers.begin(), mPlayers.end(), std::back_inserter(active_players),
-        [](std::shared_ptr<Player> player){return player->isActive();});
-    return active_players;
 }

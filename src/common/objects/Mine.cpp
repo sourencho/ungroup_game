@@ -38,3 +38,9 @@ MineUpdate Mine::getUpdate() {
       getCircle()->getRadius()};
     return mu;
 }
+
+void Mine::applyUpdate(MineUpdate mu) {
+    setActive(mu.is_active);
+    setPosition(sf::Vector2f(mu.x_pos, mu.y_pos));
+    setRadius(mu.radius);
+}

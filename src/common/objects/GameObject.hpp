@@ -1,9 +1,11 @@
 #ifndef GameObject_hpp
 #define GameObject_hpp
 
+#include <iostream>
+
 class GameObject {
     public:
-        GameObject(unsigned int id) {
+        explicit GameObject(int id) {
             mId = id;
         }
 
@@ -20,7 +22,7 @@ class GameObject {
         }
 
     protected:
-        unsigned int mId;
+        int mId;
         bool mIsActive = false;
 };
 

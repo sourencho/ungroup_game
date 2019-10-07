@@ -25,13 +25,14 @@ sf::Packet& operator >>(sf::Packet& packet, MineUpdate& mine_update);
 
 class Mine : public CircleGameObject {
  public:
-     Mine(unsigned int id, sf::Vector2f position, float size, sf::Color color,
-        std::shared_ptr<PhysicsController> pc);
-     ~Mine();
-     Mine(const Mine& temp_obj) = delete;  // TODO: define this
-     Mine& operator=(const Mine& temp_obj) = delete;  // TODO: define this
+    Mine(unsigned int id, sf::Vector2f position, float size, sf::Color color,
+       std::shared_ptr<PhysicsController> pc);
+    ~Mine();
+    Mine(const Mine& temp_obj) = delete;  // TODO: define this
+    Mine& operator=(const Mine& temp_obj) = delete;  // TODO: define this
 
-     MineUpdate getUpdate();
+    MineUpdate getUpdate();
+    void applyUpdate(MineUpdate mu);
 };
 
 #endif /* Mine_hpp */

@@ -42,7 +42,12 @@ class NetworkingClient {
      ~NetworkingClient();
 
      GameState getGameState();
+     sf::Uint32 getClientId() const;
+     void incrementTick();
+     unsigned int getTick() const;
+     void setTick(unsigned int tick);
      int getPlayerId();
+     sf::Uint32 getGameStateIsFresh() const;
 
      void setClientUnreliableUpdate(ClientUnreliableUpdate client_unreliable_update);
      void setClientReliableUpdate(ClientReliableUpdate client_reliable_update);
@@ -63,8 +68,9 @@ class NetworkingClient {
 
      // Variables
      sf::Uint32 mClientId;
-     sf::Uint32 mCurrentTick;
+     std::atomic<uint> mTick;
      bool mIsRegistered = false;
+     bool mGameStateIsFresh = true;
 
      sf::TcpSocket* mReliableClient;
      sf::UdpSocket* mUnreliableClient;
