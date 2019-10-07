@@ -1,8 +1,8 @@
-#include "../../../../vendor/catch.hpp"
-#include "../../../common/objects/CircleRigidBody.hpp"
+#include <catch.hpp>
+#include "../../../src/common/objects/CircleRigidBody.hpp"
 
 
-SCENARIO( "CircleRigidBody changes position", "[circle]" ) {
+SCENARIO( "CircleRigidBody changes position", "[common][objects][CircleRigidBody]" ) {
   sf::Vector2f position = sf::Vector2f(0.f, 0.f);
   CircleRigidBody circle = CircleRigidBody(0.f, position);
 

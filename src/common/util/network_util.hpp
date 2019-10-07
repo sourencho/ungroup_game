@@ -16,4 +16,6 @@ sf::Packet& operator >>(sf::Packet& packet, sf::Vector2f& vector_2f);
 sf::Packet& operator <<(sf::Packet& packet, const PlayerId& player_id);
 sf::Packet& operator >>(sf::Packet& packet, PlayerId& player_id);
 
+sf::Socket::Status receiveWithTimeout(sf::TcpSocket& socket, sf::Packet& packet, sf::Time timeout);
+
 #endif /* network_util_hpp */
