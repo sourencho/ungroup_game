@@ -22,7 +22,7 @@
 
 
 class NetworkingServer {
-    const unsigned int CMD_DRIFT_THRESHOLD = 100;
+    const unsigned int CMD_DRIFT_THRESHOLD = 200;
 
  public:
     NetworkingServer();
@@ -36,25 +36,44 @@ class NetworkingServer {
     void setTick(unsigned int tick);
 
  private:
-    void unreliableServer();
+    // Sockets
+    void createUdpSocket();
 
-    void reliableServer();
+    std::mutex mUdpSocket_lock;
+    std::unique_ptr<sf::UdpSocket> mUdpSocket_t;
+
+    // Threads
+    void reliableRecvSend();
+    void unreliableRecv();
+    void broadcastGameState();
+
+    std::thread mReliableRecvSend;
+    std::thread mUnreliableRecv;
+    std::thread mBroadcastGameStateThread;
+
+    std::atomic<bool> mStopThreads_ta{false};
+
+    // Methods
     void clientDisconnect(sf::TcpSocket& client, sf::Uint32 client_id);
-    void registerClient(sf::TcpSocket& client, sf::Uint32 client_id);
+    void registerClient(sf::Packet packet, sf::TcpSocket& client, sf::Uint32 client_id);
     void sendPlayerId(sf::TcpSocket& socket, sf::Uint32 client_id);
     void handleReliableCommand(sf::Socket::Status status, sf::Packet command_packet,
         sf::SocketSelector& selector, sf::TcpSocket& socket, sf::Uint32 client_id);
     void handleUnreliableCommand(sf::Socket::Status status, sf::Packet command_packet,
-      sf::UdpSocket& rt_server, sf::IpAddress& sender, unsigned short port);
+        sf::IpAddress& sender, unsigned short port);
     void setClientReliableUpdate(sf::Packet packet, int client_id);
     void setClientUnreliableUpdate(sf::Packet packet, int client_id, unsigned int client_tick);
-    void sendState(sf::UdpSocket& rt_server, sf::IpAddress& sender, unsigned short port);
-
     std::vector<int> getClientIds();
+    void sendGameState();
+
+    // Misc
     std::vector<std::pair<sf::Uint32,std::unique_ptr<sf::TcpSocket>>> mClients;
 
     std::mutex mClientToPlayerIds_lock;
     std::unordered_map<int, sf::Uint32> mClientToPlayerIds_t;
+
+    std::mutex mClientToUdpPorts_lock;
+    std::unordered_map<int, sf::Uint16> mClientToUdpPorts_t;
 
     std::mutex mClientReliableUpdates_lock;
     std::vector<ClientIdAndReliableUpdate> mClientReliableUpdates_t;
@@ -68,10 +87,7 @@ class NetworkingServer {
     sf::Uint32 mClientIdCounter = 0;
 
     std::atomic<uint> mTick_ta{0};
-    std::atomic<bool> mStopThreads_ta{false};
 
-    std::thread mReliableThread;
-    std::thread mUnreliableThread;
 };
 
 #endif /* NetworkingServer_hpp */

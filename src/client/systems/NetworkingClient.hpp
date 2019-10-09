@@ -15,7 +15,6 @@
 
 
 class NetworkingClient {
-    const char* SERVER_IP = "127.0.0.1";
 
  public:
     NetworkingClient();
@@ -28,39 +27,45 @@ class NetworkingClient {
     int getPlayerId() const;
     int getClientId() const;
     bool getGameStateIsFresh() const;
-
     void setClientUnreliableUpdate(ClientUnreliableUpdate client_unreliable_update);
     void setClientReliableUpdate(ClientReliableUpdate client_reliable_update);
 
  private:
-    // Methods
-    bool readRegistrationResponse();
-    bool registerNetworkingClient();
-    void unreliableClientSend();
-    void unreliableClientRecv();
-    void reliableClientSend();
-    void reliableClientRecv();
-    void syncServerState();
-
-    void sendClientUnreliableUpdate();
-    void sendClientReliableUpdate();
-    void sendPlayerIdRequest();
-
+    // Sockets
     void createTcpSocket(unsigned short port);
     void createUdpSocket();
 
-    // Variables
-
     std::mutex mTcpSocket_lock;
-    std::mutex mUdpSocket_lock;
     std::unique_ptr<sf::TcpSocket> mTcpSocket_t;
+
+    std::mutex mUdpSocket_lock;
     std::unique_ptr<sf::UdpSocket> mUdpSocket_t;
 
+    // Threads
+    void unreliableSend();
+    void unreliableRecv();
+    void reliableSend();
+    void reliableRecv();
+
+    std::thread mReliableRecv;
+    std::thread mReliableSend;
+    std::thread mUnreliableRecv;
+    std::thread mUnreliableSend;
+
+    std::atomic<bool> mStopThreads_ta{false};
+
+    // Methods
+    void sendClientUnreliableUpdate();
+    void sendClientReliableUpdate();
+    void sendPlayerIdRequest();
+    bool readRegistrationResponse();
+    bool registerNetworkingClient();
+
+    // Misc
     std::atomic<int> mPlayerId_ta{-1};
     std::atomic<int> mClientId_ta{-1};
     std::atomic<uint> mTick_ta{0};
     std::atomic<bool> mGameStateIsFresh_ta{true};
-    std::atomic<bool> mStopThreads_ta{false};
 
     std::mutex mGameState_lock;
     GameState mGameState_t;
@@ -71,11 +76,7 @@ class NetworkingClient {
     std::mutex mClientReliableUpdate_lock;
     ClientReliableUpdate mClientReliableUpdate_t;
 
-    std::thread mReliableClientRecv;
-    std::thread mReliableClientSend;
-    std::thread mUnreliableClientRecv;
-    std::thread mUnreliableClientSend;
-    std::thread mSyncServerState;
+    sf::Uint16 mServerUdpPort = 0;
 };
 
 #endif /* NetworkingClient_hpp */

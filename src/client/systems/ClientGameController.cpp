@@ -86,6 +86,7 @@ void ClientGameController::handleEvents(sf::Event& event) {
 void ClientGameController::update() {
     fetchPlayerId();
     setClientUpdates();
+
     if (mNetworkingClient->getGameStateIsFresh()) {
         rewindAndReplay();
         GameController::update();
@@ -97,10 +98,10 @@ void ClientGameController::update() {
 void ClientGameController::rewindAndReplay() {
     // Rewind
     GameState game_state = mNetworkingClient->getGameState();
-    int tick_delta = getTick() - game_state.tick;
     applyGameState(game_state);
 
     // Replay
+    int tick_delta = getTick() - game_state.tick;
     if (tick_delta <= 0) {return;}  // If the client is behind the server we don't need to replay
 
     // Loop through ticks that need to be replayed and apply client input from cache if present
@@ -108,13 +109,13 @@ void ClientGameController::rewindAndReplay() {
         ClientInputAndTick client_input_and_tick;
         unsigned int replay_tick = game_state.tick + i;
 
-        if(mTickToInput.count(replay_tick) > 0) {
+        if (mTickToInput.count(replay_tick) > 0) {
             client_input_and_tick = mTickToInput[replay_tick];
             GameController::computeGameState(
                 getClientInputs(client_input_and_tick.cru, client_input_and_tick.cuu),
-                GameController::MIN_TIME_STEP
-            );
+                GameController::MIN_TIME_STEP);
         } else {
+            // If we don't have input for this tick pass in empty ClientInputs
             GameController::computeGameState(ClientInputs(), GameController::MIN_TIME_STEP);
         }
     }
