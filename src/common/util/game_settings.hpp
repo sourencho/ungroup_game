@@ -2,6 +2,7 @@
 #define game_settings_hpp
 
 #include <SFML/Graphics.hpp>
+#include <chrono>
 
 /* Game Logic */
 const int MAX_PLAYER_COUNT = 10;
