@@ -19,10 +19,6 @@ struct ReliableCommand {
     sf::Uint32 tick;
 };
 
-struct PlayerId {
-    sf::Uint32 player_id;
-};
-
 enum ReliableCommandType {register_client, player_id, client_reliable_update};
 enum UnreliableCommandType {client_unreliable_update, fetch_state};
 
