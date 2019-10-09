@@ -154,3 +154,17 @@ Debug build:
 Debug run:
 - Set breakpoints
 - Run `(lldb) Launch ug-server` and/or `(lldb) Launch ug-client` via the debug tab.
+
+## Resources
+
+### Game Engine
+- [Jason Gregory: Game Engine Architecture](https://g.co/kgs/B9LnMR)
+
+### Physics
+- [Gafferon Games: Game Physics](https://web.archive.org/web/20181107181427/https://gafferongames.com/categories/game-physics)
+
+### Networking
+- [Gabriel Gambetta: Fast-Paced Multiplayer](https://www.gabrielgambetta.com/client-server-game-architecture.html)
+- [Gafferon Games: Networked Physics](https://web.archive.org/web/20181107181445/https://gafferongames.com/categories/networked-physics)
+- [Valve: Source Multiplayer Networking](https://developer.valvesoftware.com/wiki/Source_Multiplayer_Networking)
+- [Valve: Latency Compensating Methods in Client/Server In-game Protocol Design and Optimization](https://developer.valvesoftware.com/wiki/Latency_Compensating_Methods_in_Client/Server_In-game_Protocol_Design_and_Optimization)
