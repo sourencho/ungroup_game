@@ -168,3 +168,6 @@ Debug run:
 - [Gafferon Games: Networked Physics](https://web.archive.org/web/20181107181445/https://gafferongames.com/categories/networked-physics)
 - [Valve: Source Multiplayer Networking](https://developer.valvesoftware.com/wiki/Source_Multiplayer_Networking)
 - [Valve: Latency Compensating Methods in Client/Server In-game Protocol Design and Optimization](https://developer.valvesoftware.com/wiki/Latency_Compensating_Methods_in_Client/Server_In-game_Protocol_Design_and_Optimization)
+
+## Misc
+- @inzombiak
