@@ -26,7 +26,7 @@ cmake --build build -- -j
 
 ### Complilation
 
-- When you create/delete a file you need to add the `<new_file.cpp` to the corresponding `CMakeLists.txt` file. 
+- When you create/delete a file you need to add the `<new_file>.cpp` to the corresponding `CMakeLists.txt` file. 
 
 ### Style
 - Class member variables have the style `mCamelCase>`.
