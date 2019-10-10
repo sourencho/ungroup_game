@@ -1,5 +1,5 @@
-#ifndef LevelController_hpp
-#define LevelController_hpp
+#ifndef GameObjectStore_hpp
+#define GameObjectStore_hpp
 
 #include <vector>
 #include <memory>
@@ -9,12 +9,12 @@
 #include "../../common/objects/Group.hpp"
 
 
-class LevelController {
+class GameObjectStore {
  public:
-     explicit LevelController(std::shared_ptr<PhysicsController> pc);
-     ~LevelController();
-     LevelController(const LevelController& temp_obj) = delete;
-     LevelController& operator=(const LevelController& temp_obj) = delete;
+     explicit GameObjectStore(std::shared_ptr<PhysicsController> pc);
+     ~GameObjectStore();
+     GameObjectStore(const GameObjectStore& temp_obj) = delete;
+     GameObjectStore& operator=(const GameObjectStore& temp_obj) = delete;
 
      void loadLevel(size_t max_player_count, size_t max_mine_count);
 
@@ -43,4 +43,4 @@ class LevelController {
      unsigned int mNextPlayerId = 0;
 };
 
-#endif /* LevelController_hpp */
+#endif /* GameObjectStore_hpp */

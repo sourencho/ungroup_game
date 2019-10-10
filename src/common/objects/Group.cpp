@@ -10,43 +10,6 @@
 const float GROUP_MEMBER_SIZE = 15.f;
 const float GROUP_SPEED = 100.f;
 
-sf::Packet& operator <<(sf::Packet& packet, const GroupUpdate& group_update) {
-    packet
-        << group_update.group_id
-        << group_update.is_active
-        << group_update.x_pos
-        << group_update.y_pos
-        << group_update.groupable
-        << group_update.radius;
-
-    packet << group_update.members_size;
-    for (const auto player_id : group_update.members) {
-        packet << player_id;
-    }
-
-    return packet;
-}
-
-sf::Packet& operator >>(sf::Packet& packet, GroupUpdate& group_update) {
-    packet
-        >> group_update.group_id
-        >> group_update.is_active
-        >> group_update.x_pos
-        >> group_update.y_pos
-        >> group_update.groupable
-        >> group_update.radius;
-
-    packet >> group_update.members_size;
-    std::vector<sf::Uint32> members;
-    for (int i=0; i < group_update.members_size; ++i) {
-        int player_id;
-        packet >> player_id;
-        members.push_back(player_id);
-    }
-    group_update.members = members;
-    return packet;
-}
-
 Group::Group(int id, sf::Vector2f position, sf::Color color, std::shared_ptr<PhysicsController> pc,
   const std::vector<std::shared_ptr<Player>>& players)
   :CircleGameObject(id, position, 0.f, color, pc), mPlayers(players) {}
@@ -133,4 +96,41 @@ void Group::applyUpdate(GroupUpdate gu) {
     std::transform(
         gu.members.begin(), gu.members.end(), std::back_inserter(mMembers),
         [](sf::Uint32 player_id){return static_cast<int>(player_id);});
+}
+
+sf::Packet& operator <<(sf::Packet& packet, const GroupUpdate& group_update) {
+    packet
+        << group_update.group_id
+        << group_update.is_active
+        << group_update.x_pos
+        << group_update.y_pos
+        << group_update.groupable
+        << group_update.radius;
+
+    packet << group_update.members_size;
+    for (const auto player_id : group_update.members) {
+        packet << player_id;
+    }
+
+    return packet;
+}
+
+sf::Packet& operator >>(sf::Packet& packet, GroupUpdate& group_update) {
+    packet
+        >> group_update.group_id
+        >> group_update.is_active
+        >> group_update.x_pos
+        >> group_update.y_pos
+        >> group_update.groupable
+        >> group_update.radius;
+
+    packet >> group_update.members_size;
+    std::vector<sf::Uint32> members;
+    for (int i=0; i < group_update.members_size; ++i) {
+        int player_id;
+        packet >> player_id;
+        members.push_back(player_id);
+    }
+    group_update.members = members;
+    return packet;
 }

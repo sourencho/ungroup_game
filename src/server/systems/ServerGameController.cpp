@@ -43,7 +43,7 @@ void ServerGameController::clientDisconnected(std::shared_ptr<Event> event) {
             std::shared_ptr<ClientDisconnectedEvent> client_disconnect_event = \
                 std::dynamic_pointer_cast<ClientDisconnectedEvent>(event);
             int removed_client_id = client_disconnect_event->getClientId();
-            mLevelController->setPlayerActive(mClientToPlayer[removed_client_id], false);
+            mGameObjectStore->setPlayerActive(mClientToPlayer[removed_client_id], false);
             break;
         }
         default: {

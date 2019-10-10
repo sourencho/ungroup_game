@@ -1,15 +1,15 @@
 #include <memory>
 #include <vector>
 
-#include "LevelController.hpp"
+#include "GameObjectStore.hpp"
 #include "../../common/util/game_settings.hpp"
 
-LevelController::LevelController(std::shared_ptr<PhysicsController> pc):
+GameObjectStore::GameObjectStore(std::shared_ptr<PhysicsController> pc):
   mPhysicsController(pc) {}
 
-LevelController::~LevelController() {}
+GameObjectStore::~GameObjectStore() {}
 
-void LevelController::loadLevel(size_t max_player_count, size_t max_mine_count) {
+void GameObjectStore::loadLevel(size_t max_player_count, size_t max_mine_count) {
     mPlayers.reserve(max_player_count);
     mGroups.reserve(max_player_count);
     mMines.reserve(max_mine_count);
@@ -42,7 +42,7 @@ void LevelController::loadLevel(size_t max_player_count, size_t max_mine_count) 
     }
 }
 
-int LevelController::createPlayer() {
+int GameObjectStore::createPlayer() {
     int new_player_id = mNextPlayerId++;
     if (new_player_id >= mPlayers.size() || new_player_id >= mGroups.size()) {
         throw std::runtime_error("Create players or groups with id out of range");
@@ -51,46 +51,46 @@ int LevelController::createPlayer() {
     return new_player_id;
 }
 
-int LevelController::createGroup(int player_id) {
+int GameObjectStore::createGroup(int player_id) {
     int new_group_id = player_id;
     setGroupActive(new_group_id, true);
     mGroups[new_group_id]->addMember(player_id);
     return new_group_id;
 }
 
-void LevelController::setPlayerActive(int player_id, bool value) {
+void GameObjectStore::setPlayerActive(int player_id, bool value) {
     mPlayers[player_id]->setActive(value);
 }
 
 
-void LevelController::setGroupActive(int group_id, bool value) {
+void GameObjectStore::setGroupActive(int group_id, bool value) {
     mGroups[group_id]->setActive(value);
 }
 
-void LevelController::setMineActive(int mine_id, bool value) {
+void GameObjectStore::setMineActive(int mine_id, bool value) {
     mMines[mine_id]->setActive(value);
 }
 
-std::shared_ptr<Player> LevelController::getPlayer(int player_id) {
+std::shared_ptr<Player> GameObjectStore::getPlayer(int player_id) {
     return mPlayers[player_id];
 }
 
-std::shared_ptr<Group> LevelController::getGroup(int group_id) {
+std::shared_ptr<Group> GameObjectStore::getGroup(int group_id) {
     return mGroups[group_id];
 }
 
-std::shared_ptr<Mine> LevelController::getMine(int mine_id) {
+std::shared_ptr<Mine> GameObjectStore::getMine(int mine_id) {
     return mMines[mine_id];
 }
 
-std::vector<std::shared_ptr<Player>> LevelController::getPlayers() {
+std::vector<std::shared_ptr<Player>> GameObjectStore::getPlayers() {
     return mPlayers;
 }
 
-std::vector<std::shared_ptr<Group>> LevelController::getGroups() {
+std::vector<std::shared_ptr<Group>> GameObjectStore::getGroups() {
     return mGroups;
 }
 
-std::vector<std::shared_ptr<Mine>> LevelController::getMines() {
+std::vector<std::shared_ptr<Mine>> GameObjectStore::getMines() {
     return mMines;
 }
