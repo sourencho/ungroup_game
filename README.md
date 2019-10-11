@@ -16,7 +16,7 @@ mkdir build
 cmake -S . -B build
 cmake --build build -- -j
 ```
-5. Run server and client in seperate terminals:
+4. Run server and client in seperate terminals:
 ```
 ./build/src/server/ug-server
 ```
@@ -26,8 +26,6 @@ cmake --build build -- -j
 
 ## Testing
 
-We use [Catch2](https://github.com/catchorg/Catch2) for testing.
-
 To run tests, after building, run:
 ```
 ./build/tests/ug-test
@@ -35,9 +33,16 @@ To run tests, after building, run:
 
 ## Development
 
-### Complilation
+### Compiliation
 
 - When you create/delete a file you need to add the `<new_file>.cpp` to the corresponding `CMakeLists.txt` file. 
+
+### Writing Tests
+
+- We use [Catch2](https://github.com/catchorg/Catch2) for testing.
+- Add tests for a file in a mirror directory under `tests/`.
+- Test file should be named tests-<FileName>.cpp
+- Add a [test tag](https://github.com/catchorg/Catch2/blob/67b4ada6b0fbe98368df934e1378aeae1ba7f235/docs/test-cases-and-sections.md#tags) for each subdirectory and the file name.
 
 ### Style
 - Class member variables have the style `mCamelCase>`.
