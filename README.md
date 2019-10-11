@@ -174,5 +174,9 @@ Debug run:
 - [Valve: Source Multiplayer Networking](https://developer.valvesoftware.com/wiki/Source_Multiplayer_Networking)
 - [Valve: Latency Compensating Methods in Client/Server In-game Protocol Design and Optimization](https://developer.valvesoftware.com/wiki/Latency_Compensating_Methods_in_Client/Server_In-game_Protocol_Design_and_Optimization)
 
+### C++
+
+- [cliutils: An Introduction to Modern CMake](https://cliutils.gitlab.io/modern-cmake/)
+
 ### Misc
 - @inzombiak
