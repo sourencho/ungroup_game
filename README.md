@@ -1,5 +1,7 @@
 # ungroup
 
+[![Build Status](https://travis-ci.com/ungroup/ungroup_game.svg?branch=master)](https://travis-ci.com/ungroup/ungroup_game)
+
 ## Intro
 
 A game about temporary alliances.
@@ -20,6 +22,15 @@ cmake --build build -- -j
 ```
 ```
 ./build/src/client/ug-client
+```
+
+## Testing
+
+We use [Catch2](https://github.com/catchorg/Catch2) for testing.
+
+To run tests, after building, run:
+```
+./build/tests/ug-test
 ```
 
 ## Development
