@@ -4,7 +4,7 @@
 #include "../util/game_settings.hpp"
 
 GroupController::GroupController(std::vector<std::shared_ptr<Group>>& groups,
-    std::vector<std::shared_ptr<Player>>& players): mGroups(groups), mPlayers(players) {}
+    std::vector<std::shared_ptr<Player>>& players): mPlayers(players), mGroups(groups) {}
 
 GroupController::~GroupController() {}
 
@@ -14,19 +14,15 @@ int GroupController::createGroup(int player_id) {
     return new_group_id;
 }
 
-void GroupController::setGroupActive(int group_id, bool value) {
-    mGroups[group_id]->setActive(value);
-}
-
 void GroupController::update() {
-    for (auto& group: mGroups) {
+    for (auto& group : mGroups) {
         refreshGroup(group);
         updateGroup(group);
     }
 }
 
 void GroupController::updatePostPhysics() {
-    for (auto& group: mGroups) {
+    for (auto& group : mGroups) {
         group->matchRigid();
     }
 }
@@ -52,7 +48,7 @@ void GroupController::refreshGroup(std::shared_ptr<Group>& group) {
  * Updates the properties of the group
  */
 void GroupController::updateGroup(std::shared_ptr<Group>& group) {
-    if(!group->isActive()) return;
+    if (!group->isActive()) return;
 
     auto& group_players = mGroupToPlayers[group->getId()];
 
@@ -79,7 +75,7 @@ void GroupController::updateGroup(std::shared_ptr<Group>& group) {
 GroupControllerUpdate GroupController::getUpdate() {
     std::vector<GroupIdAndPlayerIds> group_id_and_player_idss;
 
-    for(auto kv : mGroupToPlayers) {
+    for (auto kv : mGroupToPlayers) {
         if (kv.second.size()) {
             GroupIdAndPlayerIds group_id_and_player_ids;
             group_id_and_player_ids.group_id = kv.first;
@@ -108,7 +104,7 @@ sf::Packet& operator <<(sf::Packet& packet, const GroupIdAndPlayerIds& gipi) {
     packet << gipi.group_id;
     packet << gipi.player_ids_size;
 
-    for(auto& player_id : gipi.player_ids) {
+    for (auto& player_id : gipi.player_ids) {
         packet << player_id;
     }
 

@@ -39,7 +39,6 @@ class GroupController {
 
     void update();
     int createGroup(int player_id);
-    void setGroupActive(int group_id, bool value);
     void updatePostPhysics();
     GroupControllerUpdate getUpdate();
     void applyUpdate(GroupControllerUpdate gcu);
