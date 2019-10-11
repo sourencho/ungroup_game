@@ -25,8 +25,7 @@ void GameObjectStore::loadLevel(size_t max_player_count, size_t max_mine_count) 
             i,
             sf::Vector2f(GROUP_START_OFFSET_X * (i+1), GROUP_START_OFFSET_Y),
             sf::Color(0, 255, 0),
-            mPhysicsController,
-            mPlayers)));
+            mPhysicsController)));
     }
 
     // Initialize Mines
@@ -51,46 +50,35 @@ int GameObjectStore::createPlayer() {
     return new_player_id;
 }
 
-int GameObjectStore::createGroup(int player_id) {
-    int new_group_id = player_id;
-    setGroupActive(new_group_id, true);
-    mGroups[new_group_id]->addMember(player_id);
-    return new_group_id;
-}
-
 void GameObjectStore::setPlayerActive(int player_id, bool value) {
     mPlayers[player_id]->setActive(value);
 }
 
 
-void GameObjectStore::setGroupActive(int group_id, bool value) {
-    mGroups[group_id]->setActive(value);
-}
-
 void GameObjectStore::setMineActive(int mine_id, bool value) {
     mMines[mine_id]->setActive(value);
 }
 
-std::shared_ptr<Player> GameObjectStore::getPlayer(int player_id) {
+std::shared_ptr<Player>& GameObjectStore::getPlayer(int player_id) {
     return mPlayers[player_id];
 }
 
-std::shared_ptr<Group> GameObjectStore::getGroup(int group_id) {
+std::shared_ptr<Group>& GameObjectStore::getGroup(int group_id) {
     return mGroups[group_id];
 }
 
-std::shared_ptr<Mine> GameObjectStore::getMine(int mine_id) {
+std::shared_ptr<Mine>& GameObjectStore::getMine(int mine_id) {
     return mMines[mine_id];
 }
 
-std::vector<std::shared_ptr<Player>> GameObjectStore::getPlayers() {
+std::vector<std::shared_ptr<Player>>& GameObjectStore::getPlayers() {
     return mPlayers;
 }
 
-std::vector<std::shared_ptr<Group>> GameObjectStore::getGroups() {
+std::vector<std::shared_ptr<Group>>& GameObjectStore::getGroups() {
     return mGroups;
 }
 
-std::vector<std::shared_ptr<Mine>> GameObjectStore::getMines() {
+std::vector<std::shared_ptr<Mine>>& GameObjectStore::getMines() {
     return mMines;
 }

@@ -12,6 +12,7 @@
 #include "../systems/PhysicsController.hpp"
 #include "../util/game_state.hpp"
 #include "GameObjectStore.hpp"
+#include "GroupController.hpp"
 
 
 class GameController {
@@ -46,6 +47,7 @@ class GameController {
 
     std::shared_ptr<PhysicsController> mPhysicsController;
     std::unique_ptr<GameObjectStore> mGameObjectStore;
+    std::unique_ptr<GroupController> mGroupController;
     std::unordered_map<sf::Uint32, int> mClientToPlayer;
 
     sf::Clock mClock;

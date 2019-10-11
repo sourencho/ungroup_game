@@ -17,6 +17,8 @@ GameController::GameController(size_t max_player_count, size_t max_mine_count):
   mPhysicsController(new PhysicsController()),
   mGameObjectStore(new GameObjectStore(mPhysicsController)) {
     mGameObjectStore->loadLevel(max_player_count, max_mine_count);
+    mGroupController = std::unique_ptr<GroupController>(
+        new GroupController(mGameObjectStore->getGroups(), mGameObjectStore->getPlayers()));
     mClock.restart();
 }
 
@@ -52,7 +54,7 @@ void GameController::computeGameState(const ClientInputs& cis, sf::Int32 delta_m
 
 void GameController::updateGameObjects(const ClientInputs& cis) {
     updatePlayers(cis);
-    updateGroups();
+    mGroupController->update();
 }
 
 void GameController::updatePlayers(const ClientInputs& cis) {
@@ -75,16 +77,8 @@ void GameController::updatePlayers(const ClientInputs& cis) {
     }
 }
 
-void GameController::updateGroups() {
-    for (auto group : mGameObjectStore->getGroups()) {
-        group->update();
-    }
-}
-
 void GameController::updateGameObjectsPostPhysics() {
-    for (auto group : mGameObjectStore->getGroups()) {
-        group->matchRigid();
-    }
+    mGroupController->updatePostPhysics();
 
     for (auto mine : mGameObjectStore->getMines()) {
         mine->matchRigid();
@@ -93,7 +87,7 @@ void GameController::updateGameObjectsPostPhysics() {
 
 unsigned int GameController::createPlayerWithGroup() {
     int new_player_id = mGameObjectStore->createPlayer();
-    mGameObjectStore->createGroup(new_player_id);
+    mGroupController->createGroup(new_player_id);
     return new_player_id;
 }
 
@@ -108,27 +102,30 @@ void GameController::applyGameState(GameState game_state) {
     for (auto pu : game_state.player_updates) {
         mGameObjectStore->getPlayer(pu.player_id)->applyUpdate(pu);
     }
+    mGroupController->applyUpdate(game_state.gcu);
 }
 
 GameState GameController::getGameState() {
-    std::vector<std::shared_ptr<Group>> groups = mGameObjectStore->getGroups();
-    std::vector<std::shared_ptr<Mine>> mines = mGameObjectStore->getMines();
-    std::vector<std::shared_ptr<Player>> players = mGameObjectStore->getPlayers();
+    auto groups = mGameObjectStore->getGroups();
+    auto mines = mGameObjectStore->getMines();
+    auto players = mGameObjectStore->getPlayers();
+    auto gcu = mGroupController->getUpdate();
 
     sf::Uint32 tick = static_cast<sf::Uint32>(getTick());
     std::vector<GroupUpdate> group_updates;
     std::vector<MineUpdate> mine_updates;
     std::vector<PlayerUpdate> player_updates;
-    GameState gs = {tick, group_updates, mine_updates, player_updates};
     std::transform(
-        groups.begin(), groups.end(), std::back_inserter(gs.group_updates),
+        groups.begin(), groups.end(), std::back_inserter(group_updates),
         [](std::shared_ptr<Group> group){return group->getUpdate();});
     std::transform(
-        mines.begin(), mines.end(), std::back_inserter(gs.mine_updates),
+        mines.begin(), mines.end(), std::back_inserter(mine_updates),
         [](std::shared_ptr<Mine> mine){return mine->getUpdate();});
     std::transform(
-        players.begin(), players.end(), std::back_inserter(gs.player_updates),
+        players.begin(), players.end(), std::back_inserter(player_updates),
         [](std::shared_ptr<Player> player){return player->getUpdate();});
+
+    GameState gs = {tick, group_updates, mine_updates, player_updates, gcu};
 
     return gs;
 }

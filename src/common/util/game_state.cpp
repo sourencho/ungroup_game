@@ -34,6 +34,8 @@ sf::Packet pack_game_state(GameState game_state) {
         }
     }
 
+    packet << game_state.gcu;
+
     return packet;
 }
 
@@ -45,6 +47,7 @@ GameState unpack_game_state(sf::Packet game_state_packet) {
     std::vector<MineUpdate> mine_updates;
     sf::Uint32 player_updates_size;
     std::vector<PlayerUpdate> player_updates;
+    GroupControllerUpdate gcu;
 
     game_state_packet >> tick;
 
@@ -69,7 +72,9 @@ GameState unpack_game_state(sf::Packet game_state_packet) {
         player_updates.push_back(pu);
     }
 
-    GameState game_state = {tick, group_updates, mine_updates, player_updates};
+    game_state_packet >> gcu;
+
+    GameState game_state = {tick, group_updates, mine_updates, player_updates, gcu};
     return game_state;
 }
 

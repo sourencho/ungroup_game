@@ -8,6 +8,7 @@
 
 #include "../objects/Group.hpp"
 #include "../objects/Mine.hpp"
+#include "../systems/GroupController.hpp"
 
 
 struct GameState {
@@ -15,6 +16,7 @@ struct GameState {
     std::vector<GroupUpdate> group_updates;
     std::vector<MineUpdate> mine_updates;
     std::vector<PlayerUpdate> player_updates;
+    GroupControllerUpdate gcu;
 };
 
 sf::Packet pack_game_state(GameState game_state);

@@ -15,6 +15,7 @@ add_library(common-lib
     systems/PhysicsController.cpp
     systems/GameController.cpp
     systems/GameObjectStore.cpp
+    systems/GroupController.cpp
 )
 
 target_link_libraries(common-lib PUBLIC sfml-system sfml-graphics sfml-network)
