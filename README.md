@@ -45,7 +45,7 @@ To run tests, after building, run:
 - Add a [test tag](https://github.com/catchorg/Catch2/blob/67b4ada6b0fbe98368df934e1378aeae1ba7f235/docs/test-cases-and-sections.md#tags) for each subdirectory and the file name.
 
 ### Style
-- Class member variables have the style `mCamelCase>`.
+- Class member variables have the style `mCamelCase`.
 - Class methods have the style `camelCase`.
 - Local variables have the style `snake_case`.
 - Variables with the suffix `_t` are used by multiple threads and have a corresponding `<var>_lock` mutex.
