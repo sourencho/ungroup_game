@@ -31,7 +31,7 @@ void ClientGameController::incrementTick() {
 }
 
 void ClientGameController::draw(sf::RenderTarget& target, sf::Shader* shader, bool use_shader) {
-    for (auto group : mLevelController->getGroups()) {
+    for (auto group : mGameObjectStore->getGroups()) {
         if (group->isActive()) {
             bool groupable = group->getGroupable();
             std::shared_ptr<Circle> circle = group->getCircle();
@@ -44,7 +44,7 @@ void ClientGameController::draw(sf::RenderTarget& target, sf::Shader* shader, bo
         }
     }
 
-    for (auto mine : mLevelController->getMines()) {
+    for (auto mine : mGameObjectStore->getMines()) {
         if (mine->isActive()) {
             mine->getCircle()->draw(target, shader, use_shader);
         }

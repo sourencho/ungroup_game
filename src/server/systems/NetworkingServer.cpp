@@ -26,8 +26,14 @@ NetworkingServer::NetworkingServer():mGameState_t() {
 NetworkingServer::~NetworkingServer() {
     std::cout << "Deconsturcting NetworkingServer" << std::endl;
 
+    mClientReliableUpdates_lock.unlock();
+    mClientUnreliableUpdates_lock.unlock();
+    mGameState_lock.unlock();
+    EventController::getInstance().unlock();
+
     std::cout << "Joining threads..." << std::endl;
     mStopThreads_ta = true;
+
     mReliableRecvSend.join();
     mUnreliableRecv.join();
     mBroadcastGameStateThread.join();

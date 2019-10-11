@@ -14,6 +14,8 @@ const float GROUP_START_OFFSET_X = 20.f;
 const float GROUP_START_OFFSET_Y = 20.f;
 const float MINE_START_OFFSET_X = 50.f;
 const float MINE_START_OFFSET_Y = 100.f;
+const float GROUP_MEMBER_SIZE = 15.f;
+const float GROUP_SPEED = 100.f;
 
 /* Threads */
 
