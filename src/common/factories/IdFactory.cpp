@@ -1,8 +1,8 @@
-#include "IdController.hpp"
+#include "IdFactory.hpp"
 
 #include <iostream>
 
-uint32_t IdController::getNextId(uint16_t type) {
+uint32_t IdFactory::getNextId(uint16_t type) {
     std::lock_guard<std::mutex> mTypeToIndex_guard(mTypeToIndex_lock);
 
     if (mTypeToIndex_t.count(type) == 0) {
@@ -21,13 +21,13 @@ uint32_t IdController::getNextId(uint16_t type) {
     return (type * OFFSET_VALUE) + index;
 }
 
-size_t IdController::getIndex(uint32_t id) {
+size_t IdFactory::getIndex(uint32_t id) {
     return id % OFFSET_VALUE;
 }
 
-uint16_t IdController::getType(uint32_t id) {
+uint16_t IdFactory::getType(uint32_t id) {
     return id / OFFSET_VALUE;
 }
 
-std::mutex IdController::mTypeToIndex_lock;
-std::unordered_map<uint16_t, size_t> IdController::mTypeToIndex_t;
+std::mutex IdFactory::mTypeToIndex_lock;
+std::unordered_map<uint16_t, size_t> IdFactory::mTypeToIndex_t;
