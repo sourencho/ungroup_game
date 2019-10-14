@@ -20,7 +20,7 @@ sf::Packet& operator >>(sf::Packet& packet, PlayerUpdate& player_update);
 
 class Player: public GameObject {
  public:
-    explicit Player(int id);
+    explicit Player(uint32_t id);
     ~Player();
 
     void setDirection(sf::Vector2f direction);

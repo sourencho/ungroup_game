@@ -19,6 +19,8 @@ GameController::GameController(size_t max_player_count, size_t max_mine_count):
     mGameObjectStore->loadLevel(max_player_count, max_mine_count);
     mGroupController = std::unique_ptr<GroupController>(
         new GroupController(mGameObjectStore->getGroups(), mGameObjectStore->getPlayers()));
+    mPlayerController = std::unique_ptr<PlayerController>(
+        new PlayerController(mGameObjectStore->getPlayers()));
     mClock.restart();
 }
 
@@ -53,28 +55,8 @@ void GameController::computeGameState(const ClientInputs& cis, sf::Int32 delta_m
 }
 
 void GameController::updateGameObjects(const ClientInputs& cis) {
-    updatePlayers(cis);
+    mPlayerController->update(cis);
     mGroupController->update();
-}
-
-void GameController::updatePlayers(const ClientInputs& cis) {
-    int client_id;
-    for (const auto& client_id_and_unreliable_update : cis.client_id_and_unreliable_updates) {
-        client_id = client_id_and_unreliable_update.client_id;
-        if(mClientToPlayer.count(client_id) > 0) {
-            int player_id = mClientToPlayer[client_id];
-            std::shared_ptr<Player> player = mGameObjectStore->getPlayer(player_id);
-            player->setDirection(client_id_and_unreliable_update.client_unreliable_update.direction);
-        }
-    }
-    for (const auto& client_id_and_reliable_update : cis.client_id_and_reliable_updates) {
-        client_id = client_id_and_reliable_update.client_id;
-        if(mClientToPlayer.count(client_id) > 0) {
-            int player_id = mClientToPlayer[client_id];
-            std::shared_ptr<Player> player = mGameObjectStore->getPlayer(player_id);
-            player->setGroupable(client_id_and_reliable_update.client_reliable_update.groupable);
-        }
-    }
 }
 
 void GameController::updateGameObjectsPostPhysics() {
@@ -85,8 +67,8 @@ void GameController::updateGameObjectsPostPhysics() {
     }
 }
 
-unsigned int GameController::createPlayerWithGroup() {
-    int new_player_id = mGameObjectStore->createPlayer();
+uint32_t GameController::createPlayerWithGroup(uint32_t client_id) {
+    uint32_t new_player_id = mPlayerController->createPlayer(client_id);
     mGroupController->createGroup(new_player_id);
     return new_player_id;
 }

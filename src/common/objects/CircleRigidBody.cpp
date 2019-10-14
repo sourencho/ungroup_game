@@ -1,8 +1,8 @@
 #include "CircleRigidBody.hpp"
 
 
-CircleRigidBody::CircleRigidBody(float radius, sf::Vector2f position):
-  mRadius(radius), mPosition(position), mVelocity(0.f, 0.f) {}
+CircleRigidBody::CircleRigidBody(uint32_t id, float radius, sf::Vector2f position):
+  mRadius(radius), mPosition(position), mVelocity(0.f, 0.f), mId(id) {}
 
 
 void CircleRigidBody::setActive(bool is_active) {

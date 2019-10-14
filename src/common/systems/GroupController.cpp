@@ -1,15 +1,22 @@
 #include "GroupController.hpp"
 
 #include <numeric>
+#include <exception>
 #include "../util/game_settings.hpp"
+
 
 GroupController::GroupController(std::vector<std::shared_ptr<Group>>& groups,
     std::vector<std::shared_ptr<Player>>& players): mPlayers(players), mGroups(groups) {}
 
 GroupController::~GroupController() {}
 
-int GroupController::createGroup(int player_id) {
-    int new_group_id = player_id;
+uint32_t GroupController::createGroup(uint32_t player_id) {
+    size_t next_group_index = nextGroupIndex++;
+    if (next_group_index >= mGroups.size()) {
+        throw std::out_of_range("Exceeded max number of groups.");
+    }
+
+    uint32_t new_group_id = mGroups[next_group_index]->getId();
     mGroupToPlayers[new_group_id].push_back(player_id);
     return new_group_id;
 }

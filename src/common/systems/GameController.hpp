@@ -13,6 +13,7 @@
 #include "../util/game_state.hpp"
 #include "GameObjectStore.hpp"
 #include "GroupController.hpp"
+#include "PlayerController.hpp"
 
 
 class GameController {
@@ -37,7 +38,7 @@ class GameController {
     void updatePlayers(const ClientInputs& cis);
     void updateGroups();
     void computeGameState(const ClientInputs& cis, sf::Int32 delta_ms);
-    unsigned int createPlayerWithGroup();
+    uint32_t createPlayerWithGroup(uint32_t client_id);
     void applyGameState(GameState game_state);
     GameState getGameState();
     void updateGameObjects(const ClientInputs& cis);
@@ -48,7 +49,7 @@ class GameController {
     std::shared_ptr<PhysicsController> mPhysicsController;
     std::unique_ptr<GameObjectStore> mGameObjectStore;
     std::unique_ptr<GroupController> mGroupController;
-    std::unordered_map<sf::Uint32, int> mClientToPlayer;
+    std::unique_ptr<PlayerController> mPlayerController;
 
     sf::Clock mClock;
     sf::Int32 mElapsedTime = 0;

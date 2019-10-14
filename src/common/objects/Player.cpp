@@ -22,7 +22,7 @@ sf::Packet& operator >>(sf::Packet& packet, PlayerUpdate& player_update) {
         >> player_update.groupable;
 }
 
-Player::Player(int id):GameObject(id), mDirection(1.0, 1.0), mGroupable(false) {}
+Player::Player(uint32_t id):GameObject(id), mDirection(1.0, 1.0), mGroupable(false) {}
 
 Player::~Player() {}
 

@@ -12,7 +12,7 @@
 class PhysicsController{
  public:
      PhysicsController();
-     std::shared_ptr<CircleRigidBody> createCRB(float radius, sf::Vector2f position);
+     std::shared_ptr<CircleRigidBody> createCRB(uint32_t id, float radius, sf::Vector2f position);
      void update(sf::Int32 delta_ms);
      void step(sf::Int32 delta_ms);
      void handleCollision();

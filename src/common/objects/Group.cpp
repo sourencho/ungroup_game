@@ -7,8 +7,8 @@
 #include "Group.hpp"
 
 
-Group::Group(int id, sf::Vector2f position, sf::Color color, std::shared_ptr<PhysicsController> pc)
-  :CircleGameObject(id, position, 0.f, color, pc) {}
+Group::Group(uint32_t id, sf::Vector2f position, sf::Color color,
+    std::shared_ptr<PhysicsController> pc):CircleGameObject(id, position, 0.f, color, pc) {}
 
 Group::~Group() {}
 

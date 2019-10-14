@@ -5,7 +5,7 @@
 
 class GameObject {
     public:
-        explicit GameObject(int id) {
+        explicit GameObject(uint32_t id) {
             mId = id;
         }
 
@@ -22,7 +22,7 @@ class GameObject {
         }
 
     protected:
-        int mId;
+        uint32_t mId;
         bool mIsActive = false;
 };
 
