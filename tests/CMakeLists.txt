@@ -2,6 +2,7 @@ add_executable(ug-test
     tests-main.cpp
     common/objects/tests-CircleRigidBody.cpp
     common/events/tests-EventController.cpp
+    common/factories/tests-IdFactory.cpp
     server/systems/tests-ServerGameController.cpp
     client/systems/tests-ClientGameController.cpp
 )

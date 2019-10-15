@@ -89,10 +89,8 @@ void ClientGameController::update() {
 
     if (mNetworkingClient->getGameStateIsFresh()) {
         rewindAndReplay();
-        GameController::update();
-    } else {
-        GameController::update();  // interpolate
     }
+    GameController::update();
 }
 
 void ClientGameController::rewindAndReplay() {
@@ -126,7 +124,7 @@ void ClientGameController::fetchPlayerId() {
     if (mPlayerId == -1) {
         mPlayerId = mNetworkingClient->getPlayerId();
         if (mPlayerId != -1) {
-            mClientToPlayer[mNetworkingClient->getClientId()] = mPlayerId;
+            mPlayerController->setPlayerClient(mPlayerId, mNetworkingClient->getClientId());
         }
     }
 }

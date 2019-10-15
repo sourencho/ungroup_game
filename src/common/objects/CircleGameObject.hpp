@@ -12,7 +12,7 @@
 
 class CircleGameObject : public GameObject {
  public:
-     CircleGameObject(unsigned int id, sf::Vector2f position, float radius, sf::Color color,
+     CircleGameObject(uint32_t id, sf::Vector2f position, float radius, sf::Color color,
         std::shared_ptr<PhysicsController> pc);
      std::shared_ptr<Circle> getCircle();
      void setActive(bool is_active);

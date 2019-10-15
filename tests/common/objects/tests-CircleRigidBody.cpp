@@ -2,9 +2,9 @@
 #include "../../../src/common/objects/CircleRigidBody.hpp"
 
 
-SCENARIO( "CircleRigidBody changes position", "[common][objects][CircleRigidBody]" ) {
+SCENARIO("CircleRigidBody changes position", "[common][objects][CircleRigidBody]") {
   sf::Vector2f position = sf::Vector2f(0.f, 0.f);
-  CircleRigidBody circle = CircleRigidBody(0.f, position);
+  CircleRigidBody circle = CircleRigidBody(0, 0.f, position);
 
   GIVEN( "a velocity is set on a circle" ) {
     circle.setVelocity(sf::Vector2f(10.f, 10.f));

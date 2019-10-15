@@ -18,14 +18,9 @@ class GameObjectStore {
 
     void loadLevel(size_t max_player_count, size_t max_mine_count);
 
-    int createPlayer();
-
-    void setPlayerActive(int player_id, bool value);
-    void setMineActive(int mine_id, bool value);
-
-    std::shared_ptr<Player>& getPlayer(int player_id);
-    std::shared_ptr<Group>& getGroup(int group_id);
-    std::shared_ptr<Mine>& getMine(int mine_id);
+    std::shared_ptr<Player>& getPlayer(uint32_t player_id);
+    std::shared_ptr<Group>& getGroup(uint32_t group_id);
+    std::shared_ptr<Mine>& getMine(uint32_t mine_id);
 
     std::vector<std::shared_ptr<Player>>& getPlayers();
     std::vector<std::shared_ptr<Group>>& getGroups();

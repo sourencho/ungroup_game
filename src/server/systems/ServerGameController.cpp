@@ -24,8 +24,8 @@ void ServerGameController::clientConnected(std::shared_ptr<Event> event) {
         case EventType::EVENT_TYPE_CLIENT_CONNECTED: {
             std::shared_ptr<ClientConnectedEvent> client_connect_event = \
                 std::dynamic_pointer_cast<ClientConnectedEvent>(event);
-            int new_client_id = client_connect_event->getClientId();
-            int new_player_id = mClientToPlayer[new_client_id] = createPlayerWithGroup();
+            uint32_t new_client_id = client_connect_event->getClientId();
+            uint32_t new_player_id = createPlayerWithGroup(new_client_id);
             mNetworkingServer->setClientToPlayerId(new_client_id, new_player_id);
             break;
         }
@@ -42,8 +42,8 @@ void ServerGameController::clientDisconnected(std::shared_ptr<Event> event) {
         case EventType::EVENT_TYPE_CLIENT_DISCONNECTED: {
             std::shared_ptr<ClientDisconnectedEvent> client_disconnect_event = \
                 std::dynamic_pointer_cast<ClientDisconnectedEvent>(event);
-            int removed_client_id = client_disconnect_event->getClientId();
-            mGameObjectStore->setPlayerActive(mClientToPlayer[removed_client_id], false);
+            uint32_t removed_client_id = client_disconnect_event->getClientId();
+            mPlayerController->removePlayer(removed_client_id);
             break;
         }
         default: {

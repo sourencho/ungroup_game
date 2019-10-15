@@ -16,6 +16,8 @@ add_library(common-lib
     systems/GameController.cpp
     systems/GameObjectStore.cpp
     systems/GroupController.cpp
+    systems/PlayerController.cpp
+    factories/IdFactory.cpp
 )
 
 target_link_libraries(common-lib PUBLIC sfml-system sfml-graphics sfml-network)

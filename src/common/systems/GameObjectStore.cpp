@@ -3,9 +3,11 @@
 
 #include "GameObjectStore.hpp"
 #include "../../common/util/game_settings.hpp"
+#include "../../common/util/game_def.hpp"
+#include "../../common/factories/IdFactory.hpp"
 
-GameObjectStore::GameObjectStore(std::shared_ptr<PhysicsController> pc):
-  mPhysicsController(pc) {}
+
+GameObjectStore::GameObjectStore(std::shared_ptr<PhysicsController> pc):mPhysicsController(pc) {}
 
 GameObjectStore::~GameObjectStore() {}
 
@@ -16,13 +18,15 @@ void GameObjectStore::loadLevel(size_t max_player_count, size_t max_mine_count) 
 
     // Initialize Players
     for (int i=0; i < max_player_count; i++) {
-        mPlayers.push_back(std::shared_ptr<Player>(new Player(i)));
+        uint32_t new_player_id = IdFactory::getInstance().getNextId(GameObjectType::player);
+        mPlayers.push_back(std::shared_ptr<Player>(new Player(new_player_id)));
     }
 
     // Initialize Groups
     for (int i=0; i < max_player_count; i++) {
+        uint32_t new_group_id = IdFactory::getInstance().getNextId(GameObjectType::group);
         mGroups.push_back(std::shared_ptr<Group>(new Group(
-            i,
+            new_group_id,
             sf::Vector2f(GROUP_START_OFFSET_X * (i+1), GROUP_START_OFFSET_Y),
             sf::Color(0, 255, 0),
             mPhysicsController)));
@@ -30,45 +34,28 @@ void GameObjectStore::loadLevel(size_t max_player_count, size_t max_mine_count) 
 
     // Initialize Mines
     for (int i=0; i < max_mine_count; i++) {
+        uint32_t new_mine_id = IdFactory::getInstance().getNextId(GameObjectType::mine);
         std::shared_ptr<Mine> new_mine = std::shared_ptr<Mine>(new Mine(
-            i,
+            new_mine_id,
             sf::Vector2f(MINE_START_OFFSET_X, MINE_START_OFFSET_Y * (i+1)),
             MINE_SIZE,
             sf::Color(0, 0, 255),
             mPhysicsController));
+        new_mine->setActive(true);
         mMines.push_back(new_mine);
-        setMineActive(i, true);
     }
 }
 
-int GameObjectStore::createPlayer() {
-    int new_player_id = mNextPlayerId++;
-    if (new_player_id >= mPlayers.size() || new_player_id >= mGroups.size()) {
-        throw std::runtime_error("Create players or groups with id out of range");
-    }
-    setPlayerActive(new_player_id, true);
-    return new_player_id;
+std::shared_ptr<Player>& GameObjectStore::getPlayer(uint32_t player_id) {
+    return mPlayers[IdFactory::getInstance().getIndex(player_id)];
 }
 
-void GameObjectStore::setPlayerActive(int player_id, bool value) {
-    mPlayers[player_id]->setActive(value);
+std::shared_ptr<Group>& GameObjectStore::getGroup(uint32_t group_id) {
+    return mGroups[IdFactory::getInstance().getIndex(group_id)];
 }
 
-
-void GameObjectStore::setMineActive(int mine_id, bool value) {
-    mMines[mine_id]->setActive(value);
-}
-
-std::shared_ptr<Player>& GameObjectStore::getPlayer(int player_id) {
-    return mPlayers[player_id];
-}
-
-std::shared_ptr<Group>& GameObjectStore::getGroup(int group_id) {
-    return mGroups[group_id];
-}
-
-std::shared_ptr<Mine>& GameObjectStore::getMine(int mine_id) {
-    return mMines[mine_id];
+std::shared_ptr<Mine>& GameObjectStore::getMine(uint32_t mine_id) {
+    return mMines[IdFactory::getInstance().getIndex(mine_id)];
 }
 
 std::vector<std::shared_ptr<Player>>& GameObjectStore::getPlayers() {

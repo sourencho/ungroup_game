@@ -8,6 +8,7 @@
 #include "../../common/objects/Player.hpp"
 #include "../../common/objects/Group.hpp"
 
+
 /* Network utilities */
 
 struct GroupIdAndPlayerIds {
@@ -38,7 +39,7 @@ class GroupController {
     GroupController& operator=(const GroupController& temp_obj) = delete;
 
     void update();
-    int createGroup(int player_id);
+    uint32_t createGroup(uint32_t player_id);
     void updatePostPhysics();
     GroupControllerUpdate getUpdate();
     void applyUpdate(GroupControllerUpdate gcu);
@@ -49,7 +50,9 @@ class GroupController {
 
     std::vector<std::shared_ptr<Player>> mPlayers;
     std::vector<std::shared_ptr<Group>> mGroups;
-    std::unordered_map<sf::Uint32, std::vector<sf::Uint32>> mGroupToPlayers;
+    std::unordered_map<uint32_t, std::vector<uint32_t>> mGroupToPlayers;
+
+    size_t nextGroupIndex = 0;
 };
 
 
