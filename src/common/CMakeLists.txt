@@ -17,6 +17,7 @@ add_library(common-lib
     systems/GameObjectStore.cpp
     systems/GroupController.cpp
     systems/PlayerController.cpp
+    systems/MineController.cpp
     factories/IdFactory.cpp
 )
 

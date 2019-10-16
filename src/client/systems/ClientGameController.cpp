@@ -16,7 +16,9 @@ ClientGameController::ClientGameController(size_t max_player_count, size_t max_m
     mKeys.group = keys[4];
 }
 
-ClientGameController::~ClientGameController() {}
+ClientGameController::~ClientGameController() {
+    std::cout << "Deconstructing ClientGameController" << std::endl;
+}
 
 ClientInputs ClientGameController::collectInputs() {
     return getClientInputs(mClientReliableUpdate, mClientUnreliableUpdate);

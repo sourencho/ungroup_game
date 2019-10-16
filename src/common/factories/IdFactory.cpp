@@ -29,5 +29,10 @@ uint16_t IdFactory::getType(uint32_t id) {
     return id / OFFSET_VALUE;
 }
 
+void IdFactory::reset() {
+    std::lock_guard<std::mutex> mTypeToIndex_guard(mTypeToIndex_lock);
+    mTypeToIndex_t.clear();
+}
+
 std::mutex IdFactory::mTypeToIndex_lock;
 std::unordered_map<uint16_t, size_t> IdFactory::mTypeToIndex_t;

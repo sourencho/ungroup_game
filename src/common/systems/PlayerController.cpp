@@ -46,6 +46,10 @@ void PlayerController::update(const ClientInputs& cis) {
     }
 }
 
+void PlayerController::updatePostPhysics() {
+    // noop
+}
+
 void PlayerController::setPlayerClient(uint32_t player_id, uint32_t client_id) {
     mClientToPlayer[client_id] = player_id;
 }

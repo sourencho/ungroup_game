@@ -1,8 +1,11 @@
 #include <catch.hpp>
+#include <iostream>
+
 #include "../../../src/common/factories/IdFactory.hpp"
 
 
 SCENARIO("Several types of ids used", "[common][systems][IdFactory]") {
+
     GIVEN("An id of type 0 is fetched") {
         WHEN("An id of type 0 is fetched") {
             uint32_t first_zero_id = IdFactory::getInstance().getNextId(0);
@@ -36,4 +39,3 @@ SCENARIO("Several types of ids used", "[common][systems][IdFactory]") {
         }
     }
 }
-
