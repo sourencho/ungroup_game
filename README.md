@@ -203,5 +203,4 @@ Debug run:
 - [SFML: Tutorials for SFML 2.5](https://www.sfml-dev.org/tutorials/2.5/)
 
 ### Misc
-- @co
 - @inzombiak
