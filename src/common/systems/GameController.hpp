@@ -14,6 +14,7 @@
 #include "GameObjectStore.hpp"
 #include "GroupController.hpp"
 #include "PlayerController.hpp"
+#include "MineController.hpp"
 
 
 class GameController {
@@ -50,11 +51,12 @@ class GameController {
     std::unique_ptr<GameObjectStore> mGameObjectStore;
     std::unique_ptr<GroupController> mGroupController;
     std::unique_ptr<PlayerController> mPlayerController;
+    std::unique_ptr<MineController> mMineController;
+
 
     sf::Clock mClock;
     sf::Int32 mElapsedTime = 0;
     sf::Int32 mTimeAccumulator = 0;
-    unsigned int mStepCount = 0;
 };
 
 #endif /* GameController_hpp */

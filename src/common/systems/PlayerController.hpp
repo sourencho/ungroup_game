@@ -17,7 +17,10 @@ class PlayerController {
     std::shared_ptr<Player> getPlayer(uint32_t player_id);
     uint32_t createPlayer(uint32_t client_id);
     void removePlayer(uint32_t client_id);
+
     void update(const ClientInputs& cis);
+    void updatePostPhysics();
+
     void setPlayerClient(uint32_t player_id, uint32_t client_id);
 
  private:

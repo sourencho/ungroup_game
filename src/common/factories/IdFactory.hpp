@@ -21,6 +21,7 @@ class IdFactory {
     uint32_t getNextId(uint16_t type);
     size_t getIndex(uint32_t id);
     uint16_t getType(uint32_t id);
+    void reset();
 
  private:
     IdFactory() {}

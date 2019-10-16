@@ -29,6 +29,7 @@ class EventController {
     void forceProcessEvents();
     void lock();
     void unlock();
+    void reset();
 
  private:
     typedef std::list<EventCallback> EventCallbackList;

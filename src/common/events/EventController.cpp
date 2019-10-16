@@ -37,6 +37,13 @@ void EventController::unlock() {
     mEventMapLock.unlock();
 }
 
+void EventController::reset() {
+    lock();
+    mEventCallbackMap.clear();
+    mEventQueue = {};
+    unlock();
+}
+
 std::mutex EventController::mEventQueueLock;
 std::mutex EventController::mEventMapLock;
 EventController::EventTypeToCallbacks EventController::mEventCallbackMap;

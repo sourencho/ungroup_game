@@ -17,14 +17,24 @@ GameController::GameController(size_t max_player_count, size_t max_mine_count):
   mPhysicsController(new PhysicsController()),
   mGameObjectStore(new GameObjectStore(mPhysicsController)) {
     mGameObjectStore->loadLevel(max_player_count, max_mine_count);
+
     mGroupController = std::unique_ptr<GroupController>(
         new GroupController(mGameObjectStore->getGroups(), mGameObjectStore->getPlayers()));
     mPlayerController = std::unique_ptr<PlayerController>(
         new PlayerController(mGameObjectStore->getPlayers()));
+    mMineController = std::unique_ptr<MineController>(
+        new MineController(mGameObjectStore->getMines()));
+
     mClock.restart();
+
+    for (int i=0; i < max_mine_count; i++) {
+        mMineController->createMine();
+    }
 }
 
-GameController::~GameController() {}
+GameController::~GameController() {
+    std::cout << "Deconstructing GameController" << std::endl;
+}
 
 void GameController::update() {
     ClientInputs cis = collectInputs();
@@ -40,9 +50,6 @@ void GameController::update() {
     }
 
     setNetworkState();
-
-    //  std::cout << "Steps per second: "
-    //      << static_cast<float>(mStepCount)/(mElapsedTime/1000) << std::endl;
 }
 
 void GameController::computeGameState(const ClientInputs& cis, sf::Int32 delta_ms) {
@@ -50,21 +57,19 @@ void GameController::computeGameState(const ClientInputs& cis, sf::Int32 delta_m
     mPhysicsController->update(delta_ms);
     updateGameObjectsPostPhysics();
     EventController::getInstance().forceProcessEvents();
-    mStepCount++;
     incrementTick();
 }
 
 void GameController::updateGameObjects(const ClientInputs& cis) {
     mPlayerController->update(cis);
     mGroupController->update();
+    mMineController->update();
 }
 
 void GameController::updateGameObjectsPostPhysics() {
+    mPlayerController->updatePostPhysics();
     mGroupController->updatePostPhysics();
-
-    for (auto mine : mGameObjectStore->getMines()) {
-        mine->matchRigid();
-    }
+    mMineController->updatePostPhysics();
 }
 
 uint32_t GameController::createPlayerWithGroup(uint32_t client_id) {

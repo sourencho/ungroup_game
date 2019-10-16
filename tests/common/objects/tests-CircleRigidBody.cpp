@@ -1,4 +1,5 @@
 #include <catch.hpp>
+
 #include "../../../src/common/objects/CircleRigidBody.hpp"
 
 

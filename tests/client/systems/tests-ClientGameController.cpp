@@ -1,6 +1,8 @@
 #include <catch.hpp>
+#include <iostream>
 
 #include "../../../src/client/systems/ClientGameController.hpp"
+
 
 SCENARIO("ClientGameController runs successfully", "[client][systems][ClientGameController]") {
     GIVEN("ClientGameController is constructed") {
