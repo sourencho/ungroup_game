@@ -5,12 +5,16 @@
 
 #include "Circle.hpp"
 
+sf::Clock shader_clock;
+
 
 Circle::Circle(float size, sf::Vector2f position, sf::Color color):
   mCircleShape(size) {
     mCircleShape.setPosition(position);
     mColor = color;
     mCircleShape.setFillColor(color);
+
+    shader_clock.restart();
 }
 
 Circle::~Circle() {}
@@ -19,6 +23,7 @@ void Circle::draw(sf::RenderTarget& target, sf::Shader* shader, bool use_shader)
     if (use_shader) {
         shader->setUniform("u_position", getPosition());
         shader->setUniform("u_radius", getRadius());
+        shader->setUniform("u_time", shader_clock.getElapsedTime().asSeconds());
         target.draw(mCircleShape, shader);
     } else {
         target.draw(mCircleShape);

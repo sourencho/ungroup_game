@@ -21,14 +21,15 @@ int main(int, char const**) {
     }
 
     // load deafult vertex shader
-    const std::string DEFAULT_VERTEX_SHADER_PATH = "shaders/vertex_shader.frag";
+    const std::string DEFAULT_VERTEX_SHADER_PATH = "src/shaders/vertex_shader.vert";
     if (!shader.loadFromFile(DEFAULT_VERTEX_SHADER_PATH, sf::Shader::Vertex)) {
         std::cerr << "Error: Could not load vertex shader" << std::endl;
     }
 
     // load default fragment shader
-    const std::string DEFAULT_FRAGMENT_SHADER_PATH = "shaders/fragment_shader.frag";
-    const std::string CIRCLE_GRADIENT_FRAGMENT_SHADER_PATH = "shaders/circle_gradient.frag";
+    const std::string DEFAULT_FRAGMENT_SHADER_PATH = "src/shaders/fragment_shader.frag";
+    const std::string CIRCLE_GRADIENT_FRAGMENT_SHADER_PATH = "src/shaders/circle_gradient.frag";
+    const std::string RAND_FRAGMENT_SHADER_PATH = "src/shaders/random.frag";
     if (!shader.loadFromFile(DEFAULT_FRAGMENT_SHADER_PATH, sf::Shader::Fragment)) {
         std::cerr << "Error: Could not load fragment shader" << std::endl;
     }
