@@ -35,7 +35,9 @@ int main(int, char const**) {
     }
 
     // Pass resolution to shader
-    shader.setUniform("u_resolution", WINDOW_RESOLUTION);
+    if (USE_SHADER) {
+        shader.setUniform("u_resolution", WINDOW_RESOLUTION);
+    }
 
     // Create client
     sf::Keyboard::Key keys[] = {sf::Keyboard::Up, sf::Keyboard::Down, sf::Keyboard::Right,

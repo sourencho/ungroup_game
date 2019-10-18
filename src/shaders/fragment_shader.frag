@@ -1,4 +1,4 @@
 void main()
 {
-    gl_FragColor = gl_fragColor;
+    gl_FragColor = gl_Color;
 }
