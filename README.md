@@ -35,7 +35,7 @@ To run tests, after building, run:
 
 ### Compiliation
 
-- When you create/delete a file you need to add the `<new_file>.cpp` to the corresponding `CMakeLists.txt` file. 
+- When you create/delete a file you need to add the `<new_file>.cpp` to the corresponding `CMakeLists.txt` file.
 
 ### Writing Tests
 
@@ -45,6 +45,7 @@ To run tests, after building, run:
 - Add a [test tag](https://github.com/catchorg/Catch2/blob/67b4ada6b0fbe98368df934e1378aeae1ba7f235/docs/test-cases-and-sections.md#tags) for each subdirectory and the file name.
 
 ### Style
+- We use [ClangFormat](https://clang.llvm.org/docs/ClangFormat.html). You can use the [xaver.clang-format](https://marketplace.visualstudio.com/items?itemName=xaver.clang-format) VSCode extension to automatically format.
 - Class member variables have the style `mCamelCase`.
 - Class methods have the style `camelCase`.
 - Local variables have the style `snake_case`.
