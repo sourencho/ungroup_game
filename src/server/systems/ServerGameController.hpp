@@ -13,19 +13,20 @@
 
 class ServerGameController : public GameController {
  public:
-     explicit ServerGameController(size_t max_player_count, size_t max_mine_count);
-     ~ServerGameController();
+    explicit ServerGameController(size_t max_player_count, size_t max_mine_count);
+    ~ServerGameController();
 
-     void clientConnected(std::shared_ptr<Event> event);
-     void clientDisconnected(std::shared_ptr<Event> event);
+    void clientConnected(std::shared_ptr<Event> event);
+    void clientDisconnected(std::shared_ptr<Event> event);
  private:
-     ClientInputs collectInputs() override;
-     void setNetworkState() override;
-     void incrementTick() override;
-     unsigned int getTick() override;
-     void setTick(unsigned int tick) override;
+    ClientInputs collectInputs() override;
+    void setNetworkState() override;
+    void incrementTick() override;
+    unsigned int getTick() override;
+    void setTick(unsigned int tick) override;
+    void step(const ClientInputs& cis, sf::Int32 delta_ms) override;
 
-     std::unique_ptr<NetworkingServer> mNetworkingServer;
+    std::unique_ptr<NetworkingServer> mNetworkingServer;
 };
 
 #endif /* ServerGameController_hpp */

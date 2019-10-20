@@ -7,11 +7,14 @@
 #include <queue>
 #include <unordered_map>
 
+#include "../rendering/Animation.hpp"
+#include "../rendering/AnimationController.hpp"
 #include "../../common/systems/GameController.hpp"
 #include "NetworkingClient.hpp"
 
 
 class ClientGameController : public GameController {
+
  public:
     explicit ClientGameController(size_t max_player_count, size_t max_mine_count,
     sf::Keyboard::Key keys[5]);
@@ -26,6 +29,7 @@ class ClientGameController : public GameController {
     void incrementTick() override;
     unsigned int getTick() override;
     void setTick(unsigned int tick) override;
+    void step(const ClientInputs& cis, sf::Int32 delta_ms) override;
 
     void fetchPlayerId();
     void setClientUpdates();
@@ -43,6 +47,7 @@ class ClientGameController : public GameController {
     std::unordered_map<unsigned int, ClientInputAndTick> mTickToInput; // Cache of player inputs
 
     std::unique_ptr<NetworkingClient> mNetworkingClient;
+    std::unique_ptr<AnimationController> mAnimationController;
 };
 
 #endif /* ClientGameController_hpp */

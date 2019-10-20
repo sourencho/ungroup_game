@@ -35,6 +35,7 @@ class GameController {
     virtual void incrementTick() = 0;
     virtual unsigned int getTick() = 0;
     virtual void setTick(unsigned int tick) = 0;
+    virtual void step(const ClientInputs& cis, sf::Int32 delta_ms) = 0;
 
     void updatePlayers(const ClientInputs& cis);
     void updateGroups();

@@ -19,6 +19,10 @@ ClientInputs ServerGameController::collectInputs() {
     return mNetworkingServer->collectClientInputs();
 }
 
+void ServerGameController::step(const ClientInputs& cis, sf::Int32 delta_ms) {
+    computeGameState(cis, delta_ms);
+}
+
 void ServerGameController::clientConnected(std::shared_ptr<Event> event) {
     switch (event->getType()) {
         case EventType::EVENT_TYPE_CLIENT_CONNECTED: {

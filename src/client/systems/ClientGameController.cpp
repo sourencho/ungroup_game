@@ -8,12 +8,9 @@
 
 ClientGameController::ClientGameController(size_t max_player_count, size_t max_mine_count,
   sf::Keyboard::Key keys[5]): GameController(max_player_count, max_mine_count),
-  mNetworkingClient(new NetworkingClient()) {
-    mKeys.up = keys[0];
-    mKeys.down = keys[1];
-    mKeys.right = keys[2];
-    mKeys.left = keys[3];
-    mKeys.group = keys[4];
+  mNetworkingClient(new NetworkingClient()), mAnimationController(new AnimationController()) {
+    mKeys = {keys[0], keys[1], keys[2], keys[3], keys[4]};
+    mAnimationController->load();
 }
 
 ClientGameController::~ClientGameController() {
@@ -51,6 +48,8 @@ void ClientGameController::draw(sf::RenderTarget& target, sf::Shader* shader, bo
             mine->getCircle()->draw(target, shader, use_shader);
         }
     }
+
+    mAnimationController->draw(target);
 }
 
 void ClientGameController::handleEvents(sf::Event& event) {
@@ -93,6 +92,11 @@ void ClientGameController::update() {
         rewindAndReplay();
     }
     GameController::update();
+}
+
+void ClientGameController::step(const ClientInputs& cis, sf::Int32 delta_ms) {
+    computeGameState(cis, delta_ms);
+    mAnimationController->step(delta_ms);
 }
 
 void ClientGameController::rewindAndReplay() {
