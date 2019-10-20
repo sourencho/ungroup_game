@@ -5,7 +5,7 @@
 
 
 struct Keys {
-    sf::Keyboard::Key up, down, left, right, group;
+    sf::Keyboard::Key up, down, right, left, group;
 };
 
 struct UnreliableCommand {

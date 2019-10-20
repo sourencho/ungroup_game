@@ -7,9 +7,9 @@
 
 
 ClientGameController::ClientGameController(size_t max_player_count, size_t max_mine_count,
-  sf::Keyboard::Key keys[5]): GameController(max_player_count, max_mine_count),
-  mNetworkingClient(new NetworkingClient()), mAnimationController(new AnimationController()) {
-    mKeys = {keys[0], keys[1], keys[2], keys[3], keys[4]};
+  Keys keys): GameController(max_player_count, max_mine_count),
+  mNetworkingClient(new NetworkingClient()), mAnimationController(new AnimationController()),
+  mKeys(keys) {
     mAnimationController->load();
 }
 

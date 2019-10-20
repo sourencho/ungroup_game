@@ -29,11 +29,9 @@ int main(int, char const **) {
     }
 
     // load default fragment shader
-    const std::string DEFAULT_FRAGMENT_SHADER_PATH =
-        "src/shaders/fragment_shader.frag";
-    const std::string CIRCLE_GRADIENT_FRAGMENT_SHADER_PATH =
-        "src/shaders/circle_gradient.frag";
-    const std::string RAND_FRAGMENT_SHADER_PATH = "src/shaders/random.frag";
+    const std::string DEFAULT_FRAGMENT_SHADER_PATH = "src/shaders/fragment_shader.frag";
+    //const std::string CIRCLE_GRADIENT_FRAGMENT_SHADER_PATH = "src/shaders/circle_gradient.frag";
+    //const std::string RAND_FRAGMENT_SHADER_PATH = "src/shaders/random.frag";
     if (!shader.loadFromFile(DEFAULT_FRAGMENT_SHADER_PATH,
                              sf::Shader::Fragment)) {
         std::cerr << "Error: Could not load fragment shader" << std::endl;
@@ -45,11 +43,9 @@ int main(int, char const **) {
     }
 
     // Create client
-    sf::Keyboard::Key keys[] = {sf::Keyboard::Up, sf::Keyboard::Down,
-                                sf::Keyboard::Right, sf::Keyboard::Left,
-                                sf::Keyboard::G};
-    ClientGameController client_game_controller(MAX_PLAYER_COUNT,
-                                                MAX_MINE_COUNT, keys);
+    Keys keys = {sf::Keyboard::Up, sf::Keyboard::Down, sf::Keyboard::Right, sf::Keyboard::Left,
+        sf::Keyboard::G};
+    ClientGameController client_game_controller(MAX_PLAYER_COUNT, MAX_MINE_COUNT, keys);
 
     // Start the game loop
     while (window.isOpen()) {

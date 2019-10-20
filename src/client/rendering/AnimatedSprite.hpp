@@ -12,8 +12,8 @@
 
 class AnimatedSprite {
  public:
-    AnimatedSprite(sf::Texture& texture, sf::Vector2u size, sf::Int32 duration_ms,
-        sf::Vector2f position);
+    AnimatedSprite(sf::Texture& spritesheet_texture, sf::Vector2u spritesheet_size,
+        sf::Int32 duration_ms, sf::Vector2f position);
     ~AnimatedSprite() {};
 
     void draw(sf::RenderTarget& target);

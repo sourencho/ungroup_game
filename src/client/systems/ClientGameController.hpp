@@ -16,8 +16,7 @@
 class ClientGameController : public GameController {
 
  public:
-    explicit ClientGameController(size_t max_player_count, size_t max_mine_count,
-    sf::Keyboard::Key keys[5]);
+    explicit ClientGameController(size_t max_player_count, size_t max_mine_count, Keys keys);
     ~ClientGameController();
 
     void update() override;
