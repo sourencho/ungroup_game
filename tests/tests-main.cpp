@@ -8,14 +8,14 @@ struct MyListener : Catch::TestEventListenerBase {
 
     using TestEventListenerBase::TestEventListenerBase; // inherit constructor
 
-    void testCaseStarting(Catch::TestCaseInfo const &testInfo) override {
+    void testCaseStarting(Catch::TestCaseInfo const& testInfo) override {
         std::cout << "Resetting EventController" << std::endl;
         EventController::getInstance().reset();
         std::cout << "Resetting IdFactory" << std::endl;
         IdFactory::getInstance().reset();
     }
 
-    void testCaseEnded(Catch::TestCaseStats const &testCaseStats) override {
+    void testCaseEnded(Catch::TestCaseStats const& testCaseStats) override {
         // Tear-down after a test case is run
     }
 };

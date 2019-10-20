@@ -7,12 +7,12 @@
 #include "../util/game_settings.hpp"
 #include "Mine.hpp"
 
-sf::Packet &operator<<(sf::Packet &packet, const MineUpdate &mine_update) {
+sf::Packet& operator<<(sf::Packet& packet, const MineUpdate& mine_update) {
     return packet << mine_update.mine_id << mine_update.is_active << mine_update.x_pos
                   << mine_update.y_pos << mine_update.radius;
 }
 
-sf::Packet &operator>>(sf::Packet &packet, MineUpdate &mine_update) {
+sf::Packet& operator>>(sf::Packet& packet, MineUpdate& mine_update) {
     return packet >> mine_update.mine_id >> mine_update.is_active >> mine_update.x_pos >>
            mine_update.y_pos >> mine_update.radius;
 }

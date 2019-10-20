@@ -14,14 +14,14 @@ typedef std::function<void(std::shared_ptr<Event>)> EventCallback;
 
 class EventController {
   public:
-    static EventController &getInstance() {
+    static EventController& getInstance() {
         static EventController instance;
         return instance;
     }
 
     // Let's make sure we don't accidentally get copies of the singleton.
-    EventController(EventController const &) = delete;
-    void operator=(EventController const &) = delete;
+    EventController(EventController const&) = delete;
+    void operator=(EventController const&) = delete;
 
     void addEventListener(EventType event_type, EventCallback event_callback);
     void queueEvent(std::shared_ptr<Event> event);

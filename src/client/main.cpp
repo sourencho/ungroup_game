@@ -5,7 +5,7 @@
 #include "systems/ClientGameController.hpp"
 #include <SFML/Graphics.hpp>
 
-int main(int, char const **) {
+int main(int, char const**) {
     // Create the main window
     sf::RenderWindow window(sf::VideoMode(WINDOW_RESOLUTION.x, WINDOW_RESOLUTION.y), "SFML window");
 

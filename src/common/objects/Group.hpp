@@ -21,16 +21,16 @@ struct GroupUpdate {
     bool groupable;
 };
 
-sf::Packet &operator<<(sf::Packet &packet, const GroupUpdate &group_update);
-sf::Packet &operator>>(sf::Packet &packet, GroupUpdate &group_update);
+sf::Packet& operator<<(sf::Packet& packet, const GroupUpdate& group_update);
+sf::Packet& operator>>(sf::Packet& packet, GroupUpdate& group_update);
 
 class Group : public CircleGameObject {
   public:
     Group(uint32_t id, sf::Vector2f position, sf::Color color,
           std::shared_ptr<PhysicsController> pc);
     ~Group();
-    Group(const Group &temp_obj) = delete;            // TODO: define this
-    Group &operator=(const Group &temp_obj) = delete; // TODO: define this
+    Group(const Group& temp_obj) = delete;            // TODO: define this
+    Group& operator=(const Group& temp_obj) = delete; // TODO: define this
 
     bool getGroupable();
     void setGroupable(bool groupable);

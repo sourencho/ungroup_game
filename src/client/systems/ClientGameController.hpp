@@ -19,8 +19,8 @@ class ClientGameController : public GameController {
     ~ClientGameController();
 
     void update() override;
-    void draw(sf::RenderTarget &target, sf::Shader *shader, bool use_shader);
-    void handleEvents(sf::Event &event);
+    void draw(sf::RenderTarget& target, sf::Shader* shader, bool use_shader);
+    void handleEvents(sf::Event& event);
 
   private:
     ClientInputs collectInputs() override;
@@ -28,13 +28,13 @@ class ClientGameController : public GameController {
     void incrementTick() override;
     unsigned int getTick() override;
     void setTick(unsigned int tick) override;
-    void step(const ClientInputs &cis, sf::Int32 delta_ms) override;
+    void step(const ClientInputs& cis, sf::Int32 delta_ms) override;
 
     void fetchPlayerId();
     void setClientUpdates();
     void rewindAndReplay();
 
-    ClientInputs &getClientInputs(ClientReliableUpdate cru, ClientUnreliableUpdate cuu);
+    ClientInputs& getClientInputs(ClientReliableUpdate cru, ClientUnreliableUpdate cuu);
 
     Keys mKeys;
     int mPlayerId = -1;

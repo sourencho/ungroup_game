@@ -26,7 +26,7 @@ void ClientGameController::setNetworkState() {
 
 void ClientGameController::incrementTick() { mNetworkingClient->incrementTick(); }
 
-void ClientGameController::draw(sf::RenderTarget &target, sf::Shader *shader, bool use_shader) {
+void ClientGameController::draw(sf::RenderTarget& target, sf::Shader* shader, bool use_shader) {
     for (auto group : mGameObjectStore->getGroups()) {
         if (group->isActive()) {
             bool groupable = group->getGroupable();
@@ -49,7 +49,7 @@ void ClientGameController::draw(sf::RenderTarget &target, sf::Shader *shader, bo
     mAnimationController->draw(target);
 }
 
-void ClientGameController::handleEvents(sf::Event &event) {
+void ClientGameController::handleEvents(sf::Event& event) {
     if (event.type == sf::Event::KeyPressed) {
         if (sf::Keyboard::isKeyPressed(mKeys.group)) {
             mClientReliableUpdate.groupable ^= true;
@@ -91,7 +91,7 @@ void ClientGameController::update() {
     GameController::update();
 }
 
-void ClientGameController::step(const ClientInputs &cis, sf::Int32 delta_ms) {
+void ClientGameController::step(const ClientInputs& cis, sf::Int32 delta_ms) {
     computeGameState(cis, delta_ms);
     mAnimationController->step(delta_ms);
 }
@@ -144,7 +144,7 @@ void ClientGameController::setClientUpdates() {
         mClientUnreliableUpdate, mClientReliableUpdate, mNetworkingClient->getTick()};
 }
 
-ClientInputs &ClientGameController::getClientInputs(ClientReliableUpdate cru,
+ClientInputs& ClientGameController::getClientInputs(ClientReliableUpdate cru,
                                                     ClientUnreliableUpdate cuu) {
     int client_id = static_cast<int>(mNetworkingClient->getClientId());
 

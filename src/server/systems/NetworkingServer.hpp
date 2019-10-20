@@ -28,7 +28,7 @@ class NetworkingServer {
     ~NetworkingServer();
 
     ClientInputs collectClientInputs();
-    void setState(const GameState &gs);
+    void setState(const GameState& gs);
     void setClientToPlayerId(int client_id, int player_id);
     void incrementTick();
     unsigned int getTick() const;
@@ -53,14 +53,14 @@ class NetworkingServer {
     std::atomic<bool> mStopThreads_ta{false};
 
     // Methods
-    void clientDisconnect(sf::TcpSocket &client, sf::Uint32 client_id);
-    void registerClient(sf::Packet packet, sf::TcpSocket &client, sf::Uint32 client_id);
-    void sendPlayerId(sf::TcpSocket &socket, sf::Uint32 client_id);
+    void clientDisconnect(sf::TcpSocket& client, sf::Uint32 client_id);
+    void registerClient(sf::Packet packet, sf::TcpSocket& client, sf::Uint32 client_id);
+    void sendPlayerId(sf::TcpSocket& socket, sf::Uint32 client_id);
     void handleReliableCommand(sf::Socket::Status status, sf::Packet command_packet,
-                               sf::SocketSelector &selector, sf::TcpSocket &socket,
+                               sf::SocketSelector& selector, sf::TcpSocket& socket,
                                sf::Uint32 client_id);
     void handleUnreliableCommand(sf::Socket::Status status, sf::Packet command_packet,
-                                 sf::IpAddress &sender, unsigned short port);
+                                 sf::IpAddress& sender, unsigned short port);
     void setClientReliableUpdate(sf::Packet packet, int client_id);
     void setClientUnreliableUpdate(sf::Packet packet, int client_id, unsigned int client_tick);
     std::vector<int> getClientIds();

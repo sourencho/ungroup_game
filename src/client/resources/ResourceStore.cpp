@@ -9,4 +9,4 @@ void ResourceStore::addTexture(std::string key, std::string texture_path) {
     mTextures[key] = std::move(texture);
 }
 
-sf::Texture &ResourceStore::getTexture(std::string key) { return *mTextures[key]; }
+sf::Texture& ResourceStore::getTexture(std::string key) { return *mTextures[key]; }

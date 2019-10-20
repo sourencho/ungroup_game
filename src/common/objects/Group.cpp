@@ -31,14 +31,14 @@ void Group::applyUpdate(GroupUpdate gu) {
     setGroupable(gu.groupable);
 }
 
-sf::Packet &operator<<(sf::Packet &packet, const GroupUpdate &group_update) {
+sf::Packet& operator<<(sf::Packet& packet, const GroupUpdate& group_update) {
     packet << group_update.group_id << group_update.is_active << group_update.x_pos
            << group_update.y_pos << group_update.radius << group_update.groupable;
 
     return packet;
 }
 
-sf::Packet &operator>>(sf::Packet &packet, GroupUpdate &group_update) {
+sf::Packet& operator>>(sf::Packet& packet, GroupUpdate& group_update) {
     packet >> group_update.group_id >> group_update.is_active >> group_update.x_pos >>
         group_update.y_pos >> group_update.radius >> group_update.groupable;
 

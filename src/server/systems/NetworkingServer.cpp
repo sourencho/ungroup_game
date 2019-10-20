@@ -81,7 +81,7 @@ void NetworkingServer::setClientToPlayerId(sf::Int32 client_id, int player_id) {
     mClientToPlayerIds_t[client_id] = player_id;
 }
 
-void NetworkingServer::setState(const GameState &gs) { mGameState_t = gs; }
+void NetworkingServer::setState(const GameState& gs) { mGameState_t = gs; }
 
 void NetworkingServer::incrementTick() { mTick_ta++; }
 
@@ -109,7 +109,7 @@ void NetworkingServer::unreliableRecv() {
 }
 
 void NetworkingServer::handleUnreliableCommand(sf::Socket::Status status, sf::Packet command_packet,
-                                               sf::IpAddress &sender, unsigned short port) {
+                                               sf::IpAddress& sender, unsigned short port) {
     if (status == sf::Socket::NotReady) {
         return;
     }
@@ -177,9 +177,9 @@ void NetworkingServer::reliableRecvSend() {
                 }
             } else {
                 // The listener socket is not ready, test all other sockets (the clients)
-                for (auto &client : mClients) {
+                for (auto& client : mClients) {
                     sf::Uint32 client_id = client.first;
-                    sf::TcpSocket &socket = *client.second;
+                    sf::TcpSocket& socket = *client.second;
                     if (selector.isReady(socket)) {
                         // The client has sent some data, we can receive it
                         sf::Packet command_packet;
@@ -195,7 +195,7 @@ void NetworkingServer::reliableRecvSend() {
 }
 
 void NetworkingServer::handleReliableCommand(sf::Socket::Status status, sf::Packet command_packet,
-                                             sf::SocketSelector &selector, sf::TcpSocket &socket,
+                                             sf::SocketSelector& selector, sf::TcpSocket& socket,
                                              sf::Uint32 client_id) {
     sf::Uint32 reliable_command_type;
     switch (status) {
@@ -223,13 +223,13 @@ void NetworkingServer::handleReliableCommand(sf::Socket::Status status, sf::Pack
     }
 }
 
-void NetworkingServer::clientDisconnect(sf::TcpSocket &client, sf::Uint32 client_id) {
+void NetworkingServer::clientDisconnect(sf::TcpSocket& client, sf::Uint32 client_id) {
     // TODO(sourenp): Remove client from mClients
     EventController::getInstance().queueEvent(
         std::shared_ptr<ClientDisconnectedEvent>(new ClientDisconnectedEvent(client_id)));
 }
 
-void NetworkingServer::sendPlayerId(sf::TcpSocket &socket, sf::Uint32 client_id) {
+void NetworkingServer::sendPlayerId(sf::TcpSocket& socket, sf::Uint32 client_id) {
     sf::Uint32 player_id;
     {
         std::lock_guard<std::mutex> mClientToPlayerIds_guard(mClientToPlayerIds_lock);
@@ -258,7 +258,7 @@ void NetworkingServer::setClientReliableUpdate(sf::Packet packet, int client_id)
     }
 }
 
-void NetworkingServer::registerClient(sf::Packet packet, sf::TcpSocket &client,
+void NetworkingServer::registerClient(sf::Packet packet, sf::TcpSocket& client,
                                       sf::Uint32 client_id) {
     // Save client udp port
     sf::Uint16 client_udp_port;
@@ -307,8 +307,8 @@ void NetworkingServer::sendGameState() {
         std::lock_guard<std::mutex> mUdpSocket_guard(mUdpSocket_lock);
         std::lock_guard<std::mutex> mClientToUdpPorts_guard(mClientToUdpPorts_lock);
 
-        for (auto &it : mClientToUdpPorts_t) {
-            sf::Uint16 &client_udp_port = it.second;
+        for (auto& it : mClientToUdpPorts_t) {
+            sf::Uint16& client_udp_port = it.second;
             sf::Socket::Status status = sf::Socket::Partial;
             while (status == sf::Socket::Partial) {
                 status = mUdpSocket_t->send(packet, CLIENT_IP, client_udp_port);

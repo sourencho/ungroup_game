@@ -11,7 +11,7 @@
  * Each sprite will show for an equal amount of time.
  * @position: Position of the animation sprite.
  */
-AnimatedSprite::AnimatedSprite(sf::Texture &spritesheet_texture, sf::Vector2u spritesheet_size,
+AnimatedSprite::AnimatedSprite(sf::Texture& spritesheet_texture, sf::Vector2u spritesheet_size,
                                sf::Int32 duration_ms, sf::Vector2f position)
     : mSprite(spritesheet_texture), mAnimation(mSprite) {
     mSprite.setPosition(position);
@@ -28,7 +28,7 @@ AnimatedSprite::AnimatedSprite(sf::Texture &spritesheet_texture, sf::Vector2u sp
     }
 }
 
-void AnimatedSprite::draw(sf::RenderTarget &target) { target.draw(mSprite); }
+void AnimatedSprite::draw(sf::RenderTarget& target) { target.draw(mSprite); }
 
 void AnimatedSprite::update(sf::Uint32 delta_ms) { mAnimation.update(delta_ms); }
 

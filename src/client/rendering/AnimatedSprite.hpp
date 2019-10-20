@@ -11,11 +11,11 @@
 
 class AnimatedSprite {
   public:
-    AnimatedSprite(sf::Texture &spritesheet_texture, sf::Vector2u spritesheet_size,
+    AnimatedSprite(sf::Texture& spritesheet_texture, sf::Vector2u spritesheet_size,
                    sf::Int32 duration_ms, sf::Vector2f position);
     ~AnimatedSprite(){};
 
-    void draw(sf::RenderTarget &target);
+    void draw(sf::RenderTarget& target);
     void update(sf::Uint32 delta_ms);
     bool isDone();
 

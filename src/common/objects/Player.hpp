@@ -14,8 +14,8 @@ struct PlayerUpdate {
     bool groupable;
 };
 
-sf::Packet &operator<<(sf::Packet &packet, const PlayerUpdate &player_update);
-sf::Packet &operator>>(sf::Packet &packet, PlayerUpdate &player_update);
+sf::Packet& operator<<(sf::Packet& packet, const PlayerUpdate& player_update);
+sf::Packet& operator>>(sf::Packet& packet, PlayerUpdate& player_update);
 
 class Player : public GameObject {
   public:

@@ -50,10 +50,10 @@ struct ClientInputAndTick {
     unsigned int tick;
 };
 
-sf::Packet &operator<<(sf::Packet &packet, const ClientReliableUpdate &client_reliable_update);
-sf::Packet &operator>>(sf::Packet &packet, ClientReliableUpdate &client_reliable_update);
+sf::Packet& operator<<(sf::Packet& packet, const ClientReliableUpdate& client_reliable_update);
+sf::Packet& operator>>(sf::Packet& packet, ClientReliableUpdate& client_reliable_update);
 
-sf::Packet &operator<<(sf::Packet &packet, const ClientUnreliableUpdate &client_unreliable_update);
-sf::Packet &operator>>(sf::Packet &packet, ClientUnreliableUpdate &client_unreliable_update);
+sf::Packet& operator<<(sf::Packet& packet, const ClientUnreliableUpdate& client_unreliable_update);
+sf::Packet& operator>>(sf::Packet& packet, ClientUnreliableUpdate& client_unreliable_update);
 
 #endif /* game_state_hpp */

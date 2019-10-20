@@ -17,7 +17,7 @@ Circle::Circle(float size, sf::Vector2f position, sf::Color color) : mCircleShap
 
 Circle::~Circle() {}
 
-void Circle::draw(sf::RenderTarget &target, sf::Shader *shader, bool use_shader) {
+void Circle::draw(sf::RenderTarget& target, sf::Shader* shader, bool use_shader) {
     if (use_shader) {
         shader->setUniform("u_position", getPosition());
         shader->setUniform("u_radius", getRadius());

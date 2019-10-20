@@ -8,14 +8,14 @@ static const uint32_t OFFSET_VALUE = UINT32_MAX / UINT16_MAX;
 
 class IdFactory {
   public:
-    static IdFactory &getInstance() {
+    static IdFactory& getInstance() {
         static IdFactory instance;
         return instance;
     }
 
     // Let's make sure we don't accidentally get copies of the singleton.
-    IdFactory(IdFactory const &) = delete;
-    void operator=(IdFactory const &) = delete;
+    IdFactory(IdFactory const&) = delete;
+    void operator=(IdFactory const&) = delete;
 
     uint32_t getNextId(uint16_t type);
     size_t getIndex(uint32_t id);

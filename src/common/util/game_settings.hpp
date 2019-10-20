@@ -34,8 +34,8 @@ const std::chrono::milliseconds SERVER_BROADCAST_GAME_STATE_SLEEP(16);
 const std::chrono::milliseconds CLIENT_UNRELIABLE_RECV_SLEEP(SERVER_BROADCAST_GAME_STATE_SLEEP / 2);
 
 /* Networking */
-static const char *CLIENT_IP = "127.0.0.1";
+static const char* CLIENT_IP = "127.0.0.1";
 static const unsigned short SERVER_TCP_PORT = 4844;
-static const char *SERVER_IP = "127.0.0.1";
+static const char* SERVER_IP = "127.0.0.1";
 
 #endif /* game_settings_hpp */

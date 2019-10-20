@@ -17,9 +17,9 @@ struct Frame {
 
 class Animation {
   public:
-    Animation(sf::Sprite &target);
+    Animation(sf::Sprite& target);
     ~Animation(){};
-    void addFrame(Frame &&frame);
+    void addFrame(Frame&& frame);
     void update(sf::Int32 elapsed);
     const sf::Int32 getLength() const { return mLength; };
     bool isDone();
@@ -28,7 +28,7 @@ class Animation {
     sf::Int32 mLength = 0;
     sf::Int32 mProgress = 0;
     std::vector<Frame> mFrames;
-    sf::Sprite &mTarget;
+    sf::Sprite& mTarget;
 };
 
 #endif /* Animation_hpp */
