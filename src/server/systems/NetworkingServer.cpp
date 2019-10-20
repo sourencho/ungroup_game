@@ -1,20 +1,21 @@
 #include "NetworkingServer.hpp"
+#include <atomic>
+#include <memory>
 #include <utility>
 #include <vector>
-#include <memory>
-#include <atomic>
 
-#include "../../common/util/network_util.hpp"
-#include "../../common/events/EventController.hpp"
 #include "../../common/events/ClientConnectedEvent.hpp"
 #include "../../common/events/ClientDisconnectedEvent.hpp"
+#include "../../common/events/EventController.hpp"
 #include "../../common/util/game_settings.hpp"
+#include "../../common/util/network_util.hpp"
 
+sf::Time TCP_TIMEOUT = sf::milliseconds(100);
+;
 
-sf::Time TCP_TIMEOUT = sf::milliseconds(100);;
-
-NetworkingServer::NetworkingServer():mGameState_t() {
-    std::cout << "Starting ungroup game server." << std::endl;;
+NetworkingServer::NetworkingServer() : mGameState_t() {
+    std::cout << "Starting ungroup game server." << std::endl;
+    ;
 
     createUdpSocket();
 
@@ -42,7 +43,6 @@ NetworkingServer::~NetworkingServer() {
 }
 
 /* Main thread methods */
-
 
 void NetworkingServer::createUdpSocket() {
     std::lock_guard<std::mutex> mUdpSocket_guard(mUdpSocket_lock);
@@ -81,21 +81,13 @@ void NetworkingServer::setClientToPlayerId(sf::Int32 client_id, int player_id) {
     mClientToPlayerIds_t[client_id] = player_id;
 }
 
-void NetworkingServer::setState(const GameState& gs) {
-    mGameState_t = gs;
-}
+void NetworkingServer::setState(const GameState& gs) { mGameState_t = gs; }
 
-void NetworkingServer::incrementTick() {
-    mTick_ta++;
-}
+void NetworkingServer::incrementTick() { mTick_ta++; }
 
-unsigned int NetworkingServer::getTick() const {
-    return static_cast<unsigned int>(mTick_ta);
-}
+unsigned int NetworkingServer::getTick() const { return static_cast<unsigned int>(mTick_ta); }
 
-void NetworkingServer::setTick(unsigned int tick) {
-    mTick_ta = tick;
-}
+void NetworkingServer::setTick(unsigned int tick) { mTick_ta = tick; }
 
 /* UnreliableServer thread methods */
 
@@ -117,33 +109,33 @@ void NetworkingServer::unreliableRecv() {
 }
 
 void NetworkingServer::handleUnreliableCommand(sf::Socket::Status status, sf::Packet command_packet,
-    sf::IpAddress& sender, unsigned short port) {
+                                               sf::IpAddress& sender, unsigned short port) {
     if (status == sf::Socket::NotReady) {
         return;
     }
     UnreliableCommand unreliable_command;
     command_packet >> unreliable_command;
     switch (unreliable_command.command) {
-        case (sf::Uint32) UnreliableCommandType::client_unreliable_update: {
-            setClientUnreliableUpdate(command_packet, unreliable_command.client_id,
-                unreliable_command.tick);
-            break;
-        }
-        default: {
-            std::cout << "Unknown command code sent: " << unreliable_command.command << std::endl;
-            break;
-        }
+    case (sf::Uint32)UnreliableCommandType::client_unreliable_update: {
+        setClientUnreliableUpdate(command_packet, unreliable_command.client_id,
+                                  unreliable_command.tick);
+        break;
+    }
+    default: {
+        std::cout << "Unknown command code sent: " << unreliable_command.command << std::endl;
+        break;
+    }
     }
 }
 
 void NetworkingServer::setClientUnreliableUpdate(sf::Packet packet, int client_id,
-    uint client_tick) {
+                                                 uint client_tick) {
     int drift = std::abs(static_cast<int>((mTick_ta - client_tick)));
     if (drift < CMD_DRIFT_THRESHOLD) {
         ClientUnreliableUpdate client_unreliable_update;
         packet >> client_unreliable_update;
         ClientIdAndUnreliableUpdate client_id_and_unreliable_update = {client_id,
-            client_unreliable_update};
+                                                                       client_unreliable_update};
         {
             std::lock_guard<std::mutex> mClientUnreliableUpdates_guard(
                 mClientUnreliableUpdates_lock);
@@ -151,7 +143,7 @@ void NetworkingServer::setClientUnreliableUpdate(sf::Packet packet, int client_i
         }
     } else {
         std::cout << "Receive client_update command with tick drifted past drift threshold. "
-            << "Drift value is: " << drift << std::endl;
+                  << "Drift value is: " << drift << std::endl;
     }
 }
 
@@ -185,7 +177,7 @@ void NetworkingServer::reliableRecvSend() {
                 }
             } else {
                 // The listener socket is not ready, test all other sockets (the clients)
-                for (auto &client : mClients) {
+                for (auto& client : mClients) {
                     sf::Uint32 client_id = client.first;
                     sf::TcpSocket& socket = *client.second;
                     if (selector.isReady(socket)) {
@@ -203,30 +195,31 @@ void NetworkingServer::reliableRecvSend() {
 }
 
 void NetworkingServer::handleReliableCommand(sf::Socket::Status status, sf::Packet command_packet,
-  sf::SocketSelector& selector, sf::TcpSocket& socket, sf::Uint32 client_id) {
+                                             sf::SocketSelector& selector, sf::TcpSocket& socket,
+                                             sf::Uint32 client_id) {
     sf::Uint32 reliable_command_type;
     switch (status) {
-        case sf::Socket::Done:
-            if (command_packet >> reliable_command_type) {
-                if (reliable_command_type == (sf::Uint32) ReliableCommandType::register_client) {
-                    registerClient(command_packet, socket, client_id);
-                } else if (reliable_command_type == (sf::Uint32) ReliableCommandType::player_id) {
-                    sendPlayerId(socket, client_id);
-                } else if (reliable_command_type == \
-                    (sf::Uint32) ReliableCommandType::client_reliable_update) {
-                    setClientReliableUpdate(command_packet, client_id);
-                }
+    case sf::Socket::Done:
+        if (command_packet >> reliable_command_type) {
+            if (reliable_command_type == (sf::Uint32)ReliableCommandType::register_client) {
+                registerClient(command_packet, socket, client_id);
+            } else if (reliable_command_type == (sf::Uint32)ReliableCommandType::player_id) {
+                sendPlayerId(socket, client_id);
+            } else if (reliable_command_type ==
+                       (sf::Uint32)ReliableCommandType::client_reliable_update) {
+                setClientReliableUpdate(command_packet, client_id);
             }
-            break;
-        case sf::TcpSocket::Error:
-        case sf::TcpSocket::Disconnected:
-            std::cout << "Removing client due to TCP dsconnect/error." << std::endl;
-            clientDisconnect(socket, client_id);
-            selector.remove(socket);
-            break;
-        default:
-            std::cout << "TCP client sent unkown signal." << std::endl;
-            break;
+        }
+        break;
+    case sf::TcpSocket::Error:
+    case sf::TcpSocket::Disconnected:
+        std::cout << "Removing client due to TCP dsconnect/error." << std::endl;
+        clientDisconnect(socket, client_id);
+        selector.remove(socket);
+        break;
+    default:
+        std::cout << "TCP client sent unkown signal." << std::endl;
+        break;
     }
 }
 
@@ -247,11 +240,7 @@ void NetworkingServer::sendPlayerId(sf::TcpSocket& socket, sf::Uint32 client_id)
     }
     sf::Packet packet;
     sf::Uint32 player_id_cmd = ReliableCommandType::player_id;
-    ReliableCommand reliable_command = {
-        client_id,
-        player_id_cmd,
-        mTick_ta
-    };
+    ReliableCommand reliable_command = {client_id, player_id_cmd, mTick_ta};
     if (packet << reliable_command << player_id) {
         socket.send(packet);
     } else {
@@ -270,7 +259,7 @@ void NetworkingServer::setClientReliableUpdate(sf::Packet packet, int client_id)
 }
 
 void NetworkingServer::registerClient(sf::Packet packet, sf::TcpSocket& client,
-    sf::Uint32 client_id) {
+                                      sf::Uint32 client_id) {
     // Save client udp port
     sf::Uint16 client_udp_port;
     packet >> client_udp_port;
@@ -287,7 +276,7 @@ void NetworkingServer::registerClient(sf::Packet packet, sf::TcpSocket& client,
     }
     sf::Packet response_packet;
     sf::Uint32 register_cmd = (sf::Uint32)ReliableCommandType::register_client;
-    ReliableCommand reliable_command = {client_id, register_cmd, (sf::Uint32) mTick_ta};
+    ReliableCommand reliable_command = {client_id, register_cmd, (sf::Uint32)mTick_ta};
     if (response_packet << reliable_command << server_udp_port) {
         client.send(response_packet);
         EventController::getInstance().queueEvent(
@@ -318,7 +307,7 @@ void NetworkingServer::sendGameState() {
         std::lock_guard<std::mutex> mUdpSocket_guard(mUdpSocket_lock);
         std::lock_guard<std::mutex> mClientToUdpPorts_guard(mClientToUdpPorts_lock);
 
-        for (auto& it: mClientToUdpPorts_t) {
+        for (auto& it : mClientToUdpPorts_t) {
             sf::Uint16& client_udp_port = it.second;
             sf::Socket::Status status = sf::Socket::Partial;
             while (status == sf::Socket::Partial) {

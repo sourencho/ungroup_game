@@ -15,11 +15,9 @@ sf::Vector2f normalize(const sf::Vector2f& source) {
 }
 
 float distance(const sf::Vector2f& point_a, const sf::Vector2f& point_b) {
-    return sqrt(
-        pow((point_b.x - point_a.x), 2) +
-        pow((point_b.y - point_a.y), 2));
+    return sqrt(pow((point_b.x - point_a.x), 2) + pow((point_b.y - point_a.y), 2));
 }
 
 sf::Vector2f getVector(const sf::Vector2f& point_a, const sf::Vector2f& point_b) {
-    return  sf::Vector2f(point_b.x - point_a.x, point_b.y - point_a.y);
+    return sf::Vector2f(point_b.x - point_a.x, point_b.y - point_a.y);
 }

@@ -2,9 +2,9 @@
 
 #include "Animation.hpp"
 
-Animation::Animation(sf::Sprite &target) : mTarget(target) {}
+Animation::Animation(sf::Sprite& target) : mTarget(target) {}
 
-void Animation::addFrame(Frame &&frame) {
+void Animation::addFrame(Frame&& frame) {
     mLength += frame.duration;
     mFrames.push_back(std::move(frame));
 }
@@ -23,6 +23,4 @@ void Animation::update(sf::Int32 elapsed) {
     }
 }
 
-bool Animation::isDone() {
-    return mProgress > mLength;
-}
+bool Animation::isDone() { return mProgress > mLength; }

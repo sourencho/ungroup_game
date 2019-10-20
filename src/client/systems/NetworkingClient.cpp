@@ -1,22 +1,21 @@
 #include "NetworkingClient.hpp"
 
-#include <iostream>
-#include <list>
-#include <thread>
-#include <mutex>
+#include <SFML/Network.hpp>
 #include <chrono>
 #include <ctime>
+#include <iostream>
+#include <list>
+#include <mutex>
+#include <thread>
 #include <vector>
-#include <SFML/Network.hpp>
 
-#include "../../common/util/network_util.hpp"
 #include "../../common/util/game_settings.hpp"
+#include "../../common/util/network_util.hpp"
 
+const sf::Time CLIENT_TCP_TIMEOUT = sf::milliseconds(100);
+;
 
-const sf::Time CLIENT_TCP_TIMEOUT = sf::milliseconds(100);;
-
-
-NetworkingClient::NetworkingClient():mGameState_t() {
+NetworkingClient::NetworkingClient() : mGameState_t() {
     std::cout << "Starting client..." << std::endl;
 
     createTcpSocket(SERVER_TCP_PORT);
@@ -25,7 +24,7 @@ NetworkingClient::NetworkingClient():mGameState_t() {
     bool registered = registerNetworkingClient();
     if (registered) {
         std::cout << "Registered as client " << mClientId_ta << " at tick " << mTick_ta
-        << std::endl;
+                  << std::endl;
     } else {
         std::cout << "Failed to register." << std::endl;
     }
@@ -102,12 +101,10 @@ bool NetworkingClient::readRegistrationResponse() {
     return false;
 }
 
-int NetworkingClient::getPlayerId() const {
-    return mPlayerId_ta;
-}
+int NetworkingClient::getPlayerId() const { return mPlayerId_ta; }
 
 GameState NetworkingClient::getGameState() {
-     std::lock_guard<std::mutex> mGameState_guard(mGameState_lock);
+    std::lock_guard<std::mutex> mGameState_guard(mGameState_lock);
     mGameStateIsFresh_ta = false;
     return mGameState_t;
 }
@@ -122,25 +119,15 @@ void NetworkingClient::setClientReliableUpdate(ClientReliableUpdate client_relia
     mClientReliableUpdate_t = client_reliable_update;
 }
 
-int NetworkingClient::getClientId() const {
-    return mClientId_ta;
-}
+int NetworkingClient::getClientId() const { return mClientId_ta; }
 
-bool NetworkingClient::getGameStateIsFresh() const {
-    return mGameStateIsFresh_ta;
-}
+bool NetworkingClient::getGameStateIsFresh() const { return mGameStateIsFresh_ta; }
 
-void NetworkingClient::incrementTick() {
-    mTick_ta++;
-}
+void NetworkingClient::incrementTick() { mTick_ta++; }
 
-uint NetworkingClient::getTick() const {
-    return mTick_ta;
-}
+uint NetworkingClient::getTick() const { return mTick_ta; }
 
-void NetworkingClient::setTick(uint tick) {
-    mTick_ta = tick;
-}
+void NetworkingClient::setTick(uint tick) { mTick_ta = tick; }
 
 /* mReliableRecv thread methods */
 
@@ -185,7 +172,7 @@ void NetworkingClient::sendPlayerIdRequest() {
 
     if (mPlayerId_ta == -1) {
         sf::Packet packet;
-        if (packet << (sf::Uint32) ReliableCommandType::player_id) {
+        if (packet << (sf::Uint32)ReliableCommandType::player_id) {
             mTcpSocket_t->send(packet);
         } else {
             std::cout << "Failed to form packet" << std::endl;
@@ -198,8 +185,8 @@ void NetworkingClient::sendClientReliableUpdate() {
     std::lock_guard<std::mutex> mTcpSocket_guard(mTcpSocket_lock);
 
     sf::Packet packet;
-    if (packet << ReliableCommandType::client_reliable_update &&
-        packet << mClientReliableUpdate_t) {
+    if (packet << ReliableCommandType::client_reliable_update && packet
+                                                                     << mClientReliableUpdate_t) {
         mTcpSocket_t->send(packet);
     } else {
         std::cout << "Failed to form packet" << std::endl;
@@ -235,7 +222,7 @@ void NetworkingClient::unreliableRecv() {
 
 void NetworkingClient::unreliableSend() {
     while (!mStopThreads_ta) {
-        if(mServerUdpPort != 0) {
+        if (mServerUdpPort != 0) {
             sendClientUnreliableUpdate();
         }
 
@@ -246,8 +233,8 @@ void NetworkingClient::unreliableSend() {
 void NetworkingClient::sendClientUnreliableUpdate() {
     sf::Packet packet;
     sf::Uint32 client_unreliable_update_cmd = UnreliableCommandType::client_unreliable_update;
-    UnreliableCommand unreliable_command = {(sf::Uint32) mClientId_ta, client_unreliable_update_cmd,
-        mTick_ta};
+    UnreliableCommand unreliable_command = {(sf::Uint32)mClientId_ta, client_unreliable_update_cmd,
+                                            mTick_ta};
 
     std::lock_guard<std::mutex> mClientReliableUpdate_guard(mClientReliableUpdate_lock);
     if (packet << unreliable_command && packet << mClientUnreliableUpdate_t) {

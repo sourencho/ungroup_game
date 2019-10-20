@@ -1,14 +1,13 @@
 #ifndef IdFactory_hpp
 #define IdFactory_hpp
 
-#include <unordered_map>
 #include <mutex>
+#include <unordered_map>
 
-
-static const uint32_t OFFSET_VALUE = UINT32_MAX/UINT16_MAX;
+static const uint32_t OFFSET_VALUE = UINT32_MAX / UINT16_MAX;
 
 class IdFactory {
- public:
+  public:
     static IdFactory& getInstance() {
         static IdFactory instance;
         return instance;
@@ -23,7 +22,7 @@ class IdFactory {
     uint16_t getType(uint32_t id);
     void reset();
 
- private:
+  private:
     IdFactory() {}
 
     static std::mutex mTypeToIndex_lock;

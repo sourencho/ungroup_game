@@ -1,9 +1,8 @@
-#define CATCH_CONFIG_MAIN  // This tells Catch to provide a main() - only do this in one cpp file
+#define CATCH_CONFIG_MAIN // This tells Catch to provide a main() - only do this in one cpp file
 #include <catch.hpp>
 
-#include "../../../src/common/factories/IdFactory.hpp"
 #include "../../../src/common/events/EventController.hpp"
-
+#include "../../../src/common/factories/IdFactory.hpp"
 
 struct MyListener : Catch::TestEventListenerBase {
 

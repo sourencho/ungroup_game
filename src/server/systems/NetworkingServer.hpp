@@ -1,30 +1,29 @@
 #ifndef NetworkingServer_hpp
 #define NetworkingServer_hpp
 
-#include <stdio.h>
+#include <atomic>
+#include <chrono>
+#include <future>
 #include <iostream>
 #include <list>
-#include <vector>
 #include <memory>
-#include <chrono>
-#include <thread>
-#include <utility>
-#include <future>
-#include <atomic>
-#include <unordered_map>
 #include <mutex>
+#include <stdio.h>
+#include <thread>
+#include <unordered_map>
+#include <utility>
+#include <vector>
 
 #include <SFML/Network.hpp>
 
 #include "../../common/objects/Group.hpp"
-#include "../../common/util/game_state.hpp"
 #include "../../common/objects/Mine.hpp"
-
+#include "../../common/util/game_state.hpp"
 
 class NetworkingServer {
     const unsigned int CMD_DRIFT_THRESHOLD = 200;
 
- public:
+  public:
     NetworkingServer();
     ~NetworkingServer();
 
@@ -35,7 +34,7 @@ class NetworkingServer {
     unsigned int getTick() const;
     void setTick(unsigned int tick);
 
- private:
+  private:
     // Sockets
     void createUdpSocket();
 
@@ -58,16 +57,17 @@ class NetworkingServer {
     void registerClient(sf::Packet packet, sf::TcpSocket& client, sf::Uint32 client_id);
     void sendPlayerId(sf::TcpSocket& socket, sf::Uint32 client_id);
     void handleReliableCommand(sf::Socket::Status status, sf::Packet command_packet,
-        sf::SocketSelector& selector, sf::TcpSocket& socket, sf::Uint32 client_id);
+                               sf::SocketSelector& selector, sf::TcpSocket& socket,
+                               sf::Uint32 client_id);
     void handleUnreliableCommand(sf::Socket::Status status, sf::Packet command_packet,
-        sf::IpAddress& sender, unsigned short port);
+                                 sf::IpAddress& sender, unsigned short port);
     void setClientReliableUpdate(sf::Packet packet, int client_id);
     void setClientUnreliableUpdate(sf::Packet packet, int client_id, unsigned int client_tick);
     std::vector<int> getClientIds();
     void sendGameState();
 
     // Misc
-    std::vector<std::pair<sf::Uint32,std::unique_ptr<sf::TcpSocket>>> mClients;
+    std::vector<std::pair<sf::Uint32, std::unique_ptr<sf::TcpSocket>>> mClients;
 
     std::mutex mClientToPlayerIds_lock;
     std::unordered_map<int, sf::Uint32> mClientToPlayerIds_t;
@@ -87,7 +87,6 @@ class NetworkingServer {
     sf::Uint32 mClientIdCounter = 0;
 
     std::atomic<uint> mTick_ta{0};
-
 };
 
 #endif /* NetworkingServer_hpp */

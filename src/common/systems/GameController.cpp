@@ -1,40 +1,36 @@
-#include <iostream>
 #include <algorithm>
+#include <chrono>
 #include <cstdlib>
-#include <vector>
+#include <iostream>
 #include <memory>
 #include <thread>
-#include <chrono>
-#include <iostream>
+#include <vector>
 
 #include "GameController.hpp"
 
-#include "../util/game_settings.hpp"
 #include "../events/EventController.hpp"
+#include "../util/game_settings.hpp"
 
-
-GameController::GameController(size_t max_player_count, size_t max_mine_count):
-  mPhysicsController(new PhysicsController()),
-  mGameObjectStore(new GameObjectStore(mPhysicsController)) {
+GameController::GameController(size_t max_player_count, size_t max_mine_count)
+    : mPhysicsController(new PhysicsController()),
+      mGameObjectStore(new GameObjectStore(mPhysicsController)) {
     mGameObjectStore->loadLevel(max_player_count, max_mine_count);
 
     mGroupController = std::unique_ptr<GroupController>(
         new GroupController(mGameObjectStore->getGroups(), mGameObjectStore->getPlayers()));
-    mPlayerController = std::unique_ptr<PlayerController>(
-        new PlayerController(mGameObjectStore->getPlayers()));
-    mMineController = std::unique_ptr<MineController>(
-        new MineController(mGameObjectStore->getMines()));
+    mPlayerController =
+        std::unique_ptr<PlayerController>(new PlayerController(mGameObjectStore->getPlayers()));
+    mMineController =
+        std::unique_ptr<MineController>(new MineController(mGameObjectStore->getMines()));
 
     mClock.restart();
 
-    for (int i=0; i < max_mine_count; i++) {
+    for (int i = 0; i < max_mine_count; i++) {
         mMineController->createMine();
     }
 }
 
-GameController::~GameController() {
-    std::cout << "Deconstructing GameController" << std::endl;
-}
+GameController::~GameController() { std::cout << "Deconstructing GameController" << std::endl; }
 
 void GameController::update() {
     ClientInputs cis = collectInputs();
@@ -52,7 +48,7 @@ void GameController::update() {
     setNetworkState();
 }
 
-void GameController::computeGameState(const ClientInputs& cis, sf::Int32 delta_ms) {
+void GameController::computeGameState(const ClientInputs &cis, sf::Int32 delta_ms) {
     updateGameObjects(cis);
     mPhysicsController->update(delta_ms);
     updateGameObjectsPostPhysics();
@@ -60,7 +56,7 @@ void GameController::computeGameState(const ClientInputs& cis, sf::Int32 delta_m
     incrementTick();
 }
 
-void GameController::updateGameObjects(const ClientInputs& cis) {
+void GameController::updateGameObjects(const ClientInputs &cis) {
     mPlayerController->update(cis);
     mGroupController->update();
     mMineController->update();
@@ -102,15 +98,12 @@ GameState GameController::getGameState() {
     std::vector<GroupUpdate> group_updates;
     std::vector<MineUpdate> mine_updates;
     std::vector<PlayerUpdate> player_updates;
-    std::transform(
-        groups.begin(), groups.end(), std::back_inserter(group_updates),
-        [](std::shared_ptr<Group> group){return group->getUpdate();});
-    std::transform(
-        mines.begin(), mines.end(), std::back_inserter(mine_updates),
-        [](std::shared_ptr<Mine> mine){return mine->getUpdate();});
-    std::transform(
-        players.begin(), players.end(), std::back_inserter(player_updates),
-        [](std::shared_ptr<Player> player){return player->getUpdate();});
+    std::transform(groups.begin(), groups.end(), std::back_inserter(group_updates),
+                   [](std::shared_ptr<Group> group) { return group->getUpdate(); });
+    std::transform(mines.begin(), mines.end(), std::back_inserter(mine_updates),
+                   [](std::shared_ptr<Mine> mine) { return mine->getUpdate(); });
+    std::transform(players.begin(), players.end(), std::back_inserter(player_updates),
+                   [](std::shared_ptr<Player> player) { return player->getUpdate(); });
 
     GameState gs = {tick, group_updates, mine_updates, player_updates, gcu};
 

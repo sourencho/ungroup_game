@@ -3,7 +3,6 @@
 
 #include "../../../src/common/factories/IdFactory.hpp"
 
-
 SCENARIO("Several types of ids used", "[common][systems][IdFactory]") {
 
     GIVEN("An id of type 0 is fetched") {

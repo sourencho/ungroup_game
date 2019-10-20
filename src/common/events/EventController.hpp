@@ -4,17 +4,16 @@
 #include <functional>
 #include <list>
 #include <map>
-#include <queue>
 #include <memory>
 #include <mutex>
+#include <queue>
 
 #include "Event.hpp"
-
 
 typedef std::function<void(std::shared_ptr<Event>)> EventCallback;
 
 class EventController {
- public:
+  public:
     static EventController& getInstance() {
         static EventController instance;
         return instance;
@@ -31,7 +30,7 @@ class EventController {
     void unlock();
     void reset();
 
- private:
+  private:
     typedef std::list<EventCallback> EventCallbackList;
     typedef std::map<EventType, EventCallbackList> EventTypeToCallbacks;
     typedef std::queue<std::shared_ptr<Event>> EventQueue;

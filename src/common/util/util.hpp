@@ -1,9 +1,9 @@
 #ifndef util_hpp
 #define util_hpp
 
-#include <stdio.h>
-#include <memory>
 #include <SFML/Graphics.hpp>
+#include <memory>
+#include <stdio.h>
 
 sf::Vector2f normalize(const sf::Vector2f& source);
 float distance(const sf::Vector2f& point_a, const sf::Vector2f& point_b);

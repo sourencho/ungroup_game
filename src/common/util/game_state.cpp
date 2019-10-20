@@ -2,12 +2,11 @@
 
 #include "network_util.hpp"
 
-
 sf::Packet pack_game_state(GameState game_state) {
     sf::Packet packet;
 
-    if (!(packet << game_state.tick && packet << static_cast<sf::Uint32>(
-        game_state.group_updates.size()))) {
+    if (!(packet << game_state.tick &&
+          packet << static_cast<sf::Uint32>(game_state.group_updates.size()))) {
         std::cout << "Failed to form packet" << std::endl;
     }
     for (const auto group_update : game_state.group_updates) {
@@ -52,21 +51,21 @@ GameState unpack_game_state(sf::Packet game_state_packet) {
     game_state_packet >> tick;
 
     game_state_packet >> group_updates_size;
-    for (int i=0; i < group_updates_size; ++i) {
+    for (int i = 0; i < group_updates_size; ++i) {
         GroupUpdate gu = {};
         game_state_packet >> gu;
         group_updates.push_back(gu);
     }
 
     game_state_packet >> mine_updates_size;
-    for (int i=0; i < mine_updates_size; ++i) {
+    for (int i = 0; i < mine_updates_size; ++i) {
         MineUpdate mu = {};
         game_state_packet >> mu;
         mine_updates.push_back(mu);
     }
 
     game_state_packet >> player_updates_size;
-    for (int i=0; i < player_updates_size; ++i) {
+    for (int i = 0; i < player_updates_size; ++i) {
         PlayerUpdate pu = {};
         game_state_packet >> pu;
         player_updates.push_back(pu);
@@ -78,23 +77,18 @@ GameState unpack_game_state(sf::Packet game_state_packet) {
     return game_state;
 }
 
-sf::Packet& operator <<(sf::Packet& packet,
-  const ClientUnreliableUpdate& client_unreliable_update) {
-    return packet
-        << client_unreliable_update.direction;
+sf::Packet& operator<<(sf::Packet& packet, const ClientUnreliableUpdate& client_unreliable_update) {
+    return packet << client_unreliable_update.direction;
 }
 
-sf::Packet& operator >>(sf::Packet& packet, ClientUnreliableUpdate& client_unreliable_update) {
-    return packet
-        >> client_unreliable_update.direction;
+sf::Packet& operator>>(sf::Packet& packet, ClientUnreliableUpdate& client_unreliable_update) {
+    return packet >> client_unreliable_update.direction;
 }
 
-sf::Packet& operator <<(sf::Packet& packet, const ClientReliableUpdate& client_reliable_update) {
-    return packet
-        << client_reliable_update.groupable;
+sf::Packet& operator<<(sf::Packet& packet, const ClientReliableUpdate& client_reliable_update) {
+    return packet << client_reliable_update.groupable;
 }
 
-sf::Packet& operator >>(sf::Packet& packet, ClientReliableUpdate& client_reliable_update) {
-    return packet
-        >> client_reliable_update.groupable;
+sf::Packet& operator>>(sf::Packet& packet, ClientReliableUpdate& client_reliable_update) {
+    return packet >> client_reliable_update.groupable;
 }
