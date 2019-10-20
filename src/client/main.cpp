@@ -1,18 +1,19 @@
-#include <SFML/Graphics.hpp>
 #include <iostream>
-#include "systems/ClientGameController.hpp"
+
 #include "../common/util/game_def.hpp"
 #include "../common/util/game_settings.hpp"
+#include "systems/ClientGameController.hpp"
+#include <SFML/Graphics.hpp>
 
-int main(int, char const**) {
+int main(int, char const **) {
     // Create the main window
-    sf::RenderWindow window(sf::VideoMode(WINDOW_RESOLUTION.x, WINDOW_RESOLUTION.y), "SFML window");
+    sf::RenderWindow window(
+        sf::VideoMode(WINDOW_RESOLUTION.x, WINDOW_RESOLUTION.y), "SFML window");
 
     // Window
     window.setVerticalSyncEnabled(true);
     window.setFramerateLimit(60);
     window.setTitle("Ungroup");
-
 
     // Setup shaders
     sf::Shader shader;
@@ -21,16 +22,18 @@ int main(int, char const**) {
     }
 
     // load deafult vertex shader
-    const std::string DEFAULT_VERTEX_SHADER_PATH = "src/shaders/vertex_shader.vert";
+    const std::string DEFAULT_VERTEX_SHADER_PATH =
+        "src/shaders/vertex_shader.vert";
     if (!shader.loadFromFile(DEFAULT_VERTEX_SHADER_PATH, sf::Shader::Vertex)) {
         std::cerr << "Error: Could not load vertex shader" << std::endl;
     }
 
     // load default fragment shader
     const std::string DEFAULT_FRAGMENT_SHADER_PATH = "src/shaders/fragment_shader.frag";
-    const std::string CIRCLE_GRADIENT_FRAGMENT_SHADER_PATH = "src/shaders/circle_gradient.frag";
-    const std::string RAND_FRAGMENT_SHADER_PATH = "src/shaders/random.frag";
-    if (!shader.loadFromFile(DEFAULT_FRAGMENT_SHADER_PATH, sf::Shader::Fragment)) {
+    //const std::string CIRCLE_GRADIENT_FRAGMENT_SHADER_PATH = "src/shaders/circle_gradient.frag";
+    //const std::string RAND_FRAGMENT_SHADER_PATH = "src/shaders/random.frag";
+    if (!shader.loadFromFile(DEFAULT_FRAGMENT_SHADER_PATH,
+                             sf::Shader::Fragment)) {
         std::cerr << "Error: Could not load fragment shader" << std::endl;
     }
 
@@ -40,8 +43,8 @@ int main(int, char const**) {
     }
 
     // Create client
-    sf::Keyboard::Key keys[] = {sf::Keyboard::Up, sf::Keyboard::Down, sf::Keyboard::Right,
-        sf::Keyboard::Left, sf::Keyboard::G};
+    Keys keys = {sf::Keyboard::Up, sf::Keyboard::Down, sf::Keyboard::Right, sf::Keyboard::Left,
+        sf::Keyboard::G};
     ClientGameController client_game_controller(MAX_PLAYER_COUNT, MAX_MINE_COUNT, keys);
 
     // Start the game loop
@@ -56,8 +59,7 @@ int main(int, char const**) {
 
             // Escape pressed: exit
             if (event.type == sf::Event::KeyPressed &&
-                event.key.code == sf::Keyboard::Escape
-            ) {
+                event.key.code == sf::Keyboard::Escape) {
                 window.close();
             }
 

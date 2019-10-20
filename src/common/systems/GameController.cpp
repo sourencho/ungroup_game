@@ -44,7 +44,7 @@ void GameController::update() {
     sf::Int32 frame_time = mClock.restart().asMilliseconds();
     mTimeAccumulator += frame_time;
     while (mTimeAccumulator >= MIN_TIME_STEP) {
-        computeGameState(cis, MIN_TIME_STEP);
+        step(cis, MIN_TIME_STEP);
         mTimeAccumulator -= MIN_TIME_STEP;
         mElapsedTime += MIN_TIME_STEP;
     }
