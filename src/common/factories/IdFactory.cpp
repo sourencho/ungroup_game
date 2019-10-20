@@ -21,13 +21,9 @@ uint32_t IdFactory::getNextId(uint16_t type) {
     return (type * OFFSET_VALUE) + index;
 }
 
-size_t IdFactory::getIndex(uint32_t id) {
-    return id % OFFSET_VALUE;
-}
+size_t IdFactory::getIndex(uint32_t id) { return id % OFFSET_VALUE; }
 
-uint16_t IdFactory::getType(uint32_t id) {
-    return id / OFFSET_VALUE;
-}
+uint16_t IdFactory::getType(uint32_t id) { return id / OFFSET_VALUE; }
 
 void IdFactory::reset() {
     std::lock_guard<std::mutex> mTypeToIndex_guard(mTypeToIndex_lock);

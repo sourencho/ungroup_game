@@ -2,7 +2,6 @@
 
 #include <iostream>
 
-
 EventController::EventController() {}
 
 void EventController::addEventListener(EventType event_type, EventCallback event_callback) {

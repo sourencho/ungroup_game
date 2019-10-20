@@ -23,6 +23,4 @@ void Animation::update(sf::Int32 elapsed) {
     }
 }
 
-bool Animation::isDone() {
-    return mProgress > mLength;
-}
+bool Animation::isDone() { return mProgress > mLength; }

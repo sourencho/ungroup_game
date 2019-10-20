@@ -1,14 +1,11 @@
 #include "CircleGameObject.hpp"
 
-
 CircleGameObject::CircleGameObject(uint32_t id, sf::Vector2f position, float radius,
-  sf::Color color, std::shared_ptr<PhysicsController> pc):
-  GameObject(id), mCircle(std::shared_ptr<Circle>(new Circle(radius, position, color))),
-  mCircleRigidBody(pc->createCRB(id, radius, position)) {}
+                                   sf::Color color, std::shared_ptr<PhysicsController> pc)
+    : GameObject(id), mCircle(std::shared_ptr<Circle>(new Circle(radius, position, color))),
+      mCircleRigidBody(pc->createCRB(id, radius, position)) {}
 
-std::shared_ptr<Circle> CircleGameObject::getCircle() {
-    return mCircle;
-}
+std::shared_ptr<Circle> CircleGameObject::getCircle() { return mCircle; }
 
 void CircleGameObject::setActive(bool is_active) {
     mIsActive = is_active;
@@ -29,6 +26,4 @@ void CircleGameObject::setPosition(sf::Vector2f position) {
     mCircleRigidBody->setPosition(position);
 }
 
-void CircleGameObject::matchRigid() {
-    mCircle->setPosition(mCircleRigidBody->getPosition());
-}
+void CircleGameObject::matchRigid() { mCircle->setPosition(mCircleRigidBody->getPosition()); }

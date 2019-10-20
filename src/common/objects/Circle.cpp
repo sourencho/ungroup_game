@@ -1,15 +1,13 @@
-#include <stdio.h>
-#include <random>
 #include <iostream>
+#include <random>
+#include <stdio.h>
 #include <utility>
 
 #include "Circle.hpp"
 
 sf::Clock shader_clock;
 
-
-Circle::Circle(float size, sf::Vector2f position, sf::Color color):
-  mCircleShape(size) {
+Circle::Circle(float size, sf::Vector2f position, sf::Color color) : mCircleShape(size) {
     mCircleShape.setPosition(position);
     mColor = color;
     mCircleShape.setFillColor(color);
@@ -19,7 +17,7 @@ Circle::Circle(float size, sf::Vector2f position, sf::Color color):
 
 Circle::~Circle() {}
 
-void Circle::draw(sf::RenderTarget& target, sf::Shader* shader, bool use_shader) {
+void Circle::draw(sf::RenderTarget &target, sf::Shader *shader, bool use_shader) {
     if (use_shader) {
         shader->setUniform("u_position", getPosition());
         shader->setUniform("u_radius", getRadius());
@@ -30,32 +28,19 @@ void Circle::draw(sf::RenderTarget& target, sf::Shader* shader, bool use_shader)
     }
 }
 
+sf::Vector2f Circle::getPosition() const { return mCircleShape.getPosition(); }
 
-sf::Vector2f Circle::getPosition() const {
-    return mCircleShape.getPosition();
-}
-
-float Circle::getRadius() const {
-    return mCircleShape.getRadius();
-}
+float Circle::getRadius() const { return mCircleShape.getRadius(); }
 
 void Circle::setColor(sf::Color color) {
     mColor = color;
     mCircleShape.setFillColor(color);
 }
 
-void Circle::setColor() {
-    mCircleShape.setFillColor(mColor);
-}
+void Circle::setColor() { mCircleShape.setFillColor(mColor); }
 
-void Circle::changeColor(sf::Color color) {
-    mCircleShape.setFillColor(color);
-}
+void Circle::changeColor(sf::Color color) { mCircleShape.setFillColor(color); }
 
-void Circle::setPosition(sf::Vector2f position) {
-    mCircleShape.setPosition(position);
-}
+void Circle::setPosition(sf::Vector2f position) { mCircleShape.setPosition(position); }
 
-void Circle::setRadius(int size) {
-    mCircleShape.setRadius(size);
-}
+void Circle::setRadius(int size) { mCircleShape.setRadius(size); }

@@ -11,10 +11,8 @@
  * Each sprite will show for an equal amount of time.
  * @position: Position of the animation sprite.
  */
-AnimatedSprite::AnimatedSprite(sf::Texture &spritesheet_texture,
-                               sf::Vector2u spritesheet_size,
-                               sf::Int32 duration_ms,
-                               sf::Vector2f position)
+AnimatedSprite::AnimatedSprite(sf::Texture &spritesheet_texture, sf::Vector2u spritesheet_size,
+                               sf::Int32 duration_ms, sf::Vector2f position)
     : mSprite(spritesheet_texture), mAnimation(mSprite) {
     mSprite.setPosition(position);
     sf::Int32 frame_count = spritesheet_size.x * spritesheet_size.y;
@@ -25,18 +23,13 @@ AnimatedSprite::AnimatedSprite(sf::Texture &spritesheet_texture,
         for (size_t j = 0; j < spritesheet_size.y; j++) {
             auto position = sf::Vector2i(i * frame_width, j * frame_height);
             auto size = sf::Vector2i(frame_width, frame_height);
-            mAnimation.addFrame(
-                {sf::IntRect(position, size), duration_ms / frame_count});
+            mAnimation.addFrame({sf::IntRect(position, size), duration_ms / frame_count});
         }
     }
 }
 
 void AnimatedSprite::draw(sf::RenderTarget &target) { target.draw(mSprite); }
 
-void AnimatedSprite::update(sf::Uint32 delta_ms) {
-    mAnimation.update(delta_ms);
-}
+void AnimatedSprite::update(sf::Uint32 delta_ms) { mAnimation.update(delta_ms); }
 
-bool AnimatedSprite::isDone() {
-    return mAnimation.isDone();
-}
+bool AnimatedSprite::isDone() { return mAnimation.isDone(); }

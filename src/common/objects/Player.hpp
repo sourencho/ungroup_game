@@ -1,12 +1,11 @@
 #ifndef Player_hpp
 #define Player_hpp
 
-#include <stdio.h>
 #include <SFML/Graphics.hpp>
 #include <SFML/Network.hpp>
+#include <stdio.h>
 
 #include "GameObject.hpp"
-
 
 struct PlayerUpdate {
     sf::Uint32 player_id;
@@ -15,11 +14,11 @@ struct PlayerUpdate {
     bool groupable;
 };
 
-sf::Packet& operator <<(sf::Packet& packet, const PlayerUpdate& player_update);
-sf::Packet& operator >>(sf::Packet& packet, PlayerUpdate& player_update);
+sf::Packet &operator<<(sf::Packet &packet, const PlayerUpdate &player_update);
+sf::Packet &operator>>(sf::Packet &packet, PlayerUpdate &player_update);
 
-class Player: public GameObject {
- public:
+class Player : public GameObject {
+  public:
     explicit Player(uint32_t id);
     ~Player();
 
@@ -31,10 +30,9 @@ class Player: public GameObject {
     PlayerUpdate getUpdate() const;
     void applyUpdate(PlayerUpdate pu);
 
- private:
+  private:
     sf::Vector2f mDirection;
     bool mGroupable = false;
 };
-
 
 #endif /* Player_hpp */

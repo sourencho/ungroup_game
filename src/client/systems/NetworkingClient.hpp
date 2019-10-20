@@ -1,22 +1,21 @@
 #ifndef NetworkingClient_hpp
 #define NetworkingClient_hpp
 
-#include <stdio.h>
-#include <vector>
 #include <atomic>
 #include <memory>
-#include <thread>
 #include <mutex>
+#include <stdio.h>
+#include <thread>
+#include <vector>
 
 #include <SFML/Network.hpp>
 
 #include "../../common/util/game_def.hpp"
 #include "../../common/util/game_state.hpp"
 
-
 class NetworkingClient {
 
- public:
+  public:
     NetworkingClient();
     ~NetworkingClient();
 
@@ -30,7 +29,7 @@ class NetworkingClient {
     void setClientUnreliableUpdate(ClientUnreliableUpdate client_unreliable_update);
     void setClientReliableUpdate(ClientReliableUpdate client_reliable_update);
 
- private:
+  private:
     // Sockets
     void createTcpSocket(unsigned short port);
     void createUdpSocket();

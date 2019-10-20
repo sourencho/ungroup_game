@@ -1,15 +1,14 @@
 #ifndef CircleRigidBody_hpp
 #define CircleRigidBody_hpp
 
-#include <vector>
 #include <memory>
+#include <vector>
 
-#include <SFML/Graphics.hpp>
 #include "GameObject.hpp"
-
+#include <SFML/Graphics.hpp>
 
 class CircleRigidBody {
- public:
+  public:
     CircleRigidBody(uint32_t id, float radius, sf::Vector2f position);
 
     void setActive(bool is_active);
@@ -28,11 +27,11 @@ class CircleRigidBody {
     void move(sf::Vector2f offset);
     void step(sf::Int32 delta_ms);
 
- private:
+  private:
     bool mIsActive = false;
     float mRadius;
     sf::Vector2f mPosition;
-    sf::Vector2f mVelocity;  // distance/second
+    sf::Vector2f mVelocity; // distance/second
     uint32_t mId;
 };
 

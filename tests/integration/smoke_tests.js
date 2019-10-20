@@ -9,7 +9,7 @@ var client = spawn('./build/src/client/ug-client');
 DESIRED_OUTPUT = "Received client registration. Issued client ID 0"
 success = false;
 
-server.stdout.on('data', function (data) {
+server.stdout.on('data', function(data) {
     var str = data.toString()
     if (str.includes(DESIRED_OUTPUT)) {
         success = true;

@@ -1,15 +1,14 @@
 #include <thread>
 
+#include "../../common/util/game_state.hpp"
+#include "../../common/util/util.hpp"
 #include "ClientGameController.hpp"
 #include <SFML/Graphics.hpp>
-#include "../../common/util/util.hpp"
-#include "../../common/util/game_state.hpp"
-
 
 ClientGameController::ClientGameController(size_t max_player_count, size_t max_mine_count,
-  Keys keys): GameController(max_player_count, max_mine_count),
-  mNetworkingClient(new NetworkingClient()), mAnimationController(new AnimationController()),
-  mKeys(keys) {
+                                           Keys keys)
+    : GameController(max_player_count, max_mine_count), mNetworkingClient(new NetworkingClient()),
+      mAnimationController(new AnimationController()), mKeys(keys) {
     mAnimationController->load();
 }
 
@@ -25,11 +24,9 @@ void ClientGameController::setNetworkState() {
     // noop
 }
 
-void ClientGameController::incrementTick() {
-    mNetworkingClient->incrementTick();
-}
+void ClientGameController::incrementTick() { mNetworkingClient->incrementTick(); }
 
-void ClientGameController::draw(sf::RenderTarget& target, sf::Shader* shader, bool use_shader) {
+void ClientGameController::draw(sf::RenderTarget &target, sf::Shader *shader, bool use_shader) {
     for (auto group : mGameObjectStore->getGroups()) {
         if (group->isActive()) {
             bool groupable = group->getGroupable();
@@ -52,7 +49,7 @@ void ClientGameController::draw(sf::RenderTarget& target, sf::Shader* shader, bo
     mAnimationController->draw(target);
 }
 
-void ClientGameController::handleEvents(sf::Event& event) {
+void ClientGameController::handleEvents(sf::Event &event) {
     if (event.type == sf::Event::KeyPressed) {
         if (sf::Keyboard::isKeyPressed(mKeys.group)) {
             mClientReliableUpdate.groupable ^= true;
@@ -83,7 +80,7 @@ void ClientGameController::handleEvents(sf::Event& event) {
  * or via local interpolation.
  * Rewind and replay is applying the game state update from the server (rewind because it is likely
  * for an old tick) and then interpolating up to the current tick via interpolation (replay).
-**/
+ **/
 void ClientGameController::update() {
     fetchPlayerId();
     setClientUpdates();
@@ -94,7 +91,7 @@ void ClientGameController::update() {
     GameController::update();
 }
 
-void ClientGameController::step(const ClientInputs& cis, sf::Int32 delta_ms) {
+void ClientGameController::step(const ClientInputs &cis, sf::Int32 delta_ms) {
     computeGameState(cis, delta_ms);
     mAnimationController->step(delta_ms);
 }
@@ -106,10 +103,12 @@ void ClientGameController::rewindAndReplay() {
 
     // Replay
     int tick_delta = getTick() - game_state.tick;
-    if (tick_delta <= 0) {return;}  // If the client is behind the server we don't need to replay
+    if (tick_delta <= 0) {
+        return;
+    } // If the client is behind the server we don't need to replay
 
     // Loop through ticks that need to be replayed and apply client input from cache if present
-    for (int i=0; i < tick_delta; ++i) {
+    for (int i = 0; i < tick_delta; ++i) {
         ClientInputAndTick client_input_and_tick;
         unsigned int replay_tick = game_state.tick + i;
 
@@ -141,12 +140,12 @@ void ClientGameController::setClientUpdates() {
     mNetworkingClient->setClientReliableUpdate(mClientReliableUpdate);
 
     // Save input and state for replay
-    mTickToInput[mNetworkingClient->getTick()] = (ClientInputAndTick){mClientUnreliableUpdate,
-        mClientReliableUpdate, mNetworkingClient->getTick()};
+    mTickToInput[mNetworkingClient->getTick()] = (ClientInputAndTick){
+        mClientUnreliableUpdate, mClientReliableUpdate, mNetworkingClient->getTick()};
 }
 
-ClientInputs& ClientGameController::getClientInputs(ClientReliableUpdate cru,
-  ClientUnreliableUpdate cuu) {
+ClientInputs &ClientGameController::getClientInputs(ClientReliableUpdate cru,
+                                                    ClientUnreliableUpdate cuu) {
     int client_id = static_cast<int>(mNetworkingClient->getClientId());
 
     if (mClientInputs.client_id_and_reliable_updates.size() == 0) {
@@ -164,10 +163,6 @@ ClientInputs& ClientGameController::getClientInputs(ClientReliableUpdate cru,
     return mClientInputs;
 }
 
-unsigned int ClientGameController::getTick() {
-    return mNetworkingClient->getTick();
-}
+unsigned int ClientGameController::getTick() { return mNetworkingClient->getTick(); }
 
-void ClientGameController::setTick(unsigned int tick) {
-    mNetworkingClient->setTick(tick);
-}
+void ClientGameController::setTick(unsigned int tick) { mNetworkingClient->setTick(tick); }

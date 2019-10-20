@@ -1,12 +1,11 @@
 #include "PlayerController.hpp"
 
-#include <exception>
-#include "../util/game_settings.hpp"
 #include "../factories/IdFactory.hpp"
+#include "../util/game_settings.hpp"
+#include <exception>
 
-
-PlayerController::PlayerController(std::vector<std::shared_ptr<Player>>& players)
-    :mPlayers(players) {}
+PlayerController::PlayerController(std::vector<std::shared_ptr<Player>> &players)
+    : mPlayers(players) {}
 
 PlayerController::~PlayerController() {}
 
@@ -26,19 +25,19 @@ void PlayerController::removePlayer(uint32_t client_id) {
     getPlayer(mClientToPlayer[client_id])->setActive(false);
 }
 
-void PlayerController::update(const ClientInputs& cis) {
+void PlayerController::update(const ClientInputs &cis) {
     uint32_t client_id;
-    for (const auto& client_id_and_unreliable_update : cis.client_id_and_unreliable_updates) {
+    for (const auto &client_id_and_unreliable_update : cis.client_id_and_unreliable_updates) {
         client_id = client_id_and_unreliable_update.client_id;
-        if(mClientToPlayer.count(client_id) > 0) {
+        if (mClientToPlayer.count(client_id) > 0) {
             uint32_t player_id = mClientToPlayer[client_id];
             getPlayer(player_id)->setDirection(
                 client_id_and_unreliable_update.client_unreliable_update.direction);
         }
     }
-    for (const auto& client_id_and_reliable_update : cis.client_id_and_reliable_updates) {
+    for (const auto &client_id_and_reliable_update : cis.client_id_and_reliable_updates) {
         client_id = client_id_and_reliable_update.client_id;
-        if(mClientToPlayer.count(client_id) > 0) {
+        if (mClientToPlayer.count(client_id) > 0) {
             uint32_t player_id = mClientToPlayer[client_id];
             getPlayer(player_id)->setGroupable(
                 client_id_and_reliable_update.client_reliable_update.groupable);
