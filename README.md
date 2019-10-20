@@ -1,6 +1,6 @@
 # ungroup
 
-[![Build Status](https://travis-ci.com/ungroup/ungroup_game.svg?branch=master)](https://travis-ci.com/ungroup/ungroup_game)
+[![Build Status](https://travis-ci.com/SourenP/ungroup_game.svg?branch=master)](https://travis-ci.com/SourenP/ungroup_game)
 
 ## Intro
 
