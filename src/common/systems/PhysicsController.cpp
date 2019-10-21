@@ -4,6 +4,8 @@
 
 #include "PhysicsController.hpp"
 
+#include "../events/CollisionEvent.hpp"
+#include "../events/EventController.hpp"
 #include "../util/util.hpp"
 
 PhysicsController::PhysicsController() {}
@@ -59,7 +61,16 @@ void PhysicsController::handleCollision() {
                 sf::Vector2f between_norm = normalize(between);
                 between_norm *= radius_sum - distance_between;
                 circle_b->move(between_norm);
+
+                sf::Vector2f collision_point =
+                    getMidpoint(circle_a->getCenter(), circle_b->getCenter());
+                fireCollisionEvent(collision_point);
             }
         }
     }
+}
+
+void PhysicsController::fireCollisionEvent(sf::Vector2f position) {
+    EventController::getInstance().forceQueueEvent(
+        std::shared_ptr<CollisionEvent>(new CollisionEvent(position)));
 }

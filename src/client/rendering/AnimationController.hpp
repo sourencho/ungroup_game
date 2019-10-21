@@ -1,12 +1,11 @@
 #ifndef AnimationController_hpp
 #define AnimationController_hpp
 
-#include "../resources/ResourceStore.hpp"
 #include "AnimatedSprite.hpp"
 
 class AnimationController {
   public:
-    explicit AnimationController();
+    explicit AnimationController(){};
     ~AnimationController(){};
     AnimationController(const AnimationController& temp_obj) = delete;
     AnimationController& operator=(const AnimationController& temp_obj) = delete;
@@ -18,7 +17,6 @@ class AnimationController {
 
   private:
     std::vector<std::unique_ptr<AnimatedSprite>> mAnimatedSprites;
-    ResourceStore mResourceStore;
 };
 
 #endif /* AnimationController_hpp */

@@ -5,9 +5,10 @@
 
 class ClientConnectedEvent : public Event {
   public:
-    explicit ClientConnectedEvent(int client_id);
+    explicit ClientConnectedEvent(int client_id)
+        : Event(EventType::EVENT_TYPE_CLIENT_CONNECTED), mClientId(client_id){};
 
-    int getClientId();
+    int getClientId() { return mClientId; };
 
   private:
     int mClientId = -1;

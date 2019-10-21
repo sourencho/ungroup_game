@@ -7,9 +7,11 @@
 #include <unordered_map>
 #include <vector>
 
+#include "../../common/events/Event.hpp"
 #include "../../common/systems/GameController.hpp"
 #include "../rendering/Animation.hpp"
 #include "../rendering/AnimationController.hpp"
+#include "../resources/ResourceStore.hpp"
 #include "NetworkingClient.hpp"
 
 class ClientGameController : public GameController {
@@ -33,6 +35,7 @@ class ClientGameController : public GameController {
     void fetchPlayerId();
     void setClientUpdates();
     void rewindAndReplay();
+    void collisionEvent(std::shared_ptr<Event> event);
 
     ClientInputs& getClientInputs(ClientReliableUpdate cru, ClientUnreliableUpdate cuu);
 
@@ -46,6 +49,7 @@ class ClientGameController : public GameController {
     std::unordered_map<unsigned int, ClientInputAndTick> mTickToInput; // Cache of player inputs
 
     std::unique_ptr<NetworkingClient> mNetworkingClient;
+    std::unique_ptr<ResourceStore> mResourceStore;
     std::unique_ptr<AnimationController> mAnimationController;
 };
 

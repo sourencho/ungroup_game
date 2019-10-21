@@ -1,5 +1,7 @@
 #include <thread>
 
+#include "../../common/events/CollisionEvent.hpp"
+#include "../../common/events/EventController.hpp"
 #include "../../common/util/game_state.hpp"
 #include "../../common/util/util.hpp"
 #include "ClientGameController.hpp"
@@ -8,8 +10,13 @@
 ClientGameController::ClientGameController(size_t max_player_count, size_t max_mine_count,
                                            Keys keys)
     : GameController(max_player_count, max_mine_count), mNetworkingClient(new NetworkingClient()),
-      mAnimationController(new AnimationController()), mKeys(keys) {
-    mAnimationController->load();
+      mResourceStore(new ResourceStore()), mAnimationController(new AnimationController()),
+      mKeys(keys) {
+    mResourceStore->load();
+
+    EventController::getInstance().addEventListener(
+        EventType::EVENT_TYPE_COLLISION,
+        std::bind(&ClientGameController::collisionEvent, this, std::placeholders::_1));
 }
 
 ClientGameController::~ClientGameController() {
@@ -161,6 +168,26 @@ ClientInputs& ClientGameController::getClientInputs(ClientReliableUpdate cru,
     mClientInputs.client_id_and_unreliable_updates[0].client_unreliable_update = cuu;
 
     return mClientInputs;
+}
+
+void ClientGameController::collisionEvent(std::shared_ptr<Event> event) {
+    switch (event->getType()) {
+    case EventType::EVENT_TYPE_COLLISION: {
+        std::shared_ptr<CollisionEvent> collision_event =
+            std::dynamic_pointer_cast<CollisionEvent>(event);
+        sf::Vector2f position = collision_event->getPosition();
+
+        // Create collision animation
+        auto collision = std::unique_ptr<AnimatedSprite>(new AnimatedSprite(
+            mResourceStore->getTexture("collision"), {3, 3}, 200, position, {.8f, .8f}));
+        mAnimationController->add(std::move(collision));
+        break;
+    }
+    default: {
+        std::cout << "Unexpected event type." << std::endl;
+        break;
+    }
+    }
 }
 
 unsigned int ClientGameController::getTick() { return mNetworkingClient->getTick(); }

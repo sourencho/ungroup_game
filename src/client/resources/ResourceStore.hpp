@@ -14,6 +14,7 @@ class ResourceStore {
     ResourceStore(const ResourceStore& temp_obj) = delete;
     ResourceStore& operator=(const ResourceStore& temp_obj) = delete;
 
+    void load();
     void addTexture(std::string key, std::string texture_path);
     sf::Texture& getTexture(std::string key);
 
