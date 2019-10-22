@@ -28,9 +28,9 @@ before_script:
   - make install -j
   # Cmake
   - mkdir -p ${TRAVIS_BUILD_DIR}/build && cd ${TRAVIS_BUILD_DIR}/build
-  - cmake -DCMAKE_INSTALL_PREFIX=${TRAVIS_BUILD_DIR}/usr -DCMAKE_CXX_FLAGS="-I${TRAVIS_BUILD_DIR}/usr/include -I${TRAVIS_BUILD_DIR}/usr/include/eigen3" .. && cmake -LA ..
+  - cmake -DCMAKE_INSTALL_PREFIX=${TRAVIS_BUILD_DIR}/usr -DCMAKE_CXX_FLAGS="-I${TRAVIS_BUILD_DIR}/usr/include" .. && cmake -LA ..
   - make -j VERBOSE=1
   - cd ..
 script:
-  - bash -c 'if ! ./build/tests/ug-test; then >&2 echo "Fail"; exit 1; fi'
+  - bash -c 'if ! ASAN_OPTIONS=detect_leaks=0 ./build/tests/ug-test; then >&2 echo "Fail"; exit 1; fi'
   - bash -c 'if ! xvfb-run --server-args="-screen 0 1280x1024x24" -e /dev/stdout -a node tests/integration/smoke_tests.js; then >&2 echo "Fail"; exit 1; fi'

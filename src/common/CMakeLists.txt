@@ -8,9 +8,6 @@ add_library(common-lib
     objects/Circle.cpp
     objects/CircleRigidBody.cpp
     objects/Group.cpp
-    events/ClientConnectedEvent.cpp
-    events/Event.cpp
-    events/ClientDisconnectedEvent.cpp
     events/EventController.cpp
     systems/PhysicsController.cpp
     systems/GameController.cpp

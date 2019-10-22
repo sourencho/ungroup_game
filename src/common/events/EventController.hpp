@@ -25,6 +25,7 @@ class EventController {
 
     void addEventListener(EventType event_type, EventCallback event_callback);
     void queueEvent(std::shared_ptr<Event> event);
+    void forceQueueEvent(std::shared_ptr<Event> event);
     void forceProcessEvents();
     void lock();
     void unlock();

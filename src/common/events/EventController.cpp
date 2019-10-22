@@ -16,6 +16,8 @@ void EventController::queueEvent(std::shared_ptr<Event> event) {
     mEventQueueLock.unlock();
 }
 
+void EventController::forceQueueEvent(std::shared_ptr<Event> event) { mEventQueue.push(event); }
+
 void EventController::forceProcessEvents() {
     while (!mEventQueue.empty()) {
         std::shared_ptr<Event> event = mEventQueue.front();

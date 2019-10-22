@@ -21,3 +21,7 @@ float distance(const sf::Vector2f& point_a, const sf::Vector2f& point_b) {
 sf::Vector2f getVector(const sf::Vector2f& point_a, const sf::Vector2f& point_b) {
     return sf::Vector2f(point_b.x - point_a.x, point_b.y - point_a.y);
 }
+
+sf::Vector2f getMidpoint(const sf::Vector2f& point_a, const sf::Vector2f& point_b) {
+    return sf::Vector2f((point_a.x + point_b.x) / 2.f, (point_a.y + point_b.y) / 2.f);
+}
