@@ -55,7 +55,7 @@ To run tests, after building, run:
 
 ## Debugging
 
-#### Travis CI Debug Build
+### Travis CI Debug Build
 
 Run this to enable debug mode on a specific build.
 ```
@@ -68,15 +68,15 @@ Run this to enable debug mode on a specific build.
    https://api.travis-ci.com/job/<JOB_ID>/debug  
 ```
 
-#### Vscode lldb
+### Vscode lldb
 
 In vscode on a mac you can debug using `lldb`.
 
-### 1. Install the extention "Native Debug"
+#### 1. Install the extention "Native Debug"
 
 Link: https://marketplace.visualstudio.com/items?itemName=webfreak.debug
 
-### 2. Setup tasks
+#### 2. Setup tasks
 
 Set `tasks.json` to:
 ```
@@ -149,7 +149,7 @@ Set `tasks.json` to:
 }
 ```
 
-### 3. Setup launch
+#### 3. Setup launch
 
 Set `launch.json` to:
 ```
@@ -184,7 +184,7 @@ Set `launch.json` to:
 }
 ```
 
-### 4. Run tasks
+#### 4. Run tasks
 
 Debug build:
 - `CMD` + `SHIFT` + `P` >  ` Tasks: Run Task` > `build_debug`
