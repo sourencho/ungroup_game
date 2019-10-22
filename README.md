@@ -55,6 +55,21 @@ To run tests, after building, run:
 
 ## Debugging
 
+#### Travis CI Debug Build
+
+Run this to enable debug mode on a specific build.
+```
+  curl -s -X POST \    
+   -H "Content-Type: application/json" \    
+   -H "Accept: application/json" \    
+   -H "Travis-API-Version: 3" \    
+   -H "Authorization: token <TOKEN>" \    
+   -d '{ "quiet": true }' \    
+   https://api.travis-ci.com/job/<JOB_ID>/debug  
+```
+
+#### Vscode lldb
+
 In vscode on a mac you can debug using `lldb`.
 
 ### 1. Install the extention "Native Debug"
