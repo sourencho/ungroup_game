@@ -5,7 +5,7 @@
 SCENARIO("AnimatedSprite is created and animation completed",
          "[common][rendering][AnimatedSprite]") {
     GIVEN("An AnimatedSprite is created with duration 200") {
-        sf::Texture texture = sf::Texture();
+        sf::Texture texture;
         texture.loadFromFile("resources/images/test.png");
         AnimatedSprite animated_sprite =
             AnimatedSprite(texture, {3, 3}, 200, {100.f, 100.f}, {1.f, 1.f});
