@@ -26,7 +26,7 @@ class CircleRigidBody : public GameObject {
     void setAcceleration(sf::Vector2f acceleration) { mAcceleration = acceleration; }
 
     void applyForce(sf::Vector2f force) { mForce += force; }
-    void applyInput(sf::Vector2f force);
+    void applyInput(sf::Vector2f input);
 
     const bool isMovable() const { return mMovable; };
 
