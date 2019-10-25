@@ -3,7 +3,6 @@
 #include <iostream>
 
 #include "../util/network_util.hpp"
-#include "../util/util.hpp"
 
 sf::Packet& operator<<(sf::Packet& packet, const PlayerUpdate& player_update) {
     return packet << player_update.player_id << player_update.is_active << player_update.direction

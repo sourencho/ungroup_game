@@ -116,15 +116,15 @@ void NetworkingServer::handleUnreliableCommand(sf::Socket::Status status, sf::Pa
     UnreliableCommand unreliable_command;
     command_packet >> unreliable_command;
     switch (unreliable_command.command) {
-    case (sf::Uint32)UnreliableCommandType::client_unreliable_update: {
-        setClientUnreliableUpdate(command_packet, unreliable_command.client_id,
-                                  unreliable_command.tick);
-        break;
-    }
-    default: {
-        std::cout << "Unknown command code sent: " << unreliable_command.command << std::endl;
-        break;
-    }
+        case (sf::Uint32)UnreliableCommandType::client_unreliable_update: {
+            setClientUnreliableUpdate(command_packet, unreliable_command.client_id,
+                                      unreliable_command.tick);
+            break;
+        }
+        default: {
+            std::cout << "Unknown command code sent: " << unreliable_command.command << std::endl;
+            break;
+        }
     }
 }
 
@@ -199,27 +199,27 @@ void NetworkingServer::handleReliableCommand(sf::Socket::Status status, sf::Pack
                                              sf::Uint32 client_id) {
     sf::Uint32 reliable_command_type;
     switch (status) {
-    case sf::Socket::Done:
-        if (command_packet >> reliable_command_type) {
-            if (reliable_command_type == (sf::Uint32)ReliableCommandType::register_client) {
-                registerClient(command_packet, socket, client_id);
-            } else if (reliable_command_type == (sf::Uint32)ReliableCommandType::player_id) {
-                sendPlayerId(socket, client_id);
-            } else if (reliable_command_type ==
-                       (sf::Uint32)ReliableCommandType::client_reliable_update) {
-                setClientReliableUpdate(command_packet, client_id);
+        case sf::Socket::Done:
+            if (command_packet >> reliable_command_type) {
+                if (reliable_command_type == (sf::Uint32)ReliableCommandType::register_client) {
+                    registerClient(command_packet, socket, client_id);
+                } else if (reliable_command_type == (sf::Uint32)ReliableCommandType::player_id) {
+                    sendPlayerId(socket, client_id);
+                } else if (reliable_command_type ==
+                           (sf::Uint32)ReliableCommandType::client_reliable_update) {
+                    setClientReliableUpdate(command_packet, client_id);
+                }
             }
-        }
-        break;
-    case sf::TcpSocket::Error:
-    case sf::TcpSocket::Disconnected:
-        std::cout << "Removing client due to TCP dsconnect/error." << std::endl;
-        clientDisconnect(socket, client_id);
-        selector.remove(socket);
-        break;
-    default:
-        std::cout << "TCP client sent unkown signal." << std::endl;
-        break;
+            break;
+        case sf::TcpSocket::Error:
+        case sf::TcpSocket::Disconnected:
+            std::cout << "Removing client due to TCP dsconnect/error." << std::endl;
+            clientDisconnect(socket, client_id);
+            selector.remove(socket);
+            break;
+        default:
+            std::cout << "TCP client sent unkown signal." << std::endl;
+            break;
     }
 }
 

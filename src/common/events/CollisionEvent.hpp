@@ -1,18 +1,19 @@
 #ifndef CollisionEvent_hpp
 #define CollisionEvent_hpp
 
+#include "../physics/PhysicsController.hpp"
 #include "Event.hpp"
 #include <SFML/Graphics.hpp>
 
 class CollisionEvent : public Event {
   public:
-    explicit CollisionEvent(sf::Vector2f position)
-        : Event(EVENT_TYPE_COLLISION), mPosition(position) {}
+    explicit CollisionEvent(Collision collision)
+        : Event(EVENT_TYPE_COLLISION), mCollision(collision) {}
 
-    sf::Vector2f getPosition() { return mPosition; };
+    const Collision getCollision() const { return mCollision; };
 
   private:
-    sf::Vector2f mPosition;
+    Collision mCollision;
 };
 
 #endif /* CollisionEvent_hpp */

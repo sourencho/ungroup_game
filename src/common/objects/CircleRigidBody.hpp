@@ -7,32 +7,37 @@
 #include "GameObject.hpp"
 #include <SFML/Graphics.hpp>
 
-class CircleRigidBody {
+class CircleRigidBody : public GameObject {
   public:
-    CircleRigidBody(uint32_t id, float radius, sf::Vector2f position);
-
-    void setActive(bool is_active);
-    bool isActive() const;
-
-    float getRadius() const;
-    void setRadius(float radius);
-
-    sf::Vector2f getPosition() const;
-    void setPosition(sf::Vector2f position);
-
-    void setVelocity(sf::Vector2f velocity);
-
-    sf::Vector2f getCenter();
+    CircleRigidBody(uint32_t id, float radius, sf::Vector2f position, bool movable = true);
 
     void move(sf::Vector2f offset);
     void step(sf::Int32 delta_ms);
 
+    sf::Vector2f getCenter() const;
+
+    float getRadius() const { return mRadius; }
+    void setRadius(float radius) { mRadius = radius; }
+
+    sf::Vector2f getPosition() const { return mPosition; }
+    void setPosition(sf::Vector2f position) { mPosition = position; }
+
+    void setVelocity(sf::Vector2f velocity) { mVelocity = velocity; }
+    void setAcceleration(sf::Vector2f acceleration) { mAcceleration = acceleration; }
+
+    void applyForce(sf::Vector2f force) { mForce += force; }
+    void applyInput(sf::Vector2f force);
+
+    const bool isMovable() const { return mMovable; };
+
   private:
-    bool mIsActive = false;
+    bool mMovable;
     float mRadius;
-    sf::Vector2f mPosition;
+    float mMass;
+    sf::Vector2f mAcceleration;
+    sf::Vector2f mForce;
+    sf::Vector2f mPosition; // top left corner of box surrounding circle
     sf::Vector2f mVelocity; // distance/second
-    uint32_t mId;
 };
 
 #endif /* CircleRigidBody_hpp */

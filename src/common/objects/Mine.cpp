@@ -19,14 +19,14 @@ sf::Packet& operator>>(sf::Packet& packet, MineUpdate& mine_update) {
 
 Mine::Mine(uint32_t id, sf::Vector2f position, float size, sf::Color color,
            std::shared_ptr<PhysicsController> pc)
-    : CircleGameObject(id, position, size, color, pc) {}
+    : CircleGameObject(id, position, size, color, pc, false) {}
 
 Mine::~Mine() {}
 
 MineUpdate Mine::getUpdate() {
-    sf::Vector2f position = getCircle()->getPosition();
+    sf::Vector2f position = getCircle().getPosition();
     MineUpdate mu = {(sf::Uint32)getId(), isActive(), position.x, position.y,
-                     getCircle()->getRadius()};
+                     getCircle().getRadius()};
     return mu;
 }
 

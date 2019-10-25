@@ -1,29 +1,47 @@
+#include <algorithm>
+#include <cmath>
+
 #include "CircleRigidBody.hpp"
 
-CircleRigidBody::CircleRigidBody(uint32_t id, float radius, sf::Vector2f position)
-    : mRadius(radius), mPosition(position), mVelocity(0.f, 0.f), mId(id) {}
+CircleRigidBody::CircleRigidBody(uint32_t id, float radius, sf::Vector2f position, bool movable)
+    : GameObject(id), mRadius(radius), mPosition(position), mVelocity(0.f, 0.f), mMass(1.f),
+      mForce(0.f, 0.f), mAcceleration(0.f, 0.f), mMovable(movable) {}
 
-void CircleRigidBody::setActive(bool is_active) { mIsActive = is_active; }
+void CircleRigidBody::applyInput(sf::Vector2f input) { applyForce(input * 5.f); }
 
-bool CircleRigidBody::isActive() const { return mIsActive; }
+void CircleRigidBody::move(sf::Vector2f offset) {
+    if (!isActive() || !isMovable()) {
+        return;
+    }
 
-float CircleRigidBody::getRadius() const { return mRadius; }
-
-sf::Vector2f CircleRigidBody::getPosition() const { return mPosition; }
-
-void CircleRigidBody::setRadius(float radius) { mRadius = radius; }
-
-void CircleRigidBody::setPosition(sf::Vector2f position) { mPosition = position; }
-
-void CircleRigidBody::setVelocity(sf::Vector2f velocity) { mVelocity = velocity; }
-
-void CircleRigidBody::move(sf::Vector2f offset) { mPosition += offset; }
-
-void CircleRigidBody::step(sf::Int32 delta_ms) {
-    mPosition += mVelocity * static_cast<float>(delta_ms) / 1000.f;
+    mPosition += offset;
 }
 
-sf::Vector2f CircleRigidBody::getCenter() {
+void CircleRigidBody::step(sf::Int32 delta_ms) {
+    if (!isActive() || !isMovable()) {
+        return;
+    }
+
+    float delta = static_cast<float>(delta_ms) / 1000.f;
+    sf::Vector2f& position = mPosition;
+    sf::Vector2f& velocity = mVelocity;
+    sf::Vector2f& acceleration = mAcceleration;
+    sf::Vector2f& force = mForce;
+    float& mass = mMass;
+
+    // Velocity Verlet
+    sf::Vector2f position_step =
+        position + (velocity * delta) + (acceleration * std::pow(2.f, delta) / 2.f);
+    sf::Vector2f acceleration_step = force / mass;
+    sf::Vector2f velocity_step = velocity + ((acceleration + acceleration_step) * delta / 2.f);
+
+    mPosition = position_step;
+    mAcceleration = acceleration_step;
+    mVelocity = velocity_step;
+    mForce = {0.f, 0.f};
+}
+
+sf::Vector2f CircleRigidBody::getCenter() const {
     sf::Vector2f position = getPosition();
     float radius = getRadius();
     return sf::Vector2f(position.x + radius, position.y + radius);

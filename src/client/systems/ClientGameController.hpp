@@ -35,7 +35,7 @@ class ClientGameController : public GameController {
     void fetchPlayerId();
     void setClientUpdates();
     void rewindAndReplay();
-    void collisionEvent(std::shared_ptr<Event> event);
+    void clientCollisionEvent(std::shared_ptr<Event> event);
 
     ClientInputs& getClientInputs(ClientReliableUpdate cru, ClientUnreliableUpdate cuu);
 

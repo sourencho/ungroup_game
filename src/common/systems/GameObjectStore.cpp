@@ -38,20 +38,20 @@ void GameObjectStore::loadLevel(size_t max_player_count, size_t max_mine_count) 
     }
 }
 
-std::shared_ptr<Player> &GameObjectStore::getPlayer(uint32_t player_id) {
+std::shared_ptr<Player>& GameObjectStore::getPlayer(uint32_t player_id) {
     return mPlayers[IdFactory::getInstance().getIndex(player_id)];
 }
 
-std::shared_ptr<Group> &GameObjectStore::getGroup(uint32_t group_id) {
+std::shared_ptr<Group>& GameObjectStore::getGroup(uint32_t group_id) {
     return mGroups[IdFactory::getInstance().getIndex(group_id)];
 }
 
-std::shared_ptr<Mine> &GameObjectStore::getMine(uint32_t mine_id) {
+std::shared_ptr<Mine>& GameObjectStore::getMine(uint32_t mine_id) {
     return mMines[IdFactory::getInstance().getIndex(mine_id)];
 }
 
-std::vector<std::shared_ptr<Player>> &GameObjectStore::getPlayers() { return mPlayers; }
+std::vector<std::shared_ptr<Player>>& GameObjectStore::getPlayers() { return mPlayers; }
 
-std::vector<std::shared_ptr<Group>> &GameObjectStore::getGroups() { return mGroups; }
+std::vector<std::shared_ptr<Group>>& GameObjectStore::getGroups() { return mGroups; }
 
-std::vector<std::shared_ptr<Mine>> &GameObjectStore::getMines() { return mMines; }
+std::vector<std::shared_ptr<Mine>>& GameObjectStore::getMines() { return mMines; }

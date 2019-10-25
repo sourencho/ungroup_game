@@ -5,6 +5,7 @@
 SCENARIO("CircleRigidBody changes position", "[common][objects][CircleRigidBody]") {
     sf::Vector2f position = sf::Vector2f(0.f, 0.f);
     CircleRigidBody circle = CircleRigidBody(0, 0.f, position);
+    circle.setActive(true);
 
     GIVEN("a velocity is set on a circle") {
         circle.setVelocity(sf::Vector2f(10.f, 10.f));
