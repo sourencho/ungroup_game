@@ -7,6 +7,7 @@
 
 #include "../events/CollisionEvent.hpp"
 #include "../events/EventController.hpp"
+#include "VectorUtil.hpp"
 
 PhysicsController::PhysicsController() {}
 
@@ -56,8 +57,14 @@ void PhysicsController::resolveCollisions() {
 
 void PhysicsController::resolveCollision(CircleRigidBody& circle_a, CircleRigidBody& circle_b,
                                          const Collision& collision) {
+    // Move bodies out of one another
     circle_a.move(collision.resolution.first);
     circle_b.move(collision.resolution.second);
+
+    // Apply impulses resulting from collision
+    auto impulses = CollisionUtil::getImpulses(circle_a, circle_b, collision);
+    circle_a.applyImpulse(impulses.first);
+    circle_b.applyImpulse(impulses.second);
 }
 
 void PhysicsController::fireCollisionEvent(const Collision& collision) {

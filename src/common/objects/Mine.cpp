@@ -19,7 +19,8 @@ sf::Packet& operator>>(sf::Packet& packet, MineUpdate& mine_update) {
 
 Mine::Mine(uint32_t id, sf::Vector2f position, float size, sf::Color color,
            std::shared_ptr<PhysicsController> pc)
-    : CircleGameObject(id, position, size, color, pc, false) {}
+    : CircleGameObject(id, position, size, color, pc, std::numeric_limits<float>::infinity(),
+                       false) {}
 
 Mine::~Mine() {}
 

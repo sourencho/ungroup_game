@@ -78,6 +78,7 @@ void GroupController::updateGroup(std::shared_ptr<Group>& group) {
 
     // Update group size
     group->setRadius(group_players.size() * GROUP_MEMBER_SIZE);
+    group->setMass(group_players.size() / 10.f);
 }
 
 GroupControllerUpdate GroupController::getUpdate() {

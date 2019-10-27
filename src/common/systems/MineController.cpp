@@ -4,7 +4,7 @@
 
 #include "../factories/IdFactory.hpp"
 
-MineController::MineController(std::vector<std::shared_ptr<Mine>> &mines) : mMines(mines) {}
+MineController::MineController(std::vector<std::shared_ptr<Mine>>& mines) : mMines(mines) {}
 
 MineController::~MineController() {}
 
@@ -24,11 +24,11 @@ void MineController::update() {
 }
 
 void MineController::updatePostPhysics() {
-    for (auto &mine : mMines) {
+    for (auto& mine : mMines) {
         mine->matchRigid();
     }
 }
 
-std::shared_ptr<Mine> &MineController::getMine(uint32_t mine_id) {
+std::shared_ptr<Mine>& MineController::getMine(uint32_t mine_id) {
     return mMines[IdFactory::getInstance().getIndex(mine_id)];
 }

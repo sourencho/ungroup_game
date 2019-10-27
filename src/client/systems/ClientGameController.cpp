@@ -19,9 +19,7 @@ ClientGameController::ClientGameController(size_t max_player_count, size_t max_m
         std::bind(&ClientGameController::clientCollisionEvent, this, std::placeholders::_1));
 }
 
-ClientGameController::~ClientGameController() {
-    std::cout << "Deconstructing ClientGameController" << std::endl;
-}
+ClientGameController::~ClientGameController() {}
 
 ClientInputs ClientGameController::collectInputs() {
     return getClientInputs(mClientReliableUpdate, mClientUnreliableUpdate);

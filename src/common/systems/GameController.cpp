@@ -8,8 +8,6 @@
 
 #include "GameController.hpp"
 
-#include "../events/CollisionEvent.hpp"
-#include "../events/Event.hpp"
 #include "../events/EventController.hpp"
 #include "../factories/IdFactory.hpp"
 #include "../util/game_def.hpp"
@@ -29,16 +27,12 @@ GameController::GameController(size_t max_player_count, size_t max_mine_count)
 
     mClock.restart();
 
-    EventController::getInstance().addEventListener(
-        EventType::EVENT_TYPE_COLLISION,
-        std::bind(&GameController::collisionEvent, this, std::placeholders::_1));
-
     for (int i = 0; i < max_mine_count; i++) {
         mMineController->createMine();
     }
 }
 
-GameController::~GameController() { std::cout << "Deconstructing GameController" << std::endl; }
+GameController::~GameController() {}
 
 void GameController::update() {
     ClientInputs cis = collectInputs();
@@ -116,33 +110,4 @@ GameState GameController::getGameState() {
     GameState gs = {tick, group_updates, mine_updates, player_updates, gcu};
 
     return gs;
-}
-
-void GameController::collisionEvent(std::shared_ptr<Event> event) {
-    switch (event->getType()) {
-        case EventType::EVENT_TYPE_COLLISION: {
-            std::shared_ptr<CollisionEvent> collision_event =
-                std::dynamic_pointer_cast<CollisionEvent>(event);
-
-            // Handle collision
-            Collision collision = collision_event->getCollision();
-            GameObjectType collider_a_type =
-                GameObjectType(IdFactory::getInstance().getType(collision.ids.first));
-            GameObjectType collider_b_type =
-                GameObjectType(IdFactory::getInstance().getType(collision.ids.second));
-            if (collider_a_type == GameObjectType::group) {
-                mGameObjectStore->getGroup(collision.ids.first)
-                    ->applyForce(collision.direction * -30.f);
-            }
-            if (collider_b_type == GameObjectType::group) {
-                mGameObjectStore->getGroup(collision.ids.second)
-                    ->applyForce(collision.direction * 10.f);
-            }
-            break;
-        }
-        default: {
-            std::cout << "Unexpected event type." << std::endl;
-            break;
-        }
-    }
 }
