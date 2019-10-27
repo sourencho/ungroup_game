@@ -36,21 +36,16 @@ NetworkingClient::NetworkingClient() : mGameState_t() {
 }
 
 NetworkingClient::~NetworkingClient() {
-    std::cout << "Deconsturcting NetworkingClient..." << std::endl;
-
     {
         std::lock_guard<std::mutex> mTcpSocket_guard(mTcpSocket_lock);
         mTcpSocket_t->disconnect();
     }
 
-    std::cout << "Joining threads..." << std::endl;
     mStopThreads_ta = true;
     mReliableRecv.join();
     mReliableSend.join();
     mUnreliableRecv.join();
     mUnreliableSend.join();
-
-    std::cout << "Deconstructed NetworkingClient." << std::endl;
 }
 
 /* Main thread methods */

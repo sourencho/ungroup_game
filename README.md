@@ -200,6 +200,7 @@ Debug run:
 
 ### Physics
 - [Gafferon Games: Game Physics](https://web.archive.org/web/20181107181427/https://gafferongames.com/categories/game-physics)
+- [Chris Hecker: Rigid body dynamics](http://www.chrishecker.com/Rigid_Body_Dynamics)
 
 ### Networking
 - [Gabriel Gambetta: Fast-Paced Multiplayer](https://www.gabrielgambetta.com/client-server-game-architecture.html)

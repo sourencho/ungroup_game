@@ -2,8 +2,8 @@
 
 #include "../../common/events/CollisionEvent.hpp"
 #include "../../common/events/EventController.hpp"
+#include "../../common/physics/VectorUtil.hpp"
 #include "../../common/util/game_state.hpp"
-#include "../../common/util/util.hpp"
 #include "ClientGameController.hpp"
 #include <SFML/Graphics.hpp>
 
@@ -16,12 +16,10 @@ ClientGameController::ClientGameController(size_t max_player_count, size_t max_m
 
     EventController::getInstance().addEventListener(
         EventType::EVENT_TYPE_COLLISION,
-        std::bind(&ClientGameController::collisionEvent, this, std::placeholders::_1));
+        std::bind(&ClientGameController::clientCollisionEvent, this, std::placeholders::_1));
 }
 
-ClientGameController::~ClientGameController() {
-    std::cout << "Deconstructing ClientGameController" << std::endl;
-}
+ClientGameController::~ClientGameController() {}
 
 ClientInputs ClientGameController::collectInputs() {
     return getClientInputs(mClientReliableUpdate, mClientUnreliableUpdate);
@@ -34,22 +32,22 @@ void ClientGameController::setNetworkState() {
 void ClientGameController::incrementTick() { mNetworkingClient->incrementTick(); }
 
 void ClientGameController::draw(sf::RenderTarget& target, sf::Shader* shader, bool use_shader) {
-    for (auto group : mGameObjectStore->getGroups()) {
+    for (auto& group : mGameObjectStore->getGroups()) {
         if (group->isActive()) {
             bool groupable = group->getGroupable();
-            std::shared_ptr<Circle> circle = group->getCircle();
+            Circle& circle = group->getCircle();
             if (groupable) {
-                circle->changeColor(sf::Color(255, 0, 0));
+                circle.changeColor(sf::Color(255, 0, 0));
             } else {
-                circle->setColor();
+                circle.setColor();
             }
-            circle->draw(target, shader, use_shader);
+            circle.draw(target, shader, use_shader);
         }
     }
 
-    for (auto mine : mGameObjectStore->getMines()) {
+    for (auto& mine : mGameObjectStore->getMines()) {
         if (mine->isActive()) {
-            mine->getCircle()->draw(target, shader, use_shader);
+            mine->getCircle().draw(target, shader, use_shader);
         }
     }
 
@@ -60,7 +58,6 @@ void ClientGameController::handleEvents(sf::Event& event) {
     if (event.type == sf::Event::KeyPressed) {
         if (sf::Keyboard::isKeyPressed(mKeys.group)) {
             mClientReliableUpdate.groupable ^= true;
-            return;
         }
 
         sf::Vector2f direction = sf::Vector2f(0.f, 0.f);
@@ -76,7 +73,7 @@ void ClientGameController::handleEvents(sf::Event& event) {
         if (sf::Keyboard::isKeyPressed(mKeys.right)) {
             direction += sf::Vector2f(1.f, 0.f);
         }
-        direction = normalize(direction);
+        direction = VectorUtil::normalize(direction);
         mClientUnreliableUpdate.direction = direction;
     }
 }
@@ -170,23 +167,23 @@ ClientInputs& ClientGameController::getClientInputs(ClientReliableUpdate cru,
     return mClientInputs;
 }
 
-void ClientGameController::collisionEvent(std::shared_ptr<Event> event) {
+void ClientGameController::clientCollisionEvent(std::shared_ptr<Event> event) {
     switch (event->getType()) {
-    case EventType::EVENT_TYPE_COLLISION: {
-        std::shared_ptr<CollisionEvent> collision_event =
-            std::dynamic_pointer_cast<CollisionEvent>(event);
-        sf::Vector2f position = collision_event->getPosition();
+        case EventType::EVENT_TYPE_COLLISION: {
+            std::shared_ptr<CollisionEvent> collision_event =
+                std::dynamic_pointer_cast<CollisionEvent>(event);
+            sf::Vector2f position = collision_event->getCollision().position;
 
-        // Create collision animation
-        auto collision = std::unique_ptr<AnimatedSprite>(new AnimatedSprite(
-            mResourceStore->getTexture("collision"), {3, 3}, 200, position, {.8f, .8f}));
-        mAnimationController->add(std::move(collision));
-        break;
-    }
-    default: {
-        std::cout << "Unexpected event type." << std::endl;
-        break;
-    }
+            // Create collision animation
+            auto collision = std::unique_ptr<AnimatedSprite>(new AnimatedSprite(
+                mResourceStore->getTexture("collision"), {3, 3}, 200, position, {.8f, .8f}));
+            mAnimationController->add(std::move(collision));
+            break;
+        }
+        default: {
+            std::cout << "Unexpected event type." << std::endl;
+            break;
+        }
     }
 }
 

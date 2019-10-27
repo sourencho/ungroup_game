@@ -1,5 +1,4 @@
 add_library(common-lib
-    util/util.cpp
     util/network_util.cpp
     util/game_state.cpp
     objects/CircleGameObject.cpp
@@ -9,7 +8,9 @@ add_library(common-lib
     objects/CircleRigidBody.cpp
     objects/Group.cpp
     events/EventController.cpp
-    systems/PhysicsController.cpp
+    physics/PhysicsController.cpp
+    physics/CollisionUtil.cpp
+    physics/VectorUtil.cpp
     systems/GameController.cpp
     systems/GameObjectStore.cpp
     systems/GroupController.cpp

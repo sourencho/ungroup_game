@@ -9,6 +9,8 @@
 #include "GameController.hpp"
 
 #include "../events/EventController.hpp"
+#include "../factories/IdFactory.hpp"
+#include "../util/game_def.hpp"
 #include "../util/game_settings.hpp"
 
 GameController::GameController(size_t max_player_count, size_t max_mine_count)
@@ -30,7 +32,7 @@ GameController::GameController(size_t max_player_count, size_t max_mine_count)
     }
 }
 
-GameController::~GameController() { std::cout << "Deconstructing GameController" << std::endl; }
+GameController::~GameController() {}
 
 void GameController::update() {
     ClientInputs cis = collectInputs();
@@ -48,7 +50,7 @@ void GameController::update() {
     setNetworkState();
 }
 
-void GameController::computeGameState(const ClientInputs &cis, sf::Int32 delta_ms) {
+void GameController::computeGameState(const ClientInputs& cis, sf::Int32 delta_ms) {
     updateGameObjects(cis);
     mPhysicsController->update(delta_ms);
     updateGameObjectsPostPhysics();
@@ -56,7 +58,7 @@ void GameController::computeGameState(const ClientInputs &cis, sf::Int32 delta_m
     incrementTick();
 }
 
-void GameController::updateGameObjects(const ClientInputs &cis) {
+void GameController::updateGameObjects(const ClientInputs& cis) {
     mPlayerController->update(cis);
     mGroupController->update();
     mMineController->update();

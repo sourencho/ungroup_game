@@ -4,4 +4,6 @@ ColumnLimit: 100
 ---
 Language: Cpp
 PointerAlignment: Left
+IndentCaseLabels: true
+NamespaceIndentation: All
 ---
