@@ -15,6 +15,10 @@ CircleRigidBody::CircleRigidBody(uint32_t id, float radius, sf::Vector2f positio
 
 void CircleRigidBody::applyInput(sf::Vector2f input) { mTargetVelocity = input * PLAYER_VELOCITY; }
 
+/**
+ * Apply impulse to change velocity based on mass.
+ * Formulas taken from http://www.chrishecker.com/Rigid_Body_Dynamics
+ */
 void CircleRigidBody::applyImpulse(const PhysicsDef::Impulse& impulse) {
     if (!isActive() || !isMovable()) {
         return;
@@ -47,6 +51,9 @@ void CircleRigidBody::step(sf::Int32 delta_ms) {
     }
 
     float delta = static_cast<float>(delta_ms) / 1000.f;
+
+    // Update velocity and position via Semi-implicit Euler
+    // Instead of acceleration lerp towards a target velocity.
     mVelocity = VectorUtil::lerp(mVelocity, mTargetVelocity, delta * TRANSITION_SPEED);
     mPosition += mVelocity * delta;
 }

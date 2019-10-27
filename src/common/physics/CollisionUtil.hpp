@@ -7,6 +7,13 @@
 #include <memory>
 #include <stdio.h>
 
+/**
+ * Details of collision between two rigid bodies.
+ * @ids: ids of the two rigid bodies.
+ * @position: point of contact between the rigid bodies after collision is resolved.
+ * @normal: normal of the collision from the latter body to the former.
+ * @resolution: the amount by which the bodies should be displaced to resolve the collision.
+ */
 struct Collision {
     std::pair<uint32_t, uint32_t> ids;
     sf::Vector2f position;

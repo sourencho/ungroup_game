@@ -37,12 +37,12 @@ class CircleRigidBody : public GameObject {
     const bool isMovable() const { return mMovable; };
 
   private:
-    bool mMovable;
-    float mRadius;
-    float mMass;
-    sf::Vector2f mPosition; // top left corner of box surrounding circle
-    sf::Vector2f mVelocity; // distance/second
-    sf::Vector2f mTargetVelocity;
+    bool mMovable;                // if false then position can't change
+    float mRadius;                // m
+    float mMass;                  // kg
+    sf::Vector2f mPosition;       // top left corner of box surrounding circle
+    sf::Vector2f mVelocity;       // distance/second
+    sf::Vector2f mTargetVelocity; // velocity will eventually converge to this value
 };
 
 #endif /* CircleRigidBody_hpp */
