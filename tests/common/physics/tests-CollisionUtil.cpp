@@ -97,7 +97,7 @@ TEST_CASE("Impulses", "[common][physics][VectorUtil][getImpulses]") {
     movable_circle_a.setActive(true);
     movable_circle_b.setActive(true);
 
-    SECTION("Circles collide when both are moving") {
+    SECTION("Horiontal collision between moving and static circles") {
         movable_circle_a.setVelocity({42.f, 0.f});
         movable_circle_b.setVelocity({0.f, 0.f});
         Collision collision = {
