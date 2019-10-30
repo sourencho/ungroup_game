@@ -17,6 +17,7 @@ add_library(common-lib
     systems/PlayerController.cpp
     systems/MineController.cpp
     factories/IdFactory.cpp
+    resources/ResourceStore.cpp
 )
 
 target_link_libraries(common-lib PUBLIC sfml-system sfml-graphics sfml-network)

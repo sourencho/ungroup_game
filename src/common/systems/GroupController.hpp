@@ -5,8 +5,9 @@
 #include <unordered_map>
 #include <vector>
 
-#include "../../common/objects/Group.hpp"
-#include "../../common/objects/Player.hpp"
+#include "../objects/Group.hpp"
+#include "../objects/Player.hpp"
+#include "../resources/ResourceStore.hpp"
 
 /* Network utilities */
 
@@ -32,11 +33,12 @@ sf::Packet& operator>>(sf::Packet& packet, GroupControllerUpdate& gcu);
 class GroupController {
   public:
     GroupController(std::vector<std::shared_ptr<Group>>& groups,
-                    std::vector<std::shared_ptr<Player>>& players);
-    ~GroupController();
+                    std::vector<std::shared_ptr<Player>>& players, ResourceStore& resource_store);
+    ~GroupController(){};
     GroupController(const GroupController& temp_obj) = delete;
     GroupController& operator=(const GroupController& temp_obj) = delete;
 
+    void draw(sf::RenderTarget& target);
     void update();
     uint32_t createGroup(uint32_t player_id);
     void updatePostPhysics();
@@ -52,6 +54,7 @@ class GroupController {
     std::vector<std::shared_ptr<Group>> mGroups;
     std::unordered_map<uint32_t, std::vector<uint32_t>> mGroupToPlayers;
     std::unordered_map<uint32_t, uint32_t> mPlayerToGroup;
+    ResourceStore& mResourceStore;
 
     size_t nextGroupIndex = 0;
 };

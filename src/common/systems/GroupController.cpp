@@ -5,10 +5,13 @@
 #include <numeric>
 
 GroupController::GroupController(std::vector<std::shared_ptr<Group>>& groups,
-                                 std::vector<std::shared_ptr<Player>>& players)
-    : mPlayers(players), mGroups(groups) {}
-
-GroupController::~GroupController() {}
+                                 std::vector<std::shared_ptr<Player>>& players,
+                                 ResourceStore& resource_store)
+    : mPlayers(players), mGroups(groups), mResourceStore(resource_store) {
+    for (auto& group : mGroups) {
+        group->setShader(mResourceStore.getShader("voronoi"));
+    }
+}
 
 uint32_t GroupController::createGroup(uint32_t player_id) {
     size_t next_group_index = nextGroupIndex++;
@@ -16,10 +19,24 @@ uint32_t GroupController::createGroup(uint32_t player_id) {
         throw std::out_of_range("Exceeded max number of groups.");
     }
 
-    uint32_t new_group_id = mGroups[next_group_index]->getId();
+    Group& new_group = *mGroups[next_group_index];
+    uint32_t new_group_id = new_group.getId();
     mGroupToPlayers[new_group_id].push_back(player_id);
     mPlayerToGroup[player_id] = new_group_id;
     return new_group_id;
+}
+
+void GroupController::draw(sf::RenderTarget& target) {
+    for (auto& group : mGroups) {
+        bool groupable = group->getGroupable();
+        Circle& circle = group->getCircle();
+        if (groupable) {
+            circle.changeColor(sf::Color(255, 0, 0));
+        } else {
+            circle.setColor();
+        }
+        group->draw(target);
+    }
 }
 
 void GroupController::update() {

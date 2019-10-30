@@ -18,8 +18,12 @@ void Group::setGroupable(bool groupable) { mGroupable = groupable; }
 
 GroupUpdate Group::getUpdate() {
     sf::Vector2f position = getCircle().getPosition();
-    GroupUpdate gu = {(sf::Uint32)getId(),     isActive(),    position.x, position.y,
-                      getCircle().getRadius(), getGroupable()};
+    GroupUpdate gu = {.group_id = (sf::Uint32)getId(),
+                      .is_active = isActive(),
+                      .x_pos = position.x,
+                      .y_pos = position.y,
+                      .radius = getCircle().getRadius(),
+                      .groupable = getGroupable()};
 
     return gu;
 }

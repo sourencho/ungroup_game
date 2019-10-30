@@ -4,7 +4,13 @@
 
 #include "../factories/IdFactory.hpp"
 
-MineController::MineController(std::vector<std::shared_ptr<Mine>>& mines) : mMines(mines) {}
+MineController::MineController(std::vector<std::shared_ptr<Mine>>& mines,
+                               ResourceStore& resource_store)
+    : mMines(mines), mResourceStore(resource_store) {
+    for (auto& mine : mMines) {
+        mine->setShader(mResourceStore.getShader("default"));
+    }
+}
 
 MineController::~MineController() {}
 
@@ -14,9 +20,16 @@ uint32_t MineController::createMine() {
         throw std::out_of_range("Exceeded max number of mines.");
     }
 
-    uint32_t new_mine_id = mMines[next_mine_index]->getId();
-    getMine(new_mine_id)->setActive(true);
+    Mine& new_mine = *mMines[next_mine_index];
+    uint32_t new_mine_id = new_mine.getId();
+    new_mine.setActive(true);
     return new_mine_id;
+}
+
+void MineController::draw(sf::RenderTarget& target) {
+    for (auto& mine : mMines) {
+        mine->draw(target);
+    }
 }
 
 void MineController::update() {

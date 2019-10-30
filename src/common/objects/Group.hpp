@@ -34,6 +34,7 @@ class Group : public CircleGameObject {
 
     bool getGroupable();
     void setGroupable(bool groupable);
+
     GroupUpdate getUpdate();
     void applyUpdate(GroupUpdate gu);
 

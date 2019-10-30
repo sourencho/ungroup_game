@@ -29,3 +29,15 @@ void CircleGameObject::setPosition(sf::Vector2f position) {
 }
 
 void CircleGameObject::matchRigid() { mCircle->setPosition(mCircleRigidBody.getPosition()); }
+
+void CircleGameObject::draw(sf::RenderTarget& render_target) {
+    if (mIsActive) {
+        if (mShader != nullptr) {
+            mCircle->draw(render_target, *mShader);
+        } else {
+            mCircle->draw(render_target);
+        }
+    };
+}
+
+void CircleGameObject::setShader(std::shared_ptr<sf::Shader> shader) { mShader = shader; };

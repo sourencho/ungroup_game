@@ -10,10 +10,7 @@
 ClientGameController::ClientGameController(size_t max_player_count, size_t max_mine_count,
                                            Keys keys)
     : GameController(max_player_count, max_mine_count), mNetworkingClient(new NetworkingClient()),
-      mResourceStore(new ResourceStore()), mAnimationController(new AnimationController()),
-      mKeys(keys) {
-    mResourceStore->load();
-
+      mAnimationController(new AnimationController()), mKeys(keys) {
     EventController::getInstance().addEventListener(
         EventType::EVENT_TYPE_COLLISION,
         std::bind(&ClientGameController::clientCollisionEvent, this, std::placeholders::_1));
@@ -45,26 +42,9 @@ void ClientGameController::updateView(sf::RenderWindow& window,
     window.setView(view);
 }
 
-void ClientGameController::draw(sf::RenderTarget& target, sf::Shader* shader, bool use_shader) {
-    for (auto& group : mGameObjectStore->getGroups()) {
-        if (group->isActive()) {
-            bool groupable = group->getGroupable();
-            Circle& circle = group->getCircle();
-            if (groupable) {
-                circle.changeColor(sf::Color(255, 0, 0));
-            } else {
-                circle.setColor();
-            }
-            circle.draw(target, shader, use_shader);
-        }
-    }
-
-    for (auto& mine : mGameObjectStore->getMines()) {
-        if (mine->isActive()) {
-            mine->getCircle().draw(target, shader, use_shader);
-        }
-    }
-
+void ClientGameController::draw(sf::RenderTarget& target) {
+    mGroupController->draw(target);
+    mMineController->draw(target);
     mAnimationController->draw(target);
 }
 

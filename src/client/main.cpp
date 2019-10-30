@@ -28,31 +28,6 @@ int main(int, char const**) {
                                           GAME_SCALE * GAME_SIZE.y / WINDOW_RESOLUTION.y};
     buffer_sprite.setScale(buffer_scaling_factor);
 
-    // Setup shaders
-    sf::Shader shader;
-    if (!sf::Shader::isAvailable()) {
-        std::cerr << "Shaders are not available." << std::endl;
-    }
-
-    // load deafult vertex shader
-    const std::string DEFAULT_VERTEX_SHADER_PATH = "resources/shaders/default.vert";
-    if (!shader.loadFromFile(DEFAULT_VERTEX_SHADER_PATH, sf::Shader::Vertex)) {
-        std::cerr << "Error: Could not load vertex shader" << std::endl;
-    }
-
-    // load default fragment shader
-    const std::string DEFAULT_FRAGMENT_SHADER_PATH = "resources/shaders/voronoi.frag";
-    if (!shader.loadFromFile(DEFAULT_FRAGMENT_SHADER_PATH, sf::Shader::Fragment)) {
-        std::cerr << "Error: Could not load fragment shader" << std::endl;
-    }
-
-    // Pass resolution to shader
-    if (USE_SHADER) {
-        shader.setUniform("u_resolution", sf::Vector2f(WINDOW_RESOLUTION));
-        shader.setUniform("u_position", sf::Vector2f(0.f, 50.f));
-        shader.setUniform("u_radius", 300.f);
-    }
-
     // Create client game controller
     Keys keys = {sf::Keyboard::Up, sf::Keyboard::Down, sf::Keyboard::Right, sf::Keyboard::Left,
                  sf::Keyboard::G};
@@ -86,7 +61,7 @@ int main(int, char const**) {
 
         client_game_controller.updateView(window, buffer_scaling_factor);
 
-        client_game_controller.draw(buffer, &shader, USE_SHADER);
+        client_game_controller.draw(buffer);
         buffer.display();
         window.draw(buffer_sprite);
         window.display();

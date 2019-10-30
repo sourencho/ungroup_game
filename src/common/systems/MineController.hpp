@@ -4,21 +4,24 @@
 #include <vector>
 
 #include "../objects/Mine.hpp"
+#include "../resources/ResourceStore.hpp"
 
 class MineController {
   public:
-    MineController(std::vector<std::shared_ptr<Mine>> &mines);
+    MineController(std::vector<std::shared_ptr<Mine>>& mines, ResourceStore& resource_store);
     ~MineController();
-    MineController(const MineController &temp_obj) = delete;
-    MineController &operator=(const MineController &temp_obj) = delete;
+    MineController(const MineController& temp_obj) = delete;
+    MineController& operator=(const MineController& temp_obj) = delete;
 
     uint32_t createMine();
+    void draw(sf::RenderTarget& target);
     void update();
     void updatePostPhysics();
-    std::shared_ptr<Mine> &getMine(uint32_t mine_id);
+    std::shared_ptr<Mine>& getMine(uint32_t mine_id);
 
   private:
     std::vector<std::shared_ptr<Mine>> mMines;
+    ResourceStore& mResourceStore;
     size_t nextMineIndex = 0;
 };
 

@@ -5,6 +5,9 @@
 #include <stdio.h>
 #include <utility>
 
+#include "../rendering/RenderingDef.hpp"
+#include "../util/game_settings.hpp"
+
 sf::Clock shader_clock;
 
 Circle::Circle(float size, sf::Vector2f position, sf::Color color) : mCircleShape(size) {
@@ -17,14 +20,17 @@ Circle::Circle(float size, sf::Vector2f position, sf::Color color) : mCircleShap
 
 Circle::~Circle() {}
 
-void Circle::draw(sf::RenderTarget& target, sf::Shader* shader, bool use_shader) {
-    if (use_shader) {
-        shader->setUniform("u_position", getPosition());
-        shader->setUniform("u_radius", getRadius());
-        shader->setUniform("u_time", shader_clock.getElapsedTime().asSeconds());
-        target.draw(mCircleShape, shader);
+void Circle::draw(sf::RenderTarget& target) { target.draw(mCircleShape); }
+
+void Circle::draw(sf::RenderTarget& target, sf::Shader& shader) {
+    if (RenderingDef::USE_SHADERS) {
+        shader.setUniform("u_resolution", sf::Vector2f(WINDOW_RESOLUTION));
+        shader.setUniform("u_position", getPosition());
+        shader.setUniform("u_radius", getRadius());
+        shader.setUniform("u_time", shader_clock.getElapsedTime().asSeconds());
+        target.draw(mCircleShape, &shader);
     } else {
-        target.draw(mCircleShape);
+        draw(target);
     }
 }
 
