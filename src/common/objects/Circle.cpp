@@ -1,9 +1,9 @@
+#include "Circle.hpp"
+
 #include <iostream>
 #include <random>
 #include <stdio.h>
 #include <utility>
-
-#include "Circle.hpp"
 
 sf::Clock shader_clock;
 
@@ -44,3 +44,9 @@ void Circle::changeColor(sf::Color color) { mCircleShape.setFillColor(color); }
 void Circle::setPosition(sf::Vector2f position) { mCircleShape.setPosition(position); }
 
 void Circle::setRadius(int size) { mCircleShape.setRadius(size); }
+
+sf::Vector2f Circle::getCenter() const {
+    sf::Vector2f position = mCircleShape.getPosition();
+    float radius = mCircleShape.getRadius();
+    return sf::Vector2f(position.x + radius, position.y + radius);
+}

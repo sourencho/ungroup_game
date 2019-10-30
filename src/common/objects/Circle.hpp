@@ -12,6 +12,7 @@ class Circle {
 
     void draw(sf::RenderTarget& target, sf::Shader* shader, bool use_shader);
 
+    sf::Vector2f getCenter() const;
     sf::Vector2f getPosition() const;
     void setPosition(sf::Vector2f position);
 

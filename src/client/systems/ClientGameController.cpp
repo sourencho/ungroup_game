@@ -31,6 +31,20 @@ void ClientGameController::setNetworkState() {
 
 void ClientGameController::incrementTick() { mNetworkingClient->incrementTick(); }
 
+void ClientGameController::updateView(sf::RenderWindow& window,
+                                      sf::Vector2f buffer_scaling_factor) {
+    // Update view to match player's group's position
+    sf::Vector2f group_position =
+        mGameObjectStore->getGroup(mGroupController->getGroupId(mPlayerId))
+            ->getCircle()
+            .getCenter();
+    sf::View view = window.getView();
+    sf::Vector2f group_view_coordinates = {group_position.x * buffer_scaling_factor.x,
+                                           group_position.y * buffer_scaling_factor.y};
+    view.setCenter(group_view_coordinates);
+    window.setView(view);
+}
+
 void ClientGameController::draw(sf::RenderTarget& target, sf::Shader* shader, bool use_shader) {
     for (auto& group : mGameObjectStore->getGroups()) {
         if (group->isActive()) {

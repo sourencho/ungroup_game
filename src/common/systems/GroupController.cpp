@@ -18,6 +18,7 @@ uint32_t GroupController::createGroup(uint32_t player_id) {
 
     uint32_t new_group_id = mGroups[next_group_index]->getId();
     mGroupToPlayers[new_group_id].push_back(player_id);
+    mPlayerToGroup[player_id] = new_group_id;
     return new_group_id;
 }
 
@@ -102,10 +103,18 @@ GroupControllerUpdate GroupController::getUpdate() {
 
 void GroupController::applyUpdate(GroupControllerUpdate gcu) {
     mGroupToPlayers.clear();
+    mPlayerToGroup.clear();
     for (auto& gipi : gcu.group_id_and_player_idss) {
         mGroupToPlayers[gipi.group_id] = gipi.player_ids;
     }
+    for (auto& gipi : gcu.group_id_and_player_idss) {
+        for (auto& player_id : gipi.player_ids) {
+            mPlayerToGroup[player_id] = gipi.group_id;
+        }
+    }
 }
+
+uint32_t GroupController::getGroupId(uint32_t player_id) { return mPlayerToGroup[player_id]; }
 
 /* Network utilities */
 

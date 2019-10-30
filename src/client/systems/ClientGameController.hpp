@@ -21,6 +21,7 @@ class ClientGameController : public GameController {
     ~ClientGameController();
 
     void update() override;
+    void updateView(sf::RenderWindow& window, sf::Vector2f buffer_scaling_factor);
     void draw(sf::RenderTarget& target, sf::Shader* shader, bool use_shader);
     void handleEvents(sf::Event& event);
 
@@ -45,8 +46,8 @@ class ClientGameController : public GameController {
     ClientReliableUpdate mClientReliableUpdate;
     ClientUnreliableUpdate mClientUnreliableUpdate;
 
-    ClientInputs mClientInputs; // Cache of current client input
-    std::unordered_map<unsigned int, ClientInputAndTick> mTickToInput; // Cache of player inputs
+    ClientInputs mClientInputs;                                        // Cache of current input
+    std::unordered_map<unsigned int, ClientInputAndTick> mTickToInput; // Cache of past inputs
 
     std::unique_ptr<NetworkingClient> mNetworkingClient;
     std::unique_ptr<ResourceStore> mResourceStore;
