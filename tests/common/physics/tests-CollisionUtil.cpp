@@ -16,7 +16,7 @@ TEST_CASE("Collision", "[common][physics][VectorUtil][getCollision]") {
     SECTION("Two movable circles") {
         SECTION("Horizontal collision") {
             CircleRigidBody movable_circle_a = CircleRigidBody(0, 10.f, {0.f, 0.f}, 1.f, true);
-            CircleRigidBody movable_circle_b = CircleRigidBody(1, 10.f, {16.f, 0.f}, 1.f, true);
+            CircleRigidBody movable_circle_b = CircleRigidBody(1, 12.f, {16.f, -2.f}, 1.f, true);
 
             Collision collision = CollisionUtil::getCollision(movable_circle_a, movable_circle_b);
             REQUIRE(CollisionUtil::areIntersecting(movable_circle_a, movable_circle_b) == true);

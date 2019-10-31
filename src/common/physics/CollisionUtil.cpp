@@ -21,10 +21,9 @@ bool CollisionUtil::areIntersecting(const CircleRigidBody& circle_a,
  */
 Collision CollisionUtil::getCollision(const CircleRigidBody& circle_a,
                                       const CircleRigidBody& circle_b) {
-    float distance = VectorUtil::distance(circle_a.getCenter(), circle_b.getCenter());
-    float overlap = circle_a.getRadius() + circle_b.getRadius() - distance;
-    sf::Vector2f normal =
-        VectorUtil::normalize(VectorUtil::getVector(circle_b.getCenter(), circle_a.getCenter()));
+    sf::Vector2f between = VectorUtil::getVector(circle_b.getCenter(), circle_a.getCenter());
+    float overlap = circle_a.getRadius() + circle_b.getRadius() - VectorUtil::length(between);
+    sf::Vector2f normal = VectorUtil::normalize(between);
 
     std::pair<sf::Vector2f, sf::Vector2f> resolution;
     if (circle_a.isMovable() && circle_b.isMovable()) {
@@ -37,8 +36,8 @@ Collision CollisionUtil::getCollision(const CircleRigidBody& circle_a,
         resolution = std::make_pair(sf::Vector2f(0.f, 0.f), sf::Vector2f(0.f, 0.f));
     }
 
-    sf::Vector2f collision_point = VectorUtil::getMidpoint(
-        circle_a.getCenter() + resolution.first, circle_b.getCenter() + resolution.second);
+    sf::Vector2f collision_point =
+        circle_b.getCenter() + resolution.second + (normal * circle_b.getRadius());
 
     Collision collision = {
         .ids = std::pair<uint32_t, uint32_t>(circle_a.getId(), circle_b.getId()),
