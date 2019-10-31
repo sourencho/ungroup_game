@@ -5,8 +5,10 @@
 
 ResourceStore::ResourceStore() {
     addTexture("collision", "resources/images/collision_expanding_circle.png");
-    addShader("default", "resources/shaders/default.vert", "resources/shaders/default.frag");
-    addShader("voronoi", "resources/shaders/default.vert", "resources/shaders/voronoi.frag");
+    addShader(RenderingDef::ShaderKey::noop, "resources/shaders/noop.vert",
+              "resources/shaders/noop.frag");
+    addShader(RenderingDef::ShaderKey::voronoi, "resources/shaders/noop.vert",
+              "resources/shaders/voronoi.frag");
 };
 
 void ResourceStore::addTexture(std::string key, std::string texture_path) {
@@ -19,7 +21,7 @@ void ResourceStore::addTexture(std::string key, std::string texture_path) {
 
 sf::Texture& ResourceStore::getTexture(std::string key) { return *mTextures[key]; }
 
-void ResourceStore::addShader(std::string key, std::string vertex_shader_path,
+void ResourceStore::addShader(RenderingDef::ShaderKey key, std::string vertex_shader_path,
                               std::string fragment_shader_path) {
     if (!sf::Shader::isAvailable()) {
         throw std::runtime_error("Shaders are not available");
@@ -35,4 +37,6 @@ void ResourceStore::addShader(std::string key, std::string vertex_shader_path,
     mShaders[key] = shader;
 }
 
-std::shared_ptr<sf::Shader> ResourceStore::getShader(std::string key) { return mShaders[key]; }
+std::shared_ptr<sf::Shader> ResourceStore::getShader(RenderingDef::ShaderKey key) {
+    return mShaders[key];
+}

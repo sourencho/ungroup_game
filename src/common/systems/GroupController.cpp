@@ -1,17 +1,13 @@
 #include "GroupController.hpp"
 
+#include "../rendering/RenderingDef.hpp"
 #include "../util/game_settings.hpp"
 #include <exception>
 #include <numeric>
 
 GroupController::GroupController(std::vector<std::shared_ptr<Group>>& groups,
-                                 std::vector<std::shared_ptr<Player>>& players,
-                                 ResourceStore& resource_store)
-    : mPlayers(players), mGroups(groups), mResourceStore(resource_store) {
-    for (auto& group : mGroups) {
-        group->setShader(mResourceStore.getShader("voronoi"));
-    }
-}
+                                 std::vector<std::shared_ptr<Player>>& players)
+    : mPlayers(players), mGroups(groups) {}
 
 uint32_t GroupController::createGroup(uint32_t player_id) {
     size_t next_group_index = nextGroupIndex++;

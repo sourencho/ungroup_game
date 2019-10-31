@@ -14,16 +14,17 @@
 #include "../util/game_settings.hpp"
 
 GameController::GameController(size_t max_player_count, size_t max_mine_count)
-    : mPhysicsController(new PhysicsController()), mResourceStore(new ResourceStore()),
-      mGameObjectStore(new GameObjectStore(mPhysicsController)) {
+    : mPhysicsController(new PhysicsController()), mResourceStore(new ResourceStore()) {
+    mGameObjectStore =
+        std::unique_ptr<GameObjectStore>(new GameObjectStore(mPhysicsController, *mResourceStore));
     mGameObjectStore->loadLevel(max_player_count, max_mine_count);
 
     mPlayerController =
         std::unique_ptr<PlayerController>(new PlayerController(mGameObjectStore->getPlayers()));
-    mGroupController = std::unique_ptr<GroupController>(new GroupController(
-        mGameObjectStore->getGroups(), mGameObjectStore->getPlayers(), *mResourceStore));
-    mMineController = std::unique_ptr<MineController>(
-        new MineController(mGameObjectStore->getMines(), *mResourceStore));
+    mGroupController = std::unique_ptr<GroupController>(
+        new GroupController(mGameObjectStore->getGroups(), mGameObjectStore->getPlayers()));
+    mMineController =
+        std::unique_ptr<MineController>(new MineController(mGameObjectStore->getMines()));
 
     mClock.restart();
 

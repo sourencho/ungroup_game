@@ -3,14 +3,9 @@
 #include <exception>
 
 #include "../factories/IdFactory.hpp"
+#include "../rendering/RenderingDef.hpp"
 
-MineController::MineController(std::vector<std::shared_ptr<Mine>>& mines,
-                               ResourceStore& resource_store)
-    : mMines(mines), mResourceStore(resource_store) {
-    for (auto& mine : mMines) {
-        mine->setShader(mResourceStore.getShader("default"));
-    }
-}
+MineController::MineController(std::vector<std::shared_ptr<Mine>>& mines) : mMines(mines) {}
 
 MineController::~MineController() {}
 

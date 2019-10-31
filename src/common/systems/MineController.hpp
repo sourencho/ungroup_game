@@ -8,7 +8,7 @@
 
 class MineController {
   public:
-    MineController(std::vector<std::shared_ptr<Mine>>& mines, ResourceStore& resource_store);
+    MineController(std::vector<std::shared_ptr<Mine>>& mines);
     ~MineController();
     MineController(const MineController& temp_obj) = delete;
     MineController& operator=(const MineController& temp_obj) = delete;
@@ -21,7 +21,6 @@ class MineController {
 
   private:
     std::vector<std::shared_ptr<Mine>> mMines;
-    ResourceStore& mResourceStore;
     size_t nextMineIndex = 0;
 };
 

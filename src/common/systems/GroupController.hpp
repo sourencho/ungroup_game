@@ -33,7 +33,7 @@ sf::Packet& operator>>(sf::Packet& packet, GroupControllerUpdate& gcu);
 class GroupController {
   public:
     GroupController(std::vector<std::shared_ptr<Group>>& groups,
-                    std::vector<std::shared_ptr<Player>>& players, ResourceStore& resource_store);
+                    std::vector<std::shared_ptr<Player>>& players);
     ~GroupController(){};
     GroupController(const GroupController& temp_obj) = delete;
     GroupController& operator=(const GroupController& temp_obj) = delete;
@@ -54,7 +54,6 @@ class GroupController {
     std::vector<std::shared_ptr<Group>> mGroups;
     std::unordered_map<uint32_t, std::vector<uint32_t>> mGroupToPlayers;
     std::unordered_map<uint32_t, uint32_t> mPlayerToGroup;
-    ResourceStore& mResourceStore;
 
     size_t nextGroupIndex = 0;
 };

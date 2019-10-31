@@ -2,10 +2,11 @@
 
 CircleGameObject::CircleGameObject(uint32_t id, sf::Vector2f position, float radius,
                                    sf::Color color, std::shared_ptr<PhysicsController> pc,
-                                   float mass, bool movable)
+                                   ResourceStore& rs, float mass, bool movable)
     : GameObject(id), mCircle(std::unique_ptr<Circle>(new Circle(radius, position, color))),
       mCircleRigidBody(pc->add(std::move(std::unique_ptr<CircleRigidBody>(
-          new CircleRigidBody(id, radius, position, mass, movable))))){};
+          new CircleRigidBody(id, radius, position, mass, movable))))),
+      mResourceStore(rs){};
 
 Circle& CircleGameObject::getCircle() { return *mCircle; }
 
@@ -32,12 +33,15 @@ void CircleGameObject::matchRigid() { mCircle->setPosition(mCircleRigidBody.getP
 
 void CircleGameObject::draw(sf::RenderTarget& render_target) {
     if (mIsActive) {
-        if (mShader != nullptr) {
-            mCircle->draw(render_target, *mShader);
+        if (mShader.shader != nullptr) {
+            mCircle->draw(render_target, *mShader.shader);
         } else {
             mCircle->draw(render_target);
         }
     };
 }
 
-void CircleGameObject::setShader(std::shared_ptr<sf::Shader> shader) { mShader = shader; };
+void CircleGameObject::setShader(RenderingDef::ShaderKey shader_key) {
+    mShader.key = shader_key;
+    mShader.shader = mResourceStore.getShader(shader_key);
+};
