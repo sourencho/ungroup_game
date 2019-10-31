@@ -6,9 +6,9 @@
 
 namespace RenderingDef {
     const bool USE_SHADERS = true;
-    enum ShaderKey { noop, voronoi };
+    enum ShaderKey { none, noop, voronoi };
     struct Shader {
-        ShaderKey key;
+        ShaderKey key = ShaderKey::none;
         std::shared_ptr<sf::Shader> shader = nullptr;
     };
 }; // namespace RenderingDef

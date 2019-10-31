@@ -38,5 +38,9 @@ void ResourceStore::addShader(RenderingDef::ShaderKey key, std::string vertex_sh
 }
 
 std::shared_ptr<sf::Shader> ResourceStore::getShader(RenderingDef::ShaderKey key) {
-    return mShaders[key];
+    if (key == RenderingDef::ShaderKey::none) {
+        return nullptr;
+    } else {
+        return mShaders[key];
+    }
 }
