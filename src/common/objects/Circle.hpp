@@ -10,8 +10,10 @@ class Circle {
     Circle(float size, sf::Vector2f position, sf::Color color);
     ~Circle();
 
-    void draw(sf::RenderTarget& target, sf::Shader* shader, bool use_shader);
+    void draw(sf::RenderTarget& target);
+    void draw(sf::RenderTarget& target, sf::Shader& shader);
 
+    sf::Vector2f getCenter() const;
     sf::Vector2f getPosition() const;
     void setPosition(sf::Vector2f position);
 

@@ -6,7 +6,8 @@
 #include "../../common/util/game_settings.hpp"
 #include "GameObjectStore.hpp"
 
-GameObjectStore::GameObjectStore(std::shared_ptr<PhysicsController> pc) : mPhysicsController(pc) {}
+GameObjectStore::GameObjectStore(std::shared_ptr<PhysicsController> pc, ResourceStore& rs)
+    : mPhysicsController(pc), mResourceStore(rs) {}
 
 GameObjectStore::~GameObjectStore() {}
 
@@ -26,7 +27,7 @@ void GameObjectStore::loadLevel(size_t max_player_count, size_t max_mine_count) 
         uint32_t new_group_id = IdFactory::getInstance().getNextId(GameObjectType::group);
         mGroups.push_back(std::shared_ptr<Group>(new Group(
             new_group_id, sf::Vector2f(GROUP_START_OFFSET_X * (i + 1), GROUP_START_OFFSET_Y),
-            sf::Color(0, 255, 0), mPhysicsController)));
+            sf::Color(0, 255, 0), mPhysicsController, mResourceStore)));
     }
 
     // Initialize Mines
@@ -34,7 +35,7 @@ void GameObjectStore::loadLevel(size_t max_player_count, size_t max_mine_count) 
         uint32_t new_mine_id = IdFactory::getInstance().getNextId(GameObjectType::mine);
         mMines.push_back(std::shared_ptr<Mine>(
             new Mine(new_mine_id, sf::Vector2f(MINE_START_OFFSET_X, MINE_START_OFFSET_Y * (i + 1)),
-                     MINE_SIZE, sf::Color(0, 0, 255), mPhysicsController)));
+                     MINE_SIZE, sf::Color(0, 0, 255), mPhysicsController, mResourceStore)));
     }
 }
 

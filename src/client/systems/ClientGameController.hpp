@@ -8,10 +8,10 @@
 #include <vector>
 
 #include "../../common/events/Event.hpp"
+#include "../../common/resources/ResourceStore.hpp"
 #include "../../common/systems/GameController.hpp"
 #include "../rendering/Animation.hpp"
 #include "../rendering/AnimationController.hpp"
-#include "../resources/ResourceStore.hpp"
 #include "NetworkingClient.hpp"
 
 class ClientGameController : public GameController {
@@ -21,7 +21,8 @@ class ClientGameController : public GameController {
     ~ClientGameController();
 
     void update() override;
-    void draw(sf::RenderTarget& target, sf::Shader* shader, bool use_shader);
+    void updateView(sf::RenderWindow& window, sf::Vector2f buffer_scaling_factor);
+    void draw(sf::RenderTarget& target);
     void handleEvents(sf::Event& event);
 
   private:
@@ -45,11 +46,10 @@ class ClientGameController : public GameController {
     ClientReliableUpdate mClientReliableUpdate;
     ClientUnreliableUpdate mClientUnreliableUpdate;
 
-    ClientInputs mClientInputs; // Cache of current client input
-    std::unordered_map<unsigned int, ClientInputAndTick> mTickToInput; // Cache of player inputs
+    ClientInputs mClientInputs;                                        // Cache of current input
+    std::unordered_map<unsigned int, ClientInputAndTick> mTickToInput; // Cache of past inputs
 
     std::unique_ptr<NetworkingClient> mNetworkingClient;
-    std::unique_ptr<ResourceStore> mResourceStore;
     std::unique_ptr<AnimationController> mAnimationController;
 };
 

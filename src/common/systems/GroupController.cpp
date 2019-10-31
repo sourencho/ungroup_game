@@ -1,5 +1,6 @@
 #include "GroupController.hpp"
 
+#include "../rendering/RenderingDef.hpp"
 #include "../util/game_settings.hpp"
 #include <exception>
 #include <numeric>
@@ -8,17 +9,30 @@ GroupController::GroupController(std::vector<std::shared_ptr<Group>>& groups,
                                  std::vector<std::shared_ptr<Player>>& players)
     : mPlayers(players), mGroups(groups) {}
 
-GroupController::~GroupController() {}
-
 uint32_t GroupController::createGroup(uint32_t player_id) {
     size_t next_group_index = nextGroupIndex++;
     if (next_group_index >= mGroups.size()) {
         throw std::out_of_range("Exceeded max number of groups.");
     }
 
-    uint32_t new_group_id = mGroups[next_group_index]->getId();
+    Group& new_group = *mGroups[next_group_index];
+    uint32_t new_group_id = new_group.getId();
     mGroupToPlayers[new_group_id].push_back(player_id);
+    mPlayerToGroup[player_id] = new_group_id;
     return new_group_id;
+}
+
+void GroupController::draw(sf::RenderTarget& target) {
+    for (auto& group : mGroups) {
+        bool groupable = group->getGroupable();
+        Circle& circle = group->getCircle();
+        if (groupable) {
+            circle.changeColor(sf::Color(255, 0, 0));
+        } else {
+            circle.setColor();
+        }
+        group->draw(target);
+    }
 }
 
 void GroupController::update() {
@@ -102,10 +116,18 @@ GroupControllerUpdate GroupController::getUpdate() {
 
 void GroupController::applyUpdate(GroupControllerUpdate gcu) {
     mGroupToPlayers.clear();
+    mPlayerToGroup.clear();
     for (auto& gipi : gcu.group_id_and_player_idss) {
         mGroupToPlayers[gipi.group_id] = gipi.player_ids;
     }
+    for (auto& gipi : gcu.group_id_and_player_idss) {
+        for (auto& player_id : gipi.player_ids) {
+            mPlayerToGroup[player_id] = gipi.group_id;
+        }
+    }
 }
+
+uint32_t GroupController::getGroupId(uint32_t player_id) { return mPlayerToGroup[player_id]; }
 
 /* Network utilities */
 

@@ -4,13 +4,14 @@
 #include <memory>
 #include <vector>
 
-#include "../../common/objects/Group.hpp"
-#include "../../common/objects/Mine.hpp"
-#include "../../common/objects/Player.hpp"
+#include "../objects/Group.hpp"
+#include "../objects/Mine.hpp"
+#include "../objects/Player.hpp"
+#include "../resources/ResourceStore.hpp"
 
 class GameObjectStore {
   public:
-    explicit GameObjectStore(std::shared_ptr<PhysicsController> pc);
+    explicit GameObjectStore(std::shared_ptr<PhysicsController> pc, ResourceStore& rs);
     ~GameObjectStore();
     GameObjectStore(const GameObjectStore& temp_obj) = delete;
     GameObjectStore& operator=(const GameObjectStore& temp_obj) = delete;
@@ -31,6 +32,7 @@ class GameObjectStore {
     std::vector<std::shared_ptr<Mine>> mMines;
 
     std::shared_ptr<PhysicsController> mPhysicsController;
+    ResourceStore& mResourceStore;
 
     unsigned int mNextPlayerId = 0;
 };

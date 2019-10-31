@@ -55,6 +55,7 @@ class GameController {
     std::unique_ptr<GroupController> mGroupController;
     std::unique_ptr<PlayerController> mPlayerController;
     std::unique_ptr<MineController> mMineController;
+    std::unique_ptr<ResourceStore> mResourceStore;
 
     sf::Clock mClock;
     sf::Int32 mElapsedTime = 0;

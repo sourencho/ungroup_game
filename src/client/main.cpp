@@ -7,39 +7,28 @@
 
 int main(int, char const**) {
     // Create the main window
-    sf::RenderWindow window(sf::VideoMode(WINDOW_RESOLUTION.x, WINDOW_RESOLUTION.y), "SFML window");
+    sf::ContextSettings contSettings{};
+    contSettings.antialiasingLevel = 0;
+    sf::RenderWindow window(sf::VideoMode(WINDOW_RESOLUTION.x, WINDOW_RESOLUTION.y), "Ungroup",
+                            sf::Style::Close, contSettings);
+    // window.setVerticalSyncEnabled(true);
+    // window.setFramerateLimit(60);
 
-    // Window
-    window.setVerticalSyncEnabled(true);
-    window.setFramerateLimit(60);
-    window.setTitle("Ungroup");
+    // Create view to set the perspective of the player
+    sf::View view({0.f, 0.f}, WINDOW_RESOLUTION);
+    window.setView(view);
 
-    // Setup shaders
-    sf::Shader shader;
-    if (!sf::Shader::isAvailable()) {
-        std::cerr << "Shaders are not available." << std::endl;
-    }
+    // Create buffer to draw game onto. Buffer can be scaled to give pixelated effect
+    sf::RenderTexture buffer;
+    if (!buffer.create(WINDOW_RESOLUTION.x, WINDOW_RESOLUTION.y))
+        return -1;
+    buffer.setSmooth(false);
+    sf::Sprite buffer_sprite(buffer.getTexture());
+    sf::Vector2f buffer_scaling_factor = {GAME_SCALE * GAME_SIZE.x / WINDOW_RESOLUTION.x,
+                                          GAME_SCALE * GAME_SIZE.y / WINDOW_RESOLUTION.y};
+    buffer_sprite.setScale(buffer_scaling_factor);
 
-    // load deafult vertex shader
-    const std::string DEFAULT_VERTEX_SHADER_PATH = "src/shaders/vertex_shader.vert";
-    if (!shader.loadFromFile(DEFAULT_VERTEX_SHADER_PATH, sf::Shader::Vertex)) {
-        std::cerr << "Error: Could not load vertex shader" << std::endl;
-    }
-
-    // load default fragment shader
-    const std::string DEFAULT_FRAGMENT_SHADER_PATH = "src/shaders/fragment_shader.frag";
-    // const std::string CIRCLE_GRADIENT_FRAGMENT_SHADER_PATH = "src/shaders/circle_gradient.frag";
-    // const std::string RAND_FRAGMENT_SHADER_PATH = "src/shaders/random.frag";
-    if (!shader.loadFromFile(DEFAULT_FRAGMENT_SHADER_PATH, sf::Shader::Fragment)) {
-        std::cerr << "Error: Could not load fragment shader" << std::endl;
-    }
-
-    // Pass resolution to shader
-    if (USE_SHADER) {
-        shader.setUniform("u_resolution", WINDOW_RESOLUTION);
-    }
-
-    // Create client
+    // Create client game controller
     Keys keys = {sf::Keyboard::Up, sf::Keyboard::Down, sf::Keyboard::Right, sf::Keyboard::Left,
                  sf::Keyboard::G};
     ClientGameController client_game_controller(MAX_PLAYER_COUNT, MAX_MINE_COUNT, keys);
@@ -59,7 +48,7 @@ int main(int, char const**) {
                 window.close();
             }
 
-            // Handle game controller events
+            // Handle game controller events (e.g. player input)
             client_game_controller.handleEvents(event);
         }
 
@@ -67,8 +56,14 @@ int main(int, char const**) {
         client_game_controller.update();
 
         // Display
-        window.clear(sf::Color::Black);
-        client_game_controller.draw(window, &shader, USE_SHADER);
+        window.clear(sf::Color::Magenta);
+        buffer.clear(sf::Color::White);
+
+        client_game_controller.updateView(window, buffer_scaling_factor);
+
+        client_game_controller.draw(buffer);
+        buffer.display();
+        window.draw(buffer_sprite);
         window.display();
     }
 

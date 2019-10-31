@@ -5,16 +5,20 @@
 #include <chrono>
 
 /* Game Logic */
+const sf::Vector2f GAME_SIZE(2688 * 4, 1512 * 4);
+const sf::Vector2f WINDOW_RESOLUTION(2688, 1512);
+const float GAME_SCALE = 2.f;
+
+const bool USE_SHADER = true;
+
 const int MAX_PLAYER_COUNT = 10;
 const int MAX_MINE_COUNT = 4;
-const bool USE_SHADER = false;
-const sf::Vector2f WINDOW_RESOLUTION(800, 600);
-const float MINE_SIZE = 30.f;
 const float GROUP_START_OFFSET_X = 20.f;
 const float GROUP_START_OFFSET_Y = 20.f;
 const float MINE_START_OFFSET_X = 50.f;
-const float MINE_START_OFFSET_Y = 100.f;
-const float GROUP_MEMBER_SIZE = 15.f;
+const float MINE_START_OFFSET_Y = 300.f;
+const float GROUP_MEMBER_SIZE = 10.f;
+const float MINE_SIZE = 50.f;
 const float GROUP_SPEED = 100.f;
 
 /* Threads */

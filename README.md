@@ -59,13 +59,13 @@ To run tests, after building, run:
 
 Run this to enable debug mode on a specific build.
 ```
-  curl -s -X POST \    
-   -H "Content-Type: application/json" \    
-   -H "Accept: application/json" \    
-   -H "Travis-API-Version: 3" \    
-   -H "Authorization: token <TOKEN>" \    
-   -d '{ "quiet": true }' \    
-   https://api.travis-ci.com/job/<JOB_ID>/debug  
+  curl -s -X POST \
+   -H "Content-Type: application/json" \
+   -H "Accept: application/json" \
+   -H "Travis-API-Version: 3" \
+   -H "Authorization: token <TOKEN>" \
+   -d '{ "quiet": true }' \
+   https://api.travis-ci.com/job/<JOB_ID>/debug
 ```
 
 ### Vscode lldb
@@ -197,6 +197,8 @@ Debug run:
 
 ### Game Engine
 - [Jason Gregory: Game Engine Architecture](https://g.co/kgs/B9LnMR)
+- [Bob Nystrom: Game Programming Patterns](http://gameprogrammingpatterns.com)
+    - [Singleton](http://gameprogrammingpatterns.com/singleton.html)
 
 ### Physics
 - [Gafferon Games: Game Physics](https://web.archive.org/web/20181107181427/https://gafferongames.com/categories/game-physics)
