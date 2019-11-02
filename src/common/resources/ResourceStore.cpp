@@ -5,21 +5,28 @@
 
 ResourceStore::ResourceStore() {
     addTexture("collision", "resources/images/collision_expanding_circle.png");
+    addTexture("dark_green_pattern", "resources/images/dark_green_pattern.png", true);
     addShader(RenderingDef::ShaderKey::noop, "resources/shaders/noop.vert",
               "resources/shaders/noop.frag");
     addShader(RenderingDef::ShaderKey::voronoi, "resources/shaders/noop.vert",
               "resources/shaders/voronoi.frag");
 };
 
-void ResourceStore::addTexture(std::string key, std::string texture_path) {
-    auto texture = std::unique_ptr<sf::Texture>(new sf::Texture());
+void ResourceStore::addTexture(std::string key, std::string texture_path, bool repeated) {
+    auto texture = std::shared_ptr<sf::Texture>(new sf::Texture());
+    texture->setRepeated(repeated);
     if (!texture->loadFromFile(texture_path)) {
         throw std::runtime_error("Error loading texture from " + texture_path);
     }
     mTextures[key] = std::move(texture);
 }
 
-sf::Texture& ResourceStore::getTexture(std::string key) { return *mTextures[key]; }
+std::shared_ptr<sf::Texture> ResourceStore::getTexture(std::string key) {
+    if (mTextures.count(key) == 0) {
+        throw std::runtime_error("Texure doesn't exist with key " + key);
+    }
+    return mTextures[key];
+}
 
 void ResourceStore::addShader(RenderingDef::ShaderKey key, std::string vertex_shader_path,
                               std::string fragment_shader_path) {
@@ -41,6 +48,9 @@ std::shared_ptr<sf::Shader> ResourceStore::getShader(RenderingDef::ShaderKey key
     if (key == RenderingDef::ShaderKey::none) {
         return nullptr;
     } else {
+        if (mShaders.count(key) == 0) {
+            throw std::runtime_error("Shader with used key doesn't exist");
+        }
         return mShaders[key];
     }
 }

@@ -25,6 +25,7 @@ class CircleGameObject : public GameObject {
     void applyInput(sf::Vector2f input);
     void matchRigid();
     void setShader(RenderingDef::ShaderKey shader_key);
+    void setTexture(std::string texture_key);
     void draw(sf::RenderTarget& render_target);
 
   protected:

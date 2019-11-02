@@ -15,14 +15,14 @@ class ResourceStore {
     ResourceStore(const ResourceStore& temp_obj) = delete;
     ResourceStore& operator=(const ResourceStore& temp_obj) = delete;
 
-    void addTexture(std::string key, std::string texture_path);
-    sf::Texture& getTexture(std::string key);
+    void addTexture(std::string key, std::string texture_path, bool repeated = false);
+    std::shared_ptr<sf::Texture> getTexture(std::string key);
     void addShader(RenderingDef::ShaderKey key, std::string vertex_shader_path,
                    std::string fragment_shader_path);
     std::shared_ptr<sf::Shader> getShader(RenderingDef::ShaderKey key);
 
   private:
-    std::unordered_map<std::string, std::unique_ptr<sf::Texture>> mTextures;
+    std::unordered_map<std::string, std::shared_ptr<sf::Texture>> mTextures;
     std::map<RenderingDef::ShaderKey, std::shared_ptr<sf::Shader>> mShaders;
 };
 

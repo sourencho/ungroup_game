@@ -6,6 +6,7 @@
 
 namespace RenderingDef {
     const bool USE_SHADERS = true;
+    const std::size_t CIRCLE_POINT_COUNT = 60;
     enum ShaderKey { none, noop, voronoi };
     struct Shader {
         ShaderKey key = ShaderKey::none;

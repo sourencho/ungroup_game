@@ -26,28 +26,33 @@ void main() {
     vec3 color = vec3(.0);
 
     // Cell positions
-    vec2 point[6];
+    vec2 point[4];
     point[0] = random2(vec2(1.0, 1.0));
     point[1] = random2(vec2(2.0, 1.0));
     point[2] = random2(vec2(3.0, 1.0));
     point[3] = random2(vec2(4.0, 1.0));
-    point[4] = random2(vec2(5.0, 1.0));
-    point[5] = random2(vec2(6.0, 1.0));
 
-    vec3 point_color[6];
-    point_color[0] = gl_Color.rgb / 1.;
-    point_color[1] = gl_Color.rgb / 2.;
-    point_color[2] = gl_Color.rgb / 3.;
-    point_color[3] = gl_Color.rgb / 4.;
-    point_color[4] = gl_Color.rgb / 5.;
-    point_color[5] = gl_Color.rgb / 6.;
+    vec3 point_color[4];
+
+    // #2 color palette
+    /*
+    point_color[0] = vec3(251. / 255., 174. / 255., 89. / 255.); // yellow
+    point_color[1] = vec3(153. / 255., 138. / 255., 47. / 255.); // green
+    point_color[2] = vec3(44. / 255., 89. / 255., 79. / 255.);   // blue
+    point_color[3] = vec3(230. / 255., 70. / 255., 97. / 255.);  // red
+    */
+    // #3 color palette
+    point_color[0] = vec3(66. / 255., 118. / 255., 118. / 255.);  // darkets
+    point_color[1] = vec3(63. / 255., 157. / 255., 130. / 255.);  // dark
+    point_color[2] = vec3(161. / 255., 205. / 255., 115. / 255.); // light
+    point_color[3] = vec3(236. / 255., 219. / 255., 96. / 255.);  // lightest
 
     float m_dist = 1.; // minimun distance
     vec2 m_point;      // minimum position
     vec3 m_point_color;
 
     // Iterate through the points positions
-    for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < 4; i++) {
         point[i] = 0.5 + 0.5 * sin(u_time + 6.2831 * point[i]);
         float dist = distance(st, point[i]);
         if (dist < m_dist) {
