@@ -201,14 +201,19 @@ Debug run:
     - [Singleton](http://gameprogrammingpatterns.com/singleton.html)
 
 ### Physics
-- [Gafferon Games: Game Physics](https://web.archive.org/web/20181107181427/https://gafferongames.com/categories/game-physics)
-- [Chris Hecker: Rigid body dynamics](http://www.chrishecker.com/Rigid_Body_Dynamics)
+- [Gafferon Games](https://web.archive.org/web/20181107181427/https://gafferongames.com)
+  - [Game Physics](https://web.archive.org/web/20181107181427/https://gafferongames.com/categories/game-physics)
+- [Chris Hecker](http://www.chrishecker.com)
+  - [Rigid body dynamics](http://www.chrishecker.com/Rigid_Body_Dynamics)
 
 ### Networking
-- [Gabriel Gambetta: Fast-Paced Multiplayer](https://www.gabrielgambetta.com/client-server-game-architecture.html)
-- [Gafferon Games: Networked Physics](https://web.archive.org/web/20181107181445/https://gafferongames.com/categories/networked-physics)
-- [Valve: Source Multiplayer Networking](https://developer.valvesoftware.com/wiki/Source_Multiplayer_Networking)
-- [Valve: Latency Compensating Methods in Client/Server In-game Protocol Design and Optimization](https://developer.valvesoftware.com/wiki/Latency_Compensating_Methods_in_Client/Server_In-game_Protocol_Design_and_Optimization)
+- [Gabriel Gambetta](https://www.gabrielgambetta.com)
+  - [Fast-Paced Multiplayer](https://www.gabrielgambetta.com/client-server-game-architecture.html)
+- [Gafferon Games](https://web.archive.org/web/20181107181427/https://gafferongames.com) 
+  - [Networked Physics](https://web.archive.org/web/20181107181445/https://gafferongames.com/categories/networked-physics)
+- [Valve: Developer Community](https://developer.valvesoftware.com)
+  - [Source Multiplayer Networking](https://developer.valvesoftware.com/wiki/Source_Multiplayer_Networking)
+  - [Latency Compensating Methods in Client/Server In-game Protocol Design and Optimization](https://developer.valvesoftware.com/wiki/Latency_Compensating_Methods_in_Client/Server_In-game_Protocol_Design_and_Optimization)
 
 ### Graphics
 
