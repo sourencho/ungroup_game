@@ -10,7 +10,8 @@
 
 sf::Clock shader_clock;
 
-Circle::Circle(float size, sf::Vector2f position, sf::Color color) : mCircleShape(size) {
+Circle::Circle(float size, sf::Vector2f position, sf::Color color)
+    : mCircleShape(size, RenderingDef::CIRCLE_POINT_COUNT) {
     mCircleShape.setPosition(position);
     mColor = color;
     mCircleShape.setFillColor(color);
@@ -55,4 +56,10 @@ sf::Vector2f Circle::getCenter() const {
     sf::Vector2f position = mCircleShape.getPosition();
     float radius = mCircleShape.getRadius();
     return sf::Vector2f(position.x + radius, position.y + radius);
+}
+
+void Circle::setTexture(std::shared_ptr<sf::Texture> texture) {
+    int diameter = mCircleShape.getRadius() * 2;
+    mCircleShape.setTextureRect({0, 0, diameter, diameter});
+    mCircleShape.setTexture(texture.get(), false);
 }

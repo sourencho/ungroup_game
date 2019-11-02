@@ -22,6 +22,7 @@ class Circle {
     void setColor();
     void setColor(sf::Color color);
     void changeColor(sf::Color color);
+    void setTexture(std::shared_ptr<sf::Texture> texture);
 
   private:
     sf::CircleShape mCircleShape;

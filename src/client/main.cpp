@@ -56,8 +56,8 @@ int main(int, char const**) {
         client_game_controller.update();
 
         // Display
-        window.clear(sf::Color::Magenta);
-        buffer.clear(sf::Color::White);
+        window.clear(sf::Color::White);
+        buffer.clear(sf::Color(12, 30, 39));
 
         client_game_controller.updateView(window, buffer_scaling_factor);
 

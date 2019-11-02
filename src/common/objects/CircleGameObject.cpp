@@ -45,3 +45,7 @@ void CircleGameObject::setShader(RenderingDef::ShaderKey shader_key) {
     mShader.key = shader_key;
     mShader.shader = mResourceStore.getShader(shader_key);
 };
+
+void CircleGameObject::setTexture(std::string texture_key) {
+    mCircle->setTexture(mResourceStore.getTexture(texture_key));
+}
