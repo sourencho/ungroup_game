@@ -24,13 +24,6 @@ uint32_t GroupController::createGroup(uint32_t player_id) {
 
 void GroupController::draw(sf::RenderTarget& target) {
     for (auto& group : mGroups) {
-        bool groupable = group->getGroupable();
-        Circle& circle = group->getCircle();
-        if (groupable) {
-            circle.changeColor(sf::Color(255, 0, 0));
-        } else {
-            circle.setColor();
-        }
         group->draw(target);
     }
 }

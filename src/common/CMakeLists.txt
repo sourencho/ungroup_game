@@ -4,7 +4,6 @@ add_library(common-lib
     objects/CircleGameObject.cpp
     objects/Player.cpp
     objects/Mine.cpp
-    objects/Circle.cpp
     objects/CircleRigidBody.cpp
     objects/Group.cpp
     events/EventController.cpp

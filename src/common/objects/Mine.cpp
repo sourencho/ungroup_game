@@ -28,13 +28,13 @@ Mine::Mine(uint32_t id, sf::Vector2f position, float size, sf::Color color,
 Mine::~Mine() {}
 
 MineUpdate Mine::getUpdate() {
-    sf::Vector2f position = getCircle().getPosition();
+    sf::Vector2f position = getPosition();
     MineUpdate mu = {
         .mine_id = (sf::Uint32)getId(),
         .is_active = isActive(),
         .x_pos = position.x,
         .y_pos = position.y,
-        .radius = getCircle().getRadius(),
+        .radius = getRadius(),
         .shader_key = (sf::Uint32)mShader.key,
     };
     return mu;
