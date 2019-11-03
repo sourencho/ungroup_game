@@ -59,7 +59,5 @@ sf::Vector2f Circle::getCenter() const {
 }
 
 void Circle::setTexture(std::shared_ptr<sf::Texture> texture) {
-    int diameter = mCircleShape.getRadius() * 2;
-    mCircleShape.setTextureRect({0, 0, diameter, diameter});
     mCircleShape.setTexture(texture.get(), false);
 }
