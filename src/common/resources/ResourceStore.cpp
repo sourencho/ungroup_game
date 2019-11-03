@@ -1,6 +1,7 @@
 
 #include <iostream>
 
+#include "../util/game_settings.hpp"
 #include "ResourceStore.hpp"
 
 ResourceStore::ResourceStore() {
@@ -40,7 +41,7 @@ void ResourceStore::addShader(RenderingDef::ShaderKey key, std::string vertex_sh
     if (!shader->loadFromFile(fragment_shader_path, sf::Shader::Fragment)) {
         throw std::runtime_error("Error loading fragment shader file " + fragment_shader_path);
     }
-
+    shader->setUniform("u_resolution", sf::Vector2f(WINDOW_RESOLUTION));
     mShaders[key] = shader;
 }
 

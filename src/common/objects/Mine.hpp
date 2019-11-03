@@ -9,7 +9,6 @@
 #include <SFML/Network.hpp>
 
 #include "../resources/ResourceStore.hpp"
-#include "Circle.hpp"
 #include "CircleGameObject.hpp"
 
 struct MineUpdate {

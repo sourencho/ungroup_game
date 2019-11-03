@@ -12,6 +12,7 @@ namespace RenderingDef {
         ShaderKey key = ShaderKey::none;
         std::shared_ptr<sf::Shader> shader = nullptr;
     };
+    const sf::Color GROUPABLE_COLOR(227, 102, 68);
 }; // namespace RenderingDef
 
 #endif /* RenderingDef_hpp */

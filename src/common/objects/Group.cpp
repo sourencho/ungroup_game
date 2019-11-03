@@ -19,14 +19,16 @@ bool Group::getGroupable() { return mGroupable; }
 
 void Group::setGroupable(bool groupable) { mGroupable = groupable; }
 
+void Group::draw(sf::RenderTarget& render_target) { CircleGameObject::draw(render_target); }
+
 GroupUpdate Group::getUpdate() {
-    sf::Vector2f position = getCircle().getPosition();
+    sf::Vector2f position = getPosition();
     GroupUpdate gu = {
         .group_id = (sf::Uint32)getId(),
         .is_active = isActive(),
         .x_pos = position.x,
         .y_pos = position.y,
-        .radius = getCircle().getRadius(),
+        .radius = getRadius(),
         .groupable = getGroupable(),
         .shader_key = (sf::Uint32)mShader.key,
     };

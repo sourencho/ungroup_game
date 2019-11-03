@@ -1,14 +1,19 @@
 #include "CircleGameObject.hpp"
 
+sf::Clock shader_clock;
+
 CircleGameObject::CircleGameObject(uint32_t id, sf::Vector2f position, float radius,
                                    sf::Color color, std::shared_ptr<PhysicsController> pc,
                                    ResourceStore& rs, float mass, bool movable)
-    : GameObject(id), mCircle(std::unique_ptr<Circle>(new Circle(radius, position, color))),
+    : GameObject(id), mCircleShape(std::unique_ptr<sf::CircleShape>(
+                          new sf::CircleShape(radius, RenderingDef::CIRCLE_POINT_COUNT))),
       mCircleRigidBody(pc->add(std::move(std::unique_ptr<CircleRigidBody>(
           new CircleRigidBody(id, radius, position, mass, movable))))),
-      mResourceStore(rs){};
-
-Circle& CircleGameObject::getCircle() { return *mCircle; }
+      mResourceStore(rs) {
+    mCircleShape->setPosition(position);
+    mCircleShape->setFillColor(color);
+    shader_clock.restart();
+};
 
 void CircleGameObject::setActive(bool is_active) {
     mIsActive = is_active;
@@ -17,26 +22,23 @@ void CircleGameObject::setActive(bool is_active) {
 
 void CircleGameObject::applyInput(sf::Vector2f input) { mCircleRigidBody.applyInput(input); }
 
-void CircleGameObject::setRadius(float radius) {
-    mCircle->setRadius(radius);
-    mCircleRigidBody.setRadius(radius);
+void CircleGameObject::matchRigid() { mCircleShape->setPosition(mCircleRigidBody.getPosition()); }
+
+sf::Vector2f CircleGameObject::getCenter() const {
+    sf::Vector2f position = mCircleShape->getPosition();
+    float radius = mCircleShape->getRadius();
+    return sf::Vector2f(position.x + radius, position.y + radius);
 }
-
-void CircleGameObject::setMass(float mass) { mCircleRigidBody.setMass(mass); }
-
-void CircleGameObject::setPosition(sf::Vector2f position) {
-    mCircle->setPosition(position);
-    mCircleRigidBody.setPosition(position);
-}
-
-void CircleGameObject::matchRigid() { mCircle->setPosition(mCircleRigidBody.getPosition()); }
 
 void CircleGameObject::draw(sf::RenderTarget& render_target) {
     if (mIsActive) {
-        if (mShader.shader != nullptr) {
-            mCircle->draw(render_target, *mShader.shader);
+        if (mShader.shader != nullptr && RenderingDef::USE_SHADERS) {
+            mShader.shader->setUniform("u_position", getPosition());
+            mShader.shader->setUniform("u_radius", getRadius());
+            mShader.shader->setUniform("u_time", shader_clock.getElapsedTime().asSeconds());
+            render_target.draw(*mCircleShape, mShader.shader.get());
         } else {
-            mCircle->draw(render_target);
+            render_target.draw(*mCircleShape);
         }
     };
 }
@@ -47,5 +49,5 @@ void CircleGameObject::setShader(RenderingDef::ShaderKey shader_key) {
 };
 
 void CircleGameObject::setTexture(std::string texture_key) {
-    mCircle->setTexture(mResourceStore.getTexture(texture_key));
+    mCircleShape->setTexture(mResourceStore.getTexture(texture_key).get());
 }

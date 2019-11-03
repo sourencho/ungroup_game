@@ -7,7 +7,6 @@
 
 #include "../physics/PhysicsController.hpp"
 #include "../resources/ResourceStore.hpp"
-#include "Circle.hpp"
 #include "CircleGameObject.hpp"
 #include "Player.hpp"
 #include <SFML/Graphics.hpp>
@@ -39,6 +38,8 @@ class Group : public CircleGameObject {
 
     GroupUpdate getUpdate();
     void applyUpdate(GroupUpdate gu);
+
+    void draw(sf::RenderTarget& render_target);
 
   private:
     bool mGroupable = false;
