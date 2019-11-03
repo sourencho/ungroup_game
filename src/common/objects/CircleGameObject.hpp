@@ -31,24 +31,32 @@ class CircleGameObject : public GameObject {
 
     sf::Vector2f getCenter() const;
 
-    float getRadius() const { return mCircleShape->getRadius(); };
+    float getRadius() const { return mCircleShape.getRadius(); };
     void setRadius(float radius) {
-        mCircleShape->setRadius(radius);
+        mCircleShape.setRadius(radius);
         mCircleRigidBody.setRadius(radius);
+        mOutlineShape.setRadius(radius);
     };
 
-    sf::Vector2f getPosition() const { return mCircleShape->getPosition(); };
+    sf::Vector2f getPosition() const { return mCircleShape.getPosition(); };
     void setPosition(sf::Vector2f position) {
-        mCircleShape->setPosition(position);
+        mCircleShape.setPosition(position);
         mCircleRigidBody.setPosition(position);
+        mOutlineShape.setPosition(position);
     };
 
-    void draw(sf::RenderTarget& target);
+    void setOutlineThickness(float thickness) { mOutlineShape.setOutlineThickness(thickness); };
+    void setOutlineColor(sf::Color color) { mOutlineShape.setOutlineColor(color); };
 
-    sf::CircleShape& getCircleShape() { return *mCircleShape; }
+    void draw(sf::RenderTarget& render_target);
+
+    void setOutline(){};
 
   protected:
-    std::unique_ptr<sf::CircleShape> mCircleShape;
+    sf::CircleShape mCircleShape;
+    sf::CircleShape
+        mOutlineShape; // We need another circle hidden behind to draw the outline on. We can't use
+                       // the original circle because the shader draw over the outline.
     CircleRigidBody& mCircleRigidBody;
     RenderingDef::Shader mShader;
     ResourceStore& mResourceStore;

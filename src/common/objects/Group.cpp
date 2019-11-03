@@ -19,7 +19,15 @@ bool Group::getGroupable() { return mGroupable; }
 
 void Group::setGroupable(bool groupable) { mGroupable = groupable; }
 
-void Group::draw(sf::RenderTarget& render_target) { CircleGameObject::draw(render_target); }
+void Group::draw(sf::RenderTarget& render_target) {
+    if (mGroupable) {
+        setOutlineThickness(1.f);
+        setOutlineColor(RenderingDef::GROUPABLE_COLOR);
+    } else {
+        setOutlineThickness(0.f);
+    }
+    CircleGameObject::draw(render_target);
+}
 
 GroupUpdate Group::getUpdate() {
     sf::Vector2f position = getPosition();

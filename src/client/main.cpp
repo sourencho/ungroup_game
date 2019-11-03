@@ -11,8 +11,7 @@ int main(int, char const**) {
     contSettings.antialiasingLevel = 0;
     sf::RenderWindow window(sf::VideoMode(WINDOW_RESOLUTION.x, WINDOW_RESOLUTION.y), "Ungroup",
                             sf::Style::Close, contSettings);
-    // window.setVerticalSyncEnabled(true);
-    // window.setFramerateLimit(60);
+    window.setFramerateLimit(60);
 
     // Create view to set the perspective of the player
     sf::View view({0.f, 0.f}, WINDOW_RESOLUTION);
