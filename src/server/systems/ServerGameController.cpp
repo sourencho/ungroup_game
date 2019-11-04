@@ -8,10 +8,10 @@ ServerGameController::ServerGameController(size_t max_player_count, size_t max_m
     : GameController(max_player_count, max_mine_count), mNetworkingServer(new NetworkingServer()) {
     EventController::getInstance().addEventListener(
         EventType::EVENT_TYPE_CLIENT_CONNECTED,
-        std::bind(&ServerGameController::clientConnected, this, std::placeholders::_1));
+        std::bind(&ServerGameController::handleEvent, this, std::placeholders::_1));
     EventController::getInstance().addEventListener(
         EventType::EVENT_TYPE_CLIENT_DISCONNECTED,
-        std::bind(&ServerGameController::clientDisconnected, this, std::placeholders::_1));
+        std::bind(&ServerGameController::handleEvent, this, std::placeholders::_1));
 }
 
 ServerGameController::~ServerGameController() {}
@@ -24,7 +24,7 @@ void ServerGameController::step(const ClientInputs& cis, sf::Int32 delta_ms) {
     computeGameState(cis, delta_ms);
 }
 
-void ServerGameController::clientConnected(std::shared_ptr<Event> event) {
+void ServerGameController::handleEvent(std::shared_ptr<Event> event) {
     switch (event->getType()) {
         case EventType::EVENT_TYPE_CLIENT_CONNECTED: {
             std::shared_ptr<ClientConnectedEvent> client_connect_event =
@@ -34,15 +34,6 @@ void ServerGameController::clientConnected(std::shared_ptr<Event> event) {
             mNetworkingServer->setClientToPlayerId(new_client_id, new_player_id);
             break;
         }
-        default: {
-            std::cout << "Unexpected event type." << std::endl;
-            break;
-        }
-    }
-}
-
-void ServerGameController::clientDisconnected(std::shared_ptr<Event> event) {
-    switch (event->getType()) {
         case EventType::EVENT_TYPE_CLIENT_DISCONNECTED: {
             std::shared_ptr<ClientDisconnectedEvent> client_disconnect_event =
                 std::dynamic_pointer_cast<ClientDisconnectedEvent>(event);

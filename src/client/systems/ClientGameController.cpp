@@ -13,7 +13,7 @@ ClientGameController::ClientGameController(size_t max_player_count, size_t max_m
       mAnimationController(new AnimationController()), mKeys(keys) {
     EventController::getInstance().addEventListener(
         EventType::EVENT_TYPE_COLLISION,
-        std::bind(&ClientGameController::clientCollisionEvent, this, std::placeholders::_1));
+        std::bind(&ClientGameController::handleEvent, this, std::placeholders::_1));
 }
 
 ClientGameController::~ClientGameController() {}
@@ -159,17 +159,13 @@ ClientInputs& ClientGameController::getClientInputs(ClientReliableUpdate cru,
     return mClientInputs;
 }
 
-void ClientGameController::clientCollisionEvent(std::shared_ptr<Event> event) {
+void ClientGameController::handleEvent(std::shared_ptr<Event> event) {
     switch (event->getType()) {
         case EventType::EVENT_TYPE_COLLISION: {
             std::shared_ptr<CollisionEvent> collision_event =
                 std::dynamic_pointer_cast<CollisionEvent>(event);
-            sf::Vector2f position = collision_event->getCollision().position;
 
-            // Create collision animation
-            auto collision = std::unique_ptr<AnimatedSprite>(new AnimatedSprite(
-                *mResourceStore->getTexture("collision"), {6, 1}, 240, position, {2.f, 2.f}));
-            mAnimationController->add(std::move(collision));
+            createCollisionAnimation(collision_event->getCollision());
             break;
         }
         default: {
@@ -177,6 +173,12 @@ void ClientGameController::clientCollisionEvent(std::shared_ptr<Event> event) {
             break;
         }
     }
+}
+
+void ClientGameController::createCollisionAnimation(const Collision& collision) {
+    auto collision_sprite = std::unique_ptr<AnimatedSprite>(new AnimatedSprite(
+        *mResourceStore->getTexture("collision"), {6, 1}, 240, collision.position, {2.f, 2.f}));
+    mAnimationController->add(std::move(collision_sprite));
 }
 
 unsigned int ClientGameController::getTick() { return mNetworkingClient->getTick(); }
