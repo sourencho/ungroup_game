@@ -168,7 +168,7 @@ void ClientGameController::clientCollisionEvent(std::shared_ptr<Event> event) {
 
             // Create collision animation
             auto collision = std::unique_ptr<AnimatedSprite>(new AnimatedSprite(
-                *mResourceStore->getTexture("collision"), {3, 3}, 200, position, {.8f, .8f}));
+                *mResourceStore->getTexture("collision"), {6, 1}, 240, position, {2.f, 2.f}));
             mAnimationController->add(std::move(collision));
             break;
         }

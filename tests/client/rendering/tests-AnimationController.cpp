@@ -8,7 +8,7 @@ SCENARIO("AnimatedSprite is added to AnimationController and removed on completi
         sf::Texture texture;
         texture.loadFromFile("resources/images/test.png");
         auto animated_sprite = std::unique_ptr<AnimatedSprite>(
-            new AnimatedSprite(texture, {3, 3}, 200, {100.f, 100.f}, {1.f, 1.f}));
+            new AnimatedSprite(texture, {6, 1}, 200, {100.f, 100.f}, {1.f, 1.f}));
         AnimationController animation_controller;
         animation_controller.add(std::move(animated_sprite));
         WHEN("step one time at 100ms") {

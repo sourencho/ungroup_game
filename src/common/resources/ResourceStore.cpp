@@ -5,8 +5,8 @@
 #include "ResourceStore.hpp"
 
 ResourceStore::ResourceStore() {
-    addTexture("collision", "resources/images/collision_expanding_circle.png");
-    addTexture("dark_green_pattern", "resources/images/dark_green_pattern.png", true);
+    addTexture("collision", "resources/images/spark.png");
+    addTexture("mine_pattern", "resources/images/mine_pattern.png", true);
     addShader(RenderingDef::ShaderKey::noop, "resources/shaders/noop.vert",
               "resources/shaders/noop.frag");
     addShader(RenderingDef::ShaderKey::voronoi, "resources/shaders/noop.vert",
