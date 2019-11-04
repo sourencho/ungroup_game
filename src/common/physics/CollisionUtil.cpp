@@ -1,4 +1,7 @@
 #include "CollisionUtil.hpp"
+
+#include <cmath>
+
 #include "VectorUtil.hpp"
 
 /**
@@ -21,9 +24,18 @@ bool CollisionUtil::areIntersecting(const CircleRigidBody& circle_a,
  */
 Collision CollisionUtil::getCollision(const CircleRigidBody& circle_a,
                                       const CircleRigidBody& circle_b) {
+    bool collided = true;
     sf::Vector2f between = VectorUtil::getVector(circle_b.getCenter(), circle_a.getCenter());
     float overlap = circle_a.getRadius() + circle_b.getRadius() - VectorUtil::length(between);
     sf::Vector2f normal = VectorUtil::normalize(between);
+
+    sf::Vector2f relative_velocity = circle_a.getVelocity() - circle_b.getVelocity();
+    float velocity_along_normal = VectorUtil::dot(relative_velocity, normal);
+
+    // Do not consider collision if velocities are seperating
+    if (velocity_along_normal > 0) {
+        collided = false;
+    }
 
     std::pair<sf::Vector2f, sf::Vector2f> resolution;
     if (circle_a.isMovable() && circle_b.isMovable()) {
@@ -44,6 +56,7 @@ Collision CollisionUtil::getCollision(const CircleRigidBody& circle_a,
         .position = collision_point,
         .normal = normal,
         .resolution = resolution,
+        .collided = collided,
     };
 
     return collision;

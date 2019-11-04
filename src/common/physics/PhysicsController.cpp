@@ -7,6 +7,7 @@
 
 #include "../events/CollisionEvent.hpp"
 #include "../events/EventController.hpp"
+#include "PhysicsDef.hpp"
 #include "VectorUtil.hpp"
 
 PhysicsController::PhysicsController() {}
@@ -48,6 +49,9 @@ void PhysicsController::resolveCollisions() {
 
             if (CollisionUtil::areIntersecting(circle_a, circle_b)) {
                 Collision collision = CollisionUtil::getCollision(circle_a, circle_b);
+                if (collision.collided == false) {
+                    continue;
+                }
                 resolveCollision(circle_a, circle_b, collision);
                 fireCollisionEvent(collision);
             }
@@ -63,6 +67,10 @@ void PhysicsController::resolveCollision(CircleRigidBody& circle_a, CircleRigidB
 
     // Apply impulses resulting from collision
     auto impulses = CollisionUtil::getImpulses(circle_a, circle_b, collision);
+
+    impulses.first.magnitude *= PhysicsDef::IMPULSE_MILTIPLIER;
+    impulses.second.magnitude *= PhysicsDef::IMPULSE_MILTIPLIER;
+
     circle_a.applyImpulse(impulses.first);
     circle_b.applyImpulse(impulses.second);
 }

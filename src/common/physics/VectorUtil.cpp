@@ -16,7 +16,7 @@ sf::Vector2f VectorUtil::normalize(const sf::Vector2f& source) {
 }
 
 float VectorUtil::distance(const sf::Vector2f& point_a, const sf::Vector2f& point_b) {
-    return sqrt(pow((point_b.x - point_a.x), 2) + pow((point_b.y - point_a.y), 2));
+    return sqrt(pow((point_b.x - point_a.x), 2.f) + pow((point_b.y - point_a.y), 2.f));
 }
 
 sf::Vector2f VectorUtil::getVector(const sf::Vector2f& point_a, const sf::Vector2f& point_b) {
