@@ -1,9 +1,10 @@
 #include <memory>
 #include <vector>
 
-#include "../../common/factories/IdFactory.hpp"
-#include "../../common/util/game_def.hpp"
-#include "../../common/util/game_settings.hpp"
+#include "../factories/IdFactory.hpp"
+#include "../rendering/RenderingDef.hpp"
+#include "../util/game_def.hpp"
+#include "../util/game_settings.hpp"
 #include "GameObjectStore.hpp"
 
 GameObjectStore::GameObjectStore(std::shared_ptr<PhysicsController> pc, ResourceStore& rs)
@@ -31,11 +32,13 @@ void GameObjectStore::loadLevel(size_t max_player_count, size_t max_mine_count) 
     }
 
     // Initialize Mines
+    std::vector<sf::Color> mine_colors = {RenderingDef::DARKEST_COLOR, RenderingDef::DARK_COLOR,
+                                          RenderingDef::LIGHT_COLOR, RenderingDef::LIGHTEST_COLOR};
     for (int i = 0; i < max_mine_count; i++) {
         uint32_t new_mine_id = IdFactory::getInstance().getNextId(GameObjectType::mine);
-        mMines.push_back(std::shared_ptr<Mine>(
-            new Mine(new_mine_id, sf::Vector2f(MINE_START_OFFSET_X, MINE_START_OFFSET_Y * (i + 1)),
-                     MINE_SIZE, sf::Color::White, mPhysicsController, mResourceStore)));
+        mMines.push_back(std::shared_ptr<Mine>(new Mine(
+            new_mine_id, sf::Vector2f(MINE_START_OFFSET_X, MINE_START_OFFSET_Y * (i + 1)),
+            MINE_SIZE, mine_colors[i % mine_colors.size()], mPhysicsController, mResourceStore)));
     }
 }
 
