@@ -13,24 +13,29 @@ TEST_CASE("Intersection", "[common][physics][VectorUtil][areIntersecting]") {
 }
 
 TEST_CASE("Collision", "[common][physics][VectorUtil][getCollision]") {
-    SECTION("Two movable circles") {
+    SECTION("Between two movable circles") {
         SECTION("Horizontal collision") {
             CircleRigidBody movable_circle_a = CircleRigidBody(0, 10.f, {0.f, 0.f}, 1.f, true);
             CircleRigidBody movable_circle_b = CircleRigidBody(1, 12.f, {16.f, -2.f}, 1.f, true);
-
             Collision collision = CollisionUtil::getCollision(movable_circle_a, movable_circle_b);
-            REQUIRE(CollisionUtil::areIntersecting(movable_circle_a, movable_circle_b) == true);
 
-            REQUIRE(collision.ids.first == 0);
-            REQUIRE(collision.ids.second == 1);
-            REQUIRE(collision.position.x == 18.f);
-            REQUIRE(collision.position.y == 10.f);
-            REQUIRE(collision.normal.x == -1.f);
-            REQUIRE(collision.normal.y == 0.f);
-            REQUIRE(collision.resolution.first.x == -2.f);
-            REQUIRE(collision.resolution.first.y == 0.f);
-            REQUIRE(collision.resolution.second.x == 2.f);
-            REQUIRE(collision.resolution.second.y == 0.f);
+            SECTION("Intersecting before applying collision resolution") {
+                REQUIRE(CollisionUtil::areIntersecting(movable_circle_a, movable_circle_b) == true);
+            }
+
+            SECTION("Collision values are correct") {
+                REQUIRE(collision.ids.first == 0);
+                REQUIRE(collision.ids.second == 1);
+                REQUIRE(collision.position.x == 18.f);
+                REQUIRE(collision.position.y == 10.f);
+                REQUIRE(collision.normal.x == -1.f);
+                REQUIRE(collision.normal.y == 0.f);
+                REQUIRE(collision.resolution.first.x == -2.f);
+                REQUIRE(collision.resolution.first.y == 0.f);
+                REQUIRE(collision.resolution.second.x == 2.f);
+                REQUIRE(collision.resolution.second.y == 0.f);
+                REQUIRE(collision.collided == true);
+            }
 
             SECTION("Not intersecting after applying collision resolution") {
                 movable_circle_a.setActive(true);
@@ -41,16 +46,50 @@ TEST_CASE("Collision", "[common][physics][VectorUtil][getCollision]") {
                         false);
             }
         }
+
+        SECTION("Angular collision") {
+            CircleRigidBody movable_circle_a = CircleRigidBody(9, 10.f, {0.f, 0.f}, 1.f, true);
+            CircleRigidBody movable_circle_b = CircleRigidBody(99, 10.f, {11.f, 11.f}, 1.f, true);
+            Collision collision = CollisionUtil::getCollision(movable_circle_a, movable_circle_b);
+
+            SECTION("Intersecting before applying collision resolution") {
+                REQUIRE(CollisionUtil::areIntersecting(movable_circle_a, movable_circle_b) == true);
+            }
+
+            SECTION("Not intersecting after applying collision resolution") {
+                movable_circle_a.setActive(true);
+                movable_circle_b.setActive(true);
+                movable_circle_a.move(collision.resolution.first);
+                movable_circle_b.move(collision.resolution.second);
+
+                REQUIRE(CollisionUtil::areIntersecting(movable_circle_a, movable_circle_b) ==
+                        false);
+            }
+        }
+
+        SECTION("Velocities are seperating") {
+            CircleRigidBody movable_circle_a = CircleRigidBody(0, 10.f, {0.f, 0.f}, 1.f, true);
+            CircleRigidBody movable_circle_b = CircleRigidBody(1, 12.f, {16.f, -2.f}, 1.f, true);
+            movable_circle_a.setActive(true);
+            movable_circle_b.setActive(true);
+            movable_circle_a.setVelocity({-1.f, 0.f});
+            movable_circle_b.setVelocity({1.f, 0.f});
+            Collision collision = CollisionUtil::getCollision(movable_circle_a, movable_circle_b);
+            REQUIRE(collision.collided == false);
+        }
     }
-    SECTION("Movable and unmovable circles") {
+    SECTION("Between a movable and an unmovable circle") {
         SECTION("Horizontal collision") {
             CircleRigidBody movable_circle_a = CircleRigidBody(0, 10.f, {0.f, 0.f}, 1.f, true);
             CircleRigidBody unmovable_circle_b = CircleRigidBody(1, 10.f, {16.f, 0.f}, 1.f, false);
-
             Collision collision = CollisionUtil::getCollision(movable_circle_a, unmovable_circle_b);
-            REQUIRE(CollisionUtil::areIntersecting(movable_circle_a, unmovable_circle_b) == true);
 
-            SECTION("Outward horizontal collision correct") {
+            SECTION("Intersecting before applying collision resolution") {
+                REQUIRE(CollisionUtil::areIntersecting(movable_circle_a, unmovable_circle_b) ==
+                        true);
+            }
+
+            SECTION("Collision values are correct") {
                 REQUIRE(collision.ids.first == 0);
                 REQUIRE(collision.ids.second == 1);
                 REQUIRE(collision.position.x == 16.f);
@@ -61,31 +100,17 @@ TEST_CASE("Collision", "[common][physics][VectorUtil][getCollision]") {
                 REQUIRE(collision.resolution.first.y == 0.f);
                 REQUIRE(collision.resolution.second.x == 0.f);
                 REQUIRE(collision.resolution.second.y == 0.f);
-
-                SECTION("Not intersecting after applying collision resolution") {
-                    movable_circle_a.setActive(true);
-                    unmovable_circle_b.setActive(true);
-                    movable_circle_a.move(collision.resolution.first);
-                    unmovable_circle_b.move(collision.resolution.second);
-                    REQUIRE(CollisionUtil::areIntersecting(movable_circle_a, unmovable_circle_b) ==
-                            false);
-                }
+                REQUIRE(collision.collided == true);
             }
-        }
-    }
 
-    SECTION("Angular collision") {
-        CircleRigidBody movable_circle_a = CircleRigidBody(0, 10.f, {0.f, 0.f}, 1.f, true);
-        CircleRigidBody movable_circle_b = CircleRigidBody(1, 10.f, {11.f, 11.f}, 1.f, true);
-        Collision collision = CollisionUtil::getCollision(movable_circle_a, movable_circle_b);
-        REQUIRE(CollisionUtil::areIntersecting(movable_circle_a, movable_circle_b) == true);
-
-        SECTION("Not intersecting after applying collision resolution") {
-            movable_circle_a.setActive(true);
-            movable_circle_b.setActive(true);
-            movable_circle_a.move(collision.resolution.first);
-            movable_circle_b.move(collision.resolution.second);
-            REQUIRE(CollisionUtil::areIntersecting(movable_circle_a, movable_circle_b) == false);
+            SECTION("Not intersecting after applying collision resolution") {
+                movable_circle_a.setActive(true);
+                unmovable_circle_b.setActive(true);
+                movable_circle_a.move(collision.resolution.first);
+                unmovable_circle_b.move(collision.resolution.second);
+                REQUIRE(CollisionUtil::areIntersecting(movable_circle_a, unmovable_circle_b) ==
+                        false);
+            }
         }
     }
 }
@@ -105,6 +130,7 @@ TEST_CASE("Impulses", "[common][physics][VectorUtil][getImpulses]") {
             .position = {10.f, 20.f},
             .normal = {-1.f, 0.f},
             .resolution = std::make_pair(sf::Vector2f(0.f, 0.f), sf::Vector2f(0.f, 0.f)),
+            .collided = true,
         };
         auto impulses = CollisionUtil::getImpulses(movable_circle_a, movable_circle_b, collision);
 

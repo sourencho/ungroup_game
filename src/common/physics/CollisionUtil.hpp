@@ -19,6 +19,7 @@ struct Collision {
     sf::Vector2f position;
     sf::Vector2f normal;
     std::pair<sf::Vector2f, sf::Vector2f> resolution;
+    bool collided;
 };
 
 namespace CollisionUtil {

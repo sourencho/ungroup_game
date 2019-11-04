@@ -8,6 +8,7 @@ namespace PhysicsDef {
         float magnitude;
         sf::Vector2f normal;
     };
+    const float IMPULSE_MILTIPLIER = 3.f;
 }; // namespace PhysicsDef
 
 #endif /* PhysicsDef_hpp */
