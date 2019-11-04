@@ -75,13 +75,13 @@ void GroupController::updateGroup(std::shared_ptr<Group>& group) {
 
     group->applyInput(group_dir);
 
-    // Group is groupable if any member player wants to group
+    // Group is joinable if any member player wants to group
     // TODO(sourenp): Should probably switch to voting functionality later
-    bool groupable = std::accumulate(
+    bool joinable = std::accumulate(
         group_players.begin(), group_players.end(), false,
         [this](bool curr, int player_id) { return curr || mPlayers[player_id]->getGroupable(); });
 
-    group->setGroupable(groupable);
+    group->setGroupable(joinable);
 
     // Update group size
     group->setRadius(group_players.size() * GROUP_MEMBER_SIZE);

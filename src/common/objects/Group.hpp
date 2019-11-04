@@ -18,7 +18,7 @@ struct GroupUpdate {
     float x_pos;
     float y_pos;
     float radius;
-    bool groupable;
+    bool joinable;
     sf::Uint32 shader_key;
 };
 
@@ -34,7 +34,7 @@ class Group : public CircleGameObject {
     Group& operator=(const Group& temp_obj) = delete; // TODO: define this
 
     bool getGroupable();
-    void setGroupable(bool groupable);
+    void setGroupable(bool joinable);
 
     GroupUpdate getUpdate();
     void applyUpdate(GroupUpdate gu);

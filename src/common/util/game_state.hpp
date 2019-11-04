@@ -26,7 +26,7 @@ struct ClientUnreliableUpdate {
 };
 
 struct ClientReliableUpdate {
-    bool groupable = false;
+    bool joinable = false;
 };
 
 struct ClientIdAndUnreliableUpdate {

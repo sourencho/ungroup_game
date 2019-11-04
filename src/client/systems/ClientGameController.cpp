@@ -49,7 +49,7 @@ void ClientGameController::draw(sf::RenderTarget& target) {
 void ClientGameController::handleEvents(sf::Event& event) {
     if (event.type == sf::Event::KeyPressed) {
         if (sf::Keyboard::isKeyPressed(mKeys.group)) {
-            mClientReliableUpdate.groupable ^= true;
+            mClientReliableUpdate.joinable ^= true;
         }
 
         sf::Vector2f direction = sf::Vector2f(0.f, 0.f);

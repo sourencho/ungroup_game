@@ -11,7 +11,7 @@ struct PlayerUpdate {
     sf::Uint32 player_id;
     bool is_active;
     sf::Vector2f direction;
-    bool groupable;
+    bool joinable;
 };
 
 sf::Packet& operator<<(sf::Packet& packet, const PlayerUpdate& player_update);
@@ -23,7 +23,7 @@ class Player : public GameObject {
     ~Player();
 
     void setDirection(sf::Vector2f direction);
-    void setGroupable(bool groupable);
+    void setGroupable(bool joinable);
     sf::Vector2f getDirection() const;
     bool getGroupable() const;
 
