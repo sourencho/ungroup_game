@@ -58,16 +58,7 @@ To run tests, after building, run:
 
 #### Travis CI Debug Build
 
-Run this to enable debug mode on a specific build.
-```
-  curl -s -X POST \
-   -H "Content-Type: application/json" \
-   -H "Accept: application/json" \
-   -H "Travis-API-Version: 3" \
-   -H "Authorization: token <TOKEN>" \
-   -d '{ "quiet": true }' \
-   https://api.travis-ci.com/job/<JOB_ID>/debug
-```
+Run this command to enable debug mode on a specific build: https://gist.github.com/SourenP/3ae15ba0e634a3e0ccceebbb7a27a391
 
 #### Vscode lldb
 
