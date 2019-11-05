@@ -25,7 +25,7 @@ class ServerGameController : public GameController {
     void handleClientConnectedEvent(std::shared_ptr<Event> event);
     void addEventListeners();
 
-    std::unique_ptr<NetworkingServer> mNetworkingServer;
+    std::unique_ptr<NetworkingServer> m_NetworkingServer;
 };
 
 #endif /* ServerGameController_hpp */

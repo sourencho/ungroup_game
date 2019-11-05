@@ -14,7 +14,7 @@ PhysicsController::PhysicsController() {}
 
 CircleRigidBody& PhysicsController::add(std::unique_ptr<CircleRigidBody> circle_rigid_body) {
     CircleRigidBody& circle_rigid_body_ref = *circle_rigid_body;
-    mCircleRigidBodies.push_back(std::move(circle_rigid_body));
+    m_CircleRigidBodies.push_back(std::move(circle_rigid_body));
     return circle_rigid_body_ref;
 }
 
@@ -27,7 +27,7 @@ void PhysicsController::update(sf::Int32 delta_ms) {
  * Update positions of all physics bodies.
  */
 void PhysicsController::step(sf::Int32 delta_ms) {
-    for (auto& crb : mCircleRigidBodies) {
+    for (auto& crb : m_CircleRigidBodies) {
         crb->step(delta_ms);
     }
 }
@@ -37,12 +37,12 @@ void PhysicsController::step(sf::Int32 delta_ms) {
  */
 void PhysicsController::resolveCollisions() {
     auto inactive_crbs = std::stable_partition(
-        mCircleRigidBodies.begin(), mCircleRigidBodies.end(),
+        m_CircleRigidBodies.begin(), m_CircleRigidBodies.end(),
         [](const std::unique_ptr<CircleRigidBody>& crb) { return crb->isActive(); });
 
-    for (auto circle_a_it = mCircleRigidBodies.begin(); circle_a_it != inactive_crbs;
+    for (auto circle_a_it = m_CircleRigidBodies.begin(); circle_a_it != inactive_crbs;
          ++circle_a_it) {
-        for (auto circle_b_it = mCircleRigidBodies.begin(); circle_b_it != inactive_crbs;
+        for (auto circle_b_it = m_CircleRigidBodies.begin(); circle_b_it != inactive_crbs;
              ++circle_b_it) {
             CircleRigidBody& circle_a = **circle_a_it;
             CircleRigidBody& circle_b = **circle_b_it;

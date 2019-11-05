@@ -21,7 +21,7 @@ class CircleGameObject : public GameObject {
 
     void setActive(bool is_active);
 
-    void setMass(float mass) { mCircleRigidBody.setMass(mass); }
+    void setMass(float mass) { m_CircleRigidBody.setMass(mass); }
 
     void matchRigid();
 
@@ -31,35 +31,35 @@ class CircleGameObject : public GameObject {
 
     sf::Vector2f getCenter() const;
 
-    float getRadius() const { return mCircleShape.getRadius(); };
+    float getRadius() const { return m_CircleShape.getRadius(); };
     void setRadius(float radius) {
-        mCircleShape.setRadius(radius);
-        mCircleRigidBody.setRadius(radius);
-        mOutlineShape.setRadius(radius);
+        m_CircleShape.setRadius(radius);
+        m_CircleRigidBody.setRadius(radius);
+        m_OutlineShape.setRadius(radius);
     };
 
-    sf::Vector2f getPosition() const { return mCircleShape.getPosition(); };
+    sf::Vector2f getPosition() const { return m_CircleShape.getPosition(); };
     void setPosition(sf::Vector2f position) {
-        mCircleShape.setPosition(position);
-        mCircleRigidBody.setPosition(position);
-        mOutlineShape.setPosition(position);
+        m_CircleShape.setPosition(position);
+        m_CircleRigidBody.setPosition(position);
+        m_OutlineShape.setPosition(position);
     };
 
-    void setOutlineThickness(float thickness) { mOutlineShape.setOutlineThickness(thickness); };
-    void setOutlineColor(sf::Color color) { mOutlineShape.setOutlineColor(color); };
+    void setOutlineThickness(float thickness) { m_OutlineShape.setOutlineThickness(thickness); };
+    void setOutlineColor(sf::Color color) { m_OutlineShape.setOutlineColor(color); };
 
     void draw(sf::RenderTarget& render_target);
 
     void setOutline(){};
 
   protected:
-    sf::CircleShape mCircleShape;
+    sf::CircleShape m_CircleShape;
     sf::CircleShape
-        mOutlineShape; // We need another circle hidden behind to draw the outline on. We can't use
+        m_OutlineShape; // We need another circle hidden behind to draw the outline on. We can't use
                        // the original circle because the shader draw over the outline.
-    CircleRigidBody& mCircleRigidBody;
-    RenderingDef::Shader mShader;
-    ResourceStore& mResourceStore;
+    CircleRigidBody& m_CircleRigidBody;
+    RenderingDef::Shader m_Shader;
+    ResourceStore& m_ResourceStore;
 };
 
 #endif /* CircleGameObject_hpp */

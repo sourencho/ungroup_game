@@ -50,16 +50,16 @@ class GameController {
     void collisionEvent(std::shared_ptr<Event> event);
     void applyCollisionForce(uint32_t collider_a_id, uint32_t collider_b_id);
 
-    std::shared_ptr<PhysicsController> mPhysicsController;
-    std::unique_ptr<GameObjectStore> mGameObjectStore;
-    std::unique_ptr<GroupController> mGroupController;
-    std::unique_ptr<PlayerController> mPlayerController;
-    std::unique_ptr<MineController> mMineController;
-    std::unique_ptr<ResourceStore> mResourceStore;
+    std::shared_ptr<PhysicsController> m_PhysicsController;
+    std::unique_ptr<GameObjectStore> m_GameObjectStore;
+    std::unique_ptr<GroupController> m_GroupController;
+    std::unique_ptr<PlayerController> m_PlayerController;
+    std::unique_ptr<MineController> m_MineController;
+    std::unique_ptr<ResourceStore> m_ResourceStore;
 
-    sf::Clock mClock;
-    sf::Int32 mElapsedTime = 0;
-    sf::Int32 mTimeAccumulator = 0;
+    sf::Clock m_Clock;
+    sf::Int32 m_ElapsedTime = 0;
+    sf::Int32 m_TimeAccumulator = 0;
 };
 
 #endif /* GameController_hpp */

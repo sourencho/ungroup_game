@@ -27,14 +27,14 @@ class GameObjectStore {
     std::vector<std::shared_ptr<Mine>>& getMines();
 
   private:
-    std::vector<std::shared_ptr<Player>> mPlayers;
-    std::vector<std::shared_ptr<Group>> mGroups;
-    std::vector<std::shared_ptr<Mine>> mMines;
+    std::vector<std::shared_ptr<Player>> m_Players;
+    std::vector<std::shared_ptr<Group>> m_Groups;
+    std::vector<std::shared_ptr<Mine>> m_Mines;
 
-    std::shared_ptr<PhysicsController> mPhysicsController;
-    ResourceStore& mResourceStore;
+    std::shared_ptr<PhysicsController> m_PhysicsController;
+    ResourceStore& m_ResourceStore;
 
-    unsigned int mNextPlayerId = 0;
+    unsigned int m_NextPlayerId = 0;
 };
 
 #endif /* GameObjectStore_hpp */

@@ -5,47 +5,47 @@
 EventController::EventController() {}
 
 void EventController::addEventListener(EventType event_type, EventCallback event_callback) {
-    mEventMapLock.lock();
-    mEventCallbackMap[event_type].push_back(event_callback);
-    mEventMapLock.unlock();
+    m_EventMapLock.lock();
+    m_EventCallbackMap[event_type].push_back(event_callback);
+    m_EventMapLock.unlock();
 }
 
 void EventController::queueEvent(std::shared_ptr<Event> event) {
-    mEventQueueLock.lock();
-    mEventQueue.push(event);
-    mEventQueueLock.unlock();
+    m_EventQueueLock.lock();
+    m_EventQueue.push(event);
+    m_EventQueueLock.unlock();
 }
 
-void EventController::forceQueueEvent(std::shared_ptr<Event> event) { mEventQueue.push(event); }
+void EventController::forceQueueEvent(std::shared_ptr<Event> event) { m_EventQueue.push(event); }
 
 void EventController::forceProcessEvents() {
-    while (!mEventQueue.empty()) {
-        std::shared_ptr<Event> event = mEventQueue.front();
-        for (const EventCallback event_callback : mEventCallbackMap[event->getType()]) {
+    while (!m_EventQueue.empty()) {
+        std::shared_ptr<Event> event = m_EventQueue.front();
+        for (const EventCallback event_callback : m_EventCallbackMap[event->getType()]) {
             (event_callback)(event);
         }
-        mEventQueue.pop();
+        m_EventQueue.pop();
     }
 }
 
 void EventController::lock() {
-    mEventQueueLock.lock();
-    mEventMapLock.lock();
+    m_EventQueueLock.lock();
+    m_EventMapLock.lock();
 }
 
 void EventController::unlock() {
-    mEventQueueLock.unlock();
-    mEventMapLock.unlock();
+    m_EventQueueLock.unlock();
+    m_EventMapLock.unlock();
 }
 
 void EventController::reset() {
     lock();
-    mEventCallbackMap.clear();
-    mEventQueue = {};
+    m_EventCallbackMap.clear();
+    m_EventQueue = {};
     unlock();
 }
 
-std::mutex EventController::mEventQueueLock;
-std::mutex EventController::mEventMapLock;
-EventController::EventTypeToCallbacks EventController::mEventCallbackMap;
-EventController::EventQueue EventController::mEventQueue;
+std::mutex EventController::m_EventQueueLock;
+std::mutex EventController::m_EventMapLock;
+EventController::EventTypeToCallbacks EventController::m_EventCallbackMap;
+EventController::EventQueue EventController::m_EventQueue;

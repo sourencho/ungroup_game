@@ -19,14 +19,14 @@ void ResourceStore::addTexture(std::string key, std::string texture_path, bool r
     if (!texture->loadFromFile(texture_path)) {
         throw std::runtime_error("Error loading texture from " + texture_path);
     }
-    mTextures[key] = std::move(texture);
+    m_Textures[key] = std::move(texture);
 }
 
 std::shared_ptr<sf::Texture> ResourceStore::getTexture(std::string key) {
-    if (mTextures.count(key) == 0) {
+    if (m_Textures.count(key) == 0) {
         throw std::runtime_error("Texure doesn't exist with key " + key);
     }
-    return mTextures[key];
+    return m_Textures[key];
 }
 
 void ResourceStore::addShader(RenderingDef::ShaderKey key, std::string vertex_shader_path,
@@ -42,16 +42,16 @@ void ResourceStore::addShader(RenderingDef::ShaderKey key, std::string vertex_sh
         throw std::runtime_error("Error loading fragment shader file " + fragment_shader_path);
     }
     shader->setUniform("u_resolution", sf::Vector2f(WINDOW_RESOLUTION));
-    mShaders[key] = shader;
+    m_Shaders[key] = shader;
 }
 
 std::shared_ptr<sf::Shader> ResourceStore::getShader(RenderingDef::ShaderKey key) {
     if (key == RenderingDef::ShaderKey::none) {
         return nullptr;
     } else {
-        if (mShaders.count(key) == 0) {
+        if (m_Shaders.count(key) == 0) {
             throw std::runtime_error("Shader with used key doesn't exist");
         }
-        return mShaders[key];
+        return m_Shaders[key];
     }
 }

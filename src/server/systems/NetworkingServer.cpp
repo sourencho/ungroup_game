@@ -13,89 +13,89 @@
 sf::Time TCP_TIMEOUT = sf::milliseconds(100);
 ;
 
-NetworkingServer::NetworkingServer() : mGameState_t() {
+NetworkingServer::NetworkingServer() : m_GameState_t() {
     std::cout << "Starting ungroup game server." << std::endl;
     ;
 
     createUdpSocket();
 
-    mReliableRecvSend = std::thread(&NetworkingServer::reliableRecvSend, this);
-    mUnreliableRecv = std::thread(&NetworkingServer::unreliableRecv, this);
-    mBroadcastGameStateThread = std::thread(&NetworkingServer::broadcastGameState, this);
+    m_ReliableRecvSend = std::thread(&NetworkingServer::reliableRecvSend, this);
+    m_UnreliableRecv = std::thread(&NetworkingServer::unreliableRecv, this);
+    m_BroadcastGameStateThread = std::thread(&NetworkingServer::broadcastGameState, this);
 }
 
 NetworkingServer::~NetworkingServer() {
-    mClientReliableUpdates_lock.unlock();
-    mClientUnreliableUpdates_lock.unlock();
-    mGameState_lock.unlock();
+    m_ClientReliableUpdates_lock.unlock();
+    m_ClientUnreliableUpdates_lock.unlock();
+    m_GameState_lock.unlock();
     EventController::getInstance().unlock();
 
-    mStopThreads_ta = true;
+    m_StopThreads_ta = true;
 
-    mReliableRecvSend.join();
-    mUnreliableRecv.join();
-    mBroadcastGameStateThread.join();
+    m_ReliableRecvSend.join();
+    m_UnreliableRecv.join();
+    m_BroadcastGameStateThread.join();
 }
 
 /* Main thread methods */
 
 void NetworkingServer::createUdpSocket() {
-    std::lock_guard<std::mutex> mUdpSocket_guard(mUdpSocket_lock);
-    mUdpSocket_t = std::unique_ptr<sf::UdpSocket>(new sf::UdpSocket);
-    mUdpSocket_t->bind(sf::Socket::AnyPort);
-    mUdpSocket_t->setBlocking(false);
+    std::lock_guard<std::mutex> m_UdpSocket_guard(m_UdpSocket_lock);
+    m_UdpSocket_t = std::unique_ptr<sf::UdpSocket>(new sf::UdpSocket);
+    m_UdpSocket_t->bind(sf::Socket::AnyPort);
+    m_UdpSocket_t->setBlocking(false);
 }
 
 ClientInputs NetworkingServer::collectClientInputs() {
     // Give clients a window to write inputs
     {
-        mClientReliableUpdates_lock.unlock();
-        mClientUnreliableUpdates_lock.unlock();
-        mGameState_lock.unlock();
+        m_ClientReliableUpdates_lock.unlock();
+        m_ClientUnreliableUpdates_lock.unlock();
+        m_GameState_lock.unlock();
         EventController::getInstance().unlock();
         std::this_thread::sleep_for(SERVER_INPUT_WINDOW_SLEEP);
-        mClientReliableUpdates_lock.lock();
-        mClientUnreliableUpdates_lock.lock();
-        mGameState_lock.lock();
+        m_ClientReliableUpdates_lock.lock();
+        m_ClientUnreliableUpdates_lock.lock();
+        m_GameState_lock.lock();
         EventController::getInstance().lock();
     }
 
     // Get client inputs
     ClientInputs cis = {
-        mClientUnreliableUpdates_t,
-        mClientReliableUpdates_t,
+        m_ClientUnreliableUpdates_t,
+        m_ClientReliableUpdates_t,
     };
 
-    mClientUnreliableUpdates_t.clear();
-    mClientReliableUpdates_t.clear();
+    m_ClientUnreliableUpdates_t.clear();
+    m_ClientReliableUpdates_t.clear();
 
     return cis;
 }
 
 void NetworkingServer::setClientToPlayerId(sf::Int32 client_id, int player_id) {
-    mClientToPlayerIds_t[client_id] = player_id;
+    m_ClientToPlayerIds_t[client_id] = player_id;
 }
 
-void NetworkingServer::setState(const GameState& gs) { mGameState_t = gs; }
+void NetworkingServer::setState(const GameState& gs) { m_GameState_t = gs; }
 
-void NetworkingServer::incrementTick() { mTick_ta++; }
+void NetworkingServer::incrementTick() { m_Tick_ta++; }
 
-unsigned int NetworkingServer::getTick() const { return static_cast<unsigned int>(mTick_ta); }
+unsigned int NetworkingServer::getTick() const { return static_cast<unsigned int>(m_Tick_ta); }
 
-void NetworkingServer::setTick(unsigned int tick) { mTick_ta = tick; }
+void NetworkingServer::setTick(unsigned int tick) { m_Tick_ta = tick; }
 
 /* UnreliableServer thread methods */
 
 void NetworkingServer::unreliableRecv() {
-    while (!mStopThreads_ta) {
+    while (!m_StopThreads_ta) {
         sf::IpAddress sender;
         unsigned short port;
         sf::Packet command_packet;
         sf::Socket::Status status;
 
         {
-            std::lock_guard<std::mutex> mUdpSocket_guard(mUdpSocket_lock);
-            status = mUdpSocket_t->receive(command_packet, sender, port);
+            std::lock_guard<std::mutex> m_UdpSocket_guard(m_UdpSocket_lock);
+            status = m_UdpSocket_t->receive(command_packet, sender, port);
         }
         handleUnreliableCommand(status, command_packet, sender, port);
 
@@ -125,16 +125,16 @@ void NetworkingServer::handleUnreliableCommand(sf::Socket::Status status, sf::Pa
 
 void NetworkingServer::setClientUnreliableUpdate(sf::Packet packet, int client_id,
                                                  uint client_tick) {
-    int drift = std::abs(static_cast<int>((mTick_ta - client_tick)));
+    int drift = std::abs(static_cast<int>((m_Tick_ta - client_tick)));
     if (drift < CMD_DRIFT_THRESHOLD) {
         ClientUnreliableUpdate client_unreliable_update;
         packet >> client_unreliable_update;
         ClientIdAndUnreliableUpdate client_id_and_unreliable_update = {client_id,
                                                                        client_unreliable_update};
         {
-            std::lock_guard<std::mutex> mClientUnreliableUpdates_guard(
-                mClientUnreliableUpdates_lock);
-            mClientUnreliableUpdates_t.push_back(client_id_and_unreliable_update);
+            std::lock_guard<std::mutex> m_ClientUnreliableUpdates_guard(
+                m_ClientUnreliableUpdates_lock);
+            m_ClientUnreliableUpdates_t.push_back(client_id_and_unreliable_update);
         }
     } else {
         std::cout << "Receive client_update command with tick drifted past drift threshold. "
@@ -157,7 +157,7 @@ void NetworkingServer::reliableRecvSend() {
     selector.add(listener);
 
     // Endless loop that waits for new connections
-    while (!mStopThreads_ta) {
+    while (!m_StopThreads_ta) {
         // Make the selector wait for data on any socket
         if (selector.wait(TCP_TIMEOUT)) {
             // Test the listener
@@ -166,13 +166,13 @@ void NetworkingServer::reliableRecvSend() {
                 auto socket = std::unique_ptr<sf::TcpSocket>(new sf::TcpSocket());
                 if (listener.accept(*socket) == sf::Socket::Done) {
                     selector.add(*socket);
-                    mClients.push_back(std::make_pair(mClientIdCounter++, std::move(socket)));
+                    m_Clients.push_back(std::make_pair(m_ClientIdCounter++, std::move(socket)));
                 } else {
                     socket.reset();
                 }
             } else {
                 // The listener socket is not ready, test all other sockets (the clients)
-                for (auto& client : mClients) {
+                for (auto& client : m_Clients) {
                     sf::Uint32 client_id = client.first;
                     sf::TcpSocket& socket = *client.second;
                     if (selector.isReady(socket)) {
@@ -219,9 +219,9 @@ void NetworkingServer::handleReliableCommand(sf::Socket::Status status, sf::Pack
 }
 
 void NetworkingServer::clientDisconnect(sf::TcpSocket& client, sf::Uint32 client_id) {
-    // TODO(sourenp): Remove client from mClients
-    std::lock_guard<std::mutex> mClientToPlayerIds_guard(mClientToPlayerIds_lock);
-    sf::Uint32 player_id = mClientToPlayerIds_t[client_id];
+    // TODO(sourenp): Remove client from m_Clients
+    std::lock_guard<std::mutex> m_ClientToPlayerIds_guard(m_ClientToPlayerIds_lock);
+    sf::Uint32 player_id = m_ClientToPlayerIds_t[client_id];
     EventController::getInstance().queueEvent(std::shared_ptr<ClientDisconnectedEvent>(
         new ClientDisconnectedEvent(client_id, player_id)));
 }
@@ -229,15 +229,15 @@ void NetworkingServer::clientDisconnect(sf::TcpSocket& client, sf::Uint32 client
 void NetworkingServer::sendPlayerId(sf::TcpSocket& socket, sf::Uint32 client_id) {
     sf::Uint32 player_id;
     {
-        std::lock_guard<std::mutex> mClientToPlayerIds_guard(mClientToPlayerIds_lock);
-        if (mClientToPlayerIds_t.count(client_id) == 0) {
+        std::lock_guard<std::mutex> m_ClientToPlayerIds_guard(m_ClientToPlayerIds_lock);
+        if (m_ClientToPlayerIds_t.count(client_id) == 0) {
             return;
         }
-        player_id = mClientToPlayerIds_t[client_id];
+        player_id = m_ClientToPlayerIds_t[client_id];
     }
     sf::Packet packet;
     sf::Uint32 player_id_cmd = ReliableCommandType::player_id;
-    ReliableCommand reliable_command = {client_id, player_id_cmd, mTick_ta};
+    ReliableCommand reliable_command = {client_id, player_id_cmd, m_Tick_ta};
     if (packet << reliable_command << player_id) {
         socket.send(packet);
     } else {
@@ -250,8 +250,8 @@ void NetworkingServer::setClientReliableUpdate(sf::Packet packet, int client_id)
     packet >> client_reliable_update;
     ClientIdAndReliableUpdate client_id_and_reliable_update = {client_id, client_reliable_update};
     {
-        std::lock_guard<std::mutex> mClientReliableUpdates_guard(mClientReliableUpdates_lock);
-        mClientReliableUpdates_t.push_back(client_id_and_reliable_update);
+        std::lock_guard<std::mutex> m_ClientReliableUpdates_guard(m_ClientReliableUpdates_lock);
+        m_ClientReliableUpdates_t.push_back(client_id_and_reliable_update);
     }
 }
 
@@ -261,19 +261,19 @@ void NetworkingServer::registerClient(sf::Packet packet, sf::TcpSocket& client,
     sf::Uint16 client_udp_port;
     packet >> client_udp_port;
     {
-        std::lock_guard<std::mutex> mClientToUdpPorts_guard(mClientToUdpPorts_lock);
-        mClientToUdpPorts_t[client_id] = client_udp_port;
+        std::lock_guard<std::mutex> m_ClientToUdpPorts_guard(m_ClientToUdpPorts_lock);
+        m_ClientToUdpPorts_t[client_id] = client_udp_port;
     }
 
     // Send a response
     sf::Uint16 server_udp_port;
     {
-        std::lock_guard<std::mutex> mUdpSocket_guard(mUdpSocket_lock);
-        server_udp_port = mUdpSocket_t->getLocalPort();
+        std::lock_guard<std::mutex> m_UdpSocket_guard(m_UdpSocket_lock);
+        server_udp_port = m_UdpSocket_t->getLocalPort();
     }
     sf::Packet response_packet;
     sf::Uint32 register_cmd = (sf::Uint32)ReliableCommandType::register_client;
-    ReliableCommand reliable_command = {client_id, register_cmd, (sf::Uint32)mTick_ta};
+    ReliableCommand reliable_command = {client_id, register_cmd, (sf::Uint32)m_Tick_ta};
     if (response_packet << reliable_command << server_udp_port) {
         client.send(response_packet);
         EventController::getInstance().queueEvent(
@@ -287,7 +287,7 @@ void NetworkingServer::registerClient(sf::Packet packet, sf::TcpSocket& client,
 /* UnreliableServerSend thread methods */
 
 void NetworkingServer::broadcastGameState() {
-    while (!mStopThreads_ta) {
+    while (!m_StopThreads_ta) {
         sendGameState();
         std::this_thread::sleep_for(SERVER_BROADCAST_GAME_STATE_SLEEP);
     }
@@ -296,19 +296,19 @@ void NetworkingServer::broadcastGameState() {
 void NetworkingServer::sendGameState() {
     GameState game_state;
     {
-        std::lock_guard<std::mutex> mGameState_guard(mGameState_lock);
-        game_state = mGameState_t;
+        std::lock_guard<std::mutex> m_GameState_guard(m_GameState_lock);
+        game_state = m_GameState_t;
     }
     sf::Packet packet = pack_game_state(game_state);
     {
-        std::lock_guard<std::mutex> mUdpSocket_guard(mUdpSocket_lock);
-        std::lock_guard<std::mutex> mClientToUdpPorts_guard(mClientToUdpPorts_lock);
+        std::lock_guard<std::mutex> m_UdpSocket_guard(m_UdpSocket_lock);
+        std::lock_guard<std::mutex> m_ClientToUdpPorts_guard(m_ClientToUdpPorts_lock);
 
-        for (auto& it : mClientToUdpPorts_t) {
+        for (auto& it : m_ClientToUdpPorts_t) {
             sf::Uint16& client_udp_port = it.second;
             sf::Socket::Status status = sf::Socket::Partial;
             while (status == sf::Socket::Partial) {
-                status = mUdpSocket_t->send(packet, CLIENT_IP, client_udp_port);
+                status = m_UdpSocket_t->send(packet, CLIENT_IP, client_udp_port);
             }
         }
     }

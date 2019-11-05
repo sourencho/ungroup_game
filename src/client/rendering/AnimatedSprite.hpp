@@ -20,8 +20,8 @@ class AnimatedSprite {
     bool isDone();
 
   private:
-    sf::Sprite mSprite;
-    Animation mAnimation;
+    sf::Sprite m_Sprite;
+    Animation m_Animation;
 };
 
 #endif /* AnimatedSprite_hpp */

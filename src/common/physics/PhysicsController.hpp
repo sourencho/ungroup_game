@@ -22,7 +22,7 @@ class PhysicsController {
                           const Collision& collision);
     void fireCollisionEvent(const Collision& collision);
 
-    std::vector<std::unique_ptr<CircleRigidBody>> mCircleRigidBodies;
+    std::vector<std::unique_ptr<CircleRigidBody>> m_CircleRigidBodies;
 };
 
 #endif /* PhysicsController_hpp */

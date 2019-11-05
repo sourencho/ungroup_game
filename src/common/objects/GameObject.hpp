@@ -7,15 +7,15 @@ class GameObject {
   public:
     explicit GameObject(uint32_t id) { mId = id; }
 
-    void setActive(bool is_active) { mIsActive = is_active; }
+    void setActive(bool is_active) { m_IsActive = is_active; }
 
-    bool isActive() const { return mIsActive; }
+    bool isActive() const { return m_IsActive; }
 
     int getId() const { return mId; }
 
   protected:
     uint32_t mId;
-    bool mIsActive = false;
+    bool m_IsActive = false;
 };
 
 #endif /* GameObject_hpp */

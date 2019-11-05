@@ -20,7 +20,7 @@ class MineController {
     std::shared_ptr<Mine>& getMine(uint32_t mine_id);
 
   private:
-    std::vector<std::shared_ptr<Mine>> mMines;
+    std::vector<std::shared_ptr<Mine>> m_Mines;
     size_t nextMineIndex = 0;
 };
 
