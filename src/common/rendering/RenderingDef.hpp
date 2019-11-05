@@ -12,7 +12,7 @@ namespace RenderingDef {
         ShaderKey key = ShaderKey::none;
         std::shared_ptr<sf::Shader> shader = nullptr;
     };
-    const sf::Color GROUPABLE_COLOR(227, 102, 68);
+    const sf::Color JOINABLE_COLOR(227, 102, 68);
     const sf::Color DARKEST_COLOR(66, 118, 118);
     const sf::Color DARK_COLOR(63, 157, 130);
     const sf::Color LIGHT_COLOR(161, 205, 115);

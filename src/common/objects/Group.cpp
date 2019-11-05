@@ -15,14 +15,14 @@ Group::Group(uint32_t id, sf::Vector2f position, sf::Color color,
 
 Group::~Group() {}
 
-bool Group::getGroupable() { return mGroupable; }
+bool Group::getJoinable() { return mJoinable; }
 
-void Group::setGroupable(bool joinable) { mGroupable = joinable; }
+void Group::setJoinable(bool joinable) { mJoinable = joinable; }
 
 void Group::draw(sf::RenderTarget& render_target) {
-    if (mGroupable) {
+    if (mJoinable) {
         setOutlineThickness(1.f);
-        setOutlineColor(RenderingDef::GROUPABLE_COLOR);
+        setOutlineColor(RenderingDef::JOINABLE_COLOR);
     } else {
         setOutlineThickness(0.f);
     }
@@ -37,7 +37,7 @@ GroupUpdate Group::getUpdate() {
         .x_pos = position.x,
         .y_pos = position.y,
         .radius = getRadius(),
-        .joinable = getGroupable(),
+        .joinable = getJoinable(),
         .shader_key = (sf::Uint32)mShader.key,
     };
 
@@ -48,7 +48,7 @@ void Group::applyUpdate(GroupUpdate gu) {
     setActive(gu.is_active);
     setPosition(sf::Vector2f(gu.x_pos, gu.y_pos));
     setRadius(gu.radius);
-    setGroupable(gu.joinable);
+    setJoinable(gu.joinable);
     setShader((RenderingDef::ShaderKey)gu.shader_key);
 }
 

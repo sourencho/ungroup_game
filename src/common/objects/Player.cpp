@@ -14,26 +14,25 @@ sf::Packet& operator>>(sf::Packet& packet, PlayerUpdate& player_update) {
            player_update.direction >> player_update.joinable;
 }
 
-Player::Player(uint32_t id) : GameObject(id), mDirection(1.0, 1.0), mGroupable(false) {}
+Player::Player(uint32_t id) : GameObject(id), mDirection(1.0, 1.0), mJoinable(false) {}
 
 Player::~Player() {}
 
 void Player::setDirection(sf::Vector2f direction) { mDirection = direction; }
 
-void Player::setGroupable(bool joinable) { mGroupable = joinable; }
+void Player::setJoinable(bool joinable) { mJoinable = joinable; }
 
 sf::Vector2f Player::getDirection() const { return mDirection; }
 
-bool Player::getGroupable() const { return mGroupable; }
+bool Player::getJoinable() const { return mJoinable; }
 
 PlayerUpdate Player::getUpdate() const {
-    PlayerUpdate pu = {static_cast<sf::Uint32>(getId()), isActive(), getDirection(),
-                       getGroupable()};
+    PlayerUpdate pu = {static_cast<sf::Uint32>(getId()), isActive(), getDirection(), getJoinable()};
     return pu;
 }
 
 void Player::applyUpdate(PlayerUpdate pu) {
     setActive(pu.is_active);
     setDirection(pu.direction);
-    setGroupable(pu.joinable);
+    setJoinable(pu.joinable);
 }

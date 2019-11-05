@@ -33,8 +33,8 @@ class Group : public CircleGameObject {
     Group(const Group& temp_obj) = delete;            // TODO: define this
     Group& operator=(const Group& temp_obj) = delete; // TODO: define this
 
-    bool getGroupable();
-    void setGroupable(bool joinable);
+    bool getJoinable();
+    void setJoinable(bool joinable);
 
     GroupUpdate getUpdate();
     void applyUpdate(GroupUpdate gu);
@@ -42,7 +42,7 @@ class Group : public CircleGameObject {
     void draw(sf::RenderTarget& render_target);
 
   private:
-    bool mGroupable = false;
+    bool mJoinable = false;
 };
 
 #endif /* Group_hpp */

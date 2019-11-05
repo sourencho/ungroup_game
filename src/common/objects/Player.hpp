@@ -23,16 +23,16 @@ class Player : public GameObject {
     ~Player();
 
     void setDirection(sf::Vector2f direction);
-    void setGroupable(bool joinable);
+    void setJoinable(bool joinable);
     sf::Vector2f getDirection() const;
-    bool getGroupable() const;
+    bool getJoinable() const;
 
     PlayerUpdate getUpdate() const;
     void applyUpdate(PlayerUpdate pu);
 
   private:
     sf::Vector2f mDirection;
-    bool mGroupable = false;
+    bool mJoinable = false;
 };
 
 #endif /* Player_hpp */

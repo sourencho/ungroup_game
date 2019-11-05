@@ -37,7 +37,7 @@ void GameObjectStore::loadLevel(size_t max_player_count, size_t max_mine_count) 
     for (int i = 0; i < max_mine_count; i++) {
         uint32_t new_mine_id = IdFactory::getInstance().getNextId(GameObjectType::mine);
         mMines.push_back(std::shared_ptr<Mine>(new Mine(
-            new_mine_id, sf::Vector2f(MINE_START_OFFSET_X, MINE_START_OFFSET_Y * (i + 1)),
+            new_mine_id, sf::Vector2f(MINE_START_OFFSET_X, MINE_START_OFFSET_Y * (i + 1) - 100.f),
             MINE_SIZE, mine_colors[i % mine_colors.size()], mPhysicsController, mResourceStore)));
     }
 }

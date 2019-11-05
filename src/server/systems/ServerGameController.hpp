@@ -22,7 +22,8 @@ class ServerGameController : public GameController {
     unsigned int getTick() override;
     void setTick(unsigned int tick) override;
     void step(const ClientInputs& cis, sf::Int32 delta_ms) override;
-    void handleEvent(std::shared_ptr<Event> event);
+    void handleClientConnectedEvent(std::shared_ptr<Event> event);
+    void addEventListeners();
 
     std::unique_ptr<NetworkingServer> mNetworkingServer;
 };

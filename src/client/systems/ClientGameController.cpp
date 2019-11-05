@@ -11,12 +11,16 @@ ClientGameController::ClientGameController(size_t max_player_count, size_t max_m
                                            Keys keys)
     : GameController(max_player_count, max_mine_count), mNetworkingClient(new NetworkingClient()),
       mAnimationController(new AnimationController()), mKeys(keys) {
-    EventController::getInstance().addEventListener(
-        EventType::EVENT_TYPE_COLLISION,
-        std::bind(&ClientGameController::handleEvent, this, std::placeholders::_1));
+    addEventListeners();
 }
 
 ClientGameController::~ClientGameController() {}
+
+void ClientGameController::addEventListeners() {
+    EventController::getInstance().addEventListener(
+        EventType::EVENT_TYPE_COLLISION,
+        std::bind(&ClientGameController::handleCollisionEvent, this, std::placeholders::_1));
+}
 
 ClientInputs ClientGameController::collectInputs() {
     return getClientInputs(mClientReliableUpdate, mClientUnreliableUpdate);
@@ -159,25 +163,16 @@ ClientInputs& ClientGameController::getClientInputs(ClientReliableUpdate cru,
     return mClientInputs;
 }
 
-void ClientGameController::handleEvent(std::shared_ptr<Event> event) {
-    switch (event->getType()) {
-        case EventType::EVENT_TYPE_COLLISION: {
-            std::shared_ptr<CollisionEvent> collision_event =
-                std::dynamic_pointer_cast<CollisionEvent>(event);
+void ClientGameController::handleCollisionEvent(std::shared_ptr<Event> event) {
+    std::shared_ptr<CollisionEvent> collision_event =
+        std::dynamic_pointer_cast<CollisionEvent>(event);
 
-            createCollisionAnimation(collision_event->getCollision());
-            break;
-        }
-        default: {
-            std::cout << "Unexpected event type." << std::endl;
-            break;
-        }
-    }
+    createCollisionAnimation(collision_event->getCollision().position);
 }
 
-void ClientGameController::createCollisionAnimation(const Collision& collision) {
+void ClientGameController::createCollisionAnimation(const sf::Vector2f& collision_position) {
     auto collision_sprite = std::unique_ptr<AnimatedSprite>(new AnimatedSprite(
-        *mResourceStore->getTexture("collision"), {6, 1}, 240, collision.position, {2.f, 2.f}));
+        *mResourceStore->getTexture("collision"), {6, 1}, 240, collision_position, {2.f, 2.f}));
     mAnimationController->add(std::move(collision_sprite));
 }
 
