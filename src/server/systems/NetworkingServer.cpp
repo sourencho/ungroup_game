@@ -220,8 +220,10 @@ void NetworkingServer::handleReliableCommand(sf::Socket::Status status, sf::Pack
 
 void NetworkingServer::clientDisconnect(sf::TcpSocket& client, sf::Uint32 client_id) {
     // TODO(sourenp): Remove client from mClients
-    EventController::getInstance().queueEvent(
-        std::shared_ptr<ClientDisconnectedEvent>(new ClientDisconnectedEvent(client_id)));
+    std::lock_guard<std::mutex> mClientToPlayerIds_guard(mClientToPlayerIds_lock);
+    sf::Uint32 player_id = mClientToPlayerIds_t[client_id];
+    EventController::getInstance().queueEvent(std::shared_ptr<ClientDisconnectedEvent>(
+        new ClientDisconnectedEvent(client_id, player_id)));
 }
 
 void NetworkingServer::sendPlayerId(sf::TcpSocket& socket, sf::Uint32 client_id) {

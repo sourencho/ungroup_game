@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include <vector>
 
+#include "../../common/events/Event.hpp"
 #include "../objects/Group.hpp"
 #include "../objects/Player.hpp"
 #include "../resources/ResourceStore.hpp"
@@ -47,8 +48,15 @@ class GroupController {
     uint32_t getGroupId(uint32_t player_id);
 
   private:
+    Group& getGroup(uint32_t group_id);
+    Player& getPlayer(uint32_t player_id);
+    void handleCollisionEvent(std::shared_ptr<Event> event);
+    void handleClientDisconnectedEvent(std::shared_ptr<Event> event);
+    void joinGroups(uint32_t circle_a_id, uint32_t circle_b_id);
     void refreshGroup(std::shared_ptr<Group>& group);
     void updateGroup(std::shared_ptr<Group>& group);
+    void removePlayer(uint32_t player_id);
+    void addEventListeners();
 
     std::vector<std::shared_ptr<Player>> mPlayers;
     std::vector<std::shared_ptr<Group>> mGroups;

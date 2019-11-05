@@ -15,14 +15,14 @@ Group::Group(uint32_t id, sf::Vector2f position, sf::Color color,
 
 Group::~Group() {}
 
-bool Group::getGroupable() { return mGroupable; }
+bool Group::getJoinable() { return mJoinable; }
 
-void Group::setGroupable(bool groupable) { mGroupable = groupable; }
+void Group::setJoinable(bool joinable) { mJoinable = joinable; }
 
 void Group::draw(sf::RenderTarget& render_target) {
-    if (mGroupable) {
+    if (mJoinable) {
         setOutlineThickness(1.f);
-        setOutlineColor(RenderingDef::GROUPABLE_COLOR);
+        setOutlineColor(RenderingDef::JOINABLE_COLOR);
     } else {
         setOutlineThickness(0.f);
     }
@@ -37,7 +37,7 @@ GroupUpdate Group::getUpdate() {
         .x_pos = position.x,
         .y_pos = position.y,
         .radius = getRadius(),
-        .groupable = getGroupable(),
+        .joinable = getJoinable(),
         .shader_key = (sf::Uint32)mShader.key,
     };
 
@@ -48,13 +48,13 @@ void Group::applyUpdate(GroupUpdate gu) {
     setActive(gu.is_active);
     setPosition(sf::Vector2f(gu.x_pos, gu.y_pos));
     setRadius(gu.radius);
-    setGroupable(gu.groupable);
+    setJoinable(gu.joinable);
     setShader((RenderingDef::ShaderKey)gu.shader_key);
 }
 
 sf::Packet& operator<<(sf::Packet& packet, const GroupUpdate& group_update) {
     packet << group_update.group_id << group_update.is_active << group_update.x_pos
-           << group_update.y_pos << group_update.radius << group_update.groupable
+           << group_update.y_pos << group_update.radius << group_update.joinable
            << group_update.shader_key;
 
     return packet;
@@ -62,7 +62,7 @@ sf::Packet& operator<<(sf::Packet& packet, const GroupUpdate& group_update) {
 
 sf::Packet& operator>>(sf::Packet& packet, GroupUpdate& group_update) {
     packet >> group_update.group_id >> group_update.is_active >> group_update.x_pos >>
-        group_update.y_pos >> group_update.radius >> group_update.groupable >>
+        group_update.y_pos >> group_update.radius >> group_update.joinable >>
         group_update.shader_key;
 
     return packet;

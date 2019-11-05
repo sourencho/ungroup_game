@@ -26,6 +26,7 @@ class ClientGameController : public GameController {
     void handleEvents(sf::Event& event);
 
   private:
+    void addEventListeners();
     ClientInputs collectInputs() override;
     void setNetworkState() override;
     void incrementTick() override;
@@ -36,7 +37,8 @@ class ClientGameController : public GameController {
     void fetchPlayerId();
     void setClientUpdates();
     void rewindAndReplay();
-    void clientCollisionEvent(std::shared_ptr<Event> event);
+    void handleCollisionEvent(std::shared_ptr<Event> event);
+    void createCollisionAnimation(const sf::Vector2f& collision_position);
 
     ClientInputs& getClientInputs(ClientReliableUpdate cru, ClientUnreliableUpdate cuu);
 
