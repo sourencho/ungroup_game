@@ -52,7 +52,7 @@ class GroupController {
     Player& getPlayer(uint32_t player_id);
     void handleCollisionEvent(std::shared_ptr<Event> event);
     void handleClientDisconnectedEvent(std::shared_ptr<Event> event);
-    void joinGroups(uint32_t group_a_id, uint32_t group_b_id);
+    void joinGroups(uint32_t circle_a_id, uint32_t circle_b_id);
     void refreshGroup(std::shared_ptr<Group>& group);
     void updateGroup(std::shared_ptr<Group>& group);
     void removePlayer(uint32_t player_id);
