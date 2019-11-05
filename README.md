@@ -5,6 +5,7 @@
 ## Intro
 
 A game about temporary alliances.
+
 Engine written from scratch using the [SFML](https://www.sfml-dev.org/) framework.
 
 ## Building and Running
