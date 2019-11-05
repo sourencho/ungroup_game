@@ -54,9 +54,9 @@ To run tests, after building, run:
 - Variables with the suffix `_t` are used by multiple threads and have a corresponding `<var>_lock` mutex.
 - Variables with the suffix `_ta` are used by multiple threads but don't have a mutex because they are atomic.
 
-## Debugging
+### Debugging
 
-### Travis CI Debug Build
+#### Travis CI Debug Build
 
 Run this to enable debug mode on a specific build.
 ```
@@ -69,123 +69,23 @@ Run this to enable debug mode on a specific build.
    https://api.travis-ci.com/job/<JOB_ID>/debug
 ```
 
-### Vscode lldb
+#### Vscode lldb
 
 In vscode on a mac you can debug using `lldb`.
 
-#### 1. Install the extention "Native Debug"
+##### 1. Install the extention "Native Debug"
 
 Link: https://marketplace.visualstudio.com/items?itemName=webfreak.debug
 
-#### 2. Setup tasks
+##### 2. Setup tasks
 
-Set `tasks.json` to:
-```
-{
-    "version": "2.0.0",
-    "tasks": [
-        {
-            "label": "clean",
-            "type": "shell",
-            "options": {
-                "cwd": "${workspaceRoot}"
-            },
-            "command": "rm -rf build",
-            "problemMatcher": []
-        },
-        {
-            "label": "dir",
-            "type": "shell",
-            "options": {
-                "cwd": "${workspaceRoot}"
-            },
-            "command": "mkdir -p build",
-            "problemMatcher": []
-        },
-        {
-            "label": "cmake_debug",
-            "type": "shell",
-            "options": {
-                "cwd": "${workspaceRoot}/build"
-            },
-            "command": "cmake",
-            "args": [
-                "-DCMAKE_BUILD_TYPE=Debug",
-                "${workspaceRoot}"
-            ],
-            "dependsOn": [
-                "dir"
-            ],
-            "problemMatcher": []
-        },
-        {
-            "label": "make_debug",
-            "type": "shell",
-            "options": {
-                "cwd": "${workspaceRoot}/build"
-            },
-            "command": "make -j VERBOSE=1",
-            "dependsOn": [
-                "cmake_debug"
-            ]
-        },
-        {
-            "label": "build_debug",
-            "type": "shell",
-            "options": {
-                "cwd": "${workspaceRoot}/build"
-            },
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "dependsOn": [
-                "make_debug"
-            ],
-            "problemMatcher": [
-                "$gcc"
-            ]
-        }
-    ]
-}
-```
+Set `tasks.json` to: https://gist.github.com/SourenP/46d3f5282de7fd7ecaf681384fc8e4dc
 
-#### 3. Setup launch
+##### 3. Setup launch
 
-Set `launch.json` to:
-```
-{
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "name": "(lldb) Launch ug-server",
-            "type": "cppdbg",
-            "request": "launch",
-            "program": "${workspaceRoot}/build/src/server/ug-server",
-            "args": [],
-            "stopAtEntry": true,
-            "cwd": "${workspaceFolder}",
-            "environment": [],
-            "externalConsole": false,
-            "MIMode": "lldb"
-        },
-        {
-            "name": "(lldb) Launch ug-client",
-            "type": "cppdbg",
-            "request": "launch",
-            "program": "${workspaceRoot}/build/src/client/ug-client",
-            "args": [],
-            "stopAtEntry": true,
-            "cwd": "${workspaceFolder}",
-            "environment": [],
-            "externalConsole": false,
-            "MIMode": "lldb"
-        }
-    ]
-}
-```
+Set `launch.json` to: https://gist.github.com/SourenP/47746e0c2b39545975f8e7768e281849
 
-#### 4. Run tasks
+##### 4. Run tasks
 
 Debug build:
 - `CMD` + `SHIFT` + `P` >  ` Tasks: Run Task` > `build_debug`
