@@ -47,7 +47,7 @@ To run tests, after building, run:
 
 ### Style
 - We use [ClangFormat](https://clang.llvm.org/docs/ClangFormat.html). You can use the [xaver.clang-format](https://marketplace.visualstudio.com/items?itemName=xaver.clang-format) VSCode extension to automatically format.
-- Class member variables have the style `mCamelCase`.
+- Class member variables have the style `m_camelCase`.
 - Class methods have the style `camelCase`.
 - Local variables have the style `snake_case`.
 - Variables with the suffix `_t` are used by multiple threads and have a corresponding `<var>_lock` mutex.

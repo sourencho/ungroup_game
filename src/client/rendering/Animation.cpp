@@ -2,25 +2,25 @@
 
 #include "Animation.hpp"
 
-Animation::Animation(sf::Sprite& target) : mTarget(target) {}
+Animation::Animation(sf::Sprite& target) : m_target(target) {}
 
 void Animation::addFrame(Frame&& frame) {
-    mLength += frame.duration;
-    mFrames.push_back(std::move(frame));
+    m_length += frame.duration;
+    m_frames.push_back(std::move(frame));
 }
 
 void Animation::update(sf::Int32 elapsed) {
-    mProgress += elapsed;
-    sf::Int32 p = mProgress;
-    for (size_t i = 0; i < mFrames.size(); i++) {
-        p -= mFrames[i].duration;
+    m_progress += elapsed;
+    sf::Int32 p = m_progress;
+    for (size_t i = 0; i < m_frames.size(); i++) {
+        p -= m_frames[i].duration;
 
         // if we have progressed OR if we're on the last frame, apply and stop.
-        if (p <= 0.0 || &(mFrames[i]) == &mFrames.back()) {
-            mTarget.setTextureRect(mFrames[i].rect);
+        if (p <= 0.0 || &(m_frames[i]) == &m_frames.back()) {
+            m_target.setTextureRect(m_frames[i].rect);
             break; // we found our frame
         }
     }
 }
 
-bool Animation::isDone() { return mProgress > mLength; }
+bool Animation::isDone() { return m_progress > m_length; }

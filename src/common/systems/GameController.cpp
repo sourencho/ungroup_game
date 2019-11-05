@@ -14,22 +14,22 @@
 #include "../util/game_settings.hpp"
 
 GameController::GameController(size_t max_player_count, size_t max_mine_count)
-    : mPhysicsController(new PhysicsController()), mResourceStore(new ResourceStore()) {
-    mGameObjectStore =
-        std::unique_ptr<GameObjectStore>(new GameObjectStore(mPhysicsController, *mResourceStore));
-    mGameObjectStore->loadLevel(max_player_count, max_mine_count);
+    : m_physicsController(new PhysicsController()), m_resourceStore(new ResourceStore()) {
+    m_gameObjectStore =
+        std::unique_ptr<GameObjectStore>(new GameObjectStore(m_physicsController, *m_resourceStore));
+    m_gameObjectStore->loadLevel(max_player_count, max_mine_count);
 
-    mPlayerController =
-        std::unique_ptr<PlayerController>(new PlayerController(mGameObjectStore->getPlayers()));
-    mGroupController = std::unique_ptr<GroupController>(
-        new GroupController(mGameObjectStore->getGroups(), mGameObjectStore->getPlayers()));
-    mMineController =
-        std::unique_ptr<MineController>(new MineController(mGameObjectStore->getMines()));
+    m_playerController =
+        std::unique_ptr<PlayerController>(new PlayerController(m_gameObjectStore->getPlayers()));
+    m_groupController = std::unique_ptr<GroupController>(
+        new GroupController(m_gameObjectStore->getGroups(), m_gameObjectStore->getPlayers()));
+    m_mineController =
+        std::unique_ptr<MineController>(new MineController(m_gameObjectStore->getMines()));
 
-    mClock.restart();
+    m_clock.restart();
 
     for (int i = 0; i < max_mine_count; i++) {
-        mMineController->createMine();
+        m_mineController->createMine();
     }
 }
 
@@ -40,12 +40,12 @@ void GameController::update() {
 
     // Take a variable amount of game state steps depending on how long the last frame took. See:
     // https://web.archive.org/web/20190403012130/https://gafferongames.com/post/fix_your_timestep/
-    sf::Int32 frame_time = mClock.restart().asMilliseconds();
-    mTimeAccumulator += frame_time;
-    while (mTimeAccumulator >= MIN_TIME_STEP) {
+    sf::Int32 frame_time = m_clock.restart().asMilliseconds();
+    m_timeAccumulator += frame_time;
+    while (m_timeAccumulator >= MIN_TIME_STEP) {
         step(cis, MIN_TIME_STEP);
-        mTimeAccumulator -= MIN_TIME_STEP;
-        mElapsedTime += MIN_TIME_STEP;
+        m_timeAccumulator -= MIN_TIME_STEP;
+        m_elapsedTime += MIN_TIME_STEP;
     }
 
     setNetworkState();
@@ -53,49 +53,49 @@ void GameController::update() {
 
 void GameController::computeGameState(const ClientInputs& cis, sf::Int32 delta_ms) {
     updateGameObjects(cis);
-    mPhysicsController->update(delta_ms);
+    m_physicsController->update(delta_ms);
     updateGameObjectsPostPhysics();
     EventController::getInstance().forceProcessEvents();
     incrementTick();
 }
 
 void GameController::updateGameObjects(const ClientInputs& cis) {
-    mPlayerController->update(cis);
-    mGroupController->update();
-    mMineController->update();
+    m_playerController->update(cis);
+    m_groupController->update();
+    m_mineController->update();
 }
 
 void GameController::updateGameObjectsPostPhysics() {
-    mPlayerController->updatePostPhysics();
-    mGroupController->updatePostPhysics();
-    mMineController->updatePostPhysics();
+    m_playerController->updatePostPhysics();
+    m_groupController->updatePostPhysics();
+    m_mineController->updatePostPhysics();
 }
 
 uint32_t GameController::createPlayerWithGroup(uint32_t client_id) {
-    uint32_t new_player_id = mPlayerController->createPlayer(client_id);
-    mGroupController->createGroup(new_player_id);
+    uint32_t new_player_id = m_playerController->createPlayer(client_id);
+    m_groupController->createGroup(new_player_id);
     return new_player_id;
 }
 
 void GameController::applyGameState(GameState game_state) {
     setTick(static_cast<unsigned int>(game_state.tick));
     for (auto gu : game_state.group_updates) {
-        mGameObjectStore->getGroup(gu.group_id)->applyUpdate(gu);
+        m_gameObjectStore->getGroup(gu.group_id)->applyUpdate(gu);
     }
     for (auto mu : game_state.mine_updates) {
-        mGameObjectStore->getMine(mu.mine_id)->applyUpdate(mu);
+        m_gameObjectStore->getMine(mu.mine_id)->applyUpdate(mu);
     }
     for (auto pu : game_state.player_updates) {
-        mGameObjectStore->getPlayer(pu.player_id)->applyUpdate(pu);
+        m_gameObjectStore->getPlayer(pu.player_id)->applyUpdate(pu);
     }
-    mGroupController->applyUpdate(game_state.gcu);
+    m_groupController->applyUpdate(game_state.gcu);
 }
 
 GameState GameController::getGameState() {
-    auto groups = mGameObjectStore->getGroups();
-    auto mines = mGameObjectStore->getMines();
-    auto players = mGameObjectStore->getPlayers();
-    auto gcu = mGroupController->getUpdate();
+    auto groups = m_gameObjectStore->getGroups();
+    auto mines = m_gameObjectStore->getMines();
+    auto players = m_gameObjectStore->getPlayers();
+    auto gcu = m_groupController->getUpdate();
 
     sf::Uint32 tick = static_cast<sf::Uint32>(getTick());
     std::vector<GroupUpdate> group_updates;

@@ -35,7 +35,7 @@ MineUpdate Mine::getUpdate() {
         .x_pos = position.x,
         .y_pos = position.y,
         .radius = getRadius(),
-        .shader_key = (sf::Uint32)mShader.key,
+        .shader_key = (sf::Uint32)m_shader.key,
     };
     return mu;
 }

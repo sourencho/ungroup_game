@@ -14,7 +14,7 @@
 
 GroupController::GroupController(std::vector<std::shared_ptr<Group>>& groups,
                                  std::vector<std::shared_ptr<Player>>& players)
-    : mPlayers(players), mGroups(groups) {
+    : m_players(players), m_groups(groups) {
     addEventListeners();
 }
 
@@ -30,32 +30,32 @@ void GroupController::addEventListeners() {
 
 uint32_t GroupController::createGroup(uint32_t player_id) {
     size_t next_group_index = nextGroupIndex++;
-    if (next_group_index >= mGroups.size()) {
+    if (next_group_index >= m_groups.size()) {
         throw std::out_of_range("Exceeded max number of groups.");
     }
 
-    Group& new_group = *mGroups[next_group_index];
+    Group& new_group = *m_groups[next_group_index];
     uint32_t new_group_id = new_group.getId();
-    mGroupToPlayers[new_group_id].push_back(player_id);
-    mPlayerToGroup[player_id] = new_group_id;
+    m_groupToPlayers[new_group_id].push_back(player_id);
+    m_playerToGroup[player_id] = new_group_id;
     return new_group_id;
 }
 
 void GroupController::draw(sf::RenderTarget& target) {
-    for (auto& group : mGroups) {
+    for (auto& group : m_groups) {
         group->draw(target);
     }
 }
 
 void GroupController::update() {
-    for (auto& group : mGroups) {
+    for (auto& group : m_groups) {
         refreshGroup(group);
         updateGroup(group);
     }
 }
 
 void GroupController::updatePostPhysics() {
-    for (auto& group : mGroups) {
+    for (auto& group : m_groups) {
         group->matchRigid();
     }
 }
@@ -64,7 +64,7 @@ void GroupController::updatePostPhysics() {
  * Updates the active status of the group.
  */
 void GroupController::refreshGroup(std::shared_ptr<Group>& group) {
-    auto& group_players = mGroupToPlayers[group->getId()];
+    auto& group_players = m_groupToPlayers[group->getId()];
 
     bool any_active_members =
         std::any_of(group_players.begin(), group_players.end(),
@@ -83,7 +83,7 @@ void GroupController::updateGroup(std::shared_ptr<Group>& group) {
     if (!group->isActive())
         return;
 
-    auto& group_players = mGroupToPlayers[group->getId()];
+    auto& group_players = m_groupToPlayers[group->getId()];
 
     // Group's velocity is an accumilation of it's members velocities
     sf::Vector2f group_dir =
@@ -110,7 +110,7 @@ void GroupController::updateGroup(std::shared_ptr<Group>& group) {
 GroupControllerUpdate GroupController::getUpdate() {
     std::vector<GroupIdAndPlayerIds> group_id_and_player_idss;
 
-    for (auto kv : mGroupToPlayers) {
+    for (auto kv : m_groupToPlayers) {
         if (kv.second.size()) {
             GroupIdAndPlayerIds group_id_and_player_ids;
             group_id_and_player_ids.group_id = kv.first;
@@ -127,26 +127,26 @@ GroupControllerUpdate GroupController::getUpdate() {
 }
 
 void GroupController::applyUpdate(GroupControllerUpdate gcu) {
-    mGroupToPlayers.clear();
-    mPlayerToGroup.clear();
+    m_groupToPlayers.clear();
+    m_playerToGroup.clear();
     for (auto& gipi : gcu.group_id_and_player_idss) {
-        mGroupToPlayers[gipi.group_id] = gipi.player_ids;
+        m_groupToPlayers[gipi.group_id] = gipi.player_ids;
     }
     for (auto& gipi : gcu.group_id_and_player_idss) {
         for (auto& player_id : gipi.player_ids) {
-            mPlayerToGroup[player_id] = gipi.group_id;
+            m_playerToGroup[player_id] = gipi.group_id;
         }
     }
 }
 
-uint32_t GroupController::getGroupId(uint32_t player_id) { return mPlayerToGroup[player_id]; }
+uint32_t GroupController::getGroupId(uint32_t player_id) { return m_playerToGroup[player_id]; }
 
 Group& GroupController::getGroup(uint32_t group_id) {
-    return *mGroups[IdFactory::getInstance().getIndex(group_id)];
+    return *m_groups[IdFactory::getInstance().getIndex(group_id)];
 }
 
 Player& GroupController::getPlayer(uint32_t player_id) {
-    return *mPlayers[IdFactory::getInstance().getIndex(player_id)];
+    return *m_players[IdFactory::getInstance().getIndex(player_id)];
 }
 
 void GroupController::handleCollisionEvent(std::shared_ptr<Event> event) {
@@ -172,19 +172,19 @@ void GroupController::joinGroups(uint32_t circle_a_id, uint32_t circle_b_id) {
     // Transfer players from smaller group to larger
     uint32_t from_group_id = circle_a_id;
     uint32_t to_group_id = circle_b_id;
-    if (mGroupToPlayers[circle_a_id].size() > mGroupToPlayers[circle_b_id].size()) {
+    if (m_groupToPlayers[circle_a_id].size() > m_groupToPlayers[circle_b_id].size()) {
         from_group_id = circle_b_id;
         to_group_id = circle_a_id;
     }
 
-    mGroupToPlayers[to_group_id].insert(
-        mGroupToPlayers[to_group_id].end(),
-        std::make_move_iterator(mGroupToPlayers[from_group_id].begin()),
-        std::make_move_iterator(mGroupToPlayers[from_group_id].end()));
-    mGroupToPlayers[from_group_id].clear();
+    m_groupToPlayers[to_group_id].insert(
+        m_groupToPlayers[to_group_id].end(),
+        std::make_move_iterator(m_groupToPlayers[from_group_id].begin()),
+        std::make_move_iterator(m_groupToPlayers[from_group_id].end()));
+    m_groupToPlayers[from_group_id].clear();
 
-    for (auto& player_id : mGroupToPlayers[to_group_id]) {
-        mPlayerToGroup[player_id] = to_group_id;
+    for (auto& player_id : m_groupToPlayers[to_group_id]) {
+        m_playerToGroup[player_id] = to_group_id;
     }
 }
 
@@ -196,11 +196,11 @@ void GroupController::handleClientDisconnectedEvent(std::shared_ptr<Event> event
 }
 
 void GroupController::removePlayer(uint32_t player_id) {
-    uint32_t group_id = mPlayerToGroup[player_id];
-    auto& group_players = mGroupToPlayers[group_id];
+    uint32_t group_id = m_playerToGroup[player_id];
+    auto& group_players = m_groupToPlayers[group_id];
     group_players.erase(std::remove(group_players.begin(), group_players.end(), player_id),
                         group_players.end());
-    mPlayerToGroup.erase(player_id);
+    m_playerToGroup.erase(player_id);
 }
 
 /* Network utilities */

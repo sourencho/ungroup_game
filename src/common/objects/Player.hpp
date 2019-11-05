@@ -31,8 +31,8 @@ class Player : public GameObject {
     void applyUpdate(PlayerUpdate pu);
 
   private:
-    sf::Vector2f mDirection;
-    bool mJoinable = false;
+    sf::Vector2f m_direction;
+    bool m_joinable = false;
 };
 
 #endif /* Player_hpp */

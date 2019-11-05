@@ -38,11 +38,11 @@ class EventController {
 
     EventController();
 
-    static EventTypeToCallbacks mEventCallbackMap;
-    static EventQueue mEventQueue;
+    static EventTypeToCallbacks m_eventCallbackMap;
+    static EventQueue m_eventQueue;
 
-    static std::mutex mEventQueueLock;
-    static std::mutex mEventMapLock;
+    static std::mutex m_eventQueueLock;
+    static std::mutex m_eventMapLock;
 };
 
 #endif /* EventController_hpp */

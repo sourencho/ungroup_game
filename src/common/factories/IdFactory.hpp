@@ -25,8 +25,8 @@ class IdFactory {
   private:
     IdFactory() {}
 
-    static std::mutex mTypeToIndex_lock;
-    static std::unordered_map<uint16_t, size_t> mTypeToIndex_t;
+    static std::mutex m_typeToIndex_lock;
+    static std::unordered_map<uint16_t, size_t> m_typeToIndex_t;
 };
 
 #endif /* IdFactory_hpp */

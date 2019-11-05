@@ -10,10 +10,10 @@ const float PLAYER_VELOCITY = 200.f;
 
 CircleRigidBody::CircleRigidBody(uint32_t id, float radius, sf::Vector2f position, float mass,
                                  bool movable)
-    : GameObject(id), mRadius(radius), mPosition(position), mVelocity(0.f, 0.f), mMass(mass),
-      mTargetVelocity(0.f, 0.f), mMovable(movable) {}
+    : GameObject(id), m_radius(radius), m_position(position), m_velocity(0.f, 0.f), m_mass(mass),
+      m_targetVelocity(0.f, 0.f), m_movable(movable) {}
 
-void CircleRigidBody::applyInput(sf::Vector2f input) { mTargetVelocity = input * PLAYER_VELOCITY; }
+void CircleRigidBody::applyInput(sf::Vector2f input) { m_targetVelocity = input * PLAYER_VELOCITY; }
 
 /**
  * Apply impulse to change velocity based on mass.
@@ -24,7 +24,7 @@ void CircleRigidBody::applyImpulse(const PhysicsDef::Impulse& impulse) {
         return;
     }
 
-    sf::Vector2f velocity = mVelocity + (impulse.magnitude / mMass) * impulse.normal;
+    sf::Vector2f velocity = m_velocity + (impulse.magnitude / m_mass) * impulse.normal;
     setVelocity(velocity);
 }
 
@@ -33,8 +33,8 @@ void CircleRigidBody::setVelocity(sf::Vector2f velocity) {
         return;
     }
 
-    mTargetVelocity = velocity;
-    mVelocity = velocity;
+    m_targetVelocity = velocity;
+    m_velocity = velocity;
 }
 
 void CircleRigidBody::move(sf::Vector2f offset) {
@@ -42,7 +42,7 @@ void CircleRigidBody::move(sf::Vector2f offset) {
         return;
     }
 
-    mPosition += offset;
+    m_position += offset;
 }
 
 void CircleRigidBody::step(sf::Int32 delta_ms) {
@@ -54,8 +54,8 @@ void CircleRigidBody::step(sf::Int32 delta_ms) {
 
     // Update velocity and position via Semi-implicit Euler
     // Instead of acceleration lerp towards a target velocity.
-    mVelocity = VectorUtil::lerp(mVelocity, mTargetVelocity, delta * TRANSITION_SPEED);
-    mPosition += mVelocity * delta;
+    m_velocity = VectorUtil::lerp(m_velocity, m_targetVelocity, delta * TRANSITION_SPEED);
+    m_position += m_velocity * delta;
 }
 
 sf::Vector2f CircleRigidBody::getCenter() const {

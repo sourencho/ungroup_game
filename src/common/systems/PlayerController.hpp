@@ -26,8 +26,8 @@ class PlayerController {
     void removePlayer(uint32_t client_id);
     void handleClientDisconnectedEvent(std::shared_ptr<Event> event);
 
-    std::vector<std::shared_ptr<Player>> mPlayers;
-    std::unordered_map<uint32_t, uint32_t> mClientToPlayer;
+    std::vector<std::shared_ptr<Player>> m_players;
+    std::unordered_map<uint32_t, uint32_t> m_clientToPlayer;
     size_t nextPlayerIndex = 0;
 };
 

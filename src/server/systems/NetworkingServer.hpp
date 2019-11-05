@@ -38,19 +38,19 @@ class NetworkingServer {
     // Sockets
     void createUdpSocket();
 
-    std::mutex mUdpSocket_lock;
-    std::unique_ptr<sf::UdpSocket> mUdpSocket_t;
+    std::mutex m_udpSocket_lock;
+    std::unique_ptr<sf::UdpSocket> m_udpSocket_t;
 
     // Threads
     void reliableRecvSend();
     void unreliableRecv();
     void broadcastGameState();
 
-    std::thread mReliableRecvSend;
-    std::thread mUnreliableRecv;
-    std::thread mBroadcastGameStateThread;
+    std::thread m_reliableRecvSend;
+    std::thread m_unreliableRecv;
+    std::thread m_broadcastGameStateThread;
 
-    std::atomic<bool> mStopThreads_ta{false};
+    std::atomic<bool> m_stopThreads_ta{false};
 
     // Methods
     void clientDisconnect(sf::TcpSocket& client, sf::Uint32 client_id);
@@ -67,26 +67,26 @@ class NetworkingServer {
     void sendGameState();
 
     // Misc
-    std::vector<std::pair<sf::Uint32, std::unique_ptr<sf::TcpSocket>>> mClients;
+    std::vector<std::pair<sf::Uint32, std::unique_ptr<sf::TcpSocket>>> m_clients;
 
-    std::mutex mClientToPlayerIds_lock;
-    std::unordered_map<int, sf::Uint32> mClientToPlayerIds_t;
+    std::mutex m_clientToPlayerIds_lock;
+    std::unordered_map<int, sf::Uint32> m_clientToPlayerIds_t;
 
-    std::mutex mClientToUdpPorts_lock;
-    std::unordered_map<int, sf::Uint16> mClientToUdpPorts_t;
+    std::mutex m_clientToUdpPorts_lock;
+    std::unordered_map<int, sf::Uint16> m_clientToUdpPorts_t;
 
-    std::mutex mClientReliableUpdates_lock;
-    std::vector<ClientIdAndReliableUpdate> mClientReliableUpdates_t;
+    std::mutex m_clientReliableUpdates_lock;
+    std::vector<ClientIdAndReliableUpdate> m_clientReliableUpdates_t;
 
-    std::mutex mClientUnreliableUpdates_lock;
-    std::vector<ClientIdAndUnreliableUpdate> mClientUnreliableUpdates_t;
+    std::mutex m_clientUnreliableUpdates_lock;
+    std::vector<ClientIdAndUnreliableUpdate> m_clientUnreliableUpdates_t;
 
-    std::mutex mGameState_lock;
-    GameState mGameState_t;
+    std::mutex m_gameState_lock;
+    GameState m_gameState_t;
 
-    sf::Uint32 mClientIdCounter = 0;
+    sf::Uint32 m_clientIdCounter = 0;
 
-    std::atomic<uint> mTick_ta{0};
+    std::atomic<uint> m_tick_ta{0};
 };
 
 #endif /* NetworkingServer_hpp */
