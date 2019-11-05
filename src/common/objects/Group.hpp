@@ -42,7 +42,7 @@ class Group : public CircleGameObject {
     void draw(sf::RenderTarget& render_target);
 
   private:
-    bool m_Joinable = false;
+    bool m_joinable = false;
 };
 
 #endif /* Group_hpp */

@@ -14,7 +14,7 @@
 AnimatedSprite::AnimatedSprite(sf::Texture& spritesheet_texture, sf::Vector2u spritesheet_size,
                                sf::Int32 duration_ms, sf::Vector2f position,
                                sf::Vector2f scale_factor)
-    : m_Sprite(spritesheet_texture), m_Animation(m_Sprite) {
+    : m_sprite(spritesheet_texture), m_animation(m_sprite) {
     sf::Int32 frame_count = spritesheet_size.x * spritesheet_size.y;
     sf::Vector2u texture_size = spritesheet_texture.getSize();
     uint frame_width = texture_size.x / spritesheet_size.x;
@@ -23,17 +23,17 @@ AnimatedSprite::AnimatedSprite(sf::Texture& spritesheet_texture, sf::Vector2u sp
     for (size_t j = 0; j < spritesheet_size.y; j++) {
         for (size_t i = 0; i < spritesheet_size.x; i++) {
             auto position = sf::Vector2i(i * frame_width, j * frame_height);
-            m_Animation.addFrame({sf::IntRect(position, size), duration_ms / frame_count});
+            m_animation.addFrame({sf::IntRect(position, size), duration_ms / frame_count});
         }
     }
 
-    m_Sprite.scale(scale_factor);
-    m_Sprite.setOrigin({frame_width / 2.f, frame_height / 2.f});
-    m_Sprite.setPosition(position);
+    m_sprite.scale(scale_factor);
+    m_sprite.setOrigin({frame_width / 2.f, frame_height / 2.f});
+    m_sprite.setPosition(position);
 }
 
-void AnimatedSprite::draw(sf::RenderTarget& target) { target.draw(m_Sprite); }
+void AnimatedSprite::draw(sf::RenderTarget& target) { target.draw(m_sprite); }
 
-void AnimatedSprite::update(sf::Uint32 delta_ms) { m_Animation.update(delta_ms); }
+void AnimatedSprite::update(sf::Uint32 delta_ms) { m_animation.update(delta_ms); }
 
-bool AnimatedSprite::isDone() { return m_Animation.isDone(); }
+bool AnimatedSprite::isDone() { return m_animation.isDone(); }

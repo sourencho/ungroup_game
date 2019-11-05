@@ -19,30 +19,30 @@ class CircleRigidBody : public GameObject {
 
     sf::Vector2f getCenter() const;
 
-    void setMass(float mass) { m_Mass = mass; }
-    float getMass() const { return m_Mass; }
+    void setMass(float mass) { m_mass = mass; }
+    float getMass() const { return m_mass; }
 
-    float getRadius() const { return m_Radius; }
-    void setRadius(float radius) { m_Radius = radius; }
+    float getRadius() const { return m_radius; }
+    void setRadius(float radius) { m_radius = radius; }
 
-    sf::Vector2f getPosition() const { return m_Position; }
-    void setPosition(sf::Vector2f position) { m_Position = position; }
+    sf::Vector2f getPosition() const { return m_position; }
+    void setPosition(sf::Vector2f position) { m_position = position; }
 
-    sf::Vector2f getVelocity() const { return m_Velocity; }
+    sf::Vector2f getVelocity() const { return m_velocity; }
     void setVelocity(sf::Vector2f velocity);
 
     void applyImpulse(const PhysicsDef::Impulse& impulse);
     void applyInput(sf::Vector2f input);
 
-    const bool isMovable() const { return m_Movable; };
+    const bool isMovable() const { return m_movable; };
 
   private:
-    bool m_Movable;                // if false then position can't change
-    float m_Radius;                // m
-    float m_Mass;                  // kg
-    sf::Vector2f m_Position;       // top left corner of box surrounding circle
-    sf::Vector2f m_Velocity;       // distance/second
-    sf::Vector2f m_TargetVelocity; // velocity will eventually converge to this value
+    bool m_movable;                // if false then position can't change
+    float m_radius;                // m
+    float m_mass;                  // kg
+    sf::Vector2f m_position;       // top left corner of box surrounding circle
+    sf::Vector2f m_velocity;       // distance/second
+    sf::Vector2f m_targetVelocity; // velocity will eventually converge to this value
 };
 
 #endif /* CircleRigidBody_hpp */

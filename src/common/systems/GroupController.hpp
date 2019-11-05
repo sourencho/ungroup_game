@@ -58,10 +58,10 @@ class GroupController {
     void removePlayer(uint32_t player_id);
     void addEventListeners();
 
-    std::vector<std::shared_ptr<Player>> m_Players;
-    std::vector<std::shared_ptr<Group>> m_Groups;
-    std::unordered_map<uint32_t, std::vector<uint32_t>> m_GroupToPlayers;
-    std::unordered_map<uint32_t, uint32_t> m_PlayerToGroup;
+    std::vector<std::shared_ptr<Player>> m_players;
+    std::vector<std::shared_ptr<Group>> m_groups;
+    std::unordered_map<uint32_t, std::vector<uint32_t>> m_groupToPlayers;
+    std::unordered_map<uint32_t, uint32_t> m_playerToGroup;
 
     size_t nextGroupIndex = 0;
 };

@@ -21,14 +21,14 @@ class Animation {
     ~Animation(){};
     void addFrame(Frame&& frame);
     void update(sf::Int32 elapsed);
-    const sf::Int32 getLength() const { return m_Length; };
+    const sf::Int32 getLength() const { return m_length; };
     bool isDone();
 
   private:
-    sf::Int32 m_Length = 0;
-    sf::Int32 m_Progress = 0;
-    std::vector<Frame> m_Frames;
-    sf::Sprite& m_Target;
+    sf::Int32 m_length = 0;
+    sf::Int32 m_progress = 0;
+    std::vector<Frame> m_frames;
+    sf::Sprite& m_target;
 };
 
 #endif /* Animation_hpp */

@@ -42,17 +42,17 @@ class ClientGameController : public GameController {
 
     ClientInputs& getClientInputs(ClientReliableUpdate cru, ClientUnreliableUpdate cuu);
 
-    Keys m_Keys;
-    int m_PlayerId = -1;
+    Keys m_keys;
+    int m_playerId = -1;
 
-    ClientReliableUpdate m_ClientReliableUpdate;
-    ClientUnreliableUpdate m_ClientUnreliableUpdate;
+    ClientReliableUpdate m_clientReliableUpdate;
+    ClientUnreliableUpdate m_clientUnreliableUpdate;
 
-    ClientInputs m_ClientInputs;                                        // Cache of current input
-    std::unordered_map<unsigned int, ClientInputAndTick> m_TickToInput; // Cache of past inputs
+    ClientInputs m_clientInputs;                                        // Cache of current input
+    std::unordered_map<unsigned int, ClientInputAndTick> m_tickToInput; // Cache of past inputs
 
-    std::unique_ptr<NetworkingClient> m_NetworkingClient;
-    std::unique_ptr<AnimationController> m_AnimationController;
+    std::unique_ptr<NetworkingClient> m_networkingClient;
+    std::unique_ptr<AnimationController> m_animationController;
 };
 
 #endif /* ClientGameController_hpp */

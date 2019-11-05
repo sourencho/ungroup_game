@@ -34,11 +34,11 @@ class NetworkingClient {
     void createTcpSocket(unsigned short port);
     void createUdpSocket();
 
-    std::mutex m_TcpSocket_lock;
-    std::unique_ptr<sf::TcpSocket> m_TcpSocket_t;
+    std::mutex m_tcpSocket_lock;
+    std::unique_ptr<sf::TcpSocket> m_tcpSocket_t;
 
-    std::mutex m_UdpSocket_lock;
-    std::unique_ptr<sf::UdpSocket> m_UdpSocket_t;
+    std::mutex m_udpSocket_lock;
+    std::unique_ptr<sf::UdpSocket> m_udpSocket_t;
 
     // Threads
     void unreliableSend();
@@ -46,12 +46,12 @@ class NetworkingClient {
     void reliableSend();
     void reliableRecv();
 
-    std::thread m_ReliableRecv;
-    std::thread m_ReliableSend;
-    std::thread m_UnreliableRecv;
-    std::thread m_UnreliableSend;
+    std::thread m_reliableRecv;
+    std::thread m_reliableSend;
+    std::thread m_unreliableRecv;
+    std::thread m_unreliableSend;
 
-    std::atomic<bool> m_StopThreads_ta{false};
+    std::atomic<bool> m_stopThreads_ta{false};
 
     // Methods
     void sendClientUnreliableUpdate();
@@ -61,21 +61,21 @@ class NetworkingClient {
     bool registerNetworkingClient();
 
     // Misc
-    std::atomic<int> m_PlayerId_ta{-1};
-    std::atomic<int> m_ClientId_ta{-1};
-    std::atomic<uint> m_Tick_ta{0};
-    std::atomic<bool> m_GameStateIsFresh_ta{true};
+    std::atomic<int> m_playerId_ta{-1};
+    std::atomic<int> m_clientId_ta{-1};
+    std::atomic<uint> m_tick_ta{0};
+    std::atomic<bool> m_gameStateIsFresh_ta{true};
 
-    std::mutex m_GameState_lock;
-    GameState m_GameState_t;
+    std::mutex m_gameState_lock;
+    GameState m_gameState_t;
 
-    std::mutex m_ClientUnreliableUpdate_lock;
-    ClientUnreliableUpdate m_ClientUnreliableUpdate_t;
+    std::mutex m_clientUnreliableUpdate_lock;
+    ClientUnreliableUpdate m_clientUnreliableUpdate_t;
 
-    std::mutex m_ClientReliableUpdate_lock;
-    ClientReliableUpdate m_ClientReliableUpdate_t;
+    std::mutex m_clientReliableUpdate_lock;
+    ClientReliableUpdate m_clientReliableUpdate_t;
 
-    sf::Uint16 m_ServerUdpPort = 0;
+    sf::Uint16 m_serverUdpPort = 0;
 };
 
 #endif /* NetworkingClient_hpp */

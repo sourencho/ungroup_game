@@ -11,12 +11,12 @@ enum EventType {
 
 class Event {
   public:
-    explicit Event(EventType event_type) : m_EventType(event_type){};
+    explicit Event(EventType event_type) : m_eventType(event_type){};
 
-    virtual const EventType getType() { return m_EventType; };
+    virtual const EventType getType() { return m_eventType; };
 
   private:
-    EventType m_EventType;
+    EventType m_eventType;
 };
 
 #endif /* Event_hpp */

@@ -8,12 +8,12 @@
 class CollisionEvent : public Event {
   public:
     explicit CollisionEvent(Collision collision)
-        : Event(EVENT_TYPE_COLLISION), m_Collision(collision) {}
+        : Event(EVENT_TYPE_COLLISION), m_collision(collision) {}
 
-    const Collision getCollision() const { return m_Collision; };
+    const Collision getCollision() const { return m_collision; };
 
   private:
-    Collision m_Collision;
+    Collision m_collision;
 };
 
 #endif /* CollisionEvent_hpp */

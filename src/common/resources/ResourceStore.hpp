@@ -22,8 +22,8 @@ class ResourceStore {
     std::shared_ptr<sf::Shader> getShader(RenderingDef::ShaderKey key);
 
   private:
-    std::unordered_map<std::string, std::shared_ptr<sf::Texture>> m_Textures;
-    std::map<RenderingDef::ShaderKey, std::shared_ptr<sf::Shader>> m_Shaders;
+    std::unordered_map<std::string, std::shared_ptr<sf::Texture>> m_textures;
+    std::map<RenderingDef::ShaderKey, std::shared_ptr<sf::Shader>> m_shaders;
 };
 
 #endif /* ResourceStore_hpp */
