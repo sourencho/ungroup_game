@@ -221,6 +221,7 @@ Debug run:
 
 ### C++
 
+- [lefticus: CPP Best Practices](https://github.com/lefticus/cppbestpractices)
 - [cliutils: An Introduction to Modern CMake](https://cliutils.gitlab.io/modern-cmake/)
 
 ### SFML
