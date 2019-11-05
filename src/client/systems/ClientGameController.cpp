@@ -3,7 +3,7 @@
 #include "../../common/events/CollisionEvent.hpp"
 #include "../../common/events/EventController.hpp"
 #include "../../common/physics/VectorUtil.hpp"
-#include "../../common/util/game_state.hpp"
+#include "../../common/util/StateDef.hpp"
 #include "ClientGameController.hpp"
 #include <SFML/Graphics.hpp>
 

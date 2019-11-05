@@ -1,5 +1,5 @@
-#ifndef StateDef.hpp
-#define StateDef .hpp
+#ifndef StateDef_hpp
+#define StateDef_hpp
 
 #include <stdio.h>
 #include <vector>
@@ -56,4 +56,4 @@ sf::Packet& operator>>(sf::Packet& packet, ClientReliableUpdate& client_reliable
 sf::Packet& operator<<(sf::Packet& packet, const ClientUnreliableUpdate& client_unreliable_update);
 sf::Packet& operator>>(sf::Packet& packet, ClientUnreliableUpdate& client_unreliable_update);
 
-#endif /* StateDef.hpp */
+#endif /* StateDef_hpp */

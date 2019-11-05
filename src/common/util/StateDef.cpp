@@ -1,4 +1,4 @@
-#include "game_state.hpp"
+#include "StateDef.hpp"
 
 #include "network_util.hpp"
 

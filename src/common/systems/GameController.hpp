@@ -11,7 +11,7 @@
 #include "../objects/Mine.hpp"
 #include "../objects/Player.hpp"
 #include "../physics/PhysicsController.hpp"
-#include "../util/game_state.hpp"
+#include "../util/StateDef.hpp"
 #include "GameObjectStore.hpp"
 #include "GroupController.hpp"
 #include "MineController.hpp"

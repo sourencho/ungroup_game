@@ -10,8 +10,8 @@
 
 #include <SFML/Network.hpp>
 
+#include "../../common/util/StateDef.hpp"
 #include "../../common/util/game_def.hpp"
-#include "../../common/util/game_state.hpp"
 
 class NetworkingClient {
 

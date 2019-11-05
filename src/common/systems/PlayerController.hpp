@@ -4,7 +4,7 @@
 #include <vector>
 
 #include "../objects/Player.hpp"
-#include "../util/game_state.hpp"
+#include "../util/StateDef.hpp"
 
 class PlayerController {
   public:

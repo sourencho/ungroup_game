@@ -18,7 +18,7 @@
 
 #include "../../common/objects/Group.hpp"
 #include "../../common/objects/Mine.hpp"
-#include "../../common/util/game_state.hpp"
+#include "../../common/util/StateDef.hpp"
 
 class NetworkingServer {
     const unsigned int CMD_DRIFT_THRESHOLD = 200;
