@@ -23,7 +23,7 @@ class NetworkingClient {
     void incrementTick();
     uint getTick() const;
     void setTick(uint tick);
-    int getPlayerId() const;
+    std::pair<bool, uint32_t> getPlayerId() const;
     int getClientId() const;
     bool getGameStateIsFresh() const;
     void setClientUnreliableUpdate(ClientUnreliableUpdate client_unreliable_update);
@@ -61,7 +61,9 @@ class NetworkingClient {
     bool registerNetworkingClient();
 
     // Misc
-    std::atomic<int> m_playerId_ta{-1};
+    std::atomic<bool> m_playerIdAvialable_ta{false};
+    std::atomic<uint32_t> m_playerId_ta{0};
+
     std::atomic<int> m_clientId_ta{-1};
     std::atomic<uint> m_tick_ta{0};
     std::atomic<bool> m_gameStateIsFresh_ta{true};

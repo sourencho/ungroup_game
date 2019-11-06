@@ -28,9 +28,17 @@ int main(int, char const**) {
     buffer_sprite.setScale(buffer_scaling_factor);
 
     // Create client game controller
-    Keys keys = {sf::Keyboard::Up, sf::Keyboard::Down, sf::Keyboard::Right, sf::Keyboard::Left,
-                 sf::Keyboard::G};
-    ClientGameController client_game_controller(MAX_PLAYER_COUNT, MAX_MINE_COUNT, keys);
+    ClientInputKeys client_input_keys = {
+        .up = sf::Keyboard::Up,
+        .down = sf::Keyboard::Down,
+        .right = sf::Keyboard::Right,
+        .left = sf::Keyboard::Left,
+        .joinable = sf::Keyboard::G,
+        .ungroup = sf::Keyboard::Escape,
+        .stop = sf::Keyboard::Space,
+    };
+    ClientGameController client_game_controller(MAX_PLAYER_COUNT, MAX_MINE_COUNT,
+                                                client_input_keys);
 
     // Start the game loop
     while (window.isOpen()) {
@@ -39,11 +47,6 @@ int main(int, char const**) {
         while (window.pollEvent(event)) {
             // Close window: exit
             if (event.type == sf::Event::Closed) {
-                window.close();
-            }
-
-            // Escape pressed: exit
-            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
                 window.close();
             }
 

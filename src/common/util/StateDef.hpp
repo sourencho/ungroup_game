@@ -27,21 +27,22 @@ struct ClientUnreliableUpdate {
 
 struct ClientReliableUpdate {
     bool joinable = false;
+    bool ungroup = false;
 };
 
-struct ClientIdAndUnreliableUpdate {
-    int client_id;
+struct PlayerUnreliableUpdate {
+    uint32_t player_id;
     ClientUnreliableUpdate client_unreliable_update;
 };
 
-struct ClientIdAndReliableUpdate {
-    int client_id;
+struct PlayerReliableUpdate {
+    uint32_t player_id;
     ClientReliableUpdate client_reliable_update;
 };
 
-struct ClientInputs {
-    std::vector<ClientIdAndUnreliableUpdate> client_id_and_unreliable_updates;
-    std::vector<ClientIdAndReliableUpdate> client_id_and_reliable_updates;
+struct PlayerInputs {
+    std::vector<PlayerUnreliableUpdate> player_unreliable_updates;
+    std::vector<PlayerReliableUpdate> player_reliable_updates;
 };
 
 struct ClientInputAndTick {

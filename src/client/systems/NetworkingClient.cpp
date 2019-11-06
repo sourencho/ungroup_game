@@ -96,7 +96,9 @@ bool NetworkingClient::readRegistrationResponse() {
     return false;
 }
 
-int NetworkingClient::getPlayerId() const { return m_playerId_ta; }
+std::pair<bool, uint32_t> NetworkingClient::getPlayerId() const {
+    return std::pair<bool, uint32_t>(m_playerIdAvialable_ta, m_playerId_ta);
+}
 
 GameState NetworkingClient::getGameState() {
     std::lock_guard<std::mutex> m_gameState_guard(m_gameState_lock);
@@ -140,7 +142,8 @@ void NetworkingClient::reliableRecv() {
             if (reliable_command.command == ReliableCommandType::player_id) {
                 sf::Uint32 player_id;
                 reliable_response >> player_id;
-                m_playerId_ta = static_cast<uint>(player_id);
+                m_playerId_ta = static_cast<uint32_t>(player_id);
+                m_playerIdAvialable_ta = true;
             } else {
                 std::cout << "Unknown reliable command type." << std::endl;
             }
@@ -165,7 +168,7 @@ void NetworkingClient::reliableSend() {
 void NetworkingClient::sendPlayerIdRequest() {
     std::lock_guard<std::mutex> m_tcpSocket_guard(m_tcpSocket_lock);
 
-    if (m_playerId_ta == -1) {
+    if (!m_playerIdAvialable_ta) {
         sf::Packet packet;
         if (packet << (sf::Uint32)ReliableCommandType::player_id) {
             m_tcpSocket_t->send(packet);

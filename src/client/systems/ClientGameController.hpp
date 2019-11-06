@@ -17,7 +17,8 @@
 class ClientGameController : public GameController {
 
   public:
-    explicit ClientGameController(size_t max_player_count, size_t max_mine_count, Keys keys);
+    explicit ClientGameController(size_t max_player_count, size_t max_mine_count,
+                                  ClientInputKeys keys);
     ~ClientGameController();
 
     void update() override;
@@ -27,12 +28,12 @@ class ClientGameController : public GameController {
 
   private:
     void addEventListeners();
-    ClientInputs collectInputs() override;
+    PlayerInputs collectInputs() override;
     void setNetworkState() override;
     void incrementTick() override;
     unsigned int getTick() override;
     void setTick(unsigned int tick) override;
-    void step(const ClientInputs& cis, sf::Int32 delta_ms) override;
+    void step(const PlayerInputs& pi, sf::Int32 delta_ms) override;
 
     void fetchPlayerId();
     void setClientUpdates();
@@ -40,15 +41,17 @@ class ClientGameController : public GameController {
     void handleCollisionEvent(std::shared_ptr<Event> event);
     void createCollisionAnimation(const sf::Vector2f& collision_position);
 
-    ClientInputs& getClientInputs(ClientReliableUpdate cru, ClientUnreliableUpdate cuu);
+    PlayerInputs& getClientInputs(ClientReliableUpdate cru, ClientUnreliableUpdate cuu);
 
-    Keys m_keys;
-    int m_playerId = -1;
+    ClientInputKeys m_clientInputKeys;
+
+    bool m_playerIdAvailable;
+    uint32_t m_playerId;
 
     ClientReliableUpdate m_clientReliableUpdate;
     ClientUnreliableUpdate m_clientUnreliableUpdate;
 
-    ClientInputs m_clientInputs;                                        // Cache of current input
+    PlayerInputs m_playerInputs;                                        // Cache of current input
     std::unordered_map<unsigned int, ClientInputAndTick> m_tickToInput; // Cache of past inputs
 
     std::unique_ptr<NetworkingClient> m_networkingClient;

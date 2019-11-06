@@ -39,7 +39,7 @@ struct ClientIdAndReliableUpdate {
     ClientReliableUpdate client_reliable_update;
 };
 
-struct ClientInputs {
+struct PlayerInputs {
     std::vector<ClientIdAndUnreliableUpdate> client_id_and_unreliable_updates;
     std::vector<ClientIdAndReliableUpdate> client_id_and_reliable_updates;
 };

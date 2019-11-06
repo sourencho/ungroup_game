@@ -86,9 +86,9 @@ sf::Packet& operator>>(sf::Packet& packet, ClientUnreliableUpdate& client_unreli
 }
 
 sf::Packet& operator<<(sf::Packet& packet, const ClientReliableUpdate& client_reliable_update) {
-    return packet << client_reliable_update.joinable;
+    return packet << client_reliable_update.joinable << client_reliable_update.ungroup;
 }
 
 sf::Packet& operator>>(sf::Packet& packet, ClientReliableUpdate& client_reliable_update) {
-    return packet >> client_reliable_update.joinable;
+    return packet >> client_reliable_update.joinable >> client_reliable_update.ungroup;
 }

@@ -30,20 +30,20 @@ class GameController {
     virtual void update();
 
   protected:
-    virtual ClientInputs collectInputs() = 0;
+    virtual PlayerInputs collectInputs() = 0;
     virtual void setNetworkState() = 0;
     virtual void incrementTick() = 0;
     virtual unsigned int getTick() = 0;
     virtual void setTick(unsigned int tick) = 0;
-    virtual void step(const ClientInputs& cis, sf::Int32 delta_ms) = 0;
+    virtual void step(const PlayerInputs& pi, sf::Int32 delta_ms) = 0;
 
-    void updatePlayers(const ClientInputs& cis);
+    void updatePlayers(const PlayerInputs& pi);
     void updateGroups();
-    void computeGameState(const ClientInputs& cis, sf::Int32 delta_ms);
+    void computeGameState(const PlayerInputs& pi, sf::Int32 delta_ms);
     uint32_t createPlayerWithGroup(uint32_t client_id);
     void applyGameState(GameState game_state);
     GameState getGameState();
-    void updateGameObjects(const ClientInputs& cis);
+    void updateGameObjects(const PlayerInputs& pi);
     void updateGameObjectsPostPhysics();
     PlayerUpdate clientUpdateToPlayerUpdate(ClientUnreliableUpdate client_unreliable_update,
                                             ClientReliableUpdate client_reliable_update);
