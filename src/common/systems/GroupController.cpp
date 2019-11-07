@@ -121,6 +121,7 @@ void GroupController::regroup(std::vector<std::shared_ptr<Group>>& groups) {
         player.setJoinable(false);
         Group& new_group = getGroup(new_group_id);
         Group& original_group = getGroup(original_group_id);
+        // TODO(sourenp): Set new group's location somewhere near the original group
         new_group.setPosition({0.f, 0.f});
     }
 }
