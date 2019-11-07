@@ -47,7 +47,9 @@ void PlayerController::update(const PlayerInputs& pi) {
     }
     for (const auto& player_reliable_update : pi.player_reliable_updates) {
         uint32_t player_id = player_reliable_update.player_id;
-        getPlayer(player_id)->setJoinable(player_reliable_update.client_reliable_update.joinable);
+        auto player = getPlayer(player_id);
+        player->setJoinable(player_reliable_update.client_reliable_update.joinable);
+        player->setUngroup(player_reliable_update.client_reliable_update.ungroup);
     }
 }
 

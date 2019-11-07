@@ -116,6 +116,8 @@ void ClientGameController::rewindAndReplay() {
         return;
     } // If the client is behind the server we don't need to replay
 
+    // TODO(sourenp|#102): I think we never reach here. Might be a bug.
+
     // Loop through ticks that need to be replayed and apply client input from cache if present
     for (int i = 0; i < tick_delta; ++i) {
         ClientInputAndTick client_input_and_tick;

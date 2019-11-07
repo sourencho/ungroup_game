@@ -12,6 +12,7 @@ struct PlayerUpdate {
     bool is_active;
     sf::Vector2f direction;
     bool joinable;
+    bool ungroup;
 };
 
 sf::Packet& operator<<(sf::Packet& packet, const PlayerUpdate& player_update);
@@ -22,10 +23,12 @@ class Player : public GameObject {
     explicit Player(uint32_t id);
     ~Player();
 
-    void setDirection(sf::Vector2f direction);
-    void setJoinable(bool joinable);
-    sf::Vector2f getDirection() const;
-    bool getJoinable() const;
+    void setDirection(sf::Vector2f direction) { m_direction = direction; };
+    sf::Vector2f getDirection() const { return m_direction; };
+    void setJoinable(bool joinable) { m_joinable = joinable; };
+    bool getJoinable() const { return m_joinable; };
+    void setUngroup(bool ungroup) { m_ungroup = ungroup; };
+    bool getUngroup() const { return m_ungroup; };
 
     PlayerUpdate getUpdate() const;
     void applyUpdate(PlayerUpdate pu);
@@ -33,6 +36,7 @@ class Player : public GameObject {
   private:
     sf::Vector2f m_direction;
     bool m_joinable = false;
+    bool m_ungroup = false;
 };
 
 #endif /* Player_hpp */

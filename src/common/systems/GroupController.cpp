@@ -9,6 +9,7 @@
 #include "../events/EventController.hpp"
 #include "../factories/IdFactory.hpp"
 #include "../rendering/RenderingDef.hpp"
+#include "../util/TypeDef.hpp"
 #include "../util/game_def.hpp"
 #include "../util/game_settings.hpp"
 
@@ -48,6 +49,7 @@ void GroupController::draw(sf::RenderTarget& target) {
 }
 
 void GroupController::update() {
+    regroup(m_groups);
     for (auto& group : m_groups) {
         refreshGroup(group);
         updateGroup(group);
@@ -57,6 +59,69 @@ void GroupController::update() {
 void GroupController::updatePostPhysics() {
     for (auto& group : m_groups) {
         group->matchRigid();
+    }
+}
+
+/**
+ * Reassign players' groups based on their ungroup property.
+ * The algorithm used here:
+ * 1. Get all filled group and empty groups
+ * 2. Get a list of all players that have ungroup=true keeping track of their original group
+ * 3. Assign each of those players a new group from the list of empty groups, updating that list as
+ * you reassign. For groups with just one player that has the ungroup=true, no need to reassign.
+ * 4. Reset the properties of the player and the group.
+ */
+void GroupController::regroup(std::vector<std::shared_ptr<Group>>& groups) {
+    TypeDef::ids filled_group_ids;
+    TypeDef::ids empty_group_ids;
+    std::tie(filled_group_ids, empty_group_ids) = partitionGroupsByPlayerCount();
+
+    // Get all players and their original group that need to be regrouped
+    std::vector<std::pair<uint32_t, uint32_t>> regroup_player_and_group_ids;
+    for (uint32_t group_id : filled_group_ids) {
+        auto& group_players = m_groupToPlayers[group_id];
+        for (uint32_t player_id : group_players) {
+            Player& player = getPlayer(player_id);
+            if (!player.getUngroup()) {
+                continue;
+            }
+            regroup_player_and_group_ids.push_back(std::make_pair(player_id, group_id));
+        }
+    }
+
+    // Find a new group for each player that needs to be regrouped
+    for (auto& player_and_group_id : regroup_player_and_group_ids) {
+        uint32_t player_id, original_group_id;
+        std::tie(player_id, original_group_id) = player_and_group_id;
+        Player& player = getPlayer(player_id);
+        // If the original group only has that player, it doesn't need to be regrouped
+        if (m_groupToPlayers[original_group_id].size() == 1) {
+            player.setUngroup(false);
+            player.setJoinable(false);
+            continue;
+        }
+
+        // There should always be an empty group to regroup to since there are an equal number of
+        // players and groups
+        if (empty_group_ids.size() == 0) {
+            throw std::runtime_error("No empty group to regroup to.");
+        }
+
+        // Remove player from original group
+        removePlayer(player_id);
+
+        // Transfer player to an empty group
+        uint32_t new_group_id = empty_group_ids.back();
+        empty_group_ids.pop_back();
+        m_groupToPlayers[new_group_id].push_back(player_id);
+        m_playerToGroup[player_id] = new_group_id;
+
+        // Set new group and player properties
+        player.setUngroup(false);
+        player.setJoinable(false);
+        Group& new_group = getGroup(new_group_id);
+        Group& original_group = getGroup(original_group_id);
+        new_group.setPosition({0.f, 0.f});
     }
 }
 
@@ -127,8 +192,11 @@ GroupControllerUpdate GroupController::getUpdate() {
 }
 
 void GroupController::applyUpdate(GroupControllerUpdate gcu) {
-    m_groupToPlayers.clear();
     m_playerToGroup.clear();
+    for (auto& group_and_players : m_groupToPlayers) {
+        group_and_players.second.clear();
+    }
+
     for (auto& gipi : gcu.group_id_and_player_idss) {
         m_groupToPlayers[gipi.group_id] = gipi.player_ids;
     }
@@ -143,6 +211,19 @@ uint32_t GroupController::getGroupId(uint32_t player_id) { return m_playerToGrou
 
 Group& GroupController::getGroup(uint32_t group_id) {
     return *m_groups[IdFactory::getInstance().getIndex(group_id)];
+}
+
+std::pair<TypeDef::ids, TypeDef::ids> GroupController::partitionGroupsByPlayerCount() {
+    TypeDef::ids filled_group_ids;
+    TypeDef::ids empty_group_ids;
+    for (auto& group_and_players : m_groupToPlayers) {
+        if (group_and_players.second.size() == 0) {
+            empty_group_ids.push_back(group_and_players.first);
+        } else {
+            filled_group_ids.push_back(group_and_players.first);
+        }
+    }
+    return std::pair<TypeDef::ids, TypeDef::ids>(filled_group_ids, empty_group_ids);
 }
 
 Player& GroupController::getPlayer(uint32_t player_id) {
