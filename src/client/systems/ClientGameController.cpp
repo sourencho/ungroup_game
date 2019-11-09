@@ -50,37 +50,47 @@ void ClientGameController::draw(sf::RenderTarget& target) {
     m_animationController->draw(target);
 }
 
-void ClientGameController::handleEvents(sf::Event& event) {
-    bool ungroup = false;
-    bool joinable = m_clientReliableUpdate.joinable;
+void ClientGameController::handleEvents(sf::RenderWindow& window) {
+    m_clientReliableUpdate.toggle_joinable = false;
+    m_clientReliableUpdate.toggle_ungroup = false;
     sf::Vector2f direction = m_clientUnreliableUpdate.direction;
-    if (event.type == sf::Event::KeyPressed) {
-        if (sf::Keyboard::isKeyPressed(m_clientInputKeys.joinable)) {
-            joinable ^= true;
+
+    // Process events
+    sf::Event event;
+    while (window.pollEvent(event)) {
+        // Close window: exit
+        if (event.type == sf::Event::Closed) {
+            window.close();
         }
-        if (sf::Keyboard::isKeyPressed(m_clientInputKeys.ungroup)) {
-            ungroup = true;
+
+        // Handle game controller events (e.g. player input)
+        if (event.type == sf::Event::KeyPressed) {
+            if (sf::Keyboard::isKeyPressed(m_clientInputKeys.joinable)) {
+                m_clientReliableUpdate.toggle_joinable = true;
+            }
+            if (sf::Keyboard::isKeyPressed(m_clientInputKeys.ungroup)) {
+                m_clientReliableUpdate.toggle_ungroup = true;
+            }
+            // TODO(sourenp|#103): Send key toggles instead of direction value
+            if (sf::Keyboard::isKeyPressed(m_clientInputKeys.up)) {
+                direction += sf::Vector2f(0.f, -1.f);
+            }
+            if (sf::Keyboard::isKeyPressed(m_clientInputKeys.down)) {
+                direction += sf::Vector2f(0.f, 1.f);
+            }
+            if (sf::Keyboard::isKeyPressed(m_clientInputKeys.left)) {
+                direction += sf::Vector2f(-1.f, 0.f);
+            }
+            if (sf::Keyboard::isKeyPressed(m_clientInputKeys.right)) {
+                direction += sf::Vector2f(1.f, 0.f);
+            }
+            direction = VectorUtil::normalize(direction);
+            if (sf::Keyboard::isKeyPressed(m_clientInputKeys.stop)) {
+                direction = sf::Vector2f(0.f, 0.f);
+            }
         }
-        if (sf::Keyboard::isKeyPressed(m_clientInputKeys.up)) {
-            direction += sf::Vector2f(0.f, -1.f);
-        }
-        if (sf::Keyboard::isKeyPressed(m_clientInputKeys.down)) {
-            direction += sf::Vector2f(0.f, 1.f);
-        }
-        if (sf::Keyboard::isKeyPressed(m_clientInputKeys.left)) {
-            direction += sf::Vector2f(-1.f, 0.f);
-        }
-        if (sf::Keyboard::isKeyPressed(m_clientInputKeys.right)) {
-            direction += sf::Vector2f(1.f, 0.f);
-        }
-        direction = VectorUtil::normalize(direction);
-        if (sf::Keyboard::isKeyPressed(m_clientInputKeys.stop)) {
-            direction = sf::Vector2f(0.f, 0.f);
-        }
+        m_clientUnreliableUpdate.direction = direction;
     }
-    m_clientReliableUpdate.joinable = joinable;
-    m_clientReliableUpdate.ungroup = ungroup;
-    m_clientUnreliableUpdate.direction = direction;
 }
 
 /**
@@ -100,7 +110,7 @@ void ClientGameController::update() {
     GameController::update();
 }
 
-void ClientGameController::step(const PlayerInputs& pi, sf::Int32 delta_ms) {
+void ClientGameController::step(std::shared_ptr<PlayerInputs> pi, sf::Int32 delta_ms) {
     computeGameState(pi, delta_ms);
     m_animationController->step(delta_ms);
 }
@@ -125,12 +135,13 @@ void ClientGameController::rewindAndReplay() {
 
         if (m_tickToInput.count(replay_tick) > 0) {
             client_input_and_tick = m_tickToInput[replay_tick];
-            GameController::computeGameState(
-                getClientInputs(client_input_and_tick.cru, client_input_and_tick.cuu),
-                GameController::MIN_TIME_STEP);
+            auto pi = std::shared_ptr<PlayerInputs>(new PlayerInputs(
+                getClientInputs(client_input_and_tick.cru, client_input_and_tick.cuu)));
+            GameController::computeGameState(pi, GameController::MIN_TIME_STEP);
         } else {
             // If we don't have input for this tick pass in empty PlayerInputs
-            GameController::computeGameState(PlayerInputs(), GameController::MIN_TIME_STEP);
+            auto pi = std::shared_ptr<PlayerInputs>(new PlayerInputs());
+            GameController::computeGameState(pi, GameController::MIN_TIME_STEP);
         }
     }
     m_tickToInput.clear();
@@ -145,7 +156,9 @@ void ClientGameController::fetchPlayerId() {
 void ClientGameController::setClientUpdates() {
     // Set input to send to server
     m_networkingClient->setClientUnreliableUpdate(m_clientUnreliableUpdate);
-    m_networkingClient->setClientReliableUpdate(m_clientReliableUpdate);
+    if (m_clientReliableUpdate.toggle_ungroup || m_clientReliableUpdate.toggle_joinable) {
+        m_networkingClient->setClientReliableUpdate(m_clientReliableUpdate);
+    }
 
     // Save input and state for replay
     m_tickToInput[m_networkingClient->getTick()] = (ClientInputAndTick){

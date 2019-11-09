@@ -4,6 +4,7 @@
 #include <atomic>
 #include <memory>
 #include <mutex>
+#include <queue>
 #include <stdio.h>
 #include <thread>
 #include <vector>
@@ -74,8 +75,8 @@ class NetworkingClient {
     std::mutex m_clientUnreliableUpdate_lock;
     ClientUnreliableUpdate m_clientUnreliableUpdate_t;
 
-    std::mutex m_clientReliableUpdate_lock;
-    ClientReliableUpdate m_clientReliableUpdate_t;
+    std::mutex m_clientReliableUpdates_lock;
+    std::queue<ClientReliableUpdate> m_clientReliableUpdates_t;
 
     sf::Uint16 m_serverUdpPort = 0;
 };

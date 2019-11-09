@@ -39,17 +39,23 @@ void PlayerController::handleClientDisconnectedEvent(std::shared_ptr<Event> even
 
 void PlayerController::removePlayer(uint32_t player_id) { getPlayer(player_id)->setActive(false); }
 
-void PlayerController::update(const PlayerInputs& pi) {
-    for (const auto& player_unreliable_update : pi.player_unreliable_updates) {
+void PlayerController::update(std::shared_ptr<PlayerInputs> pi) {
+    while (!pi->player_unreliable_updates.empty()) {
+        const auto& player_unreliable_update = pi->player_unreliable_updates.back();
         uint32_t player_id = player_unreliable_update.player_id;
         getPlayer(player_id)->setDirection(
             player_unreliable_update.client_unreliable_update.direction);
+        pi->player_unreliable_updates.pop_back();
     }
-    for (const auto& player_reliable_update : pi.player_reliable_updates) {
+    while (!pi->player_reliable_updates.empty()) {
+        const auto& player_reliable_update = pi->player_reliable_updates.back();
         uint32_t player_id = player_reliable_update.player_id;
         auto player = getPlayer(player_id);
-        player->setJoinable(player_reliable_update.client_reliable_update.joinable);
-        player->setUngroup(player_reliable_update.client_reliable_update.ungroup);
+        player->setJoinable(player->getJoinable() ^
+                            player_reliable_update.client_reliable_update.toggle_joinable);
+        player->setUngroup(player->getUngroup() ^
+                           player_reliable_update.client_reliable_update.toggle_ungroup);
+        pi->player_reliable_updates.pop_back();
     }
 }
 

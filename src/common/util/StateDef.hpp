@@ -26,8 +26,8 @@ struct ClientUnreliableUpdate {
 };
 
 struct ClientReliableUpdate {
-    bool joinable = false;
-    bool ungroup = false;
+    bool toggle_joinable;
+    bool toggle_ungroup;
 };
 
 struct PlayerUnreliableUpdate {

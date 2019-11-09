@@ -77,18 +77,18 @@ GameState unpack_game_state(sf::Packet game_state_packet) {
     return game_state;
 }
 
-sf::Packet& operator<<(sf::Packet& packet, const ClientUnreliableUpdate& client_unreliable_update) {
-    return packet << client_unreliable_update.direction;
+sf::Packet& operator<<(sf::Packet& packet, const ClientUnreliableUpdate& cuu) {
+    return packet << cuu.direction;
 }
 
-sf::Packet& operator>>(sf::Packet& packet, ClientUnreliableUpdate& client_unreliable_update) {
-    return packet >> client_unreliable_update.direction;
+sf::Packet& operator>>(sf::Packet& packet, ClientUnreliableUpdate& cuu) {
+    return packet >> cuu.direction;
 }
 
-sf::Packet& operator<<(sf::Packet& packet, const ClientReliableUpdate& client_reliable_update) {
-    return packet << client_reliable_update.joinable << client_reliable_update.ungroup;
+sf::Packet& operator<<(sf::Packet& packet, const ClientReliableUpdate& cru) {
+    return packet << cru.toggle_joinable << cru.toggle_ungroup;
 }
 
-sf::Packet& operator>>(sf::Packet& packet, ClientReliableUpdate& client_reliable_update) {
-    return packet >> client_reliable_update.joinable >> client_reliable_update.ungroup;
+sf::Packet& operator>>(sf::Packet& packet, ClientReliableUpdate& cru) {
+    return packet >> cru.toggle_joinable >> cru.toggle_ungroup;
 }

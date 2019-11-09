@@ -4,7 +4,6 @@
 #include <chrono>
 #include <ctime>
 #include <iostream>
-#include <list>
 #include <mutex>
 #include <thread>
 #include <vector>
@@ -112,8 +111,8 @@ void NetworkingClient::setClientUnreliableUpdate(ClientUnreliableUpdate client_u
 }
 
 void NetworkingClient::setClientReliableUpdate(ClientReliableUpdate client_reliable_update) {
-    std::lock_guard<std::mutex> m_clientReliableUpdate_guard(m_clientReliableUpdate_lock);
-    m_clientReliableUpdate_t = client_reliable_update;
+    std::lock_guard<std::mutex> m_clientReliableUpdates_guard(m_clientReliableUpdates_lock);
+    m_clientReliableUpdates_t.push(client_reliable_update);
 }
 
 int NetworkingClient::getClientId() const { return m_clientId_ta; }
@@ -179,12 +178,18 @@ void NetworkingClient::sendPlayerIdRequest() {
 }
 
 void NetworkingClient::sendClientReliableUpdate() {
-    std::lock_guard<std::mutex> m_clientReliableUpdate_guard(m_clientReliableUpdate_lock);
-    std::lock_guard<std::mutex> m_tcpSocket_guard(m_tcpSocket_lock);
+    std::lock_guard<std::mutex> m_clientReliableUpdates_guard(m_clientReliableUpdates_lock);
 
+    if (m_clientReliableUpdates_t.empty()) {
+        return;
+    }
+
+    ClientReliableUpdate client_reliable_update = m_clientReliableUpdates_t.front();
+    m_clientReliableUpdates_t.pop();
+
+    std::lock_guard<std::mutex> m_tcpSocket_guard(m_tcpSocket_lock);
     sf::Packet packet;
-    if (packet << ReliableCommandType::client_reliable_update && packet
-                                                                     << m_clientReliableUpdate_t) {
+    if (packet << ReliableCommandType::client_reliable_update && packet << client_reliable_update) {
         m_tcpSocket_t->send(packet);
     } else {
         std::cout << "Failed to form packet" << std::endl;
@@ -234,7 +239,7 @@ void NetworkingClient::sendClientUnreliableUpdate() {
     UnreliableCommand unreliable_command = {(sf::Uint32)m_clientId_ta, client_unreliable_update_cmd,
                                             m_tick_ta};
 
-    std::lock_guard<std::mutex> m_clientReliableUpdate_guard(m_clientReliableUpdate_lock);
+    std::lock_guard<std::mutex> m_clientUnreliableUpdate_guard(m_clientUnreliableUpdate_lock);
     if (packet << unreliable_command && packet << m_clientUnreliableUpdate_t) {
         std::lock_guard<std::mutex> m_udpSocket_guard(m_udpSocket_lock);
         sf::Socket::Status status = sf::Socket::Partial;

@@ -97,7 +97,6 @@ void GroupController::regroup(std::vector<std::shared_ptr<Group>>& groups) {
         // If the original group only has that player, it doesn't need to be regrouped
         if (m_groupToPlayers[original_group_id].size() == 1) {
             player.setUngroup(false);
-            player.setJoinable(false);
             continue;
         }
 
@@ -160,13 +159,20 @@ void GroupController::updateGroup(std::shared_ptr<Group>& group) {
 
     group->applyInput(group_dir);
 
-    // Group is joinable if any member player wants to group
+    // Group is joinable if any member player is joinable
     // TODO(sourenp): Should probably switch to voting functionality later
     bool joinable = std::accumulate(
         group_players.begin(), group_players.end(), false,
         [this](bool curr, int player_id) { return curr || getPlayer(player_id).getJoinable(); });
-
     group->setJoinable(joinable);
+
+    // Group is ungroup if any member player is ungroup
+    // TODO(sourenp): This was only included for debugging purposes. A group doesn't need to know
+    // when it's in the ungroup state. Remove eventually.
+    bool ungroup = std::accumulate(
+        group_players.begin(), group_players.end(), false,
+        [this](bool curr, int player_id) { return curr || getPlayer(player_id).getUngroup(); });
+    group->setUngroup(ungroup);
 
     // Update group size
     group->setRadius(group_players.size() * GROUP_MEMBER_SIZE);

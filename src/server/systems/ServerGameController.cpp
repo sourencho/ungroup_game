@@ -20,7 +20,7 @@ PlayerInputs ServerGameController::collectInputs() {
     return m_networkingServer->collectClientInputs();
 }
 
-void ServerGameController::step(const PlayerInputs& pi, sf::Int32 delta_ms) {
+void ServerGameController::step(std::shared_ptr<PlayerInputs> pi, sf::Int32 delta_ms) {
     computeGameState(pi, delta_ms);
 }
 

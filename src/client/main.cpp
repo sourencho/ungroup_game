@@ -42,19 +42,8 @@ int main(int, char const**) {
 
     // Start the game loop
     while (window.isOpen()) {
-        // Process events
-        sf::Event event;
-        while (window.pollEvent(event)) {
-            // Close window: exit
-            if (event.type == sf::Event::Closed) {
-                window.close();
-            }
-
-            // Handle game controller events (e.g. player input)
-            client_game_controller.handleEvents(event);
-        }
-
         // Update
+        client_game_controller.handleEvents(window);
         client_game_controller.update();
 
         // Display

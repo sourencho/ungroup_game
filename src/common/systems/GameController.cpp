@@ -36,7 +36,8 @@ GameController::GameController(size_t max_player_count, size_t max_mine_count)
 GameController::~GameController() {}
 
 void GameController::update() {
-    PlayerInputs pi = collectInputs();
+    std::shared_ptr<PlayerInputs> pi =
+        std::shared_ptr<PlayerInputs>(new PlayerInputs(collectInputs()));
 
     // Take a variable amount of game state steps depending on how long the last frame took. See:
     // https://web.archive.org/web/20190403012130/https://gafferongames.com/post/fix_your_timestep/
@@ -51,7 +52,7 @@ void GameController::update() {
     setNetworkState();
 }
 
-void GameController::computeGameState(const PlayerInputs& pi, sf::Int32 delta_ms) {
+void GameController::computeGameState(std::shared_ptr<PlayerInputs> pi, sf::Int32 delta_ms) {
     updateGameObjects(pi);
     m_physicsController->update(delta_ms);
     updateGameObjectsPostPhysics();
@@ -59,7 +60,7 @@ void GameController::computeGameState(const PlayerInputs& pi, sf::Int32 delta_ms
     incrementTick();
 }
 
-void GameController::updateGameObjects(const PlayerInputs& pi) {
+void GameController::updateGameObjects(std::shared_ptr<PlayerInputs> pi) {
     m_playerController->update(pi);
     m_groupController->update();
     m_mineController->update();

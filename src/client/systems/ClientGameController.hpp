@@ -24,7 +24,7 @@ class ClientGameController : public GameController {
     void update() override;
     void updateView(sf::RenderWindow& window, sf::Vector2f buffer_scaling_factor);
     void draw(sf::RenderTarget& target);
-    void handleEvents(sf::Event& event);
+    void handleEvents(sf::RenderWindow& window);
 
   private:
     void addEventListeners();
@@ -33,7 +33,7 @@ class ClientGameController : public GameController {
     void incrementTick() override;
     unsigned int getTick() override;
     void setTick(unsigned int tick) override;
-    void step(const PlayerInputs& pi, sf::Int32 delta_ms) override;
+    void step(std::shared_ptr<PlayerInputs> pi, sf::Int32 delta_ms) override;
 
     void fetchPlayerId();
     void setClientUpdates();
