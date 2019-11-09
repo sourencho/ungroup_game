@@ -1,6 +1,6 @@
 add_library(common-lib
     util/network_util.cpp
-    util/game_state.cpp
+    util/StateDef.cpp
     objects/CircleGameObject.cpp
     objects/Player.cpp
     objects/Mine.cpp

@@ -25,8 +25,8 @@ NetworkingServer::NetworkingServer() : m_gameState_t() {
 }
 
 NetworkingServer::~NetworkingServer() {
-    m_clientReliableUpdates_lock.unlock();
-    m_clientUnreliableUpdates_lock.unlock();
+    m_playerReliableUpdates_lock.unlock();
+    m_playerUnreliableUpdates_lock.unlock();
     m_gameState_lock.unlock();
     EventController::getInstance().unlock();
 
@@ -46,30 +46,30 @@ void NetworkingServer::createUdpSocket() {
     m_udpSocket_t->setBlocking(false);
 }
 
-ClientInputs NetworkingServer::collectClientInputs() {
+PlayerInputs NetworkingServer::collectClientInputs() {
     // Give clients a window to write inputs
     {
-        m_clientReliableUpdates_lock.unlock();
-        m_clientUnreliableUpdates_lock.unlock();
+        m_playerReliableUpdates_lock.unlock();
+        m_playerUnreliableUpdates_lock.unlock();
         m_gameState_lock.unlock();
         EventController::getInstance().unlock();
         std::this_thread::sleep_for(SERVER_INPUT_WINDOW_SLEEP);
-        m_clientReliableUpdates_lock.lock();
-        m_clientUnreliableUpdates_lock.lock();
+        m_playerReliableUpdates_lock.lock();
+        m_playerUnreliableUpdates_lock.lock();
         m_gameState_lock.lock();
         EventController::getInstance().lock();
     }
 
     // Get client inputs
-    ClientInputs cis = {
-        m_clientUnreliableUpdates_t,
-        m_clientReliableUpdates_t,
+    PlayerInputs pi = {
+        m_playerUnreliableUpdates_t,
+        m_playerReliableUpdates_t,
     };
 
-    m_clientUnreliableUpdates_t.clear();
-    m_clientReliableUpdates_t.clear();
+    m_playerUnreliableUpdates_t.clear();
+    m_playerReliableUpdates_t.clear();
 
-    return cis;
+    return pi;
 }
 
 void NetworkingServer::setClientToPlayerId(sf::Int32 client_id, int player_id) {
@@ -127,14 +127,21 @@ void NetworkingServer::setClientUnreliableUpdate(sf::Packet packet, int client_i
                                                  uint client_tick) {
     int drift = std::abs(static_cast<int>((m_tick_ta - client_tick)));
     if (drift < CMD_DRIFT_THRESHOLD) {
+        sf::Uint32 player_id;
+        {
+            std::lock_guard<std::mutex> m_clientToPlayerIds_guard(m_clientToPlayerIds_lock);
+            if (m_clientToPlayerIds_t.count(client_id) == 0) {
+                return;
+            }
+            player_id = m_clientToPlayerIds_t[client_id];
+        }
         ClientUnreliableUpdate client_unreliable_update;
         packet >> client_unreliable_update;
-        ClientIdAndUnreliableUpdate client_id_and_unreliable_update = {client_id,
-                                                                       client_unreliable_update};
+        PlayerUnreliableUpdate player_unreliable_update = {player_id, client_unreliable_update};
         {
-            std::lock_guard<std::mutex> m_clientUnreliableUpdates_guard(
-                m_clientUnreliableUpdates_lock);
-            m_clientUnreliableUpdates_t.push_back(client_id_and_unreliable_update);
+            std::lock_guard<std::mutex> m_playerUnreliableUpdates_guard(
+                m_playerUnreliableUpdates_lock);
+            m_playerUnreliableUpdates_t.push_back(player_unreliable_update);
         }
     } else {
         std::cout << "Receive client_update command with tick drifted past drift threshold. "
@@ -246,12 +253,17 @@ void NetworkingServer::sendPlayerId(sf::TcpSocket& socket, sf::Uint32 client_id)
 }
 
 void NetworkingServer::setClientReliableUpdate(sf::Packet packet, int client_id) {
+    uint32_t player_id;
+    {
+        std::lock_guard<std::mutex> m_clientToPlayerIds_guard(m_clientToPlayerIds_lock);
+        player_id = m_clientToPlayerIds_t[client_id];
+    }
     ClientReliableUpdate client_reliable_update;
     packet >> client_reliable_update;
-    ClientIdAndReliableUpdate client_id_and_reliable_update = {client_id, client_reliable_update};
+    PlayerReliableUpdate player_reliable_update = {player_id, client_reliable_update};
     {
-        std::lock_guard<std::mutex> m_clientReliableUpdates_guard(m_clientReliableUpdates_lock);
-        m_clientReliableUpdates_t.push_back(client_id_and_reliable_update);
+        std::lock_guard<std::mutex> m_playerReliableUpdates_guard(m_playerReliableUpdates_lock);
+        m_playerReliableUpdates_t.push_back(player_reliable_update);
     }
 }
 

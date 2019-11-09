@@ -11,7 +11,7 @@
 #include "../objects/Mine.hpp"
 #include "../objects/Player.hpp"
 #include "../physics/PhysicsController.hpp"
-#include "../util/game_state.hpp"
+#include "../util/StateDef.hpp"
 #include "GameObjectStore.hpp"
 #include "GroupController.hpp"
 #include "MineController.hpp"
@@ -30,20 +30,20 @@ class GameController {
     virtual void update();
 
   protected:
-    virtual ClientInputs collectInputs() = 0;
+    virtual PlayerInputs collectInputs() = 0;
     virtual void setNetworkState() = 0;
     virtual void incrementTick() = 0;
     virtual unsigned int getTick() = 0;
     virtual void setTick(unsigned int tick) = 0;
-    virtual void step(const ClientInputs& cis, sf::Int32 delta_ms) = 0;
+    virtual void step(std::shared_ptr<PlayerInputs> pi, sf::Int32 delta_ms) = 0;
 
-    void updatePlayers(const ClientInputs& cis);
+    void updatePlayers(std::shared_ptr<PlayerInputs> pi);
     void updateGroups();
-    void computeGameState(const ClientInputs& cis, sf::Int32 delta_ms);
+    void computeGameState(std::shared_ptr<PlayerInputs> pi, sf::Int32 delta_ms);
     uint32_t createPlayerWithGroup(uint32_t client_id);
     void applyGameState(GameState game_state);
     GameState getGameState();
-    void updateGameObjects(const ClientInputs& cis);
+    void updateGameObjects(std::shared_ptr<PlayerInputs> pi);
     void updateGameObjectsPostPhysics();
     PlayerUpdate clientUpdateToPlayerUpdate(ClientUnreliableUpdate client_unreliable_update,
                                             ClientReliableUpdate client_reliable_update);

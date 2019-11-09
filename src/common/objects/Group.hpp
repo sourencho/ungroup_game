@@ -33,8 +33,10 @@ class Group : public CircleGameObject {
     Group(const Group& temp_obj) = delete;            // TODO: define this
     Group& operator=(const Group& temp_obj) = delete; // TODO: define this
 
-    bool getJoinable();
-    void setJoinable(bool joinable);
+    bool getJoinable() { return m_joinable; };
+    void setJoinable(bool joinable) { m_joinable = joinable; };
+    bool getUngroup() { return m_ungroup; };
+    void setUngroup(bool ungroup) { m_ungroup = ungroup; };
 
     GroupUpdate getUpdate();
     void applyUpdate(GroupUpdate gu);
@@ -43,6 +45,7 @@ class Group : public CircleGameObject {
 
   private:
     bool m_joinable = false;
+    bool m_ungroup = false;
 };
 
 #endif /* Group_hpp */

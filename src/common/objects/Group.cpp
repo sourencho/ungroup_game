@@ -15,16 +15,17 @@ Group::Group(uint32_t id, sf::Vector2f position, sf::Color color,
 
 Group::~Group() {}
 
-bool Group::getJoinable() { return m_joinable; }
-
-void Group::setJoinable(bool joinable) { m_joinable = joinable; }
-
 void Group::draw(sf::RenderTarget& render_target) {
     if (m_joinable) {
         setOutlineThickness(1.f);
         setOutlineColor(RenderingDef::JOINABLE_COLOR);
     } else {
         setOutlineThickness(0.f);
+    }
+    // TODO(sourenp): This was only included for debugging purposes. Remove eventually.
+    if (m_ungroup) {
+        setOutlineThickness(2.f);
+        setOutlineColor(sf::Color::Blue);
     }
     CircleGameObject::draw(render_target);
 }

@@ -16,12 +16,12 @@ void ServerGameController::addEventListeners() {
         std::bind(&ServerGameController::handleClientConnectedEvent, this, std::placeholders::_1));
 }
 
-ClientInputs ServerGameController::collectInputs() {
+PlayerInputs ServerGameController::collectInputs() {
     return m_networkingServer->collectClientInputs();
 }
 
-void ServerGameController::step(const ClientInputs& cis, sf::Int32 delta_ms) {
-    computeGameState(cis, delta_ms);
+void ServerGameController::step(std::shared_ptr<PlayerInputs> pi, sf::Int32 delta_ms) {
+    computeGameState(pi, delta_ms);
 }
 
 void ServerGameController::handleClientConnectedEvent(std::shared_ptr<Event> event) {

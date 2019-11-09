@@ -4,14 +4,15 @@
 #include <atomic>
 #include <memory>
 #include <mutex>
+#include <queue>
 #include <stdio.h>
 #include <thread>
 #include <vector>
 
 #include <SFML/Network.hpp>
 
+#include "../../common/util/StateDef.hpp"
 #include "../../common/util/game_def.hpp"
-#include "../../common/util/game_state.hpp"
 
 class NetworkingClient {
 
@@ -23,7 +24,7 @@ class NetworkingClient {
     void incrementTick();
     uint getTick() const;
     void setTick(uint tick);
-    int getPlayerId() const;
+    std::pair<bool, uint32_t> getPlayerId() const;
     int getClientId() const;
     bool getGameStateIsFresh() const;
     void setClientUnreliableUpdate(ClientUnreliableUpdate client_unreliable_update);
@@ -61,7 +62,9 @@ class NetworkingClient {
     bool registerNetworkingClient();
 
     // Misc
-    std::atomic<int> m_playerId_ta{-1};
+    std::atomic<bool> m_playerIdAvialable_ta{false};
+    std::atomic<uint32_t> m_playerId_ta{0};
+
     std::atomic<int> m_clientId_ta{-1};
     std::atomic<uint> m_tick_ta{0};
     std::atomic<bool> m_gameStateIsFresh_ta{true};
@@ -72,8 +75,8 @@ class NetworkingClient {
     std::mutex m_clientUnreliableUpdate_lock;
     ClientUnreliableUpdate m_clientUnreliableUpdate_t;
 
-    std::mutex m_clientReliableUpdate_lock;
-    ClientReliableUpdate m_clientReliableUpdate_t;
+    std::mutex m_clientReliableUpdates_lock;
+    std::queue<ClientReliableUpdate> m_clientReliableUpdates_t;
 
     sf::Uint16 m_serverUdpPort = 0;
 };

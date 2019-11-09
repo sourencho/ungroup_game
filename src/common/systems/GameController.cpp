@@ -15,8 +15,8 @@
 
 GameController::GameController(size_t max_player_count, size_t max_mine_count)
     : m_physicsController(new PhysicsController()), m_resourceStore(new ResourceStore()) {
-    m_gameObjectStore =
-        std::unique_ptr<GameObjectStore>(new GameObjectStore(m_physicsController, *m_resourceStore));
+    m_gameObjectStore = std::unique_ptr<GameObjectStore>(
+        new GameObjectStore(m_physicsController, *m_resourceStore));
     m_gameObjectStore->loadLevel(max_player_count, max_mine_count);
 
     m_playerController =
@@ -36,14 +36,15 @@ GameController::GameController(size_t max_player_count, size_t max_mine_count)
 GameController::~GameController() {}
 
 void GameController::update() {
-    ClientInputs cis = collectInputs();
+    std::shared_ptr<PlayerInputs> pi =
+        std::shared_ptr<PlayerInputs>(new PlayerInputs(collectInputs()));
 
     // Take a variable amount of game state steps depending on how long the last frame took. See:
     // https://web.archive.org/web/20190403012130/https://gafferongames.com/post/fix_your_timestep/
     sf::Int32 frame_time = m_clock.restart().asMilliseconds();
     m_timeAccumulator += frame_time;
     while (m_timeAccumulator >= MIN_TIME_STEP) {
-        step(cis, MIN_TIME_STEP);
+        step(pi, MIN_TIME_STEP);
         m_timeAccumulator -= MIN_TIME_STEP;
         m_elapsedTime += MIN_TIME_STEP;
     }
@@ -51,16 +52,16 @@ void GameController::update() {
     setNetworkState();
 }
 
-void GameController::computeGameState(const ClientInputs& cis, sf::Int32 delta_ms) {
-    updateGameObjects(cis);
+void GameController::computeGameState(std::shared_ptr<PlayerInputs> pi, sf::Int32 delta_ms) {
+    updateGameObjects(pi);
     m_physicsController->update(delta_ms);
     updateGameObjectsPostPhysics();
     EventController::getInstance().forceProcessEvents();
     incrementTick();
 }
 
-void GameController::updateGameObjects(const ClientInputs& cis) {
-    m_playerController->update(cis);
+void GameController::updateGameObjects(std::shared_ptr<PlayerInputs> pi) {
+    m_playerController->update(pi);
     m_groupController->update();
     m_mineController->update();
 }

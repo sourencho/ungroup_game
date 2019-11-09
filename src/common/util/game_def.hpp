@@ -3,8 +3,8 @@
 
 #include <SFML/Graphics.hpp>
 
-struct Keys {
-    sf::Keyboard::Key up, down, right, left, group;
+struct ClientInputKeys {
+    sf::Keyboard::Key up, down, right, left, joinable, ungroup, stop;
 };
 
 struct UnreliableCommand {

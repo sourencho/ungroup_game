@@ -5,10 +5,11 @@
 #include <unordered_map>
 #include <vector>
 
-#include "../../common/events/Event.hpp"
+#include "../events/Event.hpp"
 #include "../objects/Group.hpp"
 #include "../objects/Player.hpp"
 #include "../resources/ResourceStore.hpp"
+#include "../util/TypeDef.hpp"
 
 /* Network utilities */
 
@@ -49,10 +50,13 @@ class GroupController {
 
   private:
     Group& getGroup(uint32_t group_id);
+    std::vector<uint32_t> getEmptyGroupIds();
+    std::pair<TypeDef::ids, TypeDef::ids> partitionGroupsByPlayerCount();
     Player& getPlayer(uint32_t player_id);
     void handleCollisionEvent(std::shared_ptr<Event> event);
     void handleClientDisconnectedEvent(std::shared_ptr<Event> event);
     void joinGroups(uint32_t circle_a_id, uint32_t circle_b_id);
+    void regroup(std::vector<std::shared_ptr<Group>>& groups);
     void refreshGroup(std::shared_ptr<Group>& group);
     void updateGroup(std::shared_ptr<Group>& group);
     void removePlayer(uint32_t player_id);

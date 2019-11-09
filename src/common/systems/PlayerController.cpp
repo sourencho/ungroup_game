@@ -26,7 +26,6 @@ uint32_t PlayerController::createPlayer(uint32_t client_id) {
     }
 
     uint32_t new_player_id = m_players[next_player_index]->getId();
-    m_clientToPlayer[client_id] = new_player_id;
     getPlayer(new_player_id)->setActive(true);
     return new_player_id;
 }
@@ -38,36 +37,30 @@ void PlayerController::handleClientDisconnectedEvent(std::shared_ptr<Event> even
     removePlayer(player_id);
 }
 
-void PlayerController::removePlayer(uint32_t client_id) {
-    getPlayer(m_clientToPlayer[client_id])->setActive(false);
-}
+void PlayerController::removePlayer(uint32_t player_id) { getPlayer(player_id)->setActive(false); }
 
-void PlayerController::update(const ClientInputs& cis) {
-    uint32_t client_id;
-    for (const auto& client_id_and_unreliable_update : cis.client_id_and_unreliable_updates) {
-        client_id = client_id_and_unreliable_update.client_id;
-        if (m_clientToPlayer.count(client_id) > 0) {
-            uint32_t player_id = m_clientToPlayer[client_id];
-            getPlayer(player_id)->setDirection(
-                client_id_and_unreliable_update.client_unreliable_update.direction);
-        }
+void PlayerController::update(std::shared_ptr<PlayerInputs> pi) {
+    while (!pi->player_unreliable_updates.empty()) {
+        const auto& player_unreliable_update = pi->player_unreliable_updates.back();
+        uint32_t player_id = player_unreliable_update.player_id;
+        getPlayer(player_id)->setDirection(
+            player_unreliable_update.client_unreliable_update.direction);
+        pi->player_unreliable_updates.pop_back();
     }
-    for (const auto& client_id_and_reliable_update : cis.client_id_and_reliable_updates) {
-        client_id = client_id_and_reliable_update.client_id;
-        if (m_clientToPlayer.count(client_id) > 0) {
-            uint32_t player_id = m_clientToPlayer[client_id];
-            getPlayer(player_id)->setJoinable(
-                client_id_and_reliable_update.client_reliable_update.joinable);
-        }
+    while (!pi->player_reliable_updates.empty()) {
+        const auto& player_reliable_update = pi->player_reliable_updates.back();
+        uint32_t player_id = player_reliable_update.player_id;
+        auto player = getPlayer(player_id);
+        player->setJoinable(player->getJoinable() ^
+                            player_reliable_update.client_reliable_update.toggle_joinable);
+        player->setUngroup(player->getUngroup() ^
+                           player_reliable_update.client_reliable_update.toggle_ungroup);
+        pi->player_reliable_updates.pop_back();
     }
 }
 
 void PlayerController::updatePostPhysics() {
     // noop
-}
-
-void PlayerController::setPlayerClient(uint32_t player_id, uint32_t client_id) {
-    m_clientToPlayer[client_id] = player_id;
 }
 
 std::shared_ptr<Player> PlayerController::getPlayer(uint32_t player_id) {
