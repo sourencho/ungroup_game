@@ -28,6 +28,11 @@ struct ClientUnreliableUpdate {
 struct ClientReliableUpdate {
     bool toggle_joinable;
     bool toggle_ungroup;
+    void setAll(bool value) {
+        toggle_joinable = value;
+        toggle_ungroup = value;
+    };
+    bool allFalse() { return !toggle_joinable && !toggle_ungroup; };
 };
 
 struct PlayerUnreliableUpdate {

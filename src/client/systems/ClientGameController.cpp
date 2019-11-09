@@ -51,8 +51,7 @@ void ClientGameController::draw(sf::RenderTarget& target) {
 }
 
 void ClientGameController::handleEvents(sf::RenderWindow& window) {
-    m_clientReliableUpdate.toggle_joinable = false;
-    m_clientReliableUpdate.toggle_ungroup = false;
+    m_clientReliableUpdate.setAll(false);
     sf::Vector2f direction = m_clientUnreliableUpdate.direction;
 
     // Process events
@@ -156,7 +155,7 @@ void ClientGameController::fetchPlayerId() {
 void ClientGameController::setClientUpdates() {
     // Set input to send to server
     m_networkingClient->setClientUnreliableUpdate(m_clientUnreliableUpdate);
-    if (m_clientReliableUpdate.toggle_ungroup || m_clientReliableUpdate.toggle_joinable) {
+    if (!m_clientReliableUpdate.allFalse()) {
         m_networkingClient->setClientReliableUpdate(m_clientReliableUpdate);
     }
 
