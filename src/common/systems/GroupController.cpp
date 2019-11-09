@@ -82,7 +82,7 @@ void GroupController::regroup(std::vector<std::shared_ptr<Group>>& groups) {
         auto& group_players = m_groupToPlayers[group_id];
         for (uint32_t player_id : group_players) {
             Player& player = getPlayer(player_id);
-            if (!player.getUngroup()) {
+            if (!player.getUngroup() || group_players.size() == 1) {
                 continue;
             }
             regroup_player_and_group_ids.push_back(std::make_pair(player_id, group_id));
@@ -96,6 +96,7 @@ void GroupController::regroup(std::vector<std::shared_ptr<Group>>& groups) {
         Player& player = getPlayer(player_id);
         // If the original group only has that player, it doesn't need to be regrouped
         if (m_groupToPlayers[original_group_id].size() == 1) {
+            player.setJoinable(false);
             player.setUngroup(false);
             continue;
         }
@@ -121,7 +122,7 @@ void GroupController::regroup(std::vector<std::shared_ptr<Group>>& groups) {
         Group& new_group = getGroup(new_group_id);
         Group& original_group = getGroup(original_group_id);
         // TODO(sourenp): Set new group's location somewhere near the original group
-        new_group.setPosition({0.f, 0.f});
+        new_group.setPosition(original_group.getPosition());
     }
 }
 
