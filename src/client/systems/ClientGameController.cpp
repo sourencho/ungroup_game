@@ -11,7 +11,6 @@ ClientGameController::ClientGameController(size_t max_player_count, size_t max_m
                                            ClientInputKeys keys)
     : GameController(max_player_count, max_mine_count), m_networkingClient(new NetworkingClient()),
       m_animationController(new AnimationController()), m_clientInputKeys(keys) {
-    m_clientUnreliableUpdate.setAll(false);
     addEventListeners();
 }
 
