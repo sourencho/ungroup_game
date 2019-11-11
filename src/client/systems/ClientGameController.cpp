@@ -11,6 +11,7 @@ ClientGameController::ClientGameController(size_t max_player_count, size_t max_m
                                            ClientInputKeys keys)
     : GameController(max_player_count, max_mine_count), m_networkingClient(new NetworkingClient()),
       m_animationController(new AnimationController()), m_clientInputKeys(keys) {
+    m_clientUnreliableUpdate.setAll(false);
     addEventListeners();
 }
 
@@ -51,8 +52,9 @@ void ClientGameController::draw(sf::RenderTarget& target) {
 }
 
 void ClientGameController::handleEvents(sf::RenderWindow& window) {
+    // Reset updates
     m_clientReliableUpdate.setAll(false);
-    sf::Vector2f direction = m_clientUnreliableUpdate.direction;
+    m_clientUnreliableUpdate.setAll(false);
 
     // Process events
     sf::Event event;
@@ -64,31 +66,18 @@ void ClientGameController::handleEvents(sf::RenderWindow& window) {
 
         // Handle game controller events (e.g. player input)
         if (event.type == sf::Event::KeyPressed) {
-            if (sf::Keyboard::isKeyPressed(m_clientInputKeys.joinable)) {
-                m_clientReliableUpdate.toggle_joinable = true;
-            }
-            if (sf::Keyboard::isKeyPressed(m_clientInputKeys.ungroup)) {
-                m_clientReliableUpdate.toggle_ungroup = true;
-            }
-            // TODO(sourenp|#103): Send key toggles instead of direction value
-            if (sf::Keyboard::isKeyPressed(m_clientInputKeys.up)) {
-                direction += sf::Vector2f(0.f, -1.f);
-            }
-            if (sf::Keyboard::isKeyPressed(m_clientInputKeys.down)) {
-                direction += sf::Vector2f(0.f, 1.f);
-            }
-            if (sf::Keyboard::isKeyPressed(m_clientInputKeys.left)) {
-                direction += sf::Vector2f(-1.f, 0.f);
-            }
-            if (sf::Keyboard::isKeyPressed(m_clientInputKeys.right)) {
-                direction += sf::Vector2f(1.f, 0.f);
-            }
-            direction = VectorUtil::normalize(direction);
-            if (sf::Keyboard::isKeyPressed(m_clientInputKeys.stop)) {
-                direction = sf::Vector2f(0.f, 0.f);
-            }
+            m_clientReliableUpdate = {
+                .toggle_ungroup = sf::Keyboard::isKeyPressed(m_clientInputKeys.ungroup),
+                .toggle_joinable = sf::Keyboard::isKeyPressed(m_clientInputKeys.joinable),
+            };
+            m_clientUnreliableUpdate = {
+                .toggle_up = sf::Keyboard::isKeyPressed(m_clientInputKeys.up),
+                .toggle_down = sf::Keyboard::isKeyPressed(m_clientInputKeys.down),
+                .toggle_right = sf::Keyboard::isKeyPressed(m_clientInputKeys.right),
+                .toggle_left = sf::Keyboard::isKeyPressed(m_clientInputKeys.left),
+                .toggle_stop = sf::Keyboard::isKeyPressed(m_clientInputKeys.stop),
+            };
         }
-        m_clientUnreliableUpdate.direction = direction;
     }
 }
 
@@ -154,9 +143,11 @@ void ClientGameController::fetchPlayerId() {
 
 void ClientGameController::setClientUpdates() {
     // Set input to send to server
-    m_networkingClient->setClientUnreliableUpdate(m_clientUnreliableUpdate);
+    if (!m_clientUnreliableUpdate.allFalse()) {
+        m_networkingClient->pushClientUnreliableUpdate(m_clientUnreliableUpdate);
+    }
     if (!m_clientReliableUpdate.allFalse()) {
-        m_networkingClient->setClientReliableUpdate(m_clientReliableUpdate);
+        m_networkingClient->pushClientReliableUpdate(m_clientReliableUpdate);
     }
 
     // Save input and state for replay
@@ -172,20 +163,22 @@ PlayerInputs& ClientGameController::getClientInputs(ClientReliableUpdate cru,
     }
 
     m_playerInputs.player_reliable_updates.clear();
-    m_playerInputs.player_reliable_updates.clear();
+    m_playerInputs.player_unreliable_updates.clear();
 
-    PlayerReliableUpdate player_reliable_update = {
-        .player_id = m_playerId,
-        .client_reliable_update = cru,
-    };
-
-    PlayerUnreliableUpdate player_unreliable_update = {
-        .player_id = m_playerId,
-        .client_unreliable_update = cuu,
-    };
-
-    m_playerInputs.player_reliable_updates.push_back(player_reliable_update);
-    m_playerInputs.player_unreliable_updates.push_back(player_unreliable_update);
+    if (!m_clientReliableUpdate.allFalse()) {
+        PlayerReliableUpdate player_reliable_update = {
+            .player_id = m_playerId,
+            .client_reliable_update = cru,
+        };
+        m_playerInputs.player_reliable_updates.push_back(player_reliable_update);
+    }
+    if (!m_clientUnreliableUpdate.allFalse()) {
+        PlayerUnreliableUpdate player_unreliable_update = {
+            .player_id = m_playerId,
+            .client_unreliable_update = cuu,
+        };
+        m_playerInputs.player_unreliable_updates.push_back(player_unreliable_update);
+    }
 
     return m_playerInputs;
 }

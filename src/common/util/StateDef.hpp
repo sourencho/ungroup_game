@@ -22,7 +22,21 @@ sf::Packet pack_game_state(GameState game_state);
 GameState unpack_game_state(sf::Packet game_state_packet);
 
 struct ClientUnreliableUpdate {
-    sf::Vector2f direction = sf::Vector2f(0.f, 0.f);
+    bool toggle_up;
+    bool toggle_down;
+    bool toggle_right;
+    bool toggle_left;
+    bool toggle_stop;
+    void setAll(bool value) {
+        toggle_up = value;
+        toggle_down = value;
+        toggle_right = value;
+        toggle_left = value;
+        toggle_stop = value;
+    };
+    bool allFalse() {
+        return !toggle_up && !toggle_down && !toggle_right && !toggle_left && !toggle_stop;
+    };
 };
 
 struct ClientReliableUpdate {

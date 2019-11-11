@@ -64,6 +64,10 @@ void GameController::updateGameObjects(std::shared_ptr<PlayerInputs> pi) {
     m_playerController->update(pi);
     m_groupController->update();
     m_mineController->update();
+
+    // Clear uptades since they've already been "consumed"
+    pi->player_reliable_updates.clear();
+    pi->player_unreliable_updates.clear();
 }
 
 void GameController::updateGameObjectsPostPhysics() {

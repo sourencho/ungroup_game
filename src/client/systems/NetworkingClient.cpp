@@ -105,12 +105,12 @@ GameState NetworkingClient::getGameState() {
     return m_gameState_t;
 }
 
-void NetworkingClient::setClientUnreliableUpdate(ClientUnreliableUpdate client_unreliable_update) {
-    std::lock_guard<std::mutex> m_clientUnreliableUpdate_guard(m_clientUnreliableUpdate_lock);
-    m_clientUnreliableUpdate_t = client_unreliable_update;
+void NetworkingClient::pushClientUnreliableUpdate(ClientUnreliableUpdate client_unreliable_update) {
+    std::lock_guard<std::mutex> m_clientUnreliableUpdates_guard(m_clientUnreliableUpdates_lock);
+    m_clientUnreliableUpdates_t.push(client_unreliable_update);
 }
 
-void NetworkingClient::setClientReliableUpdate(ClientReliableUpdate client_reliable_update) {
+void NetworkingClient::pushClientReliableUpdate(ClientReliableUpdate client_reliable_update) {
     std::lock_guard<std::mutex> m_clientReliableUpdates_guard(m_clientReliableUpdates_lock);
     m_clientReliableUpdates_t.push(client_reliable_update);
 }
@@ -234,13 +234,20 @@ void NetworkingClient::unreliableSend() {
 }
 
 void NetworkingClient::sendClientUnreliableUpdate() {
+    std::lock_guard<std::mutex> m_clientUnreliableUpdates_guard(m_clientUnreliableUpdates_lock);
+    if (m_clientUnreliableUpdates_t.empty()) {
+        return;
+    }
+
+    ClientUnreliableUpdate client_unreliable_update = m_clientUnreliableUpdates_t.front();
+    m_clientUnreliableUpdates_t.pop();
+
     sf::Packet packet;
     sf::Uint32 client_unreliable_update_cmd = UnreliableCommandType::client_unreliable_update;
     UnreliableCommand unreliable_command = {(sf::Uint32)m_clientId_ta, client_unreliable_update_cmd,
                                             m_tick_ta};
 
-    std::lock_guard<std::mutex> m_clientUnreliableUpdate_guard(m_clientUnreliableUpdate_lock);
-    if (packet << unreliable_command && packet << m_clientUnreliableUpdate_t) {
+    if (packet << unreliable_command && packet << client_unreliable_update) {
         std::lock_guard<std::mutex> m_udpSocket_guard(m_udpSocket_lock);
         sf::Socket::Status status = sf::Socket::Partial;
         while (status == sf::Socket::Partial) {
