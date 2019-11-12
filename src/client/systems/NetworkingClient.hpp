@@ -27,8 +27,8 @@ class NetworkingClient {
     std::pair<bool, uint32_t> getPlayerId() const;
     int getClientId() const;
     bool getGameStateIsFresh() const;
-    void setClientUnreliableUpdate(ClientUnreliableUpdate client_unreliable_update);
-    void setClientReliableUpdate(ClientReliableUpdate client_reliable_update);
+    void pushClientUnreliableUpdate(ClientUnreliableUpdate client_unreliable_update);
+    void pushClientReliableUpdate(ClientReliableUpdate client_reliable_update);
 
   private:
     // Sockets
@@ -72,8 +72,8 @@ class NetworkingClient {
     std::mutex m_gameState_lock;
     GameState m_gameState_t;
 
-    std::mutex m_clientUnreliableUpdate_lock;
-    ClientUnreliableUpdate m_clientUnreliableUpdate_t;
+    std::mutex m_clientUnreliableUpdates_lock;
+    std::queue<ClientUnreliableUpdate> m_clientUnreliableUpdates_t;
 
     std::mutex m_clientReliableUpdates_lock;
     std::queue<ClientReliableUpdate> m_clientReliableUpdates_t;

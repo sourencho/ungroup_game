@@ -78,11 +78,13 @@ GameState unpack_game_state(sf::Packet game_state_packet) {
 }
 
 sf::Packet& operator<<(sf::Packet& packet, const ClientUnreliableUpdate& cuu) {
-    return packet << cuu.direction;
+    return packet << cuu.toggle_up << cuu.toggle_down << cuu.toggle_right << cuu.toggle_left
+                  << cuu.toggle_stop;
 }
 
 sf::Packet& operator>>(sf::Packet& packet, ClientUnreliableUpdate& cuu) {
-    return packet >> cuu.direction;
+    return packet >> cuu.toggle_up >> cuu.toggle_down >> cuu.toggle_right >> cuu.toggle_left >>
+           cuu.toggle_stop;
 }
 
 sf::Packet& operator<<(sf::Packet& packet, const ClientReliableUpdate& cru) {
