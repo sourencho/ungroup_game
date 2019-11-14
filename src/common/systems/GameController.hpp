@@ -27,15 +27,17 @@ class GameController {
     GameController(const GameController& temp_obj) = delete;
     GameController& operator=(const GameController& temp_obj) = delete;
 
-    virtual void update();
+    void step();
 
   protected:
-    virtual PlayerInputs collectInputs() = 0;
-    virtual void setNetworkState() = 0;
+    virtual void update(std::shared_ptr<PlayerInputs> pi, sf::Int32 delta_ms) = 0;
+    virtual void preUpdate() = 0;
+    virtual void postUpdate() = 0;
+
+    virtual std::shared_ptr<PlayerInputs> collectInputs() = 0;
     virtual void incrementTick() = 0;
     virtual unsigned int getTick() = 0;
     virtual void setTick(unsigned int tick) = 0;
-    virtual void step(std::shared_ptr<PlayerInputs> pi, sf::Int32 delta_ms) = 0;
 
     void updatePlayers(std::shared_ptr<PlayerInputs> pi);
     void updateGroups();

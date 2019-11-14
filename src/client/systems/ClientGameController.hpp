@@ -18,23 +18,24 @@ class ClientGameController : public GameController {
 
   public:
     explicit ClientGameController(size_t max_player_count, size_t max_mine_count,
-                                  ClientInputKeys keys);
+                                  ClientInputKeys keys, sf::RenderWindow& window);
     ~ClientGameController();
 
-    void update() override;
     void updateView(sf::RenderWindow& window, sf::Vector2f buffer_scaling_factor);
-    void draw(sf::RenderTarget& target);
-    void handleEvents(sf::RenderWindow& window);
+    void draw(sf::RenderTexture& buffer);
 
   private:
+    void update(std::shared_ptr<PlayerInputs> pi, sf::Int32 delta_ms) override;
+    void preUpdate() override;
+    void postUpdate() override;
+
+    std::shared_ptr<PlayerInputs> collectInputs() override;
     void addEventListeners();
-    PlayerInputs collectInputs() override;
-    void setNetworkState() override;
     void incrementTick() override;
     unsigned int getTick() override;
     void setTick(unsigned int tick) override;
-    void step(std::shared_ptr<PlayerInputs> pi, sf::Int32 delta_ms) override;
 
+    void handleEvents();
     void fetchPlayerId();
     void setClientUpdates();
     void rewindAndReplay();
@@ -56,6 +57,8 @@ class ClientGameController : public GameController {
 
     std::unique_ptr<NetworkingClient> m_networkingClient;
     std::unique_ptr<AnimationController> m_animationController;
+
+    sf::RenderWindow& m_window;
 };
 
 #endif /* ClientGameController_hpp */

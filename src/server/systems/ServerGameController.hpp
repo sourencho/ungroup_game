@@ -16,14 +16,17 @@ class ServerGameController : public GameController {
     ~ServerGameController();
 
   private:
-    PlayerInputs collectInputs() override;
-    void setNetworkState() override;
+    void update(std::shared_ptr<PlayerInputs> pi, sf::Int32 delta_ms) override;
+    void preUpdate() override;
+    void postUpdate() override;
+
+    std::shared_ptr<PlayerInputs> collectInputs() override;
+    void addEventListeners();
+    void setNetworkState();
     void incrementTick() override;
     unsigned int getTick() override;
     void setTick(unsigned int tick) override;
-    void step(std::shared_ptr<PlayerInputs> pi, sf::Int32 delta_ms) override;
     void handleClientConnectedEvent(std::shared_ptr<Event> event);
-    void addEventListeners();
 
     std::unique_ptr<NetworkingServer> m_networkingServer;
 };
