@@ -7,6 +7,7 @@
 #include "../../common/events/ClientConnectedEvent.hpp"
 #include "../../common/events/ClientDisconnectedEvent.hpp"
 #include "../../common/events/EventController.hpp"
+#include "../../common/events/PlayerCreatedEvent.hpp"
 #include "../../common/util/game_settings.hpp"
 #include "../../common/util/network_util.hpp"
 
@@ -15,9 +16,9 @@ sf::Time TCP_TIMEOUT = sf::milliseconds(100);
 
 NetworkingServer::NetworkingServer() : m_gameState_t() {
     std::cout << "Starting ungroup game server." << std::endl;
-    ;
 
     createUdpSocket();
+    addEventListeners();
 
     m_reliableRecvSend = std::thread(&NetworkingServer::reliableRecvSend, this);
     m_unreliableRecv = std::thread(&NetworkingServer::unreliableRecv, this);
@@ -38,6 +39,12 @@ NetworkingServer::~NetworkingServer() {
 }
 
 /* Main thread methods */
+
+void NetworkingServer::addEventListeners() {
+    EventController::getInstance().addEventListener(
+        EventType::EVENT_TYPE_PLAYER_CREATED,
+        std::bind(&NetworkingServer::handlePlayerCreatedEvent, this, std::placeholders::_1));
+}
 
 void NetworkingServer::createUdpSocket() {
     std::lock_guard<std::mutex> m_udpSocket_guard(m_udpSocket_lock);
@@ -72,17 +79,28 @@ PlayerInputs NetworkingServer::collectClientInputs() {
     return pi;
 }
 
-void NetworkingServer::setClientToPlayerId(sf::Int32 client_id, int player_id) {
-    m_clientToPlayerIds_t[client_id] = player_id;
+void NetworkingServer::handlePlayerCreatedEvent(std::shared_ptr<Event> event) {
+    std::shared_ptr<PlayerCreatedEvent> player_created_event =
+        std::dynamic_pointer_cast<PlayerCreatedEvent>(event);
+    m_clientToPlayerIds_t[player_created_event->getClientId()] =
+        player_created_event->getPlayerId();
 }
 
-void NetworkingServer::setState(const GameState& gs) { m_gameState_t = gs; }
+void NetworkingServer::setState(const GameState& gs) {
+    m_gameState_t = gs;
+}
 
-void NetworkingServer::incrementTick() { m_tick_ta++; }
+void NetworkingServer::incrementTick() {
+    m_tick_ta++;
+}
 
-unsigned int NetworkingServer::getTick() const { return static_cast<unsigned int>(m_tick_ta); }
+unsigned int NetworkingServer::getTick() const {
+    return static_cast<unsigned int>(m_tick_ta);
+}
 
-void NetworkingServer::setTick(unsigned int tick) { m_tick_ta = tick; }
+void NetworkingServer::setTick(unsigned int tick) {
+    m_tick_ta = tick;
+}
 
 /* UnreliableServer thread methods */
 

@@ -25,24 +25,26 @@ class ClientGameController : public GameController {
     void draw(sf::RenderTexture& buffer);
 
   private:
+    // Overrides
     void update(std::shared_ptr<PlayerInputs> pi, sf::Int32 delta_ms) override;
     void preUpdate() override;
     void postUpdate() override;
-
     std::shared_ptr<PlayerInputs> collectInputs() override;
-    void addEventListeners();
     void incrementTick() override;
     unsigned int getTick() override;
     void setTick(unsigned int tick) override;
 
+    // Methods
+    void addEventListeners();
     void handleEvents();
     void fetchPlayerId();
     void setClientUpdates();
     void rewindAndReplay();
     void handleCollisionEvent(std::shared_ptr<Event> event);
     void createCollisionAnimation(const sf::Vector2f& collision_position);
-
     PlayerInputs& getClientInputs(ClientReliableUpdate cru, ClientUnreliableUpdate cuu);
+
+    // Variables
 
     ClientInputKeys m_clientInputKeys;
 

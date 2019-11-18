@@ -60,6 +60,8 @@ class NetworkingClient {
     void sendPlayerIdRequest();
     bool readRegistrationResponse();
     bool registerNetworkingClient();
+    void addEventListeners();
+    void handlePlayerCreatedEvent(std::shared_ptr<Event> event);
 
     // Misc
     std::atomic<bool> m_playerIdAvialable_ta{false};

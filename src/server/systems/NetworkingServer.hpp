@@ -65,6 +65,8 @@ class NetworkingServer {
     void setClientUnreliableUpdate(sf::Packet packet, int client_id, unsigned int client_tick);
     std::vector<int> getClientIds();
     void sendGameState();
+    void addEventListeners();
+    void handlePlayerCreatedEvent(std::shared_ptr<Event> event);
 
     // Misc
     std::vector<std::pair<sf::Uint32, std::unique_ptr<sf::TcpSocket>>> m_clients;

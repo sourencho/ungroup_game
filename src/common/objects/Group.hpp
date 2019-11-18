@@ -27,16 +27,24 @@ sf::Packet& operator>>(sf::Packet& packet, GroupUpdate& group_update);
 
 class Group : public CircleGameObject {
   public:
-    Group(uint32_t id, sf::Vector2f position, sf::Color color,
-          std::shared_ptr<PhysicsController> pc, ResourceStore& rs);
+    Group(uint32_t id, sf::Vector2f position, sf::Color color, PhysicsController& pc,
+          ResourceStore& rs);
     ~Group();
     Group(const Group& temp_obj) = delete;            // TODO: define this
     Group& operator=(const Group& temp_obj) = delete; // TODO: define this
 
-    bool getJoinable() { return m_joinable; };
-    void setJoinable(bool joinable) { m_joinable = joinable; };
-    bool getUngroup() { return m_ungroup; };
-    void setUngroup(bool ungroup) { m_ungroup = ungroup; };
+    bool getJoinable() {
+        return m_joinable;
+    };
+    void setJoinable(bool joinable) {
+        m_joinable = joinable;
+    };
+    bool getUngroup() {
+        return m_ungroup;
+    };
+    void setUngroup(bool ungroup) {
+        m_ungroup = ungroup;
+    };
 
     GroupUpdate getUpdate();
     void applyUpdate(GroupUpdate gu);

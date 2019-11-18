@@ -31,18 +31,16 @@ void ClientGameController::incrementTick() {
 void ClientGameController::updateView(sf::RenderWindow& window,
                                       sf::Vector2f buffer_scaling_factor) {
     // Update view to match player's group's position
-    sf::Vector2f group_position =
-        m_gameObjectStore->getGroup(m_groupController->getGroupId(m_playerId))->getCenter();
+    sf::Vector2f player_position = m_gameObjectController->getPlayerPosition(m_playerId);
     sf::View view = window.getView();
-    sf::Vector2f group_view_coordinates = {group_position.x * buffer_scaling_factor.x,
-                                           group_position.y * buffer_scaling_factor.y};
+    sf::Vector2f group_view_coordinates = {player_position.x * buffer_scaling_factor.x,
+                                           player_position.y * buffer_scaling_factor.y};
     view.setCenter(group_view_coordinates);
     window.setView(view);
 }
 
 void ClientGameController::draw(sf::RenderTexture& buffer) {
-    m_groupController->draw(buffer);
-    m_mineController->draw(buffer);
+    m_gameObjectController->draw(buffer);
     m_animationController->draw(buffer);
 }
 
@@ -111,7 +109,8 @@ void ClientGameController::postUpdate() {
 void ClientGameController::rewindAndReplay() {
     // Rewind
     GameState game_state = m_networkingClient->getGameState();
-    applyGameState(game_state);
+    setTick(static_cast<unsigned int>(game_state.tick));
+    m_gameObjectController->applyGameState(game_state);
 
     // Replay
     int tick_delta = getTick() - game_state.tick;

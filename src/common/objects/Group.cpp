@@ -7,13 +7,14 @@
 #include "../rendering/RenderingDef.hpp"
 #include "Group.hpp"
 
-Group::Group(uint32_t id, sf::Vector2f position, sf::Color color,
-             std::shared_ptr<PhysicsController> pc, ResourceStore& rs)
-    : CircleGameObject(id, position, 0.f, color, pc, rs, 0.f) {
+Group::Group(uint32_t id, sf::Vector2f position, sf::Color color, PhysicsController& pc,
+             ResourceStore& rs) :
+    CircleGameObject(id, position, 0.f, color, pc, rs, 0.f) {
     setShader(RenderingDef::ShaderKey::voronoi);
 }
 
-Group::~Group() {}
+Group::~Group() {
+}
 
 void Group::draw(sf::RenderTarget& render_target) {
     if (m_joinable) {
