@@ -79,17 +79,10 @@ std::shared_ptr<PlayerInputs> ClientGameController::collectInputs() {
         new PlayerInputs(getClientInputs(m_clientReliableUpdate, m_clientUnreliableUpdate)));
 }
 
-/**
- * Fetch player id from server and set the client updates to send to the server then update game
- * state. This is either done via rewind and replay when we have a game state update from the
- *server or via local interpolation. Rewind and replay is applying the game state update from
- *the server (rewind because it is likely for an old tick) and then interpolating up to the
- *current tick via interpolation (replay).
- **/
 void ClientGameController::preUpdate() {
     handleEvents();
-
-    fetchPlayerId();
+    fetchPlayerId(); // TODO(sourenp|#108): Move this to a "connecting" state that runs before
+                     // updates begin.
     setClientUpdates();
 
     if (m_networkingClient->getGameStateIsFresh()) {
@@ -106,6 +99,10 @@ void ClientGameController::postUpdate() {
     // noop
 }
 
+/*
+ * Rewind and replay is applying the game state update from the server (rewind because it is likely
+ * for an old tick) and then interpolating up to the current tick via interpolation (replay).
+ */
 void ClientGameController::rewindAndReplay() {
     // Rewind
     GameState game_state = m_networkingClient->getGameState();
