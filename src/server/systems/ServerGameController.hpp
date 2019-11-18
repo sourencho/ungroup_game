@@ -12,7 +12,7 @@
 
 class ServerGameController : public GameController {
   public:
-    explicit ServerGameController(size_t max_player_count, size_t max_mine_count);
+    explicit ServerGameController();
     ~ServerGameController();
 
   private:

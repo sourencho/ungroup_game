@@ -20,7 +20,7 @@ class GameController {
     // Game state is stepped at least every <MIN_TIME_STEP> milliseconds.
     sf::Int32 MIN_TIME_STEP = (sf::Int32)((1 / 60.) * 1000.);
 
-    explicit GameController(size_t max_player_count, size_t max_mine_count);
+    explicit GameController();
     ~GameController();
     GameController(const GameController& temp_obj) = delete;
     GameController& operator=(const GameController& temp_obj) = delete;

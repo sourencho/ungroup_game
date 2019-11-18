@@ -3,7 +3,7 @@
 #include <iostream>
 
 int main(int, char const**) {
-    ServerGameController server_game_controller(MAX_PLAYER_COUNT, MAX_MINE_COUNT);
+    ServerGameController server_game_controller;
     while (true) {
         server_game_controller.step();
     }

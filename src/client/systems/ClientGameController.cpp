@@ -7,11 +7,9 @@
 #include "ClientGameController.hpp"
 #include <SFML/Graphics.hpp>
 
-ClientGameController::ClientGameController(size_t max_player_count, size_t max_mine_count,
-                                           ClientInputKeys keys, sf::RenderWindow& window) :
-    GameController(max_player_count, max_mine_count),
-    m_networkingClient(new NetworkingClient()), m_animationController(new AnimationController()),
-    m_clientInputKeys(keys), m_window(window) {
+ClientGameController::ClientGameController(ClientInputKeys keys, sf::RenderWindow& window) :
+    GameController(), m_networkingClient(new NetworkingClient()),
+    m_animationController(new AnimationController()), m_clientInputKeys(keys), m_window(window) {
     addEventListeners();
 }
 

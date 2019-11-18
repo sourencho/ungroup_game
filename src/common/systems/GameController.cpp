@@ -13,7 +13,7 @@
 #include "../util/game_def.hpp"
 #include "../util/game_settings.hpp"
 
-GameController::GameController(size_t max_player_count, size_t max_mine_count) :
+GameController::GameController() :
     m_physicsController(new PhysicsController()), m_resourceStore(new ResourceStore()),
     m_gameObjectController(new GameObjectController(*m_physicsController, *m_resourceStore)) {
 }

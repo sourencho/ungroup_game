@@ -37,8 +37,7 @@ int main(int, char const**) {
         .ungroup = sf::Keyboard::Escape,
         .stop = sf::Keyboard::Space,
     };
-    ClientGameController client_game_controller(MAX_PLAYER_COUNT, MAX_MINE_COUNT, client_input_keys,
-                                                window);
+    ClientGameController client_game_controller(client_input_keys, window);
 
     // Start the game loop
     while (window.isOpen()) {

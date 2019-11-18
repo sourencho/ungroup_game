@@ -1,7 +1,7 @@
 #include "ServerGameController.hpp"
 
-ServerGameController::ServerGameController(size_t max_player_count, size_t max_mine_count) :
-    GameController(max_player_count, max_mine_count), m_networkingServer(new NetworkingServer()) {
+ServerGameController::ServerGameController() :
+    GameController(), m_networkingServer(new NetworkingServer()) {
 }
 
 ServerGameController::~ServerGameController() {

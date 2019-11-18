@@ -17,8 +17,7 @@
 class ClientGameController : public GameController {
 
   public:
-    explicit ClientGameController(size_t max_player_count, size_t max_mine_count,
-                                  ClientInputKeys keys, sf::RenderWindow& window);
+    explicit ClientGameController(ClientInputKeys keys, sf::RenderWindow& window);
     ~ClientGameController();
 
     void updateView(sf::RenderWindow& window, sf::Vector2f buffer_scaling_factor);

@@ -11,7 +11,7 @@ SCENARIO("ClientGameController runs successfully",
         ClientInputKeys keys = {sf::Keyboard::Up,   sf::Keyboard::Down, sf::Keyboard::Right,
                                 sf::Keyboard::Left, sf::Keyboard::G,    sf::Keyboard::Escape,
                                 sf::Keyboard::Space};
-        ClientGameController client_game_controller(10, 10, keys, window);
+        ClientGameController client_game_controller(keys, window);
 
         WHEN("is stepped") {
             client_game_controller.step();
