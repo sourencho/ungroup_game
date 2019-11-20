@@ -8,6 +8,7 @@
 #include <thread>
 #include <vector>
 
+#include "../../common/util/InputDef.hpp"
 #include "../../common/util/game_settings.hpp"
 #include "../../common/util/network_util.hpp"
 
@@ -105,14 +106,14 @@ GameState NetworkingClient::getGameState() {
     return m_gameState_t;
 }
 
-void NetworkingClient::pushClientUnreliableUpdate(ClientUnreliableUpdate client_unreliable_update) {
-    std::lock_guard<std::mutex> m_clientUnreliableUpdates_guard(m_clientUnreliableUpdates_lock);
-    m_clientUnreliableUpdates_t.push(client_unreliable_update);
+void NetworkingClient::pushUnreliableInput(InputDef::UnreliableInput unreliable_input) {
+    std::lock_guard<std::mutex> m_unreliableInputs_guard(m_unreliableInputs_lock);
+    m_unreliableInputs_t.push(unreliable_input);
 }
 
-void NetworkingClient::pushClientReliableUpdate(ClientReliableUpdate client_reliable_update) {
-    std::lock_guard<std::mutex> m_clientReliableUpdates_guard(m_clientReliableUpdates_lock);
-    m_clientReliableUpdates_t.push(client_reliable_update);
+void NetworkingClient::pushReliableInput(InputDef::ReliableInput reliable_input) {
+    std::lock_guard<std::mutex> m_reliableInputs_guard(m_reliableInputs_lock);
+    m_reliableInputs_t.push(reliable_input);
 }
 
 int NetworkingClient::getClientId() const {
@@ -168,7 +169,7 @@ void NetworkingClient::reliableSend() {
     // TODO(souren|#59): Don't spam server with TCP calls, optimize when updates are sent
     while (!m_stopThreads_ta) {
         sendPlayerIdRequest();
-        sendClientReliableUpdate();
+        sendReliableInput();
 
         std::this_thread::sleep_for(CLIENT_RELIABLE_SEND_SLEEP);
     }
@@ -187,19 +188,19 @@ void NetworkingClient::sendPlayerIdRequest() {
     }
 }
 
-void NetworkingClient::sendClientReliableUpdate() {
-    std::lock_guard<std::mutex> m_clientReliableUpdates_guard(m_clientReliableUpdates_lock);
+void NetworkingClient::sendReliableInput() {
+    std::lock_guard<std::mutex> m_reliableInputs_guard(m_reliableInputs_lock);
 
-    if (m_clientReliableUpdates_t.empty()) {
+    if (m_reliableInputs_t.empty()) {
         return;
     }
 
-    ClientReliableUpdate client_reliable_update = m_clientReliableUpdates_t.front();
-    m_clientReliableUpdates_t.pop();
+    InputDef::ReliableInput reliable_input = m_reliableInputs_t.front();
+    m_reliableInputs_t.pop();
 
     std::lock_guard<std::mutex> m_tcpSocket_guard(m_tcpSocket_lock);
     sf::Packet packet;
-    if (packet << ReliableCommandType::client_reliable_update && packet << client_reliable_update) {
+    if (packet << ReliableCommandType::reliable_input && packet << reliable_input) {
         m_tcpSocket_t->send(packet);
     } else {
         std::cout << "Failed to form packet" << std::endl;
@@ -236,28 +237,28 @@ void NetworkingClient::unreliableRecv() {
 void NetworkingClient::unreliableSend() {
     while (!m_stopThreads_ta) {
         if (m_serverUdpPort != 0) {
-            sendClientUnreliableUpdate();
+            sendUnreliableInput();
         }
 
         std::this_thread::sleep_for(CLIENT_UNRELIABLE_SEND_SLEEP);
     }
 }
 
-void NetworkingClient::sendClientUnreliableUpdate() {
-    std::lock_guard<std::mutex> m_clientUnreliableUpdates_guard(m_clientUnreliableUpdates_lock);
-    if (m_clientUnreliableUpdates_t.empty()) {
+void NetworkingClient::sendUnreliableInput() {
+    std::lock_guard<std::mutex> m_unreliableInputs_guard(m_unreliableInputs_lock);
+    if (m_unreliableInputs_t.empty()) {
         return;
     }
 
-    ClientUnreliableUpdate client_unreliable_update = m_clientUnreliableUpdates_t.front();
-    m_clientUnreliableUpdates_t.pop();
+    InputDef::UnreliableInput unreliable_input = m_unreliableInputs_t.front();
+    m_unreliableInputs_t.pop();
 
     sf::Packet packet;
-    sf::Uint32 client_unreliable_update_cmd = UnreliableCommandType::client_unreliable_update;
-    UnreliableCommand unreliable_command = {(sf::Uint32)m_clientId_ta, client_unreliable_update_cmd,
+    sf::Uint32 unreliable_input_cmd = UnreliableCommandType::unreliable_input;
+    UnreliableCommand unreliable_command = {(sf::Uint32)m_clientId_ta, unreliable_input_cmd,
                                             m_tick_ta};
 
-    if (packet << unreliable_command && packet << client_unreliable_update) {
+    if (packet << unreliable_command && packet << unreliable_input) {
         std::lock_guard<std::mutex> m_udpSocket_guard(m_udpSocket_lock);
         sf::Socket::Status status = sf::Socket::Partial;
         while (status == sf::Socket::Partial) {

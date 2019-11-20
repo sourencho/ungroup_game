@@ -8,6 +8,7 @@ add_library(client-lib
     rendering/AnimationController.cpp
     systems/NetworkingClient.cpp
     systems/ClientGameController.cpp
+    systems/InputController.cpp
 )
 
 target_link_libraries(ug-client PRIVATE client-lib common-lib)

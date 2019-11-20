@@ -28,7 +28,7 @@ int main(int, char const**) {
     buffer_sprite.setScale(buffer_scaling_factor);
 
     // Create client game controller
-    ClientInputKeys client_input_keys = {
+    InputDef::InputKeys input_keys = {
         .up = sf::Keyboard::Up,
         .down = sf::Keyboard::Down,
         .right = sf::Keyboard::Right,
@@ -37,7 +37,7 @@ int main(int, char const**) {
         .ungroup = sf::Keyboard::Escape,
         .stop = sf::Keyboard::Space,
     };
-    ClientGameController client_game_controller(client_input_keys, window);
+    ClientGameController client_game_controller(input_keys, window);
 
     // Start the game loop
     while (window.isOpen()) {

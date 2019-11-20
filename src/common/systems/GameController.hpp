@@ -28,13 +28,13 @@ class GameController {
     void step();
 
   protected:
-    void computeGameState(std::shared_ptr<PlayerInputs> pi, sf::Int32 delta_ms);
+    void computeGameState(const InputDef::PlayerInputs& pi, sf::Int32 delta_ms);
 
-    virtual void update(std::shared_ptr<PlayerInputs> pi, sf::Int32 delta_ms) = 0;
+    virtual void update(const InputDef::PlayerInputs& pi, sf::Int32 delta_ms) = 0;
     virtual void preUpdate() = 0;
     virtual void postUpdate() = 0;
 
-    virtual std::shared_ptr<PlayerInputs> collectInputs() = 0;
+    virtual InputDef::PlayerInputs getPlayerInputs() = 0;
     virtual void incrementTick() = 0;
     virtual unsigned int getTick() = 0;
     virtual void setTick(unsigned int tick) = 0;
