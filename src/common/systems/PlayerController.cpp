@@ -43,21 +43,21 @@ void PlayerController::removePlayer(uint32_t player_id) {
     getPlayer(player_id)->setActive(false);
 }
 
-void PlayerController::update(const PlayerInputs& pi) {
-    for (const auto& player_unreliable_update : pi.player_unreliable_updates) {
-        uint32_t player_id = player_unreliable_update.player_id;
-        auto cuu = player_unreliable_update.client_unreliable_update;
+void PlayerController::update(const InputDef::PlayerInputs& pi) {
+    for (const auto& player_unreliable_input : pi.player_unreliable_inputs) {
+        uint32_t player_id = player_unreliable_input.player_id;
+        auto cui = player_unreliable_input.unreliable_input;
         sf::Vector2f direction = Util::inputToDirection(
-            cuu.toggle_up, cuu.toggle_down, cuu.toggle_right, cuu.toggle_left, cuu.toggle_stop);
+            cui.toggle_up, cui.toggle_down, cui.toggle_right, cui.toggle_left, cui.toggle_stop);
         getPlayer(player_id)->setDirection(direction);
     }
-    for (const auto& player_reliable_update : pi.player_reliable_updates) {
-        uint32_t player_id = player_reliable_update.player_id;
+    for (const auto& player_reliable_input : pi.player_reliable_inputs) {
+        uint32_t player_id = player_reliable_input.player_id;
         auto player = getPlayer(player_id);
         player->setJoinable(player->getJoinable() ^
-                            player_reliable_update.client_reliable_update.toggle_joinable);
+                            player_reliable_input.reliable_input.toggle_joinable);
         player->setUngroup(player->getUngroup() ^
-                           player_reliable_update.client_reliable_update.toggle_ungroup);
+                           player_reliable_input.reliable_input.toggle_ungroup);
     }
 }
 

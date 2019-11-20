@@ -3,8 +3,9 @@
 
 #include <vector>
 
+#include "../events/Event.hpp"
 #include "../objects/Player.hpp"
-#include "../util/StateDef.hpp"
+#include "../util/InputDef.hpp"
 
 class PlayerController {
   public:
@@ -15,7 +16,7 @@ class PlayerController {
 
     std::shared_ptr<Player> getPlayer(uint32_t player_id);
     uint32_t createPlayer(uint32_t client_id);
-    void update(const PlayerInputs& pi);
+    void update(const InputDef::PlayerInputs& pi);
     void updatePostPhysics();
 
   private:

@@ -7,7 +7,7 @@
 #include "ClientGameController.hpp"
 #include <SFML/Graphics.hpp>
 
-ClientGameController::ClientGameController(ClientInputKeys keys, sf::RenderWindow& window) :
+ClientGameController::ClientGameController(InputDef::InputKeys keys, sf::RenderWindow& window) :
     GameController(), m_networkingClient(new NetworkingClient()),
     m_animationController(new AnimationController()), m_inputController(new InputController(keys)),
     m_window(window) {
@@ -43,9 +43,9 @@ void ClientGameController::draw(sf::RenderTexture& buffer) {
     m_animationController->draw(buffer);
 }
 
-PlayerInputs ClientGameController::getPlayerInputs() {
+InputDef::PlayerInputs ClientGameController::getPlayerInputs() {
     if (!m_playerIdAvailable) {
-        return PlayerInputs();
+        return InputDef::PlayerInputs();
     }
 
     return m_inputController->getPlayerInputs(m_playerId);
@@ -55,16 +55,16 @@ void ClientGameController::preUpdate() {
     fetchPlayerId(); // TODO(sourenp|#108): Move this to a "connecting" state that runs before
                      // updates begin.
 
-    auto client_inputs = m_inputController->collectInputs(m_window);
-    sendClientInputs(client_inputs);
-    saveClientInputs(client_inputs);
+    auto inputs = m_inputController->collectInputs(m_window);
+    sendInputs(inputs);
+    saveInputs(inputs);
 
     if (m_networkingClient->getGameStateIsFresh()) {
         rewindAndReplay();
     }
 }
 
-void ClientGameController::update(const PlayerInputs& pi, sf::Int32 delta_ms) {
+void ClientGameController::update(const InputDef::PlayerInputs& pi, sf::Int32 delta_ms) {
     computeGameState(pi, delta_ms);
     m_animationController->step(delta_ms);
 }
@@ -95,12 +95,12 @@ void ClientGameController::rewindAndReplay() {
     for (int i = 0; i < tick_delta; ++i) {
         unsigned int replay_tick = game_state.tick + i;
         if (m_tickToInput.count(replay_tick) > 0) {
-            ClientInputAndTick client_input_and_tick = m_tickToInput[replay_tick];
-            auto pi = PlayerInputs(m_inputController->getPlayerInputs(m_playerId));
+            InputDef::ClientInputAndTick client_input_and_tick = m_tickToInput[replay_tick];
+            auto pi = InputDef::PlayerInputs(m_inputController->getPlayerInputs(m_playerId));
             GameController::computeGameState(pi, GameController::MIN_TIME_STEP);
         } else {
-            // If we don't have input for this tick pass in empty PlayerInputs
-            auto pi = PlayerInputs();
+            // If we don't have input for this tick pass in empty inputs
+            auto pi = InputDef::PlayerInputs();
             GameController::computeGameState(pi, GameController::MIN_TIME_STEP);
         }
     }
@@ -116,23 +116,23 @@ void ClientGameController::fetchPlayerId() {
 /**
  * Send client input to server
  */
-void ClientGameController::sendClientInputs(
-    std::pair<ClientReliableUpdate, ClientUnreliableUpdate> client_inputs) {
-    if (!client_inputs.first.allFalse()) {
-        m_networkingClient->pushClientReliableUpdate(client_inputs.first);
+void ClientGameController::sendInputs(
+    std::pair<InputDef::ReliableInput, InputDef::UnreliableInput> inputs) {
+    if (!inputs.first.allFalse()) {
+        m_networkingClient->pushReliableInput(inputs.first);
     }
-    if (!client_inputs.second.allFalse()) {
-        m_networkingClient->pushClientUnreliableUpdate(client_inputs.second);
+    if (!inputs.second.allFalse()) {
+        m_networkingClient->pushUnreliableInput(inputs.second);
     }
 }
 
 /**
  * Save input and state for replay
  */
-void ClientGameController::saveClientInputs(
-    std::pair<ClientReliableUpdate, ClientUnreliableUpdate> client_inputs) {
-    m_tickToInput[m_networkingClient->getTick()] = (ClientInputAndTick){
-        client_inputs.second, client_inputs.first, m_networkingClient->getTick()};
+void ClientGameController::saveInputs(
+    std::pair<InputDef::ReliableInput, InputDef::UnreliableInput> inputs) {
+    m_tickToInput[m_networkingClient->getTick()] = (InputDef::ClientInputAndTick){
+        inputs.second, inputs.first, m_networkingClient->getTick()};
 }
 
 void ClientGameController::handleCollisionEvent(std::shared_ptr<Event> event) {

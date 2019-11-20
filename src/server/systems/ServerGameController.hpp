@@ -17,10 +17,10 @@ class ServerGameController : public GameController {
 
   private:
     // Overrides
-    void update(const PlayerInputs& pi, sf::Int32 delta_ms) override;
+    void update(const InputDef::PlayerInputs& pi, sf::Int32 delta_ms) override;
     void preUpdate() override;
     void postUpdate() override;
-    PlayerInputs getPlayerInputs() override;
+    InputDef::PlayerInputs getPlayerInputs() override;
     void incrementTick() override;
     unsigned int getTick() override;
     void setTick(unsigned int tick) override;

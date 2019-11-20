@@ -8,9 +8,9 @@ SCENARIO("ClientGameController runs successfully",
          "[client][systems][ClientGameController][skip]") {
     GIVEN("ClientGameController is constructed") {
         sf::RenderWindow window(sf::VideoMode(), "My window");
-        ClientInputKeys keys = {sf::Keyboard::Up,   sf::Keyboard::Down, sf::Keyboard::Right,
-                                sf::Keyboard::Left, sf::Keyboard::G,    sf::Keyboard::Escape,
-                                sf::Keyboard::Space};
+        InputDef::InputKeys keys = {sf::Keyboard::Up,   sf::Keyboard::Down, sf::Keyboard::Right,
+                                    sf::Keyboard::Left, sf::Keyboard::G,    sf::Keyboard::Escape,
+                                    sf::Keyboard::Space};
         ClientGameController client_game_controller(keys, window);
 
         WHEN("is stepped") {

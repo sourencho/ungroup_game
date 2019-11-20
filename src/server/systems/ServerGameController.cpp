@@ -7,7 +7,7 @@ ServerGameController::ServerGameController() :
 ServerGameController::~ServerGameController() {
 }
 
-PlayerInputs ServerGameController::getPlayerInputs() {
+InputDef::PlayerInputs ServerGameController::getPlayerInputs() {
     return m_networkingServer->collectClientInputs();
 }
 
@@ -15,7 +15,7 @@ void ServerGameController::preUpdate() {
     // noop
 }
 
-void ServerGameController::update(const PlayerInputs& pi, sf::Int32 delta_ms) {
+void ServerGameController::update(const InputDef::PlayerInputs& pi, sf::Int32 delta_ms) {
     computeGameState(pi, delta_ms);
 }
 

@@ -76,21 +76,3 @@ GameState unpack_game_state(sf::Packet game_state_packet) {
     GameState game_state = {tick, group_updates, mine_updates, player_updates, gcu};
     return game_state;
 }
-
-sf::Packet& operator<<(sf::Packet& packet, const ClientUnreliableUpdate& cuu) {
-    return packet << cuu.toggle_up << cuu.toggle_down << cuu.toggle_right << cuu.toggle_left
-                  << cuu.toggle_stop;
-}
-
-sf::Packet& operator>>(sf::Packet& packet, ClientUnreliableUpdate& cuu) {
-    return packet >> cuu.toggle_up >> cuu.toggle_down >> cuu.toggle_right >> cuu.toggle_left >>
-           cuu.toggle_stop;
-}
-
-sf::Packet& operator<<(sf::Packet& packet, const ClientReliableUpdate& cru) {
-    return packet << cru.toggle_joinable << cru.toggle_ungroup;
-}
-
-sf::Packet& operator>>(sf::Packet& packet, ClientReliableUpdate& cru) {
-    return packet >> cru.toggle_joinable >> cru.toggle_ungroup;
-}

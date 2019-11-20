@@ -8,6 +8,7 @@
 #include "../../common/events/ClientDisconnectedEvent.hpp"
 #include "../../common/events/EventController.hpp"
 #include "../../common/events/PlayerCreatedEvent.hpp"
+#include "../../common/util/InputDef.hpp"
 #include "../../common/util/game_settings.hpp"
 #include "../../common/util/network_util.hpp"
 
@@ -53,7 +54,7 @@ void NetworkingServer::createUdpSocket() {
     m_udpSocket_t->setBlocking(false);
 }
 
-PlayerInputs NetworkingServer::collectClientInputs() {
+InputDef::PlayerInputs NetworkingServer::collectClientInputs() {
     // Give clients a window to write inputs
     {
         m_playerReliableUpdates_lock.unlock();
@@ -68,7 +69,7 @@ PlayerInputs NetworkingServer::collectClientInputs() {
     }
 
     // Get client inputs
-    PlayerInputs pi = {
+    InputDef::PlayerInputs pi = {
         m_playerUnreliableUpdates_t,
         m_playerReliableUpdates_t,
     };
@@ -129,7 +130,7 @@ void NetworkingServer::handleUnreliableCommand(sf::Socket::Status status, sf::Pa
     UnreliableCommand unreliable_command;
     command_packet >> unreliable_command;
     switch (unreliable_command.command) {
-        case (sf::Uint32)UnreliableCommandType::client_unreliable_update: {
+        case (sf::Uint32)UnreliableCommandType::unreliable_input: {
             setClientUnreliableUpdate(command_packet, unreliable_command.client_id,
                                       unreliable_command.tick);
             break;
@@ -153,13 +154,13 @@ void NetworkingServer::setClientUnreliableUpdate(sf::Packet packet, int client_i
             }
             player_id = m_clientToPlayerIds_t[client_id];
         }
-        ClientUnreliableUpdate client_unreliable_update;
-        packet >> client_unreliable_update;
-        PlayerUnreliableUpdate player_unreliable_update = {player_id, client_unreliable_update};
+        InputDef::UnreliableInput unreliable_input;
+        packet >> unreliable_input;
+        InputDef::PlayerUnreliableInput player_unreliable_input = {player_id, unreliable_input};
         {
             std::lock_guard<std::mutex> m_playerUnreliableUpdates_guard(
                 m_playerUnreliableUpdates_lock);
-            m_playerUnreliableUpdates_t.push_back(player_unreliable_update);
+            m_playerUnreliableUpdates_t.push_back(player_unreliable_input);
         }
     } else {
         std::cout << "Receive client_update command with tick drifted past drift threshold. "
@@ -226,7 +227,7 @@ void NetworkingServer::handleReliableCommand(sf::Socket::Status status, sf::Pack
                 } else if (reliable_command_type == (sf::Uint32)ReliableCommandType::player_id) {
                     sendPlayerId(socket, client_id);
                 } else if (reliable_command_type ==
-                           (sf::Uint32)ReliableCommandType::client_reliable_update) {
+                           (sf::Uint32)ReliableCommandType::reliable_input) {
                     setClientReliableUpdate(command_packet, client_id);
                 }
             }
@@ -276,12 +277,12 @@ void NetworkingServer::setClientReliableUpdate(sf::Packet packet, int client_id)
         std::lock_guard<std::mutex> m_clientToPlayerIds_guard(m_clientToPlayerIds_lock);
         player_id = m_clientToPlayerIds_t[client_id];
     }
-    ClientReliableUpdate client_reliable_update;
-    packet >> client_reliable_update;
-    PlayerReliableUpdate player_reliable_update = {player_id, client_reliable_update};
+    InputDef::ReliableInput reliable_input;
+    packet >> reliable_input;
+    InputDef::PlayerReliableInput player_reliable_input = {player_id, reliable_input};
     {
         std::lock_guard<std::mutex> m_playerReliableUpdates_guard(m_playerReliableUpdates_lock);
-        m_playerReliableUpdates_t.push_back(player_reliable_update);
+        m_playerReliableUpdates_t.push_back(player_reliable_input);
     }
 }
 

@@ -18,6 +18,7 @@
 
 #include "../../common/objects/Group.hpp"
 #include "../../common/objects/Mine.hpp"
+#include "../../common/util/InputDef.hpp"
 #include "../../common/util/StateDef.hpp"
 
 class NetworkingServer {
@@ -27,7 +28,7 @@ class NetworkingServer {
     NetworkingServer();
     ~NetworkingServer();
 
-    PlayerInputs collectClientInputs();
+    InputDef::PlayerInputs collectClientInputs();
     void setState(const GameState& gs);
     void setClientToPlayerId(int client_id, int player_id);
     void incrementTick();
@@ -78,10 +79,10 @@ class NetworkingServer {
     std::unordered_map<int, sf::Uint16> m_clientToUdpPorts_t;
 
     std::mutex m_playerReliableUpdates_lock;
-    std::vector<PlayerReliableUpdate> m_playerReliableUpdates_t;
+    std::vector<InputDef::PlayerReliableInput> m_playerReliableUpdates_t;
 
     std::mutex m_playerUnreliableUpdates_lock;
-    std::vector<PlayerUnreliableUpdate> m_playerUnreliableUpdates_t;
+    std::vector<InputDef::PlayerUnreliableInput> m_playerUnreliableUpdates_t;
 
     std::mutex m_gameState_lock;
     GameState m_gameState_t;

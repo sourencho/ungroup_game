@@ -11,6 +11,7 @@
 
 #include <SFML/Network.hpp>
 
+#include "../../common/util/InputDef.hpp"
 #include "../../common/util/StateDef.hpp"
 #include "../../common/util/game_def.hpp"
 
@@ -27,8 +28,8 @@ class NetworkingClient {
     std::pair<bool, uint32_t> getPlayerId() const;
     int getClientId() const;
     bool getGameStateIsFresh() const;
-    void pushClientUnreliableUpdate(ClientUnreliableUpdate client_unreliable_update);
-    void pushClientReliableUpdate(ClientReliableUpdate client_reliable_update);
+    void pushUnreliableInput(InputDef::UnreliableInput unreliable_input);
+    void pushReliableInput(InputDef::ReliableInput reliable_input);
 
   private:
     // Sockets
@@ -55,8 +56,8 @@ class NetworkingClient {
     std::atomic<bool> m_stopThreads_ta{false};
 
     // Methods
-    void sendClientUnreliableUpdate();
-    void sendClientReliableUpdate();
+    void sendUnreliableInput();
+    void sendReliableInput();
     void sendPlayerIdRequest();
     bool readRegistrationResponse();
     bool registerNetworkingClient();
@@ -74,11 +75,11 @@ class NetworkingClient {
     std::mutex m_gameState_lock;
     GameState m_gameState_t;
 
-    std::mutex m_clientUnreliableUpdates_lock;
-    std::queue<ClientUnreliableUpdate> m_clientUnreliableUpdates_t;
+    std::mutex m_unreliableInputs_lock;
+    std::queue<InputDef::UnreliableInput> m_unreliableInputs_t;
 
-    std::mutex m_clientReliableUpdates_lock;
-    std::queue<ClientReliableUpdate> m_clientReliableUpdates_t;
+    std::mutex m_reliableInputs_lock;
+    std::queue<InputDef::ReliableInput> m_reliableInputs_t;
 
     sf::Uint16 m_serverUdpPort = 0;
 };

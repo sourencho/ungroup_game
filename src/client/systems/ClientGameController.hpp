@@ -18,7 +18,7 @@
 class ClientGameController : public GameController {
 
   public:
-    explicit ClientGameController(ClientInputKeys keys, sf::RenderWindow& window);
+    explicit ClientGameController(InputDef::InputKeys keys, sf::RenderWindow& window);
     ~ClientGameController();
 
     void updateView(sf::RenderWindow& window, sf::Vector2f buffer_scaling_factor);
@@ -26,10 +26,10 @@ class ClientGameController : public GameController {
 
   private:
     // Overrides
-    void update(const PlayerInputs& pi, sf::Int32 delta_ms) override;
+    void update(const InputDef::PlayerInputs& pi, sf::Int32 delta_ms) override;
     void preUpdate() override;
     void postUpdate() override;
-    PlayerInputs getPlayerInputs() override;
+    InputDef::PlayerInputs getPlayerInputs() override;
     void incrementTick() override;
     unsigned int getTick() override;
     void setTick(unsigned int tick) override;
@@ -40,15 +40,16 @@ class ClientGameController : public GameController {
     void rewindAndReplay();
     void handleCollisionEvent(std::shared_ptr<Event> event);
     void createCollisionAnimation(const sf::Vector2f& collision_position);
-    void sendClientInputs(std::pair<ClientReliableUpdate, ClientUnreliableUpdate> client_inputs);
-    void saveClientInputs(std::pair<ClientReliableUpdate, ClientUnreliableUpdate> client_inputs);
+    void sendInputs(std::pair<InputDef::ReliableInput, InputDef::UnreliableInput> inputs);
+    void saveInputs(std::pair<InputDef::ReliableInput, InputDef::UnreliableInput> inputs);
 
     // Variables
 
     bool m_playerIdAvailable;
     uint32_t m_playerId;
 
-    std::unordered_map<unsigned int, ClientInputAndTick> m_tickToInput; // Cache of past inputs
+    std::unordered_map<unsigned int, InputDef::ClientInputAndTick>
+        m_tickToInput; // Cache of past inputs
 
     std::unique_ptr<NetworkingClient> m_networkingClient;
     std::unique_ptr<AnimationController> m_animationController;
