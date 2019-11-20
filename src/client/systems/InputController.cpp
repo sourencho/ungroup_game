@@ -38,23 +38,28 @@ InputController::collectInputs(sf::RenderWindow& window) {
 }
 
 InputDef::PlayerInputs InputController::getPlayerInputs(uint32_t player_id) {
-    m_playerInputs.player_reliable_inputs.clear();
-    m_playerInputs.player_unreliable_inputs.clear();
+    return getPlayerInputs(player_id, m_reliableInput, m_unreliableInput);
+}
+
+InputDef::PlayerInputs InputController::getPlayerInputs(uint32_t player_id,
+                                                        InputDef::ReliableInput ri,
+                                                        InputDef::UnreliableInput ui) {
+    InputDef::PlayerInputs pi;
 
     if (!m_reliableInput.allFalse()) {
         InputDef::PlayerReliableInput player_reliable_input = {
             .player_id = player_id,
-            .reliable_input = m_reliableInput,
+            .reliable_input = ri,
         };
-        m_playerInputs.player_reliable_inputs.push_back(player_reliable_input);
+        pi.player_reliable_inputs.push_back(player_reliable_input);
     }
     if (!m_unreliableInput.allFalse()) {
         InputDef::PlayerUnreliableInput player_unreliable_input = {
             .player_id = player_id,
-            .unreliable_input = m_unreliableInput,
+            .unreliable_input = ui,
         };
-        m_playerInputs.player_unreliable_inputs.push_back(player_unreliable_input);
+        pi.player_unreliable_inputs.push_back(player_unreliable_input);
     }
 
-    return m_playerInputs;
+    return pi;
 }

@@ -46,9 +46,9 @@ void PlayerController::removePlayer(uint32_t player_id) {
 void PlayerController::update(const InputDef::PlayerInputs& pi) {
     for (const auto& player_unreliable_input : pi.player_unreliable_inputs) {
         uint32_t player_id = player_unreliable_input.player_id;
-        auto cui = player_unreliable_input.unreliable_input;
+        auto ui = player_unreliable_input.unreliable_input;
         sf::Vector2f direction = Util::inputToDirection(
-            cui.toggle_up, cui.toggle_down, cui.toggle_right, cui.toggle_left, cui.toggle_stop);
+            ui.toggle_up, ui.toggle_down, ui.toggle_right, ui.toggle_left, ui.toggle_stop);
         getPlayer(player_id)->setDirection(direction);
     }
     for (const auto& player_reliable_input : pi.player_reliable_inputs) {

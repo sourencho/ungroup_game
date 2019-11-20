@@ -1,19 +1,19 @@
 #include "InputDef.hpp"
 
-sf::Packet& operator<<(sf::Packet& packet, const InputDef::UnreliableInput& cui) {
-    return packet << cui.toggle_up << cui.toggle_down << cui.toggle_right << cui.toggle_left
-                  << cui.toggle_stop;
+sf::Packet& operator<<(sf::Packet& packet, const InputDef::UnreliableInput& ui) {
+    return packet << ui.toggle_up << ui.toggle_down << ui.toggle_right << ui.toggle_left
+                  << ui.toggle_stop;
 }
 
-sf::Packet& operator>>(sf::Packet& packet, InputDef::UnreliableInput& cui) {
-    return packet >> cui.toggle_up >> cui.toggle_down >> cui.toggle_right >> cui.toggle_left >>
-           cui.toggle_stop;
+sf::Packet& operator>>(sf::Packet& packet, InputDef::UnreliableInput& ui) {
+    return packet >> ui.toggle_up >> ui.toggle_down >> ui.toggle_right >> ui.toggle_left >>
+           ui.toggle_stop;
 }
 
-sf::Packet& operator<<(sf::Packet& packet, const InputDef::ReliableInput& cri) {
-    return packet << cri.toggle_joinable << cri.toggle_ungroup;
+sf::Packet& operator<<(sf::Packet& packet, const InputDef::ReliableInput& ri) {
+    return packet << ri.toggle_joinable << ri.toggle_ungroup;
 }
 
-sf::Packet& operator>>(sf::Packet& packet, InputDef::ReliableInput& cri) {
-    return packet >> cri.toggle_joinable >> cri.toggle_ungroup;
+sf::Packet& operator>>(sf::Packet& packet, InputDef::ReliableInput& ri) {
+    return packet >> ri.toggle_joinable >> ri.toggle_ungroup;
 }

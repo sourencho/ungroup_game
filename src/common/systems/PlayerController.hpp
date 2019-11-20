@@ -1,6 +1,7 @@
 #ifndef PlayerController_hpp
 #define PlayerController_hpp
 
+#include <memory>
 #include <vector>
 
 #include "../events/Event.hpp"

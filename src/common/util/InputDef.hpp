@@ -55,16 +55,16 @@ namespace InputDef {
     };
 
     struct ClientInputAndTick {
-        UnreliableInput cui;
-        ReliableInput cri;
+        UnreliableInput ui;
+        ReliableInput ri;
         unsigned int tick;
     };
 } // namespace InputDef
 
-sf::Packet& operator<<(sf::Packet& packet, const InputDef::UnreliableInput& cui);
-sf::Packet& operator>>(sf::Packet& packet, InputDef::UnreliableInput& cui);
+sf::Packet& operator<<(sf::Packet& packet, const InputDef::UnreliableInput& ui);
+sf::Packet& operator>>(sf::Packet& packet, InputDef::UnreliableInput& ui);
 
-sf::Packet& operator<<(sf::Packet& packet, const InputDef::ReliableInput& cri);
-sf::Packet& operator>>(sf::Packet& packet, InputDef::ReliableInput& cri);
+sf::Packet& operator<<(sf::Packet& packet, const InputDef::ReliableInput& ri);
+sf::Packet& operator>>(sf::Packet& packet, InputDef::ReliableInput& ri);
 
 #endif /* InputDef_hpp */

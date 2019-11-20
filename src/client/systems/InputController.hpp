@@ -14,14 +14,14 @@ class InputController {
     std::pair<InputDef::ReliableInput, InputDef::UnreliableInput>
     collectInputs(sf::RenderWindow& window);
     InputDef::PlayerInputs getPlayerInputs(uint32_t player_id);
+    InputDef::PlayerInputs getPlayerInputs(uint32_t player_id, InputDef::ReliableInput ri,
+                                           InputDef::UnreliableInput ui);
 
   private:
     InputDef::InputKeys m_inputKeys;
 
     InputDef::ReliableInput m_reliableInput;
     InputDef::UnreliableInput m_unreliableInput;
-
-    InputDef::PlayerInputs m_playerInputs; // Cache
 };
 
 #endif /* InputController_hpp */

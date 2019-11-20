@@ -96,7 +96,8 @@ void ClientGameController::rewindAndReplay() {
         unsigned int replay_tick = game_state.tick + i;
         if (m_tickToInput.count(replay_tick) > 0) {
             InputDef::ClientInputAndTick client_input_and_tick = m_tickToInput[replay_tick];
-            auto pi = InputDef::PlayerInputs(m_inputController->getPlayerInputs(m_playerId));
+            auto pi = InputDef::PlayerInputs(m_inputController->getPlayerInputs(
+                m_playerId, client_input_and_tick.ri, client_input_and_tick.ui));
             GameController::computeGameState(pi, GameController::MIN_TIME_STEP);
         } else {
             // If we don't have input for this tick pass in empty inputs
@@ -131,8 +132,8 @@ void ClientGameController::sendInputs(
  */
 void ClientGameController::saveInputs(
     std::pair<InputDef::ReliableInput, InputDef::UnreliableInput> inputs) {
-    m_tickToInput[m_networkingClient->getTick()] = (InputDef::ClientInputAndTick){
-        inputs.second, inputs.first, m_networkingClient->getTick()};
+    m_tickToInput[m_networkingClient->getTick()] =
+        (InputDef::ClientInputAndTick){inputs.second, inputs.first, m_networkingClient->getTick()};
 }
 
 void ClientGameController::handleCollisionEvent(std::shared_ptr<Event> event) {
