@@ -4,10 +4,16 @@
 
 #include "../factories/IdFactory.hpp"
 #include "../rendering/RenderingDef.hpp"
+#include "../util/game_settings.hpp"
 
-MineController::MineController(std::vector<std::shared_ptr<Mine>>& mines) : m_mines(mines) {}
+MineController::MineController(std::vector<std::shared_ptr<Mine>>& mines) : m_mines(mines) {
+    for (int i = 0; i < MAX_MINE_COUNT; i++) {
+        createMine();
+    }
+}
 
-MineController::~MineController() {}
+MineController::~MineController() {
+}
 
 uint32_t MineController::createMine() {
     size_t next_mine_index = nextMineIndex++;

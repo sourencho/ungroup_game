@@ -7,14 +7,14 @@
 #include "ClientGameController.hpp"
 #include <SFML/Graphics.hpp>
 
-ClientGameController::ClientGameController(size_t max_player_count, size_t max_mine_count,
-                                           ClientInputKeys keys)
-    : GameController(max_player_count, max_mine_count), m_networkingClient(new NetworkingClient()),
-      m_animationController(new AnimationController()), m_clientInputKeys(keys) {
+ClientGameController::ClientGameController(ClientInputKeys keys, sf::RenderWindow& window) :
+    GameController(), m_networkingClient(new NetworkingClient()),
+    m_animationController(new AnimationController()), m_clientInputKeys(keys), m_window(window) {
     addEventListeners();
 }
 
-ClientGameController::~ClientGameController() {}
+ClientGameController::~ClientGameController() {
+}
 
 void ClientGameController::addEventListeners() {
     EventController::getInstance().addEventListener(
@@ -22,45 +22,37 @@ void ClientGameController::addEventListeners() {
         std::bind(&ClientGameController::handleCollisionEvent, this, std::placeholders::_1));
 }
 
-PlayerInputs ClientGameController::collectInputs() {
-    return getClientInputs(m_clientReliableUpdate, m_clientUnreliableUpdate);
+void ClientGameController::incrementTick() {
+    m_networkingClient->incrementTick();
 }
-
-void ClientGameController::setNetworkState() {
-    // noop
-}
-
-void ClientGameController::incrementTick() { m_networkingClient->incrementTick(); }
 
 void ClientGameController::updateView(sf::RenderWindow& window,
                                       sf::Vector2f buffer_scaling_factor) {
     // Update view to match player's group's position
-    sf::Vector2f group_position =
-        m_gameObjectStore->getGroup(m_groupController->getGroupId(m_playerId))->getCenter();
+    sf::Vector2f player_position = m_gameObjectController->getPlayerPosition(m_playerId);
     sf::View view = window.getView();
-    sf::Vector2f group_view_coordinates = {group_position.x * buffer_scaling_factor.x,
-                                           group_position.y * buffer_scaling_factor.y};
+    sf::Vector2f group_view_coordinates = {player_position.x * buffer_scaling_factor.x,
+                                           player_position.y * buffer_scaling_factor.y};
     view.setCenter(group_view_coordinates);
     window.setView(view);
 }
 
-void ClientGameController::draw(sf::RenderTarget& target) {
-    m_groupController->draw(target);
-    m_mineController->draw(target);
-    m_animationController->draw(target);
+void ClientGameController::draw(sf::RenderTexture& buffer) {
+    m_gameObjectController->draw(buffer);
+    m_animationController->draw(buffer);
 }
 
-void ClientGameController::handleEvents(sf::RenderWindow& window) {
+void ClientGameController::handleEvents() {
     // Reset updates
     m_clientReliableUpdate.setAll(false);
     m_clientUnreliableUpdate.setAll(false);
 
     // Process events
     sf::Event event;
-    while (window.pollEvent(event)) {
+    while (m_window.pollEvent(event)) {
         // Close window: exit
         if (event.type == sf::Event::Closed) {
-            window.close();
+            m_window.close();
         }
 
         // Handle game controller events (e.g. player input)
@@ -80,32 +72,40 @@ void ClientGameController::handleEvents(sf::RenderWindow& window) {
     }
 }
 
-/**
- * Fetch player id from server and set the client updates to send to the server then update game
- * state. This is either done via rewind and replay when we have a game state update from the server
- * or via local interpolation.
- * Rewind and replay is applying the game state update from the server (rewind because it is likely
- * for an old tick) and then interpolating up to the current tick via interpolation (replay).
- **/
-void ClientGameController::update() {
-    fetchPlayerId();
+std::shared_ptr<PlayerInputs> ClientGameController::collectInputs() {
+    return std::shared_ptr<PlayerInputs>(
+        new PlayerInputs(getClientInputs(m_clientReliableUpdate, m_clientUnreliableUpdate)));
+}
+
+void ClientGameController::preUpdate() {
+    handleEvents();
+    fetchPlayerId(); // TODO(sourenp|#108): Move this to a "connecting" state that runs before
+                     // updates begin.
     setClientUpdates();
 
     if (m_networkingClient->getGameStateIsFresh()) {
         rewindAndReplay();
     }
-    GameController::update();
 }
 
-void ClientGameController::step(std::shared_ptr<PlayerInputs> pi, sf::Int32 delta_ms) {
+void ClientGameController::update(std::shared_ptr<PlayerInputs> pi, sf::Int32 delta_ms) {
     computeGameState(pi, delta_ms);
     m_animationController->step(delta_ms);
 }
 
+void ClientGameController::postUpdate() {
+    // noop
+}
+
+/*
+ * Rewind and replay is applying the game state update from the server (rewind because it is likely
+ * for an old tick) and then interpolating up to the current tick via interpolation (replay).
+ */
 void ClientGameController::rewindAndReplay() {
     // Rewind
     GameState game_state = m_networkingClient->getGameState();
-    applyGameState(game_state);
+    setTick(static_cast<unsigned int>(game_state.tick));
+    m_gameObjectController->applyGameState(game_state);
 
     // Replay
     int tick_delta = getTick() - game_state.tick;
@@ -195,6 +195,10 @@ void ClientGameController::createCollisionAnimation(const sf::Vector2f& collisio
     m_animationController->add(std::move(collision_sprite));
 }
 
-unsigned int ClientGameController::getTick() { return m_networkingClient->getTick(); }
+unsigned int ClientGameController::getTick() {
+    return m_networkingClient->getTick();
+}
 
-void ClientGameController::setTick(unsigned int tick) { m_networkingClient->setTick(tick); }
+void ClientGameController::setTick(unsigned int tick) {
+    m_networkingClient->setTick(tick);
+}

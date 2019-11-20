@@ -12,19 +12,23 @@
 
 class ServerGameController : public GameController {
   public:
-    explicit ServerGameController(size_t max_player_count, size_t max_mine_count);
+    explicit ServerGameController();
     ~ServerGameController();
 
   private:
-    PlayerInputs collectInputs() override;
-    void setNetworkState() override;
+    // Overrides
+    void update(std::shared_ptr<PlayerInputs> pi, sf::Int32 delta_ms) override;
+    void preUpdate() override;
+    void postUpdate() override;
+    std::shared_ptr<PlayerInputs> collectInputs() override;
     void incrementTick() override;
     unsigned int getTick() override;
     void setTick(unsigned int tick) override;
-    void step(std::shared_ptr<PlayerInputs> pi, sf::Int32 delta_ms) override;
-    void handleClientConnectedEvent(std::shared_ptr<Event> event);
-    void addEventListeners();
 
+    // Methods
+    void setNetworkState();
+
+    // Variables
     std::unique_ptr<NetworkingServer> m_networkingServer;
 };
 

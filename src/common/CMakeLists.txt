@@ -10,11 +10,12 @@ add_library(common-lib
     physics/PhysicsController.cpp
     physics/CollisionUtil.cpp
     physics/VectorUtil.cpp
-    systems/GameController.cpp
     systems/GameObjectStore.cpp
     systems/GroupController.cpp
     systems/PlayerController.cpp
     systems/MineController.cpp
+    systems/GameObjectController.cpp
+    systems/GameController.cpp
     factories/IdFactory.cpp
     resources/ResourceStore.cpp
 )

@@ -6,4 +6,6 @@ Language: Cpp
 PointerAlignment: Left
 IndentCaseLabels: true
 NamespaceIndentation: All
+AllowShortFunctionsOnASingleLine: false
+BreakConstructorInitializers: AfterColon
 ---

@@ -1,43 +1,41 @@
 #include "ServerGameController.hpp"
 
-#include "../../common/events/ClientConnectedEvent.hpp"
-#include "../../common/events/EventController.hpp"
-
-ServerGameController::ServerGameController(size_t max_player_count, size_t max_mine_count)
-    : GameController(max_player_count, max_mine_count), m_networkingServer(new NetworkingServer()) {
-    addEventListeners();
+ServerGameController::ServerGameController() :
+    GameController(), m_networkingServer(new NetworkingServer()) {
 }
 
-ServerGameController::~ServerGameController() {}
-
-void ServerGameController::addEventListeners() {
-    EventController::getInstance().addEventListener(
-        EventType::EVENT_TYPE_CLIENT_CONNECTED,
-        std::bind(&ServerGameController::handleClientConnectedEvent, this, std::placeholders::_1));
+ServerGameController::~ServerGameController() {
 }
 
-PlayerInputs ServerGameController::collectInputs() {
-    return m_networkingServer->collectClientInputs();
+std::shared_ptr<PlayerInputs> ServerGameController::collectInputs() {
+    return std::shared_ptr<PlayerInputs>(
+        new PlayerInputs(m_networkingServer->collectClientInputs()));
 }
 
-void ServerGameController::step(std::shared_ptr<PlayerInputs> pi, sf::Int32 delta_ms) {
+void ServerGameController::preUpdate() {
+    // noop
+}
+
+void ServerGameController::update(std::shared_ptr<PlayerInputs> pi, sf::Int32 delta_ms) {
     computeGameState(pi, delta_ms);
 }
 
-void ServerGameController::handleClientConnectedEvent(std::shared_ptr<Event> event) {
-    std::shared_ptr<ClientConnectedEvent> client_connect_event =
-        std::dynamic_pointer_cast<ClientConnectedEvent>(event);
-    uint32_t new_client_id = client_connect_event->getClientId();
-    uint32_t new_player_id = createPlayerWithGroup(new_client_id);
-    m_networkingServer->setClientToPlayerId(new_client_id, new_player_id);
+void ServerGameController::postUpdate() {
+    setNetworkState();
 }
 
 void ServerGameController::setNetworkState() {
-    m_networkingServer->setState(GameController::getGameState());
+    m_networkingServer->setState(m_gameObjectController->getGameState(getTick()));
 }
 
-void ServerGameController::incrementTick() { m_networkingServer->incrementTick(); }
+void ServerGameController::incrementTick() {
+    m_networkingServer->incrementTick();
+}
 
-unsigned int ServerGameController::getTick() { return m_networkingServer->getTick(); }
+unsigned int ServerGameController::getTick() {
+    return m_networkingServer->getTick();
+}
 
-void ServerGameController::setTick(unsigned int tick) { m_networkingServer->setTick(tick); }
+void ServerGameController::setTick(unsigned int tick) {
+    m_networkingServer->setTick(tick);
+}

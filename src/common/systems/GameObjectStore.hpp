@@ -11,7 +11,7 @@
 
 class GameObjectStore {
   public:
-    explicit GameObjectStore(std::shared_ptr<PhysicsController> pc, ResourceStore& rs);
+    explicit GameObjectStore(PhysicsController& pc, ResourceStore& rs);
     ~GameObjectStore();
     GameObjectStore(const GameObjectStore& temp_obj) = delete;
     GameObjectStore& operator=(const GameObjectStore& temp_obj) = delete;
@@ -31,7 +31,7 @@ class GameObjectStore {
     std::vector<std::shared_ptr<Group>> m_groups;
     std::vector<std::shared_ptr<Mine>> m_mines;
 
-    std::shared_ptr<PhysicsController> m_physicsController;
+    PhysicsController& m_physicsController;
     ResourceStore& m_resourceStore;
 
     unsigned int m_nextPlayerId = 0;

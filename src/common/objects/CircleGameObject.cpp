@@ -3,28 +3,33 @@
 sf::Clock shader_clock;
 
 CircleGameObject::CircleGameObject(uint32_t id, sf::Vector2f position, float radius,
-                                   sf::Color color, std::shared_ptr<PhysicsController> pc,
-                                   ResourceStore& rs, float mass, bool movable)
-    : GameObject(id), m_circleShape(radius, RenderingDef::CIRCLE_POINT_COUNT),
-      m_outlineShape(radius, RenderingDef::CIRCLE_POINT_COUNT),
-      m_circleRigidBody(pc->add(std::move(std::unique_ptr<CircleRigidBody>(
-          new CircleRigidBody(id, radius, position, mass, movable))))),
-      m_resourceStore(rs) {
+                                   sf::Color color, PhysicsController& pc, ResourceStore& rs,
+                                   float mass, bool movable) :
+    GameObject(id),
+    m_circleShape(radius, RenderingDef::CIRCLE_POINT_COUNT),
+    m_outlineShape(radius, RenderingDef::CIRCLE_POINT_COUNT),
+    m_circleRigidBody(pc.add(std::move(std::unique_ptr<CircleRigidBody>(
+        new CircleRigidBody(id, radius, position, mass, movable))))),
+    m_resourceStore(rs) {
     m_circleShape.setPosition(position);
     m_circleShape.setFillColor(color);
     m_outlineShape.setPosition(position);
     m_outlineShape.setFillColor(sf::Color::Transparent);
     shader_clock.restart();
-};
+}
 
 void CircleGameObject::setActive(bool is_active) {
     m_isActive = is_active;
     m_circleRigidBody.setActive(is_active);
 }
 
-void CircleGameObject::applyInput(sf::Vector2f input) { m_circleRigidBody.applyInput(input); }
+void CircleGameObject::applyInput(sf::Vector2f input) {
+    m_circleRigidBody.applyInput(input);
+}
 
-void CircleGameObject::matchRigid() { setPosition(m_circleRigidBody.getPosition()); }
+void CircleGameObject::matchRigid() {
+    setPosition(m_circleRigidBody.getPosition());
+}
 
 sf::Vector2f CircleGameObject::getCenter() const {
     sf::Vector2f position = m_circleShape.getPosition();

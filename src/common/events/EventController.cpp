@@ -2,7 +2,8 @@
 
 #include <iostream>
 
-EventController::EventController() {}
+EventController::EventController() {
+}
 
 void EventController::addEventListener(EventType event_type, EventCallback event_callback) {
     m_eventMapLock.lock();
@@ -16,7 +17,9 @@ void EventController::queueEvent(std::shared_ptr<Event> event) {
     m_eventQueueLock.unlock();
 }
 
-void EventController::forceQueueEvent(std::shared_ptr<Event> event) { m_eventQueue.push(event); }
+void EventController::forceQueueEvent(std::shared_ptr<Event> event) {
+    m_eventQueue.push(event);
+}
 
 void EventController::forceProcessEvents() {
     while (!m_eventQueue.empty()) {
