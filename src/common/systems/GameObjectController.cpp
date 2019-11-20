@@ -30,7 +30,7 @@ void GameObjectController::handleClientConnectedEvent(std::shared_ptr<Event> eve
         std::shared_ptr<PlayerCreatedEvent>(new PlayerCreatedEvent(client_id, new_player_id)));
 }
 
-void GameObjectController::update(std::shared_ptr<PlayerInputs> pi) {
+void GameObjectController::update(const PlayerInputs& pi) {
     m_playerController.update(pi);
     m_groupController.update();
     m_mineController.update();

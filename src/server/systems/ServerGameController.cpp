@@ -7,16 +7,15 @@ ServerGameController::ServerGameController() :
 ServerGameController::~ServerGameController() {
 }
 
-std::shared_ptr<PlayerInputs> ServerGameController::getPlayerInputs() {
-    return std::shared_ptr<PlayerInputs>(
-        new PlayerInputs(m_networkingServer->collectClientInputs()));
+PlayerInputs ServerGameController::getPlayerInputs() {
+    return m_networkingServer->collectClientInputs();
 }
 
 void ServerGameController::preUpdate() {
     // noop
 }
 
-void ServerGameController::update(std::shared_ptr<PlayerInputs> pi, sf::Int32 delta_ms) {
+void ServerGameController::update(const PlayerInputs& pi, sf::Int32 delta_ms) {
     computeGameState(pi, delta_ms);
 }
 

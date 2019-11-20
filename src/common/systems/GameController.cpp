@@ -24,7 +24,7 @@ GameController::~GameController() {
 void GameController::step() {
     preUpdate();
 
-    auto pi = getPlayerInputs();
+    PlayerInputs pi = getPlayerInputs();
 
     // Take a variable amount of game state steps depending on how long the last frame took. See:
     // https://web.archive.org/web/20190403012130/https://gafferongames.com/post/fix_your_timestep/
@@ -33,10 +33,9 @@ void GameController::step() {
     while (m_timeAccumulator >= MIN_TIME_STEP) {
         update(pi, MIN_TIME_STEP);
 
-        // Clear updates since they've already been "consumed"
-        // TODO(sourenp): pass in my to update by value since you're clearing here
-        pi->player_reliable_updates.clear();
-        pi->player_unreliable_updates.clear();
+        // Clear updates since they've already been consumed
+        pi.player_reliable_updates.clear();
+        pi.player_unreliable_updates.clear();
 
         m_timeAccumulator -= MIN_TIME_STEP;
         m_elapsedTime += MIN_TIME_STEP;
@@ -45,7 +44,7 @@ void GameController::step() {
     postUpdate();
 }
 
-void GameController::computeGameState(std::shared_ptr<PlayerInputs> pi, sf::Int32 delta_ms) {
+void GameController::computeGameState(const PlayerInputs& pi, sf::Int32 delta_ms) {
     EventController::getInstance().forceProcessEvents();
     m_gameObjectController->update(pi);
     m_physicsController->update(delta_ms);

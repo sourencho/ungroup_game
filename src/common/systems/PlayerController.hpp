@@ -15,7 +15,7 @@ class PlayerController {
 
     std::shared_ptr<Player> getPlayer(uint32_t player_id);
     uint32_t createPlayer(uint32_t client_id);
-    void update(std::shared_ptr<PlayerInputs> pi);
+    void update(const PlayerInputs& pi);
     void updatePostPhysics();
 
   private:

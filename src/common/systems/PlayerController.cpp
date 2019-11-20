@@ -43,15 +43,15 @@ void PlayerController::removePlayer(uint32_t player_id) {
     getPlayer(player_id)->setActive(false);
 }
 
-void PlayerController::update(std::shared_ptr<PlayerInputs> pi) {
-    for (const auto& player_unreliable_update : pi->player_unreliable_updates) {
+void PlayerController::update(const PlayerInputs& pi) {
+    for (const auto& player_unreliable_update : pi.player_unreliable_updates) {
         uint32_t player_id = player_unreliable_update.player_id;
         auto cuu = player_unreliable_update.client_unreliable_update;
         sf::Vector2f direction = Util::inputToDirection(
             cuu.toggle_up, cuu.toggle_down, cuu.toggle_right, cuu.toggle_left, cuu.toggle_stop);
         getPlayer(player_id)->setDirection(direction);
     }
-    for (const auto& player_reliable_update : pi->player_reliable_updates) {
+    for (const auto& player_reliable_update : pi.player_reliable_updates) {
         uint32_t player_id = player_reliable_update.player_id;
         auto player = getPlayer(player_id);
         player->setJoinable(player->getJoinable() ^

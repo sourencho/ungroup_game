@@ -15,7 +15,7 @@ class GameObjectController {
     GameObjectController(PhysicsController& physics_controller, ResourceStore& resource_store);
     ~GameObjectController();
 
-    void update(std::shared_ptr<PlayerInputs> pi);
+    void update(const PlayerInputs& pi);
     void updatePostPhysics();
     uint32_t createPlayerWithGroup(uint32_t client_id);
     GameState getGameState(uint32_t tick);

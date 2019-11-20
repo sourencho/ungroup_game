@@ -43,13 +43,12 @@ void ClientGameController::draw(sf::RenderTexture& buffer) {
     m_animationController->draw(buffer);
 }
 
-std::shared_ptr<PlayerInputs> ClientGameController::getPlayerInputs() {
+PlayerInputs ClientGameController::getPlayerInputs() {
     if (!m_playerIdAvailable) {
-        return std::shared_ptr<PlayerInputs>(new PlayerInputs());
+        return PlayerInputs();
     }
 
-    return std::shared_ptr<PlayerInputs>(
-        new PlayerInputs(m_inputController->getPlayerInputs(m_playerId)));
+    return m_inputController->getPlayerInputs(m_playerId);
 }
 
 void ClientGameController::preUpdate() {
@@ -65,7 +64,7 @@ void ClientGameController::preUpdate() {
     }
 }
 
-void ClientGameController::update(std::shared_ptr<PlayerInputs> pi, sf::Int32 delta_ms) {
+void ClientGameController::update(const PlayerInputs& pi, sf::Int32 delta_ms) {
     computeGameState(pi, delta_ms);
     m_animationController->step(delta_ms);
 }
@@ -99,12 +98,11 @@ void ClientGameController::rewindAndReplay() {
 
         if (m_tickToInput.count(replay_tick) > 0) {
             client_input_and_tick = m_tickToInput[replay_tick];
-            auto pi = std::shared_ptr<PlayerInputs>(
-                new PlayerInputs(m_inputController->getPlayerInputs(m_playerId)));
+            auto pi = PlayerInputs(m_inputController->getPlayerInputs(m_playerId));
             GameController::computeGameState(pi, GameController::MIN_TIME_STEP);
         } else {
             // If we don't have input for this tick pass in empty PlayerInputs
-            auto pi = std::shared_ptr<PlayerInputs>(new PlayerInputs());
+            auto pi = PlayerInputs();
             GameController::computeGameState(pi, GameController::MIN_TIME_STEP);
         }
     }
