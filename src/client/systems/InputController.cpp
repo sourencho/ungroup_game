@@ -1,6 +1,9 @@
 #include "InputController.hpp"
 
-InputController::InputController(ClientInputKeys keys) : m_clientInputKeys(keys) {
+InputController::InputController(ClientInputKeys keys) :
+    m_clientInputKeys(keys), m_clientReliableUpdate{false, false}, m_clientUnreliableUpdate{
+                                                                       false, false, false, false,
+                                                                       false} {
 }
 
 std::pair<ClientReliableUpdate, ClientUnreliableUpdate>

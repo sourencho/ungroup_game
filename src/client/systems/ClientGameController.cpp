@@ -93,11 +93,9 @@ void ClientGameController::rewindAndReplay() {
 
     // Loop through ticks that need to be replayed and apply client input from cache if present
     for (int i = 0; i < tick_delta; ++i) {
-        ClientInputAndTick client_input_and_tick;
         unsigned int replay_tick = game_state.tick + i;
-
         if (m_tickToInput.count(replay_tick) > 0) {
-            client_input_and_tick = m_tickToInput[replay_tick];
+            ClientInputAndTick client_input_and_tick = m_tickToInput[replay_tick];
             auto pi = PlayerInputs(m_inputController->getPlayerInputs(m_playerId));
             GameController::computeGameState(pi, GameController::MIN_TIME_STEP);
         } else {
