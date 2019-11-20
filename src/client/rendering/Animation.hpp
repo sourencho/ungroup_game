@@ -21,7 +21,9 @@ class Animation {
     ~Animation(){};
     void addFrame(Frame&& frame);
     void update(sf::Int32 elapsed);
-    const sf::Int32 getLength() const { return m_length; };
+    const sf::Int32 getLength() const {
+        return m_length;
+    };
     bool isDone();
 
   private:

@@ -9,11 +9,15 @@ const float TRANSITION_SPEED = 10.f; // drag / friction
 const float PLAYER_VELOCITY = 200.f;
 
 CircleRigidBody::CircleRigidBody(uint32_t id, float radius, sf::Vector2f position, float mass,
-                                 bool movable)
-    : GameObject(id), m_radius(radius), m_position(position), m_velocity(0.f, 0.f), m_mass(mass),
-      m_targetVelocity(0.f, 0.f), m_movable(movable) {}
+                                 bool movable) :
+    GameObject(id),
+    m_radius(radius), m_position(position), m_velocity(0.f, 0.f), m_mass(mass),
+    m_targetVelocity(0.f, 0.f), m_movable(movable) {
+}
 
-void CircleRigidBody::applyInput(sf::Vector2f input) { m_targetVelocity = input * PLAYER_VELOCITY; }
+void CircleRigidBody::applyInput(sf::Vector2f input) {
+    m_targetVelocity = input * PLAYER_VELOCITY;
+}
 
 /**
  * Apply impulse to change velocity based on mass.

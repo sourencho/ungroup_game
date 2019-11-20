@@ -5,9 +5,13 @@
 
 class TestEvent : public Event {
   public:
-    explicit TestEvent(int number) : Event(EventType::EVENT_TYPE_TEST) { mNumber = number; }
+    explicit TestEvent(int number) : Event(EventType::EVENT_TYPE_TEST) {
+        mNumber = number;
+    }
 
-    int getNumber() { return mNumber; }
+    int getNumber() {
+        return mNumber;
+    }
 
   private:
     int mNumber = -1;

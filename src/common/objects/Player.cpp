@@ -4,9 +4,11 @@
 
 #include "../util/network_util.hpp"
 
-Player::Player(uint32_t id) : GameObject(id), m_direction(0.0, 0.0), m_joinable(false) {}
+Player::Player(uint32_t id) : GameObject(id), m_direction(0.0, 0.0), m_joinable(false) {
+}
 
-Player::~Player() {}
+Player::~Player() {
+}
 
 /* Network Util */
 

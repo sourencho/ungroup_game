@@ -7,12 +7,13 @@
 #include "../util/game_settings.hpp"
 #include <exception>
 
-PlayerController::PlayerController(std::vector<std::shared_ptr<Player>>& players)
-    : m_players(players) {
+PlayerController::PlayerController(std::vector<std::shared_ptr<Player>>& players) :
+    m_players(players) {
     addEventListeners();
 }
 
-PlayerController::~PlayerController() {}
+PlayerController::~PlayerController() {
+}
 
 void PlayerController::addEventListeners() {
     EventController::getInstance().addEventListener(
@@ -38,7 +39,9 @@ void PlayerController::handleClientDisconnectedEvent(std::shared_ptr<Event> even
     removePlayer(player_id);
 }
 
-void PlayerController::removePlayer(uint32_t player_id) { getPlayer(player_id)->setActive(false); }
+void PlayerController::removePlayer(uint32_t player_id) {
+    getPlayer(player_id)->setActive(false);
+}
 
 void PlayerController::update(std::shared_ptr<PlayerInputs> pi) {
     for (const auto& player_unreliable_update : pi->player_unreliable_updates) {

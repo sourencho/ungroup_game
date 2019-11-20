@@ -115,15 +115,25 @@ void NetworkingClient::pushClientReliableUpdate(ClientReliableUpdate client_reli
     m_clientReliableUpdates_t.push(client_reliable_update);
 }
 
-int NetworkingClient::getClientId() const { return m_clientId_ta; }
+int NetworkingClient::getClientId() const {
+    return m_clientId_ta;
+}
 
-bool NetworkingClient::getGameStateIsFresh() const { return m_gameStateIsFresh_ta; }
+bool NetworkingClient::getGameStateIsFresh() const {
+    return m_gameStateIsFresh_ta;
+}
 
-void NetworkingClient::incrementTick() { m_tick_ta++; }
+void NetworkingClient::incrementTick() {
+    m_tick_ta++;
+}
 
-uint NetworkingClient::getTick() const { return m_tick_ta; }
+uint NetworkingClient::getTick() const {
+    return m_tick_ta;
+}
 
-void NetworkingClient::setTick(uint tick) { m_tick_ta = tick; }
+void NetworkingClient::setTick(uint tick) {
+    m_tick_ta = tick;
+}
 
 /* m_reliableRecv thread methods */
 

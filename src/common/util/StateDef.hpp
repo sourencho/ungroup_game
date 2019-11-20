@@ -46,7 +46,9 @@ struct ClientReliableUpdate {
         toggle_joinable = value;
         toggle_ungroup = value;
     };
-    bool allFalse() { return !toggle_joinable && !toggle_ungroup; };
+    bool allFalse() {
+        return !toggle_joinable && !toggle_ungroup;
+    };
 };
 
 struct PlayerUnreliableUpdate {
