@@ -3,10 +3,6 @@
 
 #include <SFML/Graphics.hpp>
 
-struct ClientInputKeys {
-    sf::Keyboard::Key up, down, right, left, joinable, ungroup, stop;
-};
-
 struct UnreliableCommand {
     sf::Uint32 client_id;
     sf::Uint32 command;

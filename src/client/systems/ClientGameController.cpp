@@ -9,7 +9,8 @@
 
 ClientGameController::ClientGameController(ClientInputKeys keys, sf::RenderWindow& window) :
     GameController(), m_networkingClient(new NetworkingClient()),
-    m_animationController(new AnimationController()), m_clientInputKeys(keys), m_window(window) {
+    m_animationController(new AnimationController()), m_inputController(new InputController(keys)),
+    m_window(window) {
     addEventListeners();
 }
 
@@ -42,46 +43,22 @@ void ClientGameController::draw(sf::RenderTexture& buffer) {
     m_animationController->draw(buffer);
 }
 
-void ClientGameController::handleEvents() {
-    // Reset updates
-    m_clientReliableUpdate.setAll(false);
-    m_clientUnreliableUpdate.setAll(false);
-
-    // Process events
-    sf::Event event;
-    while (m_window.pollEvent(event)) {
-        // Close window: exit
-        if (event.type == sf::Event::Closed) {
-            m_window.close();
-        }
-
-        // Handle game controller events (e.g. player input)
-        if (event.type == sf::Event::KeyPressed) {
-            m_clientReliableUpdate = {
-                .toggle_ungroup = sf::Keyboard::isKeyPressed(m_clientInputKeys.ungroup),
-                .toggle_joinable = sf::Keyboard::isKeyPressed(m_clientInputKeys.joinable),
-            };
-            m_clientUnreliableUpdate = {
-                .toggle_up = sf::Keyboard::isKeyPressed(m_clientInputKeys.up),
-                .toggle_down = sf::Keyboard::isKeyPressed(m_clientInputKeys.down),
-                .toggle_right = sf::Keyboard::isKeyPressed(m_clientInputKeys.right),
-                .toggle_left = sf::Keyboard::isKeyPressed(m_clientInputKeys.left),
-                .toggle_stop = sf::Keyboard::isKeyPressed(m_clientInputKeys.stop),
-            };
-        }
+std::shared_ptr<PlayerInputs> ClientGameController::getPlayerInputs() {
+    if (!m_playerIdAvailable) {
+        return std::shared_ptr<PlayerInputs>(new PlayerInputs());
     }
-}
 
-std::shared_ptr<PlayerInputs> ClientGameController::collectInputs() {
     return std::shared_ptr<PlayerInputs>(
-        new PlayerInputs(getClientInputs(m_clientReliableUpdate, m_clientUnreliableUpdate)));
+        new PlayerInputs(m_inputController->getPlayerInputs(m_playerId)));
 }
 
 void ClientGameController::preUpdate() {
-    handleEvents();
     fetchPlayerId(); // TODO(sourenp|#108): Move this to a "connecting" state that runs before
                      // updates begin.
-    setClientUpdates();
+
+    auto client_inputs = m_inputController->collectInputs(m_window);
+    sendClientInputs(client_inputs);
+    saveClientInputs(client_inputs);
 
     if (m_networkingClient->getGameStateIsFresh()) {
         rewindAndReplay();
@@ -122,8 +99,8 @@ void ClientGameController::rewindAndReplay() {
 
         if (m_tickToInput.count(replay_tick) > 0) {
             client_input_and_tick = m_tickToInput[replay_tick];
-            auto pi = std::shared_ptr<PlayerInputs>(new PlayerInputs(
-                getClientInputs(client_input_and_tick.cru, client_input_and_tick.cuu)));
+            auto pi = std::shared_ptr<PlayerInputs>(
+                new PlayerInputs(m_inputController->getPlayerInputs(m_playerId)));
             GameController::computeGameState(pi, GameController::MIN_TIME_STEP);
         } else {
             // If we don't have input for this tick pass in empty PlayerInputs
@@ -140,46 +117,26 @@ void ClientGameController::fetchPlayerId() {
     }
 }
 
-void ClientGameController::setClientUpdates() {
-    // Set input to send to server
-    if (!m_clientUnreliableUpdate.allFalse()) {
-        m_networkingClient->pushClientUnreliableUpdate(m_clientUnreliableUpdate);
+/**
+ * Send client input to server
+ */
+void ClientGameController::sendClientInputs(
+    std::pair<ClientReliableUpdate, ClientUnreliableUpdate> client_inputs) {
+    if (!client_inputs.first.allFalse()) {
+        m_networkingClient->pushClientReliableUpdate(client_inputs.first);
     }
-    if (!m_clientReliableUpdate.allFalse()) {
-        m_networkingClient->pushClientReliableUpdate(m_clientReliableUpdate);
+    if (!client_inputs.second.allFalse()) {
+        m_networkingClient->pushClientUnreliableUpdate(client_inputs.second);
     }
-
-    // Save input and state for replay
-    m_tickToInput[m_networkingClient->getTick()] = (ClientInputAndTick){
-        m_clientUnreliableUpdate, m_clientReliableUpdate, m_networkingClient->getTick()};
 }
 
-PlayerInputs& ClientGameController::getClientInputs(ClientReliableUpdate cru,
-                                                    ClientUnreliableUpdate cuu) {
-    // If we don't know our player id then we can't interpolate our moves
-    if (!m_playerIdAvailable) {
-        return m_playerInputs;
-    }
-
-    m_playerInputs.player_reliable_updates.clear();
-    m_playerInputs.player_unreliable_updates.clear();
-
-    if (!m_clientReliableUpdate.allFalse()) {
-        PlayerReliableUpdate player_reliable_update = {
-            .player_id = m_playerId,
-            .client_reliable_update = cru,
-        };
-        m_playerInputs.player_reliable_updates.push_back(player_reliable_update);
-    }
-    if (!m_clientUnreliableUpdate.allFalse()) {
-        PlayerUnreliableUpdate player_unreliable_update = {
-            .player_id = m_playerId,
-            .client_unreliable_update = cuu,
-        };
-        m_playerInputs.player_unreliable_updates.push_back(player_unreliable_update);
-    }
-
-    return m_playerInputs;
+/**
+ * Save input and state for replay
+ */
+void ClientGameController::saveClientInputs(
+    std::pair<ClientReliableUpdate, ClientUnreliableUpdate> client_inputs) {
+    m_tickToInput[m_networkingClient->getTick()] = (ClientInputAndTick){
+        client_inputs.second, client_inputs.first, m_networkingClient->getTick()};
 }
 
 void ClientGameController::handleCollisionEvent(std::shared_ptr<Event> event) {

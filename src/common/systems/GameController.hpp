@@ -34,7 +34,7 @@ class GameController {
     virtual void preUpdate() = 0;
     virtual void postUpdate() = 0;
 
-    virtual std::shared_ptr<PlayerInputs> collectInputs() = 0;
+    virtual std::shared_ptr<PlayerInputs> getPlayerInputs() = 0;
     virtual void incrementTick() = 0;
     virtual unsigned int getTick() = 0;
     virtual void setTick(unsigned int tick) = 0;

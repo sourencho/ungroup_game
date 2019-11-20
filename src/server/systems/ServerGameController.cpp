@@ -7,7 +7,7 @@ ServerGameController::ServerGameController() :
 ServerGameController::~ServerGameController() {
 }
 
-std::shared_ptr<PlayerInputs> ServerGameController::collectInputs() {
+std::shared_ptr<PlayerInputs> ServerGameController::getPlayerInputs() {
     return std::shared_ptr<PlayerInputs>(
         new PlayerInputs(m_networkingServer->collectClientInputs()));
 }

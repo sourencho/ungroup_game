@@ -20,7 +20,7 @@ class ServerGameController : public GameController {
     void update(std::shared_ptr<PlayerInputs> pi, sf::Int32 delta_ms) override;
     void preUpdate() override;
     void postUpdate() override;
-    std::shared_ptr<PlayerInputs> collectInputs() override;
+    std::shared_ptr<PlayerInputs> getPlayerInputs() override;
     void incrementTick() override;
     unsigned int getTick() override;
     void setTick(unsigned int tick) override;
