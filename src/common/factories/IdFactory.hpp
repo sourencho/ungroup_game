@@ -23,7 +23,8 @@ class IdFactory {
     void reset();
 
   private:
-    IdFactory() {}
+    IdFactory() {
+    }
 
     static std::mutex m_typeToIndex_lock;
     static std::unordered_map<uint16_t, size_t> m_typeToIndex_t;

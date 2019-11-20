@@ -19,22 +19,38 @@ class CircleRigidBody : public GameObject {
 
     sf::Vector2f getCenter() const;
 
-    void setMass(float mass) { m_mass = mass; }
-    float getMass() const { return m_mass; }
+    void setMass(float mass) {
+        m_mass = mass;
+    }
+    float getMass() const {
+        return m_mass;
+    }
 
-    float getRadius() const { return m_radius; }
-    void setRadius(float radius) { m_radius = radius; }
+    float getRadius() const {
+        return m_radius;
+    }
+    void setRadius(float radius) {
+        m_radius = radius;
+    }
 
-    sf::Vector2f getPosition() const { return m_position; }
-    void setPosition(sf::Vector2f position) { m_position = position; }
+    sf::Vector2f getPosition() const {
+        return m_position;
+    }
+    void setPosition(sf::Vector2f position) {
+        m_position = position;
+    }
 
-    sf::Vector2f getVelocity() const { return m_velocity; }
+    sf::Vector2f getVelocity() const {
+        return m_velocity;
+    }
     void setVelocity(sf::Vector2f velocity);
 
     void applyImpulse(const PhysicsDef::Impulse& impulse);
     void applyInput(sf::Vector2f input);
 
-    const bool isMovable() const { return m_movable; };
+    const bool isMovable() const {
+        return m_movable;
+    };
 
   private:
     bool m_movable;                // if false then position can't change

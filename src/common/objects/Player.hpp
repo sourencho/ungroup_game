@@ -23,12 +23,24 @@ class Player : public GameObject {
     explicit Player(uint32_t id);
     ~Player();
 
-    void setDirection(sf::Vector2f direction) { m_direction = direction; };
-    sf::Vector2f getDirection() const { return m_direction; };
-    void setJoinable(bool joinable) { m_joinable = joinable; };
-    bool getJoinable() const { return m_joinable; };
-    void setUngroup(bool ungroup) { m_ungroup = ungroup; };
-    bool getUngroup() const { return m_ungroup; };
+    void setDirection(sf::Vector2f direction) {
+        m_direction = direction;
+    };
+    sf::Vector2f getDirection() const {
+        return m_direction;
+    };
+    void setJoinable(bool joinable) {
+        m_joinable = joinable;
+    };
+    bool getJoinable() const {
+        return m_joinable;
+    };
+    void setUngroup(bool ungroup) {
+        m_ungroup = ungroup;
+    };
+    bool getUngroup() const {
+        return m_ungroup;
+    };
 
     PlayerUpdate getUpdate() const;
     void applyUpdate(PlayerUpdate pu);

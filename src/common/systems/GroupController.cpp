@@ -14,8 +14,9 @@
 #include "../util/game_settings.hpp"
 
 GroupController::GroupController(std::vector<std::shared_ptr<Group>>& groups,
-                                 std::vector<std::shared_ptr<Player>>& players)
-    : m_players(players), m_groups(groups) {
+                                 std::vector<std::shared_ptr<Player>>& players) :
+    m_players(players),
+    m_groups(groups) {
     addEventListeners();
 }
 
@@ -215,7 +216,9 @@ void GroupController::applyUpdate(GroupControllerUpdate gcu) {
     }
 }
 
-uint32_t GroupController::getGroupId(uint32_t player_id) { return m_playerToGroup[player_id]; }
+uint32_t GroupController::getGroupId(uint32_t player_id) {
+    return m_playerToGroup[player_id];
+}
 
 Group& GroupController::getGroup(uint32_t group_id) {
     return *m_groups[IdFactory::getInstance().getIndex(group_id)];

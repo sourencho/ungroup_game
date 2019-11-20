@@ -10,7 +10,8 @@
 #include "PhysicsDef.hpp"
 #include "VectorUtil.hpp"
 
-PhysicsController::PhysicsController() {}
+PhysicsController::PhysicsController() {
+}
 
 CircleRigidBody& PhysicsController::add(std::unique_ptr<CircleRigidBody> circle_rigid_body) {
     CircleRigidBody& circle_rigid_body_ref = *circle_rigid_body;
