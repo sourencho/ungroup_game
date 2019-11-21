@@ -8,6 +8,7 @@
 const sf::Vector2f GAME_SIZE(2688 * 4, 1512 * 4);
 const sf::Vector2f WINDOW_RESOLUTION(2688, 1512);
 const float GAME_SCALE = 2.f;
+const sf::Color BACKGROUND_COLOR(12, 30, 39);
 
 const bool USE_SHADER = true;
 

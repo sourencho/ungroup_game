@@ -37,23 +37,10 @@ int main(int, char const**) {
         .ungroup = sf::Keyboard::Escape,
         .stop = sf::Keyboard::Space,
     };
-    ClientGameController client_game_controller(input_keys, window);
+    ClientGameController client_game_controller(input_keys, window, buffer, buffer_scaling_factor,
+                                                buffer_sprite);
 
-    // Start the game loop
-    while (window.isOpen()) {
-        // Update
-        client_game_controller.step();
-
-        // Display
-        window.clear(sf::Color::White);
-        buffer.clear(sf::Color(12, 30, 39));
-
-        client_game_controller.updateView(window, buffer_scaling_factor);
-        client_game_controller.draw(buffer);
-        buffer.display();
-        window.draw(buffer_sprite);
-        window.display();
-    }
+    client_game_controller.start();
 
     return EXIT_SUCCESS;
 }
