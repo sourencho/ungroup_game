@@ -23,11 +23,16 @@ ClientGameController::~ClientGameController() {
 }
 
 void ClientGameController::start() {
+    registerClient();
     while (m_window.isOpen()) {
         step();
-        updateView();
         draw();
     }
+}
+
+void ClientGameController::registerClient() {
+    std::cout << "Registering client with server..." << std::endl;
+    m_playerId = m_networkingClient->registerClientAndFetchPlayerId();
 }
 
 void ClientGameController::addEventListeners() {
@@ -51,6 +56,8 @@ void ClientGameController::updateView() {
 }
 
 void ClientGameController::draw() {
+    updateView();
+
     m_window.clear(sf::Color::White);
     m_buffer.clear(BACKGROUND_COLOR);
 
@@ -63,17 +70,10 @@ void ClientGameController::draw() {
 }
 
 InputDef::PlayerInputs ClientGameController::getPlayerInputs() {
-    if (!m_playerIdAvailable) {
-        return InputDef::PlayerInputs();
-    }
-
     return m_inputController->getPlayerInputs(m_playerId);
 }
 
 void ClientGameController::preUpdate() {
-    fetchPlayerId(); // TODO(sourenp|#108): Move this to a "connecting" state that runs before
-                     // updates begin.
-
     auto inputs = m_inputController->collectInputs(m_window);
     sendInputs(inputs);
     saveInputs(inputs);
@@ -125,12 +125,6 @@ void ClientGameController::rewindAndReplay() {
         }
     }
     m_tickToInput.clear();
-}
-
-void ClientGameController::fetchPlayerId() {
-    if (!m_playerIdAvailable) {
-        std::tie(m_playerIdAvailable, m_playerId) = m_networkingClient->getPlayerId();
-    }
 }
 
 /**

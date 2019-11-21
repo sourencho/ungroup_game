@@ -24,6 +24,8 @@ const float GROUP_SPEED = 100.f;
 
 /* Threads */
 
+const std::chrono::milliseconds CLIENT_FETCH_PLAYER_ID_SLEEP(16);
+
 const std::chrono::milliseconds SERVER_INPUT_WINDOW_SLEEP(50);
 
 const std::chrono::milliseconds CLIENT_RELIABLE_SEND_SLEEP(16);

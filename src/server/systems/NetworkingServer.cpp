@@ -252,6 +252,9 @@ void NetworkingServer::clientDisconnect(sf::TcpSocket& client, sf::Uint32 client
         new ClientDisconnectedEvent(client_id, player_id)));
 }
 
+/**
+ * Send player id if it's available.
+ */
 void NetworkingServer::sendPlayerId(sf::TcpSocket& socket, sf::Uint32 client_id) {
     sf::Uint32 player_id;
     {
@@ -286,7 +289,7 @@ void NetworkingServer::setClientReliableUpdate(sf::Packet packet, int client_id)
     }
 }
 
-void NetworkingServer::registerClient(sf::Packet packet, sf::TcpSocket& client,
+void NetworkingServer::registerClient(sf::Packet packet, sf::TcpSocket& socket,
                                       sf::Uint32 client_id) {
     // Save client udp port
     sf::Uint16 client_udp_port;
@@ -306,7 +309,7 @@ void NetworkingServer::registerClient(sf::Packet packet, sf::TcpSocket& client,
     sf::Uint32 register_cmd = (sf::Uint32)ReliableCommandType::register_client;
     ReliableCommand reliable_command = {client_id, register_cmd, (sf::Uint32)m_tick_ta};
     if (response_packet << reliable_command << server_udp_port) {
-        client.send(response_packet);
+        socket.send(response_packet);
         EventController::getInstance().queueEvent(
             std::shared_ptr<ClientConnectedEvent>(new ClientConnectedEvent(client_id)));
         std::cout << "Received client registration. Issued client ID " << client_id << std::endl;

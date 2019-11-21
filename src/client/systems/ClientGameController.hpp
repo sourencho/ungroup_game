@@ -36,6 +36,7 @@ class ClientGameController : public GameController {
     void setTick(unsigned int tick) override;
 
     // Methods
+    void registerClient();
     void updateView();
     void draw();
     void addEventListeners();
@@ -47,8 +48,6 @@ class ClientGameController : public GameController {
     void saveInputs(std::pair<InputDef::ReliableInput, InputDef::UnreliableInput> inputs);
 
     // Variables
-
-    bool m_playerIdAvailable;
     uint32_t m_playerId;
 
     std::unordered_map<unsigned int, InputDef::ClientInputAndTick>
