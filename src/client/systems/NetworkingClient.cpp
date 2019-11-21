@@ -21,15 +21,7 @@ NetworkingClient::NetworkingClient() : m_gameState_t() {
     createTcpSocket(SERVER_TCP_PORT);
     createUdpSocket();
 
-    bool registered = registerNetworkingClient();
-    if (registered) {
-        std::cout << "Registered as client " << m_clientId_ta << " at tick " << m_tick_ta
-                  << std::endl;
-    } else {
-        std::cout << "Failed to register." << std::endl;
-    }
-
-    m_reliableRecv = std::thread(&NetworkingClient::reliableRecv, this);
+    // m_reliableRecv = std::thread(&NetworkingClient::reliableRecv, this);
     m_reliableSend = std::thread(&NetworkingClient::reliableSend, this);
     m_unreliableRecv = std::thread(&NetworkingClient::unreliableRecv, this);
     m_unreliableSend = std::thread(&NetworkingClient::unreliableSend, this);
@@ -42,7 +34,7 @@ NetworkingClient::~NetworkingClient() {
     }
 
     m_stopThreads_ta = true;
-    m_reliableRecv.join();
+    // m_reliableRecv.join();
     m_reliableSend.join();
     m_unreliableRecv.join();
     m_unreliableSend.join();
@@ -63,7 +55,49 @@ void NetworkingClient::createUdpSocket() {
     m_udpSocket_t->setBlocking(false);
 }
 
-bool NetworkingClient::registerNetworkingClient() {
+uint32_t NetworkingClient::registerClientAndFetchPlayerId() {
+    registerClient();
+    return fetchPlayerId();
+}
+
+/**
+ * Keep asking server for player_id until it returns a response.
+ * Server won't return a response if the player id isn't ready.
+ */
+uint32_t NetworkingClient::fetchPlayerId() {
+    std::lock_guard<std::mutex> m_tcpSocket_guard(m_tcpSocket_lock);
+
+    while (true) {
+        // Send request
+        sf::Packet packet;
+        if (packet << (sf::Uint32)ReliableCommandType::player_id) {
+            m_tcpSocket_t->send(packet);
+        } else {
+            std::cout << "Failed to form packet" << std::endl;
+            throw std::runtime_error("Unable to get player id.");
+        }
+
+        // Recieve response
+        sf::Socket::Status status;
+        sf::Packet reliable_response;
+        ReliableCommand reliable_command;
+        status = receiveWithTimeout(*m_tcpSocket_t, reliable_response, CLIENT_TCP_TIMEOUT);
+        if (status == sf::Socket::Done) {
+            reliable_response >> reliable_command;
+            if (reliable_command.command == ReliableCommandType::player_id) {
+                sf::Uint32 player_id;
+                reliable_response >> player_id;
+                return static_cast<uint32_t>(player_id);
+            } else {
+                std::cout << "Unexpected reliable command type." << std::endl;
+                throw std::runtime_error("Unable to get player id.");
+            }
+        }
+        std::this_thread::sleep_for(CLIENT_FETCH_PLAYER_ID_SLEEP);
+    }
+}
+
+void NetworkingClient::registerClient() {
     sf::Packet registration_request;
     sf::Uint16 udp_port;
     {
@@ -76,11 +110,11 @@ bool NetworkingClient::registerNetworkingClient() {
         return readRegistrationResponse();
     } else {
         std::cout << "Failed to form packet" << std::endl;
-        return false;
+        throw std::runtime_error("Failed to register.");
     }
 }
 
-bool NetworkingClient::readRegistrationResponse() {
+void NetworkingClient::readRegistrationResponse() {
     sf::Packet registration_response;
     ReliableCommand reliable_command;
 
@@ -90,14 +124,12 @@ bool NetworkingClient::readRegistrationResponse() {
             m_clientId_ta = static_cast<uint>(reliable_command.client_id);
             m_tick_ta = static_cast<uint>(reliable_command.tick);
             registration_response >> m_serverUdpPort;
-            return true;
+            std::cout << "Registered as client " << m_clientId_ta << " at tick " << m_tick_ta
+                      << std::endl;
+            return;
         }
     }
-    return false;
-}
-
-std::pair<bool, uint32_t> NetworkingClient::getPlayerId() const {
-    return std::pair<bool, uint32_t>(m_playerIdAvialable_ta, m_playerId_ta);
+    throw std::runtime_error("Failed to register.");
 }
 
 GameState NetworkingClient::getGameState() {
@@ -149,14 +181,7 @@ void NetworkingClient::reliableRecv() {
         }
         if (status == sf::Socket::Done) {
             reliable_response >> reliable_command;
-            if (reliable_command.command == ReliableCommandType::player_id) {
-                sf::Uint32 player_id;
-                reliable_response >> player_id;
-                m_playerId_ta = static_cast<uint32_t>(player_id);
-                m_playerIdAvialable_ta = true;
-            } else {
-                std::cout << "Unknown reliable command type." << std::endl;
-            }
+            std::cout << "Unexpected reliable command type." << std::endl;
         }
 
         std::this_thread::sleep_for(CLIENT_RELIBALE_RECV_SLEEP);
@@ -168,23 +193,9 @@ void NetworkingClient::reliableRecv() {
 void NetworkingClient::reliableSend() {
     // TODO(souren|#59): Don't spam server with TCP calls, optimize when updates are sent
     while (!m_stopThreads_ta) {
-        sendPlayerIdRequest();
         sendReliableInput();
 
         std::this_thread::sleep_for(CLIENT_RELIABLE_SEND_SLEEP);
-    }
-}
-
-void NetworkingClient::sendPlayerIdRequest() {
-    std::lock_guard<std::mutex> m_tcpSocket_guard(m_tcpSocket_lock);
-
-    if (!m_playerIdAvialable_ta) {
-        sf::Packet packet;
-        if (packet << (sf::Uint32)ReliableCommandType::player_id) {
-            m_tcpSocket_t->send(packet);
-        } else {
-            std::cout << "Failed to form packet" << std::endl;
-        }
     }
 }
 

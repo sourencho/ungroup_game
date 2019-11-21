@@ -18,11 +18,12 @@
 class ClientGameController : public GameController {
 
   public:
-    explicit ClientGameController(InputDef::InputKeys keys, sf::RenderWindow& window);
+    explicit ClientGameController(InputDef::InputKeys keys, sf::RenderWindow& window,
+                                  sf::RenderTexture& buffer, sf::Vector2f buffer_scaling_factor,
+                                  sf::Sprite& buffer_sprite);
     ~ClientGameController();
 
-    void updateView(sf::RenderWindow& window, sf::Vector2f buffer_scaling_factor);
-    void draw(sf::RenderTexture& buffer);
+    void start();
 
   private:
     // Overrides
@@ -35,6 +36,9 @@ class ClientGameController : public GameController {
     void setTick(unsigned int tick) override;
 
     // Methods
+    void registerClient();
+    void updateView();
+    void draw();
     void addEventListeners();
     void fetchPlayerId();
     void rewindAndReplay();
@@ -44,8 +48,6 @@ class ClientGameController : public GameController {
     void saveInputs(std::pair<InputDef::ReliableInput, InputDef::UnreliableInput> inputs);
 
     // Variables
-
-    bool m_playerIdAvailable;
     uint32_t m_playerId;
 
     std::unordered_map<unsigned int, InputDef::ClientInputAndTick>
@@ -56,6 +58,9 @@ class ClientGameController : public GameController {
     std::unique_ptr<InputController> m_inputController;
 
     sf::RenderWindow& m_window;
+    sf::RenderTexture& m_buffer;
+    sf::Vector2f m_bufferScalingFactor;
+    sf::Sprite& m_bufferSprite;
 };
 
 #endif /* ClientGameController_hpp */

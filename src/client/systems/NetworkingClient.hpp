@@ -21,11 +21,11 @@ class NetworkingClient {
     NetworkingClient();
     ~NetworkingClient();
 
+    uint32_t registerClientAndFetchPlayerId();
     GameState getGameState();
     void incrementTick();
     uint getTick() const;
     void setTick(uint tick);
-    std::pair<bool, uint32_t> getPlayerId() const;
     int getClientId() const;
     bool getGameStateIsFresh() const;
     void pushUnreliableInput(InputDef::UnreliableInput unreliable_input);
@@ -58,16 +58,13 @@ class NetworkingClient {
     // Methods
     void sendUnreliableInput();
     void sendReliableInput();
-    void sendPlayerIdRequest();
-    bool readRegistrationResponse();
-    bool registerNetworkingClient();
+    void readRegistrationResponse();
+    void registerClient();
     void addEventListeners();
     void handlePlayerCreatedEvent(std::shared_ptr<Event> event);
+    uint32_t fetchPlayerId();
 
     // Misc
-    std::atomic<bool> m_playerIdAvialable_ta{false};
-    std::atomic<uint32_t> m_playerId_ta{0};
-
     std::atomic<int> m_clientId_ta{-1};
     std::atomic<uint> m_tick_ta{0};
     std::atomic<bool> m_gameStateIsFresh_ta{true};

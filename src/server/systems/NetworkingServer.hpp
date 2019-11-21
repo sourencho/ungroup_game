@@ -55,7 +55,7 @@ class NetworkingServer {
 
     // Methods
     void clientDisconnect(sf::TcpSocket& client, sf::Uint32 client_id);
-    void registerClient(sf::Packet packet, sf::TcpSocket& client, sf::Uint32 client_id);
+    void registerClient(sf::Packet packet, sf::TcpSocket& socket, sf::Uint32 client_id);
     void sendPlayerId(sf::TcpSocket& socket, sf::Uint32 client_id);
     void handleReliableCommand(sf::Socket::Status status, sf::Packet command_packet,
                                sf::SocketSelector& selector, sf::TcpSocket& socket,
