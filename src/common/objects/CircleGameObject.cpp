@@ -1,5 +1,7 @@
 #include "CircleGameObject.hpp"
 
+#include "../util/game_settings.hpp"
+
 sf::Clock shader_clock;
 
 CircleGameObject::CircleGameObject(uint32_t id, sf::Vector2f position, float radius,
@@ -41,6 +43,7 @@ void CircleGameObject::draw(sf::RenderTarget& render_target) {
     if (m_isActive) {
         render_target.draw(m_outlineShape);
         if (m_shader.shader != nullptr && RenderingDef::USE_SHADERS) {
+            m_shader.shader->setUniform("u_resolution", sf::Vector2f(WINDOW_RESOLUTION));
             m_shader.shader->setUniform("u_position", getPosition());
             m_shader.shader->setUniform("u_radius", getRadius());
             m_shader.shader->setUniform("u_time", shader_clock.getElapsedTime().asSeconds());
