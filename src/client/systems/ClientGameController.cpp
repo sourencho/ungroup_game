@@ -97,18 +97,19 @@ void ClientGameController::postUpdate() {
  * for an old tick) and then interpolating up to the current tick via interpolation (replay).
  */
 void ClientGameController::rewindAndReplay() {
-    // Rewind
     GameState game_state = m_networkingClient->getGameState();
-    setTick(static_cast<unsigned int>(game_state.tick));
+    int client_tick = getTick();
+    int server_tick = game_state.tick;
+    int tick_delta = client_tick - server_tick;
+
+    // Rewind
     m_gameObjectController->applyGameState(game_state);
+    setTick(static_cast<unsigned int>(server_tick));
 
     // Replay
-    int tick_delta = getTick() - game_state.tick;
-    if (tick_delta <= 0) {
+    if (!USE_INTERPOLATION_REPLAY || tick_delta <= 0) {
         return;
     } // If the client is behind the server we don't need to replay
-
-    // TODO(sourenp|#102): I think we never reach here. Might be a bug.
 
     // Loop through ticks that need to be replayed and apply client input from cache if present
     for (int i = 0; i < tick_delta; ++i) {
