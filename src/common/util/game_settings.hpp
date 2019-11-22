@@ -11,6 +11,7 @@ const float GAME_SCALE = 2.f;
 const sf::Color BACKGROUND_COLOR(12, 30, 39);
 
 const bool USE_SHADER = true;
+const bool USE_INTERPOLATION_REPLAY = false;
 
 const int MAX_PLAYER_COUNT = 10;
 const int MAX_MINE_COUNT = 4;
