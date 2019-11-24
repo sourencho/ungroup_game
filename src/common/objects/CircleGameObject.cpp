@@ -39,19 +39,24 @@ sf::Vector2f CircleGameObject::getCenter() const {
     return sf::Vector2f(position.x + radius, position.y + radius);
 }
 
+sf::Vector2f CircleGameObject::getVelocity() const {
+    return m_circleRigidBody.getVelocity();
+}
+
 void CircleGameObject::draw(sf::RenderTarget& render_target) {
-    if (m_isActive) {
-        render_target.draw(m_outlineShape);
-        if (m_shader.shader != nullptr && RenderingDef::USE_SHADERS) {
-            m_shader.shader->setUniform("u_resolution", sf::Vector2f(WINDOW_RESOLUTION));
-            m_shader.shader->setUniform("u_position", getPosition());
-            m_shader.shader->setUniform("u_radius", getRadius());
-            m_shader.shader->setUniform("u_time", shader_clock.getElapsedTime().asSeconds());
-            render_target.draw(m_circleShape, m_shader.shader.get());
-        } else {
-            render_target.draw(m_circleShape);
-        }
-    };
+    if (!m_isActive) {
+        return;
+    }
+    render_target.draw(m_outlineShape);
+    if (m_shader.shader != nullptr && RenderingDef::USE_SHADERS) {
+        m_shader.shader->setUniform("u_resolution", sf::Vector2f(WINDOW_RESOLUTION));
+        m_shader.shader->setUniform("u_position", getPosition());
+        m_shader.shader->setUniform("u_radius", getRadius());
+        m_shader.shader->setUniform("u_time", shader_clock.getElapsedTime().asSeconds());
+        render_target.draw(m_circleShape, m_shader.shader.get());
+    } else {
+        render_target.draw(m_circleShape);
+    }
 }
 
 void CircleGameObject::setShader(RenderingDef::ShaderKey shader_key) {

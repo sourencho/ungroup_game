@@ -19,6 +19,7 @@ add_library(common-lib
     systems/GameController.cpp
     factories/IdFactory.cpp
     resources/ResourceStore.cpp
+    rendering/DirectionArrow.cpp
 )
 
 target_link_libraries(common-lib PUBLIC sfml-system sfml-graphics sfml-network)

@@ -5,12 +5,14 @@
 #include <stdio.h>
 #include <vector>
 
+#include <SFML/Graphics.hpp>
+#include <SFML/Network.hpp>
+
 #include "../physics/PhysicsController.hpp"
+#include "../rendering/DirectionArrow.hpp"
 #include "../resources/ResourceStore.hpp"
 #include "CircleGameObject.hpp"
 #include "Player.hpp"
-#include <SFML/Graphics.hpp>
-#include <SFML/Network.hpp>
 
 struct GroupUpdate {
     sf::Uint32 group_id;
@@ -45,6 +47,9 @@ class Group : public CircleGameObject {
     void setUngroup(bool ungroup) {
         m_ungroup = ungroup;
     };
+    void setDirection(sf::Vector2f direction);
+
+    void setActive(bool active);
 
     GroupUpdate getUpdate();
     void applyUpdate(GroupUpdate gu);
@@ -54,6 +59,8 @@ class Group : public CircleGameObject {
   private:
     bool m_joinable = false;
     bool m_ungroup = false;
+
+    DirectionArrow m_directionArrow;
 };
 
 #endif /* Group_hpp */

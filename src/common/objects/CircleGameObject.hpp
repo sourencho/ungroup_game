@@ -59,7 +59,7 @@ class CircleGameObject : public GameObject {
 
     void draw(sf::RenderTarget& render_target);
 
-    void setOutline(){};
+    sf::Vector2f getVelocity() const;
 
   protected:
     sf::CircleShape m_circleShape;

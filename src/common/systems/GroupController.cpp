@@ -159,7 +159,7 @@ void GroupController::updateGroup(std::shared_ptr<Group>& group) {
                             return curr_vel + getPlayer(player_id).getDirection();
                         });
 
-    group->applyInput(group_dir);
+    group->setDirection(group_dir);
 
     // Group is joinable if any member player is joinable
     // TODO(sourenp): Should probably switch to voting functionality later
