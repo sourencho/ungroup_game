@@ -19,7 +19,7 @@ DirectionArrows::DirectionArrows() : m_velocityTriangle(0, 3) {
 }
 
 void DirectionArrows::draw(sf::RenderTarget& render_target, float radius, sf::Vector2f position,
-                           sf::Vector2f velocity, std::vector<sf::Vector2f> targets,
+                           sf::Vector2f velocity, const std::vector<sf::Vector2f>& targets,
                            sf::Color color, bool active) {
 
     if (!active) {

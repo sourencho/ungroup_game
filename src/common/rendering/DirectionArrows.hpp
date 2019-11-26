@@ -28,7 +28,7 @@ class DirectionArrows {
      * @active: whether or not to draw the arrows
      */
     void draw(sf::RenderTarget& render_target, float radius, sf::Vector2f position,
-              sf::Vector2f velocity, std::vector<sf::Vector2f> targets, sf::Color color,
+              sf::Vector2f velocity, const std::vector<sf::Vector2f>& targets, sf::Color color,
               bool active);
 
   private:

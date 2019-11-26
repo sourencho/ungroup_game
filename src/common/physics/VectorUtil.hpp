@@ -15,7 +15,7 @@ namespace VectorUtil {
     void print(const sf::Vector2f& v);
     float dot(const sf::Vector2f& a, const sf::Vector2f& b);
     void clamp(sf::Vector2f& a, float min, float max);
-    float angle(const sf::Vector2f& b);
+    float angle(const sf::Vector2f& v);
 } // namespace VectorUtil
 
 #endif /* VectorUtil_hpp */
