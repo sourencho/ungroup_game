@@ -18,7 +18,7 @@ Engine written from scratch using the [SFML](https://www.sfml-dev.org/) framewor
 ```
 // With ninja (faster, colorless)
 cmake -GNinja -S . -B build
-ninja -D build
+ninja -C build
 
 // Without ninja (slower, colorful)
 cmake -S . -B build
