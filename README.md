@@ -16,11 +16,11 @@ Engine written from scratch using the [SFML](https://www.sfml-dev.org/) framewor
 2. Install SFML-devel package
 3. Configure and build:
 ```
-// With ninja (faster)
+// With ninja (faster, colorless)
 cmake -GNinja -S . -B build
 ninja -D build
 
-// Without ninja
+// Without ninja (slower, colorful)
 cmake -S . -B build
 cmake --build build -- -j
 ```
