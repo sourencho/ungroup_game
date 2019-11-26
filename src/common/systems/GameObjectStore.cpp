@@ -24,7 +24,7 @@ GameObjectStore::GameObjectStore(PhysicsController& pc, ResourceStore& rs) :
         uint32_t new_group_id = IdFactory::getInstance().getNextId(GameObjectType::group);
         m_groups.push_back(std::shared_ptr<Group>(new Group(
             new_group_id, sf::Vector2f(GROUP_START_OFFSET_X * (i + 1), GROUP_START_OFFSET_Y),
-            sf::Color::White, m_physicsController, m_resourceStore)));
+            sf::Color::Transparent, m_physicsController, m_resourceStore)));
     }
 
     // Initialize Mines

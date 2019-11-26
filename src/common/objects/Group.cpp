@@ -1,4 +1,5 @@
 #include <iostream>
+
 #include <memory>
 #include <numeric>
 #include <stdio.h>
@@ -9,26 +10,33 @@
 
 Group::Group(uint32_t id, sf::Vector2f position, sf::Color color, PhysicsController& pc,
              ResourceStore& rs) :
-    CircleGameObject(id, position, 0.f, color, pc, rs, 0.f) {
-    setShader(RenderingDef::ShaderKey::voronoi);
+    CircleGameObject(id, position, 0.f, color, pc, rs, 0.f),
+    m_directionArrow() {
+    setShader(RenderingDef::ShaderKey::none);
 }
 
 Group::~Group() {
 }
 
 void Group::draw(sf::RenderTarget& render_target) {
+    setOutlineThickness(1.f);
+
+    sf::Color outline_color = sf::Color::White;
+
     if (m_joinable) {
-        setOutlineThickness(1.f);
-        setOutlineColor(RenderingDef::JOINABLE_COLOR);
-    } else {
-        setOutlineThickness(0.f);
+        outline_color = RenderingDef::JOINABLE_COLOR;
     }
     // TODO(sourenp): This was only included for debugging purposes. Remove eventually.
     if (m_ungroup) {
-        setOutlineThickness(2.f);
-        setOutlineColor(sf::Color::Blue);
+        outline_color = sf::Color::Blue;
     }
+
+    setOutlineColor(outline_color);
+
     CircleGameObject::draw(render_target);
+
+    m_directionArrow.draw(render_target, getRadius(), getPosition(), getVelocity(),
+                          m_targetDirections, outline_color, m_isActive);
 }
 
 GroupUpdate Group::getUpdate() {
@@ -52,6 +60,14 @@ void Group::applyUpdate(GroupUpdate gu) {
     setRadius(gu.radius);
     setJoinable(gu.joinable);
     setShader((RenderingDef::ShaderKey)gu.shader_key);
+}
+
+void Group::setActive(bool active) {
+    CircleGameObject::setActive(active);
+}
+
+void Group::setDirection(sf::Vector2f direction) {
+    applyInput(direction); // TODO(sourenp): Clean this up
 }
 
 sf::Packet& operator<<(sf::Packet& packet, const GroupUpdate& group_update) {
