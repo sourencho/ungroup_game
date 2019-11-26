@@ -16,8 +16,6 @@ Engine written from scratch using the [SFML](https://www.sfml-dev.org/) framewor
 2. Install SFML-devel package
 3. Configure and build:
 ```
-mkdir build
-
 // With ninja (faster)
 cmake -GNinja -S . -B build
 ninja -D build
