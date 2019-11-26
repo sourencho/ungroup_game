@@ -152,14 +152,19 @@ void GroupController::updateGroup(std::shared_ptr<Group>& group) {
 
     auto& group_players = m_groupToPlayers[group->getId()];
 
-    // Group's velocity is an accumilation of it's members velocities
-    sf::Vector2f group_dir =
-        std::accumulate(group_players.begin(), group_players.end(), sf::Vector2f(0.f, 0.f),
-                        [this](sf::Vector2f curr_vel, int player_id) {
-                            return curr_vel + getPlayer(player_id).getDirection();
-                        });
+    // Player directions
+    std::vector<sf::Vector2f> player_directions;
+    std::transform(
+        group_players.begin(), group_players.end(), std::back_inserter(player_directions),
+        [this](int player_id) -> sf::Vector2f { return getPlayer(player_id).getDirection(); });
 
-    group->setDirection(group_dir);
+    group->setTargetDirections(player_directions);
+
+    // Group's velocity is an accumilation of it's members directions
+    sf::Vector2f group_vel = std::accumulate(
+        player_directions.begin(), player_directions.end(), sf::Vector2f(0.f, 0.f),
+        [this](sf::Vector2f curr_vel, sf::Vector2f player_dir) { return curr_vel + player_dir; });
+    group->setDirection(group_vel);
 
     // Group is joinable if any member player is joinable
     // TODO(sourenp): Should probably switch to voting functionality later

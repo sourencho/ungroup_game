@@ -9,7 +9,7 @@
 #include <SFML/Network.hpp>
 
 #include "../physics/PhysicsController.hpp"
-#include "../rendering/DirectionArrow.hpp"
+#include "../rendering/DirectionArrows.hpp"
 #include "../resources/ResourceStore.hpp"
 #include "CircleGameObject.hpp"
 #include "Player.hpp"
@@ -49,6 +49,10 @@ class Group : public CircleGameObject {
     };
     void setDirection(sf::Vector2f direction);
 
+    void setTargetDirections(std::vector<sf::Vector2f> target_directions) {
+        m_targetDirections = target_directions;
+    }
+
     void setActive(bool active);
 
     GroupUpdate getUpdate();
@@ -59,8 +63,9 @@ class Group : public CircleGameObject {
   private:
     bool m_joinable = false;
     bool m_ungroup = false;
+    std::vector<sf::Vector2f> m_targetDirections;
 
-    DirectionArrow m_directionArrow;
+    DirectionArrows m_directionArrow;
 };
 
 #endif /* Group_hpp */

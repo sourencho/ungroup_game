@@ -35,8 +35,8 @@ void Group::draw(sf::RenderTarget& render_target) {
 
     CircleGameObject::draw(render_target);
 
-    m_directionArrow.draw(render_target, getRadius() * .3f, getRadius(), getPosition(),
-                          getVelocity(), outline_color, m_isActive);
+    m_directionArrow.draw(render_target, getRadius(), getPosition(), getVelocity(),
+                          m_targetDirections, outline_color, m_isActive);
 }
 
 GroupUpdate Group::getUpdate() {
