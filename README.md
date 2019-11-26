@@ -17,6 +17,12 @@ Engine written from scratch using the [SFML](https://www.sfml-dev.org/) framewor
 3. Configure and build:
 ```
 mkdir build
+
+// With ninja (faster)
+cmake -GNinja -S . -B build
+ninja -D build
+
+// Without ninja
 cmake -S . -B build
 cmake --build build -- -j
 ```
