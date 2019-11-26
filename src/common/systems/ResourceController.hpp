@@ -36,14 +36,14 @@ class ResourceController {
      * Note full count won't be added if id count reaches max.
      * @return: The count added and the resulting count.
      */
-    std::pair<uint32_t, uint32_t> add(uint32_t id, ResourceType resoure_type, uint32_t count);
+    std::pair<uint32_t, uint32_t> add(uint32_t id, ResourceType resource_type, uint32_t count);
 
     /**
      * Subtract an count of resource from an id.
      * Note full count will not be subtracted if id count reaches zero.
      * @return: The count subtracted and the resulting count.
      */
-    std::pair<uint32_t, uint32_t> subtract(uint32_t id, ResourceType resoure_type, uint32_t count);
+    std::pair<uint32_t, uint32_t> subtract(uint32_t id, ResourceType resource_type, uint32_t count);
 
     /**
      * Move an count of resource from one id to another.

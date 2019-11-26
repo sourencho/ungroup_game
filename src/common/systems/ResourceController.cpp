@@ -1,5 +1,7 @@
 #include "ResourceController.hpp"
 
+#include <limits>
+
 void ResourceController::init(uint32_t id) {
     if (m_resourceCounts.count(id) == 0) {
         m_resourceCounts[id] = {0, 0, 0, 0};
