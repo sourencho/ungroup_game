@@ -8,6 +8,7 @@ add_executable(ug-test
     client/systems/tests-ClientGameController.cpp
     client/rendering/tests-AnimatedSprite.cpp
     client/rendering/tests-AnimationController.cpp
+    common/systems/tests-ResourceController.cpp
 )
 
 target_link_libraries(ug-test PRIVATE server-lib common-lib client-lib catch)

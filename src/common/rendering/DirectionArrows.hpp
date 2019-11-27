@@ -1,4 +1,3 @@
-
 /**
  * Draws arrows around the edge of a (not drawn) circle.
  *
@@ -60,4 +59,4 @@ class DirectionArrows {
     std::vector<sf::CircleShape> m_targetTriangles;
 };
 
-#endif /* DriectionArrow_hpp */
+#endif /* DirectionArrows_hpp */

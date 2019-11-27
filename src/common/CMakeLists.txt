@@ -17,6 +17,7 @@ add_library(common-lib
     systems/MineController.cpp
     systems/GameObjectController.cpp
     systems/GameController.cpp
+    systems/ResourceController.cpp
     factories/IdFactory.cpp
     resources/ResourceStore.cpp
     rendering/DirectionArrows.cpp
