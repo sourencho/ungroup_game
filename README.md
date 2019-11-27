@@ -60,6 +60,27 @@ To run tests, after building, run:
 - Variables with the suffix `_t` are used by multiple threads and have a corresponding `<var>_lock` mutex.
 - Variables with the suffix `_ta` are used by multiple threads but don't have a mutex because they are atomic.
 
+### Pull Request Template
+
+```
+**Description**
+
+Description of changes
+
+**Fixes**
+
+Fixes #123
+
+**Commits**
+
+[COMMIT_SHA_1] Commit title
+Commit message
+
+[COMMIT_SHA_2] Commit title
+Commit message
+```
+ 
+
 ### Debugging
 
 #### Travis CI Debug Build
