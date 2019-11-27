@@ -15,7 +15,10 @@ ClientGameController::ClientGameController(InputDef::InputKeys keys, sf::RenderW
     GameController(),
     m_networkingClient(new NetworkingClient()), m_animationController(new AnimationController()),
     m_inputController(new InputController(keys)), m_window(window), m_buffer(buffer),
-    m_bufferSprite(buffer_sprite), m_bufferScalingFactor(buffer_scaling_factor) {
+    m_windowView(sf::Vector2f(window.getSize()) / 2.f, sf::Vector2f(window.getSize())),
+    m_playerView({0.f, 0.f}, sf::Vector2f(window.getSize())),
+    m_guiController(new GUIController(window.getSize())), m_bufferSprite(buffer_sprite),
+    m_bufferScalingFactor(buffer_scaling_factor) {
     addEventListeners();
 }
 
@@ -45,27 +48,29 @@ void ClientGameController::incrementTick() {
     m_networkingClient->incrementTick();
 }
 
-void ClientGameController::updateView() {
+sf::Vector2f ClientGameController::getPlayerViewCenter() {
     // Update view to match player's group's position
     sf::Vector2f player_position = m_gameObjectController->getPlayerPosition(m_playerId);
-    sf::View view = m_window.getView();
-    sf::Vector2f group_view_coordinates = {player_position.x * m_bufferScalingFactor.x,
-                                           player_position.y * m_bufferScalingFactor.y};
-    view.setCenter(group_view_coordinates);
-    m_window.setView(view);
+    return {player_position.x * m_bufferScalingFactor.x,
+            player_position.y * m_bufferScalingFactor.y};
 }
 
 void ClientGameController::draw() {
-    updateView();
-
     m_window.clear(sf::Color::White);
     m_buffer.clear(BACKGROUND_COLOR);
 
+    // Draw game from player view
+    m_playerView.setCenter(getPlayerViewCenter());
+    m_window.setView(m_playerView);
     m_gameObjectController->draw(m_buffer);
     m_animationController->draw(m_buffer);
+    m_window.draw(m_bufferSprite);
+
+    // Draw GUI from window view
+    m_window.setView(m_windowView);
+    m_guiController->draw(m_window);
 
     m_buffer.display();
-    m_window.draw(m_bufferSprite);
     m_window.display();
 }
 
@@ -89,7 +94,7 @@ void ClientGameController::update(const InputDef::PlayerInputs& pi, sf::Int32 de
 }
 
 void ClientGameController::postUpdate() {
-    // noop
+    m_guiController->update();
 }
 
 /*

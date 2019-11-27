@@ -12,6 +12,7 @@
 #include "../../common/systems/GameController.hpp"
 #include "../rendering/Animation.hpp"
 #include "../rendering/AnimationController.hpp"
+#include "../rendering/GUIController.hpp"
 #include "../systems/InputController.hpp"
 #include "NetworkingClient.hpp"
 
@@ -36,8 +37,8 @@ class ClientGameController : public GameController {
     void setTick(unsigned int tick) override;
 
     // Methods
+    sf::Vector2f getPlayerViewCenter();
     void registerClient();
-    void updateView();
     void draw();
     void addEventListeners();
     void fetchPlayerId();
@@ -56,9 +57,12 @@ class ClientGameController : public GameController {
     std::unique_ptr<NetworkingClient> m_networkingClient;
     std::unique_ptr<AnimationController> m_animationController;
     std::unique_ptr<InputController> m_inputController;
+    std::unique_ptr<GUIController> m_guiController;
 
     sf::RenderWindow& m_window;
     sf::RenderTexture& m_buffer;
+    sf::View m_playerView;
+    sf::View m_windowView;
     sf::Vector2f m_bufferScalingFactor;
     sf::Sprite& m_bufferSprite;
 };
