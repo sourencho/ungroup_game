@@ -28,7 +28,7 @@ class CircleGameObject : public GameObject {
 
     void setShader(RenderingDef::ShaderKey shader_key);
 
-    void setTexture(std::string texture_key);
+    void setTexture(RenderingDef::TextureKey texture_key);
 
     sf::Vector2f getCenter() const;
 

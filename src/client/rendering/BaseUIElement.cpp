@@ -1,10 +1,10 @@
 #include "BaseUIElement.hpp"
 
-BaseUIElement::BaseUIElement(sf::Vector2u window_size, sf::Vector2f size, Align align,
+BaseUIElement::BaseUIElement(sf::Vector2u window_size, sf::Vector2f element_size, Align align,
                              Padding padding) :
     m_position({10., 10.}) {
     // We only need to set the position once because the window size is static
-    setPosition(window_size, size, align, padding);
+    setPosition(window_size, element_size, align, padding);
 }
 
 void BaseUIElement::setPosition(sf::Vector2u window_size, sf::Vector2f element_size, Align align,

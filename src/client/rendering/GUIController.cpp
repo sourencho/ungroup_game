@@ -3,10 +3,10 @@
 #include "TestUIElement.hpp"
 
 GUIController::GUIController(sf::Vector2u window_size) {
-    loadLevel(window_size);
+    load(window_size);
 }
 
-void GUIController::loadLevel(sf::Vector2u window_size) {
+void GUIController::load(sf::Vector2u window_size) {
     // Test UI element
     // add(std::unique_ptr<TestUIElement>(new TestUIElement(
     //     window_size, {100.f, 200.f}, Align::TOP_LEFT, (Padding){50.f, 50.f, 50.f, 50.f})));

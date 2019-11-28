@@ -22,7 +22,7 @@ Mine::Mine(uint32_t id, sf::Vector2f position, float size, sf::Color color, Phys
            ResourceStore& rs) :
     CircleGameObject(id, position, size, color, pc, rs, std::numeric_limits<float>::infinity(),
                      false) {
-    setTexture("mine_pattern");
+    setTexture(RenderingDef::TextureKey::mine_pattern);
 }
 
 Mine::~Mine() {

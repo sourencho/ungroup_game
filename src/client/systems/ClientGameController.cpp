@@ -163,8 +163,9 @@ void ClientGameController::handleCollisionEvent(std::shared_ptr<Event> event) {
 }
 
 void ClientGameController::createCollisionAnimation(const sf::Vector2f& collision_position) {
-    auto collision_sprite = std::unique_ptr<AnimatedSprite>(new AnimatedSprite(
-        *m_resourceStore->getTexture("collision"), {6, 1}, 240, collision_position, {2.f, 2.f}));
+    auto collision_sprite = std::unique_ptr<AnimatedSprite>(
+        new AnimatedSprite(*m_resourceStore->getTexture(RenderingDef::TextureKey::collision),
+                           {6, 1}, 240, collision_position, {2.f, 2.f}));
     m_animationController->add(std::move(collision_sprite));
 }
 

@@ -20,7 +20,7 @@ class GUIController {
 
   private:
     void add(std::unique_ptr<BaseUIElement> ui_element);
-    void loadLevel(sf::Vector2u window_size);
+    void load(sf::Vector2u window_size);
 
     std::vector<std::unique_ptr<BaseUIElement>> m_elements;
 };
