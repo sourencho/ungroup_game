@@ -1,4 +1,7 @@
+#include <iostream>
 #include <thread>
+
+#include <SFML/Graphics.hpp>
 
 #include "../../common/events/CollisionEvent.hpp"
 #include "../../common/events/EventController.hpp"
@@ -6,7 +9,6 @@
 #include "../../common/util/StateDef.hpp"
 #include "../../common/util/game_settings.hpp"
 #include "ClientGameController.hpp"
-#include <SFML/Graphics.hpp>
 
 ClientGameController::ClientGameController(InputDef::InputKeys keys, sf::RenderWindow& window,
                                            sf::RenderTexture& buffer,
@@ -17,8 +19,8 @@ ClientGameController::ClientGameController(InputDef::InputKeys keys, sf::RenderW
     m_inputController(new InputController(keys)), m_window(window), m_buffer(buffer),
     m_windowView(sf::Vector2f(window.getSize()) / 2.f, sf::Vector2f(window.getSize())),
     m_playerView({0.f, 0.f}, sf::Vector2f(window.getSize())),
-    m_guiController(new GUIController(window.getSize())), m_bufferSprite(buffer_sprite),
-    m_bufferScalingFactor(buffer_scaling_factor) {
+    m_guiController(new GUIController(window.getSize(), *m_resourceStore)),
+    m_bufferSprite(buffer_sprite), m_bufferScalingFactor(buffer_scaling_factor) {
     addEventListeners();
 }
 
@@ -56,7 +58,7 @@ sf::Vector2f ClientGameController::getPlayerViewCenter() {
 }
 
 void ClientGameController::draw() {
-    m_window.clear(sf::Color::White);
+    m_window.clear(sf::Color::Green);
     m_buffer.clear(BACKGROUND_COLOR);
 
     // Draw game from player view
@@ -94,7 +96,11 @@ void ClientGameController::update(const InputDef::PlayerInputs& pi, sf::Int32 de
 }
 
 void ClientGameController::postUpdate() {
-    m_guiController->update();
+    UIData ui_data = {
+        .frame_rate =
+            static_cast<float>(m_frameCount) / (static_cast<float>(m_elapsedTime) / 1000.f),
+    };
+    m_guiController->update(ui_data);
 }
 
 /*

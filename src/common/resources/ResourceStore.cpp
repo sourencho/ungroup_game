@@ -62,10 +62,11 @@ std::shared_ptr<sf::Shader> ResourceStore::getShader(RenderingDef::ShaderKey key
 }
 
 void ResourceStore::addFont(RenderingDef::FontKey key, std::string font_path) {
-    sf::Font font;
-    if (!font.loadFromFile(font_path)) {
+    auto font = std::shared_ptr<sf::Font>(new sf::Font());
+    if (!font->loadFromFile(font_path)) {
         throw std::runtime_error("Error loading font from " + font_path);
     }
+    m_fonts[key] = font;
 }
 
 std::shared_ptr<sf::Font> ResourceStore::getFont(RenderingDef::FontKey key) {

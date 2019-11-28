@@ -12,6 +12,8 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "../../common/systems/ResourceController.hpp"
+
 enum Align { TOP_RIGHT, TOP_LEFT, BOTTOM_RIGHT, BOTTOM_LEFT };
 struct Padding {
     float right;
@@ -19,7 +21,9 @@ struct Padding {
     float top;
     float bottom;
 };
-struct UIData {};
+struct UIData {
+    float frame_rate;
+};
 
 class BaseUIElement {
   public:

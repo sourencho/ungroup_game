@@ -46,6 +46,7 @@ class GameController {
     sf::Clock m_clock;
     sf::Int32 m_elapsedTime = 0;
     sf::Int32 m_timeAccumulator = 0;
+    sf::Int32 m_frameCount = 0;
 };
 
 #endif /* GameController_hpp */
