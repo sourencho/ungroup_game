@@ -18,11 +18,13 @@ class ResourceController {
 
     /**
      * Get count of resource for an id.
+     * @returns: Count of resource type.
      */
     uint32_t get(uint32_t id, ResourceType resource_type);
 
     /**
      * Get counts for all resources for an id.
+     * @returns: Array of counts where index corresponds to ResourceType value.
      */
     std::array<uint32_t, RESOURCE_TYPE_COUNT> get(uint32_t id);
 

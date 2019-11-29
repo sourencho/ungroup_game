@@ -7,7 +7,9 @@
 namespace RenderingDef {
     const bool USE_SHADERS = true;
     const std::size_t CIRCLE_POINT_COUNT = 60;
+    enum TextureKey { collision, mine_pattern };
     enum ShaderKey { none, noop, voronoi };
+    enum FontKey { silkscreen };
     struct Shader {
         ShaderKey key = ShaderKey::none;
         std::shared_ptr<sf::Shader> shader = nullptr;

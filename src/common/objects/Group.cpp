@@ -12,22 +12,24 @@ Group::Group(uint32_t id, sf::Vector2f position, sf::Color color, PhysicsControl
              ResourceStore& rs) :
     CircleGameObject(id, position, 0.f, color, pc, rs, 0.f),
     m_directionArrow() {
-    setShader(RenderingDef::ShaderKey::none);
+    setShader(RenderingDef::ShaderKey::voronoi);
 }
 
 Group::~Group() {
 }
 
 void Group::draw(sf::RenderTarget& render_target) {
-    setOutlineThickness(1.f);
+    setOutlineThickness(0.f);
 
     sf::Color outline_color = sf::Color::White;
 
     if (m_joinable) {
+        setOutlineThickness(1.f);
         outline_color = RenderingDef::JOINABLE_COLOR;
     }
     // TODO(sourenp): This was only included for debugging purposes. Remove eventually.
     if (m_ungroup) {
+        setOutlineThickness(1.f);
         outline_color = sf::Color::Blue;
     }
 
@@ -36,7 +38,7 @@ void Group::draw(sf::RenderTarget& render_target) {
     CircleGameObject::draw(render_target);
 
     m_directionArrow.draw(render_target, getRadius(), getPosition(), getVelocity(),
-                          m_targetDirections, outline_color, m_isActive);
+                          m_targetDirections, sf::Color::White, m_isActive);
 }
 
 GroupUpdate Group::getUpdate() {

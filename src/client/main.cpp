@@ -13,10 +13,6 @@ int main(int, char const**) {
                             sf::Style::Close, contSettings);
     window.setFramerateLimit(60);
 
-    // Create view to set the perspective of the player
-    sf::View view({0.f, 0.f}, WINDOW_RESOLUTION);
-    window.setView(view);
-
     // Create buffer to draw game onto. Buffer can be scaled to give pixelated effect
     sf::RenderTexture buffer;
     if (!buffer.create(WINDOW_RESOLUTION.x, WINDOW_RESOLUTION.y))

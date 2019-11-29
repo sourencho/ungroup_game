@@ -9,6 +9,10 @@ add_library(client-lib
     systems/NetworkingClient.cpp
     systems/ClientGameController.cpp
     systems/InputController.cpp
+    rendering/GUIController.cpp
+    rendering/BaseUIElement.cpp
+    rendering/TestUIElement.cpp
+    rendering/FrameRateUIElement.cpp
 )
 
 target_link_libraries(ug-client PRIVATE client-lib common-lib)

@@ -8,7 +8,7 @@
 const sf::Vector2f GAME_SIZE(2688 * 4, 1512 * 4);
 const sf::Vector2f WINDOW_RESOLUTION(2688, 1512);
 const float GAME_SCALE = 2.f;
-const sf::Color BACKGROUND_COLOR(12, 30, 39);
+const sf::Color BACKGROUND_COLOR(sf::Color::Black);
 
 const bool USE_SHADER = true;
 const bool USE_INTERPOLATION_REPLAY = false;
@@ -19,7 +19,7 @@ const float GROUP_START_OFFSET_X = 20.f;
 const float GROUP_START_OFFSET_Y = 20.f;
 const float MINE_START_OFFSET_X = 50.f;
 const float MINE_START_OFFSET_Y = 200.f;
-const float GROUP_MEMBER_SIZE = 5.f;
+const float GROUP_MEMBER_SIZE = 10.f;
 const float MINE_SIZE = 80.f;
 const float GROUP_SPEED = 100.f;
 

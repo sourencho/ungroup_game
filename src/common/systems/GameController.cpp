@@ -41,6 +41,8 @@ void GameController::step() {
         m_elapsedTime += MIN_TIME_STEP;
     }
 
+    m_frameCount += 1;
+
     postUpdate();
 }
 

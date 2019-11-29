@@ -5,15 +5,21 @@
 #include "ResourceStore.hpp"
 
 ResourceStore::ResourceStore() {
-    addTexture("collision", "resources/images/spark.png");
-    addTexture("mine_pattern", "resources/images/mine_pattern.png", true);
+    load();
+};
+
+void ResourceStore::load() {
+    addTexture(RenderingDef::TextureKey::collision, "resources/images/spark.png");
+    addTexture(RenderingDef::TextureKey::mine_pattern, "resources/images/mine_pattern.png", true);
     addShader(RenderingDef::ShaderKey::noop, "resources/shaders/noop.vert",
               "resources/shaders/noop.frag");
     addShader(RenderingDef::ShaderKey::voronoi, "resources/shaders/noop.vert",
               "resources/shaders/voronoi.frag");
-};
+    addFont(RenderingDef::FontKey::silkscreen, "resources/fonts/slkscr.ttf");
+}
 
-void ResourceStore::addTexture(std::string key, std::string texture_path, bool repeated) {
+void ResourceStore::addTexture(RenderingDef::TextureKey key, std::string texture_path,
+                               bool repeated) {
     auto texture = std::shared_ptr<sf::Texture>(new sf::Texture());
     texture->setRepeated(repeated);
     if (!texture->loadFromFile(texture_path)) {
@@ -22,9 +28,9 @@ void ResourceStore::addTexture(std::string key, std::string texture_path, bool r
     m_textures[key] = std::move(texture);
 }
 
-std::shared_ptr<sf::Texture> ResourceStore::getTexture(std::string key) {
+std::shared_ptr<sf::Texture> ResourceStore::getTexture(RenderingDef::TextureKey key) {
     if (m_textures.count(key) == 0) {
-        throw std::runtime_error("Texure doesn't exist with key " + key);
+        throw std::runtime_error("Texure with used key doesn't exist");
     }
     return m_textures[key];
 }
@@ -53,4 +59,19 @@ std::shared_ptr<sf::Shader> ResourceStore::getShader(RenderingDef::ShaderKey key
         }
         return m_shaders[key];
     }
+}
+
+void ResourceStore::addFont(RenderingDef::FontKey key, std::string font_path) {
+    auto font = std::shared_ptr<sf::Font>(new sf::Font());
+    if (!font->loadFromFile(font_path)) {
+        throw std::runtime_error("Error loading font from " + font_path);
+    }
+    m_fonts[key] = font;
+}
+
+std::shared_ptr<sf::Font> ResourceStore::getFont(RenderingDef::FontKey key) {
+    if (m_fonts.count(key) == 0) {
+        throw std::runtime_error("Font with used key doesn't exist");
+    }
+    return m_fonts[key];
 }

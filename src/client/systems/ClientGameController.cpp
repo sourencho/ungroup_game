@@ -1,4 +1,7 @@
+#include <iostream>
 #include <thread>
+
+#include <SFML/Graphics.hpp>
 
 #include "../../common/events/CollisionEvent.hpp"
 #include "../../common/events/EventController.hpp"
@@ -6,7 +9,6 @@
 #include "../../common/util/StateDef.hpp"
 #include "../../common/util/game_settings.hpp"
 #include "ClientGameController.hpp"
-#include <SFML/Graphics.hpp>
 
 ClientGameController::ClientGameController(InputDef::InputKeys keys, sf::RenderWindow& window,
                                            sf::RenderTexture& buffer,
@@ -15,6 +17,9 @@ ClientGameController::ClientGameController(InputDef::InputKeys keys, sf::RenderW
     GameController(),
     m_networkingClient(new NetworkingClient()), m_animationController(new AnimationController()),
     m_inputController(new InputController(keys)), m_window(window), m_buffer(buffer),
+    m_windowView(sf::Vector2f(window.getSize()) / 2.f, sf::Vector2f(window.getSize())),
+    m_playerView({0.f, 0.f}, sf::Vector2f(window.getSize())),
+    m_guiController(new GUIController(window.getSize(), *m_resourceStore)),
     m_bufferSprite(buffer_sprite), m_bufferScalingFactor(buffer_scaling_factor) {
     addEventListeners();
 }
@@ -45,27 +50,29 @@ void ClientGameController::incrementTick() {
     m_networkingClient->incrementTick();
 }
 
-void ClientGameController::updateView() {
+sf::Vector2f ClientGameController::getPlayerViewCenter() {
     // Update view to match player's group's position
     sf::Vector2f player_position = m_gameObjectController->getPlayerPosition(m_playerId);
-    sf::View view = m_window.getView();
-    sf::Vector2f group_view_coordinates = {player_position.x * m_bufferScalingFactor.x,
-                                           player_position.y * m_bufferScalingFactor.y};
-    view.setCenter(group_view_coordinates);
-    m_window.setView(view);
+    return {player_position.x * m_bufferScalingFactor.x,
+            player_position.y * m_bufferScalingFactor.y};
 }
 
 void ClientGameController::draw() {
-    updateView();
-
-    m_window.clear(sf::Color::White);
+    m_window.clear(sf::Color::Green);
     m_buffer.clear(BACKGROUND_COLOR);
 
+    // Draw game from player view
+    m_playerView.setCenter(getPlayerViewCenter());
+    m_window.setView(m_playerView);
     m_gameObjectController->draw(m_buffer);
     m_animationController->draw(m_buffer);
+    m_window.draw(m_bufferSprite);
+
+    // Draw GUI from window view
+    m_window.setView(m_windowView);
+    m_guiController->draw(m_window);
 
     m_buffer.display();
-    m_window.draw(m_bufferSprite);
     m_window.display();
 }
 
@@ -89,7 +96,11 @@ void ClientGameController::update(const InputDef::PlayerInputs& pi, sf::Int32 de
 }
 
 void ClientGameController::postUpdate() {
-    // noop
+    UIData ui_data = {
+        .frame_rate =
+            static_cast<float>(m_frameCount) / (static_cast<float>(m_elapsedTime) / 1000.f),
+    };
+    m_guiController->update(ui_data);
 }
 
 /*
@@ -158,8 +169,9 @@ void ClientGameController::handleCollisionEvent(std::shared_ptr<Event> event) {
 }
 
 void ClientGameController::createCollisionAnimation(const sf::Vector2f& collision_position) {
-    auto collision_sprite = std::unique_ptr<AnimatedSprite>(new AnimatedSprite(
-        *m_resourceStore->getTexture("collision"), {6, 1}, 240, collision_position, {2.f, 2.f}));
+    auto collision_sprite = std::unique_ptr<AnimatedSprite>(
+        new AnimatedSprite(*m_resourceStore->getTexture(RenderingDef::TextureKey::collision),
+                           {6, 1}, 240, collision_position, {2.f, 2.f}));
     m_animationController->add(std::move(collision_sprite));
 }
 
