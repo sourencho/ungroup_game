@@ -62,7 +62,7 @@ To run tests, after building, run:
 
 ### Pull Request Template
 
-```
+```markdown
 **Description**
 
 Description of changes
