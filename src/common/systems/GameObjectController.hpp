@@ -9,6 +9,7 @@
 #include "GroupController.hpp"
 #include "MineController.hpp"
 #include "PlayerController.hpp"
+#include "ResourceController.hpp"
 
 class GameObjectController {
   public:
@@ -22,6 +23,7 @@ class GameObjectController {
     void applyGameState(GameState game_state);
     void draw(sf::RenderTexture& buffer);
     sf::Vector2f getPlayerPosition(uint32_t player_id);
+    std::array<uint32_t, RESOURCE_TYPE_COUNT> getPlayerResources(uint32_t player_id);
 
   private:
     void addEventListeners();
@@ -31,6 +33,7 @@ class GameObjectController {
     GroupController m_groupController;
     PlayerController m_playerController;
     MineController m_mineController;
+    ResourceController m_resourceController;
 };
 
 #endif /* GameObjectController_hpp */

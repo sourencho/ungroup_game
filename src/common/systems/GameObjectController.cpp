@@ -9,7 +9,7 @@ GameObjectController::GameObjectController(PhysicsController& physics_controller
     m_gameObjectStore(physics_controller, resource_store),
     m_playerController(m_gameObjectStore.getPlayers()),
     m_groupController(m_gameObjectStore.getGroups(), m_gameObjectStore.getPlayers()),
-    m_mineController(m_gameObjectStore.getMines()) {
+    m_mineController(m_gameObjectStore.getMines()), m_resourceController() {
     addEventListeners();
 }
 
@@ -59,6 +59,7 @@ void GameObjectController::applyGameState(GameState game_state) {
         m_gameObjectStore.getPlayer(pu.player_id)->applyUpdate(pu);
     }
     m_groupController.applyUpdate(game_state.gcu);
+    m_resourceController.applyUpdate(game_state.rcu);
 }
 
 GameState GameObjectController::getGameState(uint32_t tick) {
@@ -66,6 +67,7 @@ GameState GameObjectController::getGameState(uint32_t tick) {
     auto mines = m_gameObjectStore.getMines();
     auto players = m_gameObjectStore.getPlayers();
     auto gcu = m_groupController.getUpdate();
+    auto rcu = m_resourceController.getUpdate();
 
     std::vector<GroupUpdate> group_updates;
     std::vector<MineUpdate> mine_updates;
@@ -77,7 +79,7 @@ GameState GameObjectController::getGameState(uint32_t tick) {
     std::transform(players.begin(), players.end(), std::back_inserter(player_updates),
                    [](std::shared_ptr<Player> player) { return player->getUpdate(); });
 
-    GameState gs = {tick, group_updates, mine_updates, player_updates, gcu};
+    GameState gs = {tick, group_updates, mine_updates, player_updates, gcu, rcu};
 
     return gs;
 }
@@ -89,4 +91,9 @@ void GameObjectController::draw(sf::RenderTexture& buffer) {
 
 sf::Vector2f GameObjectController::getPlayerPosition(uint32_t player_id) {
     return m_gameObjectStore.getGroup(m_groupController.getGroupId(player_id))->getCenter();
+}
+
+std::array<uint32_t, RESOURCE_TYPE_COUNT>
+GameObjectController::getPlayerResources(uint32_t player_id) {
+    return m_resourceController.get(player_id);
 }

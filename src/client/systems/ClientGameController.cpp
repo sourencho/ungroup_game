@@ -99,6 +99,7 @@ void ClientGameController::postUpdate() {
     UIData ui_data = {
         .frame_rate =
             static_cast<float>(m_frameCount) / (static_cast<float>(m_elapsedTime) / 1000.f),
+        .resources = m_gameObjectController->getPlayerResources(m_playerId),
     };
     m_guiController->update(ui_data);
 }
