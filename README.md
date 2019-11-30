@@ -11,9 +11,9 @@ A game about temporary alliances.
 Engine written from scratch using the [SFML](https://www.sfml-dev.org/) framework.
 
 ## Building and Running
-**Unix**
+### Unix
 1. Clone this repo
-2. Install SFML-devel package
+2. Install [SFML 2.5.1](https://www.sfml-dev.org/download/sfml/2.5.1/) package
 3. Configure and build:
 ```
 // With ninja (faster, colorless)
