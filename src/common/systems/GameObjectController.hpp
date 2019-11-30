@@ -9,6 +9,7 @@
 #include "GroupController.hpp"
 #include "MineController.hpp"
 #include "PlayerController.hpp"
+#include "ResourceController.hpp"
 
 class GameObjectController {
   public:
@@ -31,6 +32,7 @@ class GameObjectController {
     GroupController m_groupController;
     PlayerController m_playerController;
     MineController m_mineController;
+    ResourceController m_resourceController;
 };
 
 #endif /* GameObjectController_hpp */

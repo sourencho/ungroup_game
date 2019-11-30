@@ -8,8 +8,30 @@
 #include <array>
 #include <unordered_map>
 
+#include <SFML/Network.hpp>
+
 enum ResourceType { RED, GREEN, BLUE, YELLOW };
 const size_t RESOURCE_TYPE_COUNT = 4;
+
+/* Network utilities */
+
+struct IdAndCounts {
+    sf::Uint32 id;
+    std::array<sf::Uint32, RESOURCE_TYPE_COUNT> counts;
+};
+
+struct ResourceControllerUpdate {
+    sf::Uint32 id_and_counts_list_size;
+    std::vector<IdAndCounts> id_and_counts_list;
+};
+
+sf::Packet& operator<<(sf::Packet& packet, const IdAndCounts& ic);
+sf::Packet& operator>>(sf::Packet& packet, IdAndCounts& ic);
+
+sf::Packet& operator<<(sf::Packet& packet, const ResourceControllerUpdate& rcu);
+sf::Packet& operator>>(sf::Packet& packet, ResourceControllerUpdate& rcu);
+
+/* Class */
 
 class ResourceController {
   public:
@@ -56,6 +78,16 @@ class ResourceController {
      */
     std::tuple<uint32_t, uint32_t, uint32_t, uint32_t>
     move(uint32_t from, uint32_t to, ResourceType resource_type, uint32_t count);
+
+    /**
+     * Get state update to send over the network.
+     */
+    ResourceControllerUpdate getUpdate();
+
+    /**
+     * Overwrite state with update.
+     */
+    void applyUpdate(ResourceControllerUpdate rcu);
 
   private:
     /**

@@ -186,41 +186,6 @@ void GroupController::updateGroup(std::shared_ptr<Group>& group) {
     group->setMass(group_players.size() / 10.f);
 }
 
-GroupControllerUpdate GroupController::getUpdate() {
-    std::vector<GroupIdAndPlayerIds> group_id_and_player_idss;
-
-    for (auto kv : m_groupToPlayers) {
-        if (kv.second.size()) {
-            GroupIdAndPlayerIds group_id_and_player_ids;
-            group_id_and_player_ids.group_id = kv.first;
-            group_id_and_player_ids.player_ids_size = kv.second.size();
-            group_id_and_player_ids.player_ids = kv.second;
-            group_id_and_player_idss.push_back(group_id_and_player_ids);
-        }
-    }
-
-    sf::Uint32 group_id_and_player_ids_size = group_id_and_player_idss.size();
-    GroupControllerUpdate gcu = {group_id_and_player_ids_size, group_id_and_player_idss};
-
-    return gcu;
-}
-
-void GroupController::applyUpdate(GroupControllerUpdate gcu) {
-    m_playerToGroup.clear();
-    for (auto& group_and_players : m_groupToPlayers) {
-        group_and_players.second.clear();
-    }
-
-    for (auto& gipi : gcu.group_id_and_player_idss) {
-        m_groupToPlayers[gipi.group_id] = gipi.player_ids;
-    }
-    for (auto& gipi : gcu.group_id_and_player_idss) {
-        for (auto& player_id : gipi.player_ids) {
-            m_playerToGroup[player_id] = gipi.group_id;
-        }
-    }
-}
-
 uint32_t GroupController::getGroupId(uint32_t player_id) {
     return m_playerToGroup[player_id];
 }
@@ -301,6 +266,41 @@ void GroupController::removePlayer(uint32_t player_id) {
 }
 
 /* Network utilities */
+
+GroupControllerUpdate GroupController::getUpdate() {
+    std::vector<GroupIdAndPlayerIds> group_id_and_player_idss;
+
+    for (auto kv : m_groupToPlayers) {
+        if (kv.second.size()) {
+            GroupIdAndPlayerIds group_id_and_player_ids;
+            group_id_and_player_ids.group_id = kv.first;
+            group_id_and_player_ids.player_ids_size = kv.second.size();
+            group_id_and_player_ids.player_ids = kv.second;
+            group_id_and_player_idss.push_back(group_id_and_player_ids);
+        }
+    }
+
+    sf::Uint32 group_id_and_player_ids_size = group_id_and_player_idss.size();
+    GroupControllerUpdate gcu = {group_id_and_player_ids_size, group_id_and_player_idss};
+
+    return gcu;
+}
+
+void GroupController::applyUpdate(GroupControllerUpdate gcu) {
+    m_playerToGroup.clear();
+    for (auto& group_and_players : m_groupToPlayers) {
+        group_and_players.second.clear();
+    }
+
+    for (auto& gipi : gcu.group_id_and_player_idss) {
+        m_groupToPlayers[gipi.group_id] = gipi.player_ids;
+    }
+    for (auto& gipi : gcu.group_id_and_player_idss) {
+        for (auto& player_id : gipi.player_ids) {
+            m_playerToGroup[player_id] = gipi.group_id;
+        }
+    }
+}
 
 sf::Packet& operator<<(sf::Packet& packet, const GroupIdAndPlayerIds& gipi) {
     packet << gipi.group_id;
