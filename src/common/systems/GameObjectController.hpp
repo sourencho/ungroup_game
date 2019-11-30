@@ -23,6 +23,7 @@ class GameObjectController {
     void applyGameState(GameState game_state);
     void draw(sf::RenderTexture& buffer);
     sf::Vector2f getPlayerPosition(uint32_t player_id);
+    std::array<uint32_t, RESOURCE_TYPE_COUNT> getPlayerResources(uint32_t player_id);
 
   private:
     void addEventListeners();

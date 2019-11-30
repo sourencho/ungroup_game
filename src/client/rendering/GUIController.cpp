@@ -1,6 +1,7 @@
 #include "GUIController.hpp"
 
 #include "FrameRateUIElement.hpp"
+#include "ResourceUIElement.hpp"
 #include "TestUIElement.hpp"
 
 GUIController::GUIController(sf::Vector2u window_size, ResourceStore& rs) : m_resourceStore(rs) {
@@ -11,9 +12,24 @@ void GUIController::load(sf::Vector2u window_size) {
     // Test UI element
     // add(std::unique_ptr<TestUIElement>(new TestUIElement(
     //     window_size, {100.f, 200.f}, Align::TOP_LEFT, (Padding){50.f, 50.f, 50.f, 50.f})));
-    add(std::unique_ptr<FrameRateUIElement>(
-        new FrameRateUIElement(window_size, {0.f, 0.f}, Align::BOTTOM_RIGHT,
-                               (Padding){70.f, 0.f, 0.f, 60.f}, m_resourceStore)));
+    add(std::unique_ptr<FrameRateUIElement>(new FrameRateUIElement(window_size, {0.f, 0.f},
+                                                                   Align::BOTTOM_RIGHT,
+                                                                   (Padding){
+                                                                       .right = 24.f,
+                                                                       .left = 0.f,
+                                                                       .top = 0.f,
+                                                                       .bottom = 24.f,
+                                                                   },
+                                                                   m_resourceStore)));
+    add(std::unique_ptr<ResourceUIElement>(new ResourceUIElement(window_size, {0.f, 0.f},
+                                                                 Align::TOP_RIGHT,
+                                                                 (Padding){
+                                                                     .right = 24.f,
+                                                                     .left = 0.f,
+                                                                     .top = 0.f,
+                                                                     .bottom = 0.f,
+                                                                 },
+                                                                 m_resourceStore)));
 }
 
 void GUIController::add(std::unique_ptr<BaseUIElement> ui_element) {

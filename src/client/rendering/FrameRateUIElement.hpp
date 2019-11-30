@@ -21,6 +21,9 @@ class FrameRateUIElement : public BaseUIElement {
 
   private:
     sf::Text m_text;
+    sf::Vector2u m_windowSize;
+    Align m_align;
+    Padding m_padding;
 };
 
 #endif /* FrameRateUIElement_hpp */

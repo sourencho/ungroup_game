@@ -23,6 +23,7 @@ struct Padding {
 };
 struct UIData {
     float frame_rate;
+    std::array<uint32_t, RESOURCE_TYPE_COUNT> resources;
 };
 
 class BaseUIElement {
@@ -36,8 +37,6 @@ class BaseUIElement {
 
   protected:
     sf::Vector2f m_position;
-
-  private:
     void setPosition(sf::Vector2u window_size, sf::Vector2f element_size, Align align,
                      Padding padding);
 };

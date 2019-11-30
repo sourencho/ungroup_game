@@ -15,7 +15,7 @@ void ResourceStore::load() {
               "resources/shaders/noop.frag");
     addShader(RenderingDef::ShaderKey::voronoi, "resources/shaders/noop.vert",
               "resources/shaders/voronoi.frag");
-    addFont(RenderingDef::FontKey::silkscreen, "resources/fonts/slkscr.ttf");
+    addFont(RenderingDef::FontKey::monogram, "resources/fonts/monogram.ttf");
 }
 
 void ResourceStore::addTexture(RenderingDef::TextureKey key, std::string texture_path,

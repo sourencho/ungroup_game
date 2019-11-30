@@ -45,10 +45,6 @@ void GameObjectController::updatePostPhysics() {
 uint32_t GameObjectController::createPlayerWithGroup(uint32_t client_id) {
     uint32_t new_player_id = m_playerController.createPlayer(client_id);
     m_groupController.createGroup(new_player_id);
-
-    // TODO(sourenp): Remove, this is a temporary test.
-    m_resourceController.add(new_player_id, ResourceType::GREEN, new_player_id);
-
     return new_player_id;
 }
 
@@ -95,4 +91,9 @@ void GameObjectController::draw(sf::RenderTexture& buffer) {
 
 sf::Vector2f GameObjectController::getPlayerPosition(uint32_t player_id) {
     return m_gameObjectStore.getGroup(m_groupController.getGroupId(player_id))->getCenter();
+}
+
+std::array<uint32_t, RESOURCE_TYPE_COUNT>
+GameObjectController::getPlayerResources(uint32_t player_id) {
+    return m_resourceController.get(player_id);
 }
