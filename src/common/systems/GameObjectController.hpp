@@ -28,12 +28,14 @@ class GameObjectController {
   private:
     void addEventListeners();
     void handleClientConnectedEvent(std::shared_ptr<Event> event);
+    void handleCollisionEvent(std::shared_ptr<Event> event);
+    void transferResources(uint32_t circle_a_id, uint32_t circle_b_id);
 
+    ResourceController m_resourceController;
     GameObjectStore m_gameObjectStore;
     GroupController m_groupController;
     PlayerController m_playerController;
     MineController m_mineController;
-    ResourceController m_resourceController;
 };
 
 #endif /* GameObjectController_hpp */

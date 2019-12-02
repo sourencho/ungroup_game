@@ -6,7 +6,8 @@
 #include "../rendering/RenderingDef.hpp"
 #include "../util/game_settings.hpp"
 
-MineController::MineController(std::vector<std::shared_ptr<Mine>>& mines) : m_mines(mines) {
+MineController::MineController(std::vector<std::shared_ptr<Mine>>& mines, ResourceController& rc) :
+    m_mines(mines), m_resourceController(rc) {
     for (int i = 0; i < MAX_MINE_COUNT; i++) {
         createMine();
     }
@@ -24,6 +25,7 @@ uint32_t MineController::createMine() {
     Mine& new_mine = *m_mines[next_mine_index];
     uint32_t new_mine_id = new_mine.getId();
     new_mine.setActive(true);
+    m_resourceController.add(new_mine_id, new_mine.getResourceType(), 4);
     return new_mine_id;
 }
 
@@ -34,7 +36,9 @@ void MineController::draw(sf::RenderTarget& target) {
 }
 
 void MineController::update() {
-    // noop
+    for (auto& mine : m_mines) {
+        mine->setResourceCount(m_resourceController.get(mine->getId(), mine->getResourceType()));
+    }
 }
 
 void MineController::updatePostPhysics() {
@@ -43,6 +47,6 @@ void MineController::updatePostPhysics() {
     }
 }
 
-std::shared_ptr<Mine>& MineController::getMine(uint32_t mine_id) {
-    return m_mines[IdFactory::getInstance().getIndex(mine_id)];
+Mine& MineController::getMine(uint32_t mine_id) {
+    return *m_mines[IdFactory::getInstance().getIndex(mine_id)];
 }

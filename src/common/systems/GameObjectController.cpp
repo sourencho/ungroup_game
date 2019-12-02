@@ -1,15 +1,18 @@
 #include "GameObjectController.hpp"
 
-#include "../../common/events/ClientConnectedEvent.hpp"
-#include "../../common/events/EventController.hpp"
-#include "../../common/events/PlayerCreatedEvent.hpp"
+#include "../events/ClientConnectedEvent.hpp"
+#include "../events/CollisionEvent.hpp"
+#include "../events/EventController.hpp"
+#include "../events/PlayerCreatedEvent.hpp"
+#include "../factories/IdFactory.hpp"
+#include "../util/game_def.hpp"
 
 GameObjectController::GameObjectController(PhysicsController& physics_controller,
                                            ResourceStore& resource_store) :
     m_gameObjectStore(physics_controller, resource_store),
     m_playerController(m_gameObjectStore.getPlayers()),
     m_groupController(m_gameObjectStore.getGroups(), m_gameObjectStore.getPlayers()),
-    m_mineController(m_gameObjectStore.getMines()), m_resourceController() {
+    m_mineController(m_gameObjectStore.getMines(), m_resourceController) {
     addEventListeners();
 }
 
@@ -19,6 +22,37 @@ void GameObjectController::addEventListeners() {
     EventController::getInstance().addEventListener(
         EventType::EVENT_TYPE_CLIENT_CONNECTED,
         std::bind(&GameObjectController::handleClientConnectedEvent, this, std::placeholders::_1));
+    EventController::getInstance().addEventListener(
+        EventType::EVENT_TYPE_COLLISION,
+        std::bind(&GameObjectController::handleCollisionEvent, this, std::placeholders::_1));
+}
+
+void GameObjectController::handleCollisionEvent(std::shared_ptr<Event> event) {
+    std::shared_ptr<CollisionEvent> collision_event =
+        std::dynamic_pointer_cast<CollisionEvent>(event);
+
+    Collision collision = collision_event->getCollision();
+    transferResources(collision.ids.first, collision.ids.second);
+}
+
+void GameObjectController::transferResources(uint32_t circle_a_id, uint32_t circle_b_id) {
+    uint32_t group_id, mine_id;
+    if (IdFactory::getInstance().getType(circle_a_id) == GameObjectType::group &&
+        IdFactory::getInstance().getType(circle_b_id) == GameObjectType::mine) {
+        group_id = circle_a_id;
+        mine_id = circle_b_id;
+    } else if (IdFactory::getInstance().getType(circle_a_id) == GameObjectType::mine &&
+               IdFactory::getInstance().getType(circle_b_id) == GameObjectType::group) {
+        group_id = circle_b_id;
+        mine_id = circle_a_id;
+    } else {
+        return;
+    }
+    Mine& mine = m_mineController.getMine(mine_id);
+    std::vector<uint32_t> group_player_ids = m_groupController.getGroupPlayerIds(group_id);
+    for (auto player_id : group_player_ids) {
+        m_resourceController.move(mine_id, player_id, mine.getResourceType(), 1);
+    }
 }
 
 void GameObjectController::handleClientConnectedEvent(std::shared_ptr<Event> event) {

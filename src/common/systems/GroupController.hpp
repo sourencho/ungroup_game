@@ -47,9 +47,10 @@ class GroupController {
     GroupControllerUpdate getUpdate();
     void applyUpdate(GroupControllerUpdate gcu);
     uint32_t getGroupId(uint32_t player_id);
+    Group& getGroup(uint32_t group_id);
+    std::vector<uint32_t> getGroupPlayerIds(uint32_t group_id);
 
   private:
-    Group& getGroup(uint32_t group_id);
     std::vector<uint32_t> getEmptyGroupIds();
     std::pair<TypeDef::ids, TypeDef::ids> partitionGroupsByPlayerCount();
     Player& getPlayer(uint32_t player_id);
