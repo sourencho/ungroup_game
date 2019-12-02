@@ -1,5 +1,5 @@
 /**
- * Renders the players resources.
+ * Renders the client's player's resource counts.
  */
 
 #ifndef ResourceUIElement_hpp

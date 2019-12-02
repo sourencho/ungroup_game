@@ -21,15 +21,36 @@ class NetworkingClient {
     NetworkingClient();
     ~NetworkingClient();
 
+    /**
+     * Establish a connection with the server and get back client's player id.
+     * This function will stall until the player id is recieved.
+     */
     uint32_t registerClientAndFetchPlayerId();
+
+    /**
+     * Get last game state recieved from the server.
+     */
     GameState getGameState();
+
+    int getClientId() const;
+
+    /**
+     * Bool indicating whether getGameState will return a new game state or one already fetched.
+     */
+    bool getGameStateIsFresh() const;
+    /**
+     * Push an unreliable input onto the stack to be sent to the server.
+     */
+    void pushUnreliableInput(InputDef::UnreliableInput unreliable_input);
+
+    /**
+     * Push a reliable input onto the stack to be sent to the server.
+     */
+    void pushReliableInput(InputDef::ReliableInput reliable_input);
+
     void incrementTick();
     uint getTick() const;
     void setTick(uint tick);
-    int getClientId() const;
-    bool getGameStateIsFresh() const;
-    void pushUnreliableInput(InputDef::UnreliableInput unreliable_input);
-    void pushReliableInput(InputDef::ReliableInput reliable_input);
 
   private:
     // Sockets
@@ -56,13 +77,27 @@ class NetworkingClient {
     std::atomic<bool> m_stopThreads_ta{false};
 
     // Methods
+    /**
+     * Send client inputs to server via UDP.
+     */
     void sendUnreliableInput();
+
+    /**
+     * Send client inputs to server via TCP.
+     */
     void sendReliableInput();
-    void readRegistrationResponse();
+
+    /**
+     * Establish a TCP connection with the server and get back a client id and tick.
+     */
     void registerClient();
-    void addEventListeners();
-    void handlePlayerCreatedEvent(std::shared_ptr<Event> event);
+    void readRegistrationResponse();
     uint32_t fetchPlayerId();
+
+    /**
+     * Register callbacks for events.
+     */
+    void addEventListeners();
 
     // Misc
     std::atomic<int> m_clientId_ta{-1};

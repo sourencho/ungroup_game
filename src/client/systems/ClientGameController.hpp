@@ -7,7 +7,6 @@
 #include <unordered_map>
 #include <vector>
 
-#include "../../common/events/Event.hpp"
 #include "../../common/resources/ResourceStore.hpp"
 #include "../../common/systems/GameController.hpp"
 #include "../rendering/Animation.hpp"
@@ -37,15 +36,36 @@ class ClientGameController : public GameController {
     void setTick(unsigned int tick) override;
 
     // Methods
+
+    /**
+     * Get the center coordinates of the player's view of the world.
+     * Currently returns the center of the player's group.
+     */
     sf::Vector2f getPlayerViewCenter();
+
+    /**
+     * Register the client via the NetworkingClient.
+     * @returns: The client's player id.
+     */
     void registerClient();
+
     void draw();
-    void addEventListeners();
-    void fetchPlayerId();
+
+    /*
+     * Apply the game state update from the server (rewind, because it is likely the state of an old
+     * tick) and then interpolate up to the current tick by applying local inputs for each tick
+     * (replay).
+     */
     void rewindAndReplay();
-    void handleCollisionEvent(std::shared_ptr<Event> event);
-    void createCollisionAnimation(const sf::Vector2f& collision_position);
+
+    /**
+     * Send client input to server
+     */
     void sendInputs(std::pair<InputDef::ReliableInput, InputDef::UnreliableInput> inputs);
+
+    /**
+     * Save local input for replay
+     */
     void saveInputs(std::pair<InputDef::ReliableInput, InputDef::UnreliableInput> inputs);
 
     // Variables

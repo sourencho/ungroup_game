@@ -3,8 +3,6 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "../../common/events/CollisionEvent.hpp"
-#include "../../common/events/EventController.hpp"
 #include "../../common/physics/VectorUtil.hpp"
 #include "../../common/util/StateDef.hpp"
 #include "../../common/util/game_settings.hpp"
@@ -15,13 +13,13 @@ ClientGameController::ClientGameController(InputDef::InputKeys keys, sf::RenderW
                                            sf::Vector2f buffer_scaling_factor,
                                            sf::Sprite& buffer_sprite) :
     GameController(),
-    m_networkingClient(new NetworkingClient()), m_animationController(new AnimationController()),
+    m_networkingClient(new NetworkingClient()),
+    m_animationController(new AnimationController(*m_resourceStore)),
     m_inputController(new InputController(keys)), m_window(window), m_buffer(buffer),
     m_windowView(sf::Vector2f(window.getSize()) / 2.f, sf::Vector2f(window.getSize())),
     m_playerView({0.f, 0.f}, sf::Vector2f(window.getSize())),
     m_guiController(new GUIController(window.getSize(), *m_resourceStore)),
     m_bufferSprite(buffer_sprite), m_bufferScalingFactor(buffer_scaling_factor) {
-    addEventListeners();
 }
 
 ClientGameController::~ClientGameController() {
@@ -38,12 +36,6 @@ void ClientGameController::start() {
 void ClientGameController::registerClient() {
     std::cout << "Registering client with server..." << std::endl;
     m_playerId = m_networkingClient->registerClientAndFetchPlayerId();
-}
-
-void ClientGameController::addEventListeners() {
-    EventController::getInstance().addEventListener(
-        EventType::EVENT_TYPE_COLLISION,
-        std::bind(&ClientGameController::handleCollisionEvent, this, std::placeholders::_1));
 }
 
 void ClientGameController::incrementTick() {
@@ -104,10 +96,6 @@ void ClientGameController::postUpdate() {
     m_guiController->update(ui_data);
 }
 
-/*
- * Rewind and replay is applying the game state update from the server (rewind because it is likely
- * for an old tick) and then interpolating up to the current tick via interpolation (replay).
- */
 void ClientGameController::rewindAndReplay() {
     GameState game_state = m_networkingClient->getGameState();
     int client_tick = getTick();
@@ -140,9 +128,6 @@ void ClientGameController::rewindAndReplay() {
     m_tickToInput.clear();
 }
 
-/**
- * Send client input to server
- */
 void ClientGameController::sendInputs(
     std::pair<InputDef::ReliableInput, InputDef::UnreliableInput> inputs) {
     if (!inputs.first.allFalse()) {
@@ -153,27 +138,10 @@ void ClientGameController::sendInputs(
     }
 }
 
-/**
- * Save input and state for replay
- */
 void ClientGameController::saveInputs(
     std::pair<InputDef::ReliableInput, InputDef::UnreliableInput> inputs) {
     m_tickToInput[m_networkingClient->getTick()] =
         (InputDef::ClientInputAndTick){inputs.second, inputs.first, m_networkingClient->getTick()};
-}
-
-void ClientGameController::handleCollisionEvent(std::shared_ptr<Event> event) {
-    std::shared_ptr<CollisionEvent> collision_event =
-        std::dynamic_pointer_cast<CollisionEvent>(event);
-
-    createCollisionAnimation(collision_event->getCollision().position);
-}
-
-void ClientGameController::createCollisionAnimation(const sf::Vector2f& collision_position) {
-    auto collision_sprite = std::unique_ptr<AnimatedSprite>(
-        new AnimatedSprite(*m_resourceStore->getTexture(RenderingDef::TextureKey::collision),
-                           {6, 1}, 240, collision_position, {2.f, 2.f}));
-    m_animationController->add(std::move(collision_sprite));
 }
 
 unsigned int ClientGameController::getTick() {

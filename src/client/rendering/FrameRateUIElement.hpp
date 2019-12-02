@@ -1,5 +1,5 @@
 /**
- * Renders the frames FPS of the client.
+ * Renders the client's updates per second.
  */
 
 #ifndef FrameRateUIElement_hpp

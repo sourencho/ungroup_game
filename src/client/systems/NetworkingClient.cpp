@@ -55,6 +55,10 @@ void NetworkingClient::createUdpSocket() {
     m_udpSocket_t->setBlocking(false);
 }
 
+/**
+ * The player id isn't ready at registration time so this function stalls until player id is
+ * recieved.
+ */
 uint32_t NetworkingClient::registerClientAndFetchPlayerId() {
     registerClient();
     return fetchPlayerId();
