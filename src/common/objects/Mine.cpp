@@ -18,14 +18,25 @@ sf::Packet& operator>>(sf::Packet& packet, MineUpdate& mine_update) {
            mine_update.y_pos >> mine_update.radius >> mine_update.shader_key;
 }
 
-Mine::Mine(uint32_t id, sf::Vector2f position, float size, sf::Color color, PhysicsController& pc,
-           ResourceStore& rs) :
+Mine::Mine(uint32_t id, sf::Vector2f position, float size, sf::Color color,
+           ResourceType resource_type, PhysicsController& pc, ResourceStore& rs) :
     CircleGameObject(id, position, size, color, pc, rs, std::numeric_limits<float>::infinity(),
-                     false) {
+                     false),
+    m_resourceType(resource_type) {
     setTexture(RenderingDef::TextureKey::mine_pattern);
 }
 
 Mine::~Mine() {
+}
+
+void Mine::draw(sf::RenderTarget& render_target) {
+    if (m_resourceCount == 0) {
+        setColor(RenderingDef::EMPTY_MINE_COLOR);
+    } else {
+        setColor(RenderingDef::MINE_COLORS[m_resourceType]);
+    }
+
+    CircleGameObject::draw(render_target);
 }
 
 MineUpdate Mine::getUpdate() {

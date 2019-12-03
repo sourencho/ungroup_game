@@ -24,17 +24,16 @@ GameObjectStore::GameObjectStore(PhysicsController& pc, ResourceStore& rs) :
         uint32_t new_group_id = IdFactory::getInstance().getNextId(GameObjectType::group);
         m_groups.push_back(std::shared_ptr<Group>(new Group(
             new_group_id, sf::Vector2f(GROUP_START_OFFSET_X * (i + 1), GROUP_START_OFFSET_Y),
-            sf::Color::Transparent, m_physicsController, m_resourceStore)));
+            RenderingDef::DEFAULT_GROUP_COLOR, m_physicsController, m_resourceStore)));
     }
 
     // Initialize Mines
-    std::vector<sf::Color> mine_colors = {RenderingDef::DARKEST_COLOR, RenderingDef::DARK_COLOR,
-                                          RenderingDef::LIGHT_COLOR, RenderingDef::LIGHTEST_COLOR};
     for (int i = 0; i < MAX_MINE_COUNT; i++) {
         uint32_t new_mine_id = IdFactory::getInstance().getNextId(GameObjectType::mine);
         m_mines.push_back(std::shared_ptr<Mine>(new Mine(
             new_mine_id, sf::Vector2f(MINE_START_OFFSET_X, MINE_START_OFFSET_Y * (i + 1) - 100.f),
-            MINE_SIZE, mine_colors[i % mine_colors.size()], m_physicsController, m_resourceStore)));
+            MINE_SIZE, RenderingDef::DEFAULT_MINE_COLOR, ResourceType(i % RESOURCE_TYPE_COUNT),
+            m_physicsController, m_resourceStore)));
     }
 }
 

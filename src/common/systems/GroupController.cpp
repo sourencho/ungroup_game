@@ -265,6 +265,10 @@ void GroupController::removePlayer(uint32_t player_id) {
     m_playerToGroup.erase(player_id);
 }
 
+std::vector<uint32_t> GroupController::getGroupPlayerIds(uint32_t group_id) {
+    return m_groupToPlayers[group_id];
+}
+
 /* Network utilities */
 
 GroupControllerUpdate GroupController::getUpdate() {

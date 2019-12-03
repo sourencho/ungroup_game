@@ -47,9 +47,9 @@ void GameController::step() {
 }
 
 void GameController::computeGameState(const InputDef::PlayerInputs& pi, sf::Int32 delta_ms) {
-    EventController::getInstance().forceProcessEvents();
     m_gameObjectController->update(pi);
     m_physicsController->update(delta_ms);
     m_gameObjectController->updatePostPhysics();
+    EventController::getInstance().forceProcessEvents();
     incrementTick();
 }

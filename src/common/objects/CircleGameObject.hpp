@@ -56,6 +56,9 @@ class CircleGameObject : public GameObject {
     void setOutlineColor(sf::Color color) {
         m_outlineShape.setOutlineColor(color);
     };
+    void setColor(sf::Color color) {
+        m_circleShape.setFillColor(color);
+    }
 
     void draw(sf::RenderTarget& render_target);
 

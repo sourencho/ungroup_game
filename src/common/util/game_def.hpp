@@ -18,6 +18,10 @@ struct ReliableCommand {
 enum ReliableCommandType { register_client, player_id, reliable_input };
 enum UnreliableCommandType { unreliable_input, fetch_state };
 
-enum GameObjectType { group, mine, player };
+enum GameObjectType {
+    player,
+    group,
+    mine,
+};
 
 #endif /* game_def_hpp */
