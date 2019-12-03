@@ -25,7 +25,7 @@ uint32_t MineController::createMine() {
     Mine& new_mine = *m_mines[next_mine_index];
     uint32_t new_mine_id = new_mine.getId();
     new_mine.setActive(true);
-    m_resourceController.add(new_mine_id, new_mine.getResourceType(), 4);
+    m_resourceController.add(new_mine_id, new_mine.getResourceType(), MINE_RESOURCE_COUNT);
     return new_mine_id;
 }
 

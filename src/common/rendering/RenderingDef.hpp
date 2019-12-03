@@ -21,10 +21,12 @@ namespace RenderingDef {
     const sf::Color DARK_COLOR(63, 157, 130);
     const sf::Color LIGHT_COLOR(161, 205, 115);
     const sf::Color LIGHTEST_COLOR(236, 219, 96);
-
     const std::array<sf::Color, RESOURCE_TYPE_COUNT> MINE_COLORS = {
         RenderingDef::DARKEST_COLOR, RenderingDef::DARK_COLOR, RenderingDef::LIGHT_COLOR,
         RenderingDef::LIGHTEST_COLOR};
+    const sf::Color EMPTY_MINE_COLOR = sf::Color::White;
+    const sf::Color DEFAULT_GROUP_COLOR = sf::Color::Transparent;
+    const sf::Color DEFAULT_MINE_COLOR = sf::Color::White;
 }; // namespace RenderingDef
 
 #endif /* RenderingDef_hpp */

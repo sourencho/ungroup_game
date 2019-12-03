@@ -31,7 +31,7 @@ Mine::~Mine() {
 
 void Mine::draw(sf::RenderTarget& render_target) {
     if (m_resourceCount == 0) {
-        setColor(sf::Color::White);
+        setColor(RenderingDef::EMPTY_MINE_COLOR);
     } else {
         setColor(RenderingDef::MINE_COLORS[m_resourceType]);
     }
