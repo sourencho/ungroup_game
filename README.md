@@ -62,27 +62,6 @@ To run tests, after building, run:
 - Variables with the suffix `_t` are used by multiple threads and have a corresponding `<var>_lock` mutex.
 - Variables with the suffix `_ta` are used by multiple threads but don't have a mutex because they are atomic.
 
-### Pull Request Template
-
-```markdown
-**Description**
-
-Description of changes
-
-**Fixes**
-
-Fixes #X
-
-**Commits**
-
-[COMMIT_SHA_1] Commit title
-Commit message
-
-[COMMIT_SHA_2] Commit title
-Commit message
-```
- 
-
 ### Debugging
 
 #### Travis CI Debug Build
@@ -130,7 +109,7 @@ Debug run:
 ### Networking
 - [Gabriel Gambetta](https://www.gabrielgambetta.com)
   - [Fast-Paced Multiplayer](https://www.gabrielgambetta.com/client-server-game-architecture.html)
-- [Gafferon Games](https://gafferongames.com) 
+- [Gafferon Games](https://gafferongames.com)
   - [Networked Physics](https://gafferongames.com/categories/networked-physics)
 - [Valve: Developer Community](https://developer.valvesoftware.com)
   - [Source Multiplayer Networking](https://developer.valvesoftware.com/wiki/Source_Multiplayer_Networking)
