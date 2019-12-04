@@ -4,22 +4,17 @@
 #include <SFML/Graphics.hpp>
 
 #include "../../common/physics/VectorUtil.hpp"
+#include "../../common/util/InputDef.hpp"
 #include "../../common/util/StateDef.hpp"
 #include "../../common/util/game_settings.hpp"
 #include "ClientGameController.hpp"
 
-ClientGameController::ClientGameController(InputDef::InputKeys keys, sf::RenderWindow& window,
-                                           sf::RenderTexture& buffer,
-                                           sf::Vector2f buffer_scaling_factor,
-                                           sf::Sprite& buffer_sprite) :
+ClientGameController::ClientGameController() :
     GameController(),
-    m_networkingClient(new NetworkingClient()),
-    m_animationController(new AnimationController(*m_resourceStore)),
-    m_inputController(new InputController(keys)), m_window(window), m_buffer(buffer),
-    m_windowView(sf::Vector2f(window.getSize()) / 2.f, sf::Vector2f(window.getSize())),
-    m_playerView({0.f, 0.f}, sf::Vector2f(window.getSize())),
-    m_guiController(new GUIController(window.getSize(), *m_resourceStore)),
-    m_bufferSprite(buffer_sprite), m_bufferScalingFactor(buffer_scaling_factor) {
+    m_window(sf::VideoMode(WINDOW_RESOLUTION.x, WINDOW_RESOLUTION.y), "Ungroup", sf::Style::Close),
+    m_networkingClient(new NetworkingClient()), m_inputController(new InputController(INPUT_KEYS)),
+    m_renderingController(
+        new RenderingController(m_window, *m_gameObjectController, *m_resourceStore)) {
 }
 
 ClientGameController::~ClientGameController() {
@@ -42,30 +37,8 @@ void ClientGameController::incrementTick() {
     m_networkingClient->incrementTick();
 }
 
-sf::Vector2f ClientGameController::getPlayerViewCenter() {
-    // Update view to match player's group's position
-    sf::Vector2f player_position = m_gameObjectController->getPlayerPosition(m_playerId);
-    return {player_position.x * m_bufferScalingFactor.x,
-            player_position.y * m_bufferScalingFactor.y};
-}
-
 void ClientGameController::draw() {
-    m_window.clear(sf::Color::Green);
-    m_buffer.clear(BACKGROUND_COLOR);
-
-    // Draw game from player view
-    m_playerView.setCenter(getPlayerViewCenter());
-    m_window.setView(m_playerView);
-    m_gameObjectController->draw(m_buffer);
-    m_animationController->draw(m_buffer);
-    m_window.draw(m_bufferSprite);
-
-    // Draw GUI from window view
-    m_window.setView(m_windowView);
-    m_guiController->draw(m_window);
-
-    m_buffer.display();
-    m_window.display();
+    m_renderingController->draw();
 }
 
 InputDef::PlayerInputs ClientGameController::getPlayerInputs() {
@@ -80,20 +53,25 @@ void ClientGameController::preUpdate() {
     if (m_networkingClient->getGameStateIsFresh()) {
         rewindAndReplay();
     }
+
+    m_renderingController->preUpdate();
 }
 
 void ClientGameController::update(const InputDef::PlayerInputs& pi, sf::Int32 delta_ms) {
     computeGameState(pi, delta_ms);
-    m_animationController->step(delta_ms);
+    m_renderingController->update(delta_ms);
 }
 
 void ClientGameController::postUpdate() {
+    sf::Vector2f player_position = m_gameObjectController->getPlayerPosition(m_playerId);
     UIData ui_data = {
-        .frame_rate =
-            static_cast<float>(m_frameCount) / (static_cast<float>(m_elapsedTime) / 1000.f),
+        .steps_per_second =
+            static_cast<float>(m_stepCount) / (static_cast<float>(m_elapsedTime) / 1000.f),
+        .updates_per_second =
+            static_cast<float>(m_updateCount) / (static_cast<float>(m_elapsedTime) / 1000.f),
         .resources = m_gameObjectController->getPlayerResources(m_playerId),
     };
-    m_guiController->update(ui_data);
+    m_renderingController->postUpdate(player_position, ui_data);
 }
 
 void ClientGameController::rewindAndReplay() {

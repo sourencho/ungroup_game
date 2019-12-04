@@ -15,7 +15,7 @@ void AnimationController::add(std::unique_ptr<AnimatedSprite> animated_sprite) {
     m_animatedSprites.push_back(std::move(animated_sprite));
 }
 
-void AnimationController::step(sf::Uint32 delta_ms) {
+void AnimationController::update(sf::Uint32 delta_ms) {
     for (auto& animated_sprite : m_animatedSprites) {
         animated_sprite->update(delta_ms);
     }

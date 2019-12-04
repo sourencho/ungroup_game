@@ -22,7 +22,8 @@ struct Padding {
     float bottom;
 };
 struct UIData {
-    float frame_rate;
+    float steps_per_second;
+    float updates_per_second;
     std::array<uint32_t, RESOURCE_TYPE_COUNT> resources;
 };
 

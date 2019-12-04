@@ -15,6 +15,8 @@ class ServerGameController : public GameController {
     explicit ServerGameController();
     ~ServerGameController();
 
+    void start() override;
+
   private:
     // Overrides
     void update(const InputDef::PlayerInputs& pi, sf::Int32 delta_ms) override;
