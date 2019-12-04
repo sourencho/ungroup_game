@@ -12,15 +12,14 @@
 #include "../rendering/Animation.hpp"
 #include "../rendering/AnimationController.hpp"
 #include "../rendering/GUIController.hpp"
+#include "../rendering/RenderingController.hpp"
 #include "../systems/InputController.hpp"
 #include "NetworkingClient.hpp"
 
 class ClientGameController : public GameController {
 
   public:
-    explicit ClientGameController(InputDef::InputKeys keys, sf::RenderWindow& window,
-                                  sf::RenderTexture& buffer, sf::Vector2f buffer_scaling_factor,
-                                  sf::Sprite& buffer_sprite);
+    explicit ClientGameController();
     ~ClientGameController();
 
     void start();
@@ -36,12 +35,6 @@ class ClientGameController : public GameController {
     void setTick(unsigned int tick) override;
 
     // Methods
-
-    /**
-     * Get the center coordinates of the player's view of the world.
-     * Currently returns the center of the player's group.
-     */
-    sf::Vector2f getPlayerViewCenter();
 
     /**
      * Register the client via the NetworkingClient.
@@ -74,17 +67,11 @@ class ClientGameController : public GameController {
     std::unordered_map<unsigned int, InputDef::ClientInputAndTick>
         m_tickToInput; // Cache of past inputs
 
-    std::unique_ptr<NetworkingClient> m_networkingClient;
-    std::unique_ptr<AnimationController> m_animationController;
-    std::unique_ptr<InputController> m_inputController;
-    std::unique_ptr<GUIController> m_guiController;
+    sf::RenderWindow m_window;
 
-    sf::RenderWindow& m_window;
-    sf::RenderTexture& m_buffer;
-    sf::View m_playerView;
-    sf::View m_windowView;
-    sf::Vector2f m_bufferScalingFactor;
-    sf::Sprite& m_bufferSprite;
+    std::unique_ptr<NetworkingClient> m_networkingClient;
+    std::unique_ptr<InputController> m_inputController;
+    std::unique_ptr<RenderingController> m_renderingController;
 };
 
 #endif /* ClientGameController_hpp */

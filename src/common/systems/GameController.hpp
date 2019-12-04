@@ -25,6 +25,10 @@ class GameController {
     GameController(const GameController& temp_obj) = delete;
     GameController& operator=(const GameController& temp_obj) = delete;
 
+    /**
+     * Calls preUpdate once, update one or many times, and postUpdate once.
+     * Calls update a variable amount of times to acheive a constant average updates per second.
+     */
     void step();
 
   protected:

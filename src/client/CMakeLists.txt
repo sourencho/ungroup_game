@@ -14,6 +14,7 @@ add_library(client-lib
     rendering/TestUIElement.cpp
     rendering/FrameRateUIElement.cpp
     rendering/ResourceUIElement.cpp
+    rendering/RenderingController.cpp
 )
 
 target_link_libraries(ug-client PRIVATE client-lib common-lib)
