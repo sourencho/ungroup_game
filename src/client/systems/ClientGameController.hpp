@@ -22,7 +22,7 @@ class ClientGameController : public GameController {
     explicit ClientGameController();
     ~ClientGameController();
 
-    void start();
+    void start() override;
 
   private:
     // Overrides
@@ -62,7 +62,7 @@ class ClientGameController : public GameController {
     void saveInputs(std::pair<InputDef::ReliableInput, InputDef::UnreliableInput> inputs);
 
     // Variables
-    uint32_t m_playerId;
+    uint32_t m_playerId = 0;
 
     std::unordered_map<unsigned int, InputDef::ClientInputAndTick>
         m_tickToInput; // Cache of past inputs

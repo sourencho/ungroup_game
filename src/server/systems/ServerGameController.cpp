@@ -7,6 +7,12 @@ ServerGameController::ServerGameController() :
 ServerGameController::~ServerGameController() {
 }
 
+void ServerGameController::start() {
+    while (true) {
+        step();
+    }
+}
+
 InputDef::PlayerInputs ServerGameController::getPlayerInputs() {
     return m_networkingServer->collectClientInputs();
 }
