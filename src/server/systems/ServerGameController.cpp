@@ -8,6 +8,7 @@ ServerGameController::~ServerGameController() {
 }
 
 void ServerGameController::start() {
+    m_state = State::playing;
     while (true) {
         step();
     }
@@ -26,11 +27,14 @@ void ServerGameController::update(const InputDef::PlayerInputs& pi, sf::Int32 de
 }
 
 void ServerGameController::postUpdate() {
+    if (m_gameObjectController->getGameOver()) {
+        m_state = State::game_over;
+    }
     setNetworkState();
 }
 
 void ServerGameController::setNetworkState() {
-    m_networkingServer->setState(m_gameObjectController->getGameState(getTick()));
+    m_networkingServer->setState(m_gameObjectController->getGameState(getTick(), m_state));
 }
 
 void ServerGameController::incrementTick() {

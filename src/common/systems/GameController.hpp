@@ -12,6 +12,7 @@
 #include "../objects/Player.hpp"
 #include "../physics/PhysicsController.hpp"
 #include "../util/StateDef.hpp"
+#include "../util/game_def.hpp"
 #include "GameObjectController.hpp"
 #include "GameObjectStore.hpp"
 
@@ -53,6 +54,8 @@ class GameController {
     sf::Int32 m_timeAccumulator = 0;
     sf::Int32 m_stepCount = 0;
     sf::Int32 m_updateCount = 0;
+
+    State m_state = State::none;
 };
 
 #endif /* GameController_hpp */

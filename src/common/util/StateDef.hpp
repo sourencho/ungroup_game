@@ -10,6 +10,7 @@
 #include "../objects/Mine.hpp"
 #include "../systems/GroupController.hpp"
 #include "../systems/ResourceController.hpp"
+#include "game_def.hpp"
 
 struct GameState {
     unsigned int tick;
@@ -18,6 +19,7 @@ struct GameState {
     std::vector<PlayerUpdate> player_updates;
     GroupControllerUpdate gcu;
     ResourceControllerUpdate rcu;
+    State state;
 };
 
 sf::Packet pack_game_state(GameState game_state);

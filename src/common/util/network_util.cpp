@@ -26,6 +26,17 @@ sf::Packet& operator>>(sf::Packet& packet, sf::Vector2f& vector_2f) {
     return packet >> vector_2f.x >> vector_2f.y;
 }
 
+sf::Packet& operator<<(sf::Packet& packet, const State& state) {
+    return packet << static_cast<sf::Uint32>(state);
+}
+
+sf::Packet& operator>>(sf::Packet& packet, State& state) {
+    sf::Uint32 state_index;
+    packet >> state_index;
+    state = State(state_index);
+    return packet;
+}
+
 sf::Socket::Status receiveWithTimeout(sf::TcpSocket& socket, sf::Packet& packet, sf::Time timeout) {
     sf::SocketSelector selector;
     selector.add(socket);

@@ -35,6 +35,7 @@ sf::Packet pack_game_state(GameState game_state) {
 
     packet << game_state.gcu;
     packet << game_state.rcu;
+    packet << game_state.state;
 
     return packet;
 }
@@ -49,6 +50,7 @@ GameState unpack_game_state(sf::Packet game_state_packet) {
     std::vector<PlayerUpdate> player_updates;
     GroupControllerUpdate gcu;
     ResourceControllerUpdate rcu;
+    State state;
 
     game_state_packet >> tick;
 
@@ -75,7 +77,8 @@ GameState unpack_game_state(sf::Packet game_state_packet) {
 
     game_state_packet >> gcu;
     game_state_packet >> rcu;
+    game_state_packet >> state;
 
-    GameState game_state = {tick, group_updates, mine_updates, player_updates, gcu, rcu};
+    GameState game_state = {tick, group_updates, mine_updates, player_updates, gcu, rcu, state};
     return game_state;
 }

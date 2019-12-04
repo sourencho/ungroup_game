@@ -5,6 +5,7 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "../systems/ResourceController.hpp"
 #include "InputDef.hpp"
 
 /* Input */
@@ -37,7 +38,14 @@ const float MINE_START_OFFSET_Y = 200.f;
 const float GROUP_MEMBER_SIZE = 10.f;
 const float MINE_SIZE = 80.f;
 const float GROUP_SPEED = 100.f;
-const uint32_t MINE_RESOURCE_COUNT = 4;
+const uint32_t MINE_RESOURCE_COUNT = 1;
+
+const std::array<uint32_t, RESOURCE_TYPE_COUNT> WIN_CONDITION = {
+    MINE_RESOURCE_COUNT,
+    MINE_RESOURCE_COUNT,
+    MINE_RESOURCE_COUNT,
+    MINE_RESOURCE_COUNT,
+};
 
 /* Threads */
 

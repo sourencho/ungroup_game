@@ -22,7 +22,7 @@ ClientGameController::~ClientGameController() {
 
 void ClientGameController::start() {
     registerClient();
-    while (m_window.isOpen()) {
+    while (m_window.isOpen() && m_state != State::game_over) {
         step();
         draw();
     }
@@ -81,7 +81,7 @@ void ClientGameController::rewindAndReplay() {
     int tick_delta = client_tick - server_tick;
 
     // Rewind
-    m_gameObjectController->applyGameState(game_state);
+    m_state = m_gameObjectController->applyGameState(game_state);
     setTick(static_cast<unsigned int>(server_tick));
 
     // Replay

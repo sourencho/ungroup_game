@@ -6,6 +6,7 @@
 #include "../events/PlayerCreatedEvent.hpp"
 #include "../factories/IdFactory.hpp"
 #include "../util/game_def.hpp"
+#include "../util/game_settings.hpp"
 
 GameObjectController::GameObjectController(PhysicsController& physics_controller,
                                            ResourceStore& resource_store) :
@@ -82,7 +83,7 @@ uint32_t GameObjectController::createPlayerWithGroup(uint32_t client_id) {
     return new_player_id;
 }
 
-void GameObjectController::applyGameState(GameState game_state) {
+State GameObjectController::applyGameState(GameState game_state) {
     for (auto gu : game_state.group_updates) {
         m_gameObjectStore.getGroup(gu.group_id)->applyUpdate(gu);
     }
@@ -94,9 +95,10 @@ void GameObjectController::applyGameState(GameState game_state) {
     }
     m_groupController.applyUpdate(game_state.gcu);
     m_resourceController.applyUpdate(game_state.rcu);
+    return game_state.state;
 }
 
-GameState GameObjectController::getGameState(uint32_t tick) {
+GameState GameObjectController::getGameState(uint32_t tick, State state) {
     auto groups = m_gameObjectStore.getGroups();
     auto mines = m_gameObjectStore.getMines();
     auto players = m_gameObjectStore.getPlayers();
@@ -113,7 +115,7 @@ GameState GameObjectController::getGameState(uint32_t tick) {
     std::transform(players.begin(), players.end(), std::back_inserter(player_updates),
                    [](std::shared_ptr<Player> player) { return player->getUpdate(); });
 
-    GameState gs = {tick, group_updates, mine_updates, player_updates, gcu, rcu};
+    GameState gs = {tick, group_updates, mine_updates, player_updates, gcu, rcu, state};
 
     return gs;
 }
@@ -130,4 +132,13 @@ sf::Vector2f GameObjectController::getPlayerPosition(uint32_t player_id) {
 std::array<uint32_t, RESOURCE_TYPE_COUNT>
 GameObjectController::getPlayerResources(uint32_t player_id) {
     return m_resourceController.get(player_id);
+}
+
+bool GameObjectController::getGameOver() {
+    for (auto player_id : m_playerController.getActivePlayerIds()) {
+        if (m_resourceController.get(player_id) == WIN_CONDITION) {
+            return true;
+        }
+    }
+    return false;
 }

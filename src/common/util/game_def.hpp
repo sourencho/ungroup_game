@@ -3,6 +3,12 @@
 
 #include <SFML/Graphics.hpp>
 
+enum State {
+    none,
+    playing,
+    game_over,
+};
+
 struct UnreliableCommand {
     sf::Uint32 client_id;
     sf::Uint32 command;
