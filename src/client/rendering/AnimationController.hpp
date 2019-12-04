@@ -13,7 +13,7 @@ class AnimationController {
     AnimationController& operator=(const AnimationController& temp_obj) = delete;
 
     void add(std::unique_ptr<AnimatedSprite> animated_sprite);
-    void step(sf::Uint32 delta_ms);
+    void update(sf::Uint32 delta_ms);
     void draw(sf::RenderTarget& target);
     const size_t getCount() const {
         return m_animatedSprites.size();

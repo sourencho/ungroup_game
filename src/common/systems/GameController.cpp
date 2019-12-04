@@ -39,9 +39,10 @@ void GameController::step() {
 
         m_timeAccumulator -= MIN_TIME_STEP;
         m_elapsedTime += MIN_TIME_STEP;
+        m_updateCount += 1;
     }
 
-    m_frameCount += 1;
+    m_stepCount += 1;
 
     postUpdate();
 }
