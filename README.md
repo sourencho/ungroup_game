@@ -71,7 +71,7 @@ Description of changes
 
 **Fixes**
 
-Fixes #123
+Fixes #X
 
 **Commits**
 
