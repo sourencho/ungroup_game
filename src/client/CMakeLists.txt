@@ -12,7 +12,7 @@ add_library(client-lib
     rendering/GUIController.cpp
     rendering/BaseUIElement.cpp
     rendering/TestUIElement.cpp
-    rendering/FrameRateUIElement.cpp
+    rendering/DebugUIElement.cpp
     rendering/ResourceUIElement.cpp
     rendering/RenderingController.cpp
 )

@@ -65,8 +65,10 @@ void ClientGameController::update(const InputDef::PlayerInputs& pi, sf::Int32 de
 void ClientGameController::postUpdate() {
     sf::Vector2f player_position = m_gameObjectController->getPlayerPosition(m_playerId);
     UIData ui_data = {
-        .frame_rate =
-            static_cast<float>(m_frameCount) / (static_cast<float>(m_elapsedTime) / 1000.f),
+        .steps_per_second =
+            static_cast<float>(m_stepCount) / (static_cast<float>(m_elapsedTime) / 1000.f),
+        .updates_per_second =
+            static_cast<float>(m_updateCount) / (static_cast<float>(m_elapsedTime) / 1000.f),
         .resources = m_gameObjectController->getPlayerResources(m_playerId),
     };
     m_renderingController->postUpdate(player_position, ui_data);
