@@ -12,6 +12,8 @@ A game about temporary alliances.
 
 Engine written from scratch using the [SFML](https://www.sfml-dev.org/) framework.
 
+Created by [@sourenp](https://github.com/SourenP) and [@copacetic](https://github.com/copacetic)
+
 ## Building and Running
 ### Unix
 1. Clone this repo
