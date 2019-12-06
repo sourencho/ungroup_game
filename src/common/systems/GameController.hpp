@@ -42,8 +42,6 @@ class GameController {
 
     virtual InputDef::PlayerInputs getPlayerInputs() = 0;
     virtual void incrementTick() = 0;
-    virtual unsigned int getTick() = 0;
-    virtual void setTick(unsigned int tick) = 0;
 
     std::unique_ptr<PhysicsController> m_physicsController;
     std::unique_ptr<ResourceStore> m_resourceStore;
@@ -55,7 +53,7 @@ class GameController {
     sf::Int32 m_stepCount = 0;
     sf::Int32 m_updateCount = 0;
 
-    State m_state = State::none;
+    GameStateCore m_gameCoreState;
 };
 
 #endif /* GameController_hpp */

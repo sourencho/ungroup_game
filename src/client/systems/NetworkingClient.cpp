@@ -237,7 +237,8 @@ void NetworkingClient::unreliableRecv() {
         }
 
         if (status != sf::Socket::NotReady) {
-            GameState game_state = unpack_game_state(packet);
+            GameState game_state;
+            packet >> game_state;
             m_gameStateIsFresh_ta = true;
             std::lock_guard<std::mutex> m_gameState_guard(m_gameState_lock);
             m_gameState_t = game_state;

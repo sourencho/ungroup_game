@@ -8,7 +8,7 @@ ServerGameController::~ServerGameController() {
 }
 
 void ServerGameController::start() {
-    m_state = State::playing;
+    m_gameCoreState.status = GameStatus::playing;
     while (true) {
         step();
     }
@@ -27,24 +27,25 @@ void ServerGameController::update(const InputDef::PlayerInputs& pi, sf::Int32 de
 }
 
 void ServerGameController::postUpdate() {
-    if (m_gameObjectController->getGameOver()) {
-        m_state = State::game_over;
+    bool game_over;
+    uint32_t winner_player_id;
+    std::tie(game_over, winner_player_id) = m_gameObjectController->getGameOver();
+    if (game_over) {
+        m_gameCoreState.status = GameStatus::game_over;
+        m_gameCoreState.winner_player_id = winner_player_id;
     }
+    m_gameCoreState.tick = m_networkingServer->getTick();
     setNetworkState();
 }
 
 void ServerGameController::setNetworkState() {
-    m_networkingServer->setState(m_gameObjectController->getGameState(getTick(), m_state));
+    GameState game_state = {
+        .object = m_gameObjectController->getGameStateObject(),
+        .core = m_gameCoreState,
+    };
+    m_networkingServer->setState(game_state);
 }
 
 void ServerGameController::incrementTick() {
     m_networkingServer->incrementTick();
-}
-
-unsigned int ServerGameController::getTick() {
-    return m_networkingServer->getTick();
-}
-
-void ServerGameController::setTick(unsigned int tick) {
-    m_networkingServer->setTick(tick);
 }

@@ -13,9 +13,6 @@ sf::Packet& operator>>(sf::Packet& packet, ReliableCommand& api_command);
 sf::Packet& operator<<(sf::Packet& packet, const sf::Vector2f& vector_2f);
 sf::Packet& operator>>(sf::Packet& packet, sf::Vector2f& vector_2f);
 
-sf::Packet& operator<<(sf::Packet& packet, const State& state);
-sf::Packet& operator>>(sf::Packet& packet, State& state);
-
 sf::Socket::Status receiveWithTimeout(sf::TcpSocket& socket, sf::Packet& packet, sf::Time timeout);
 
 #endif /* network_util_hpp */
