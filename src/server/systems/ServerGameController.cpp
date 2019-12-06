@@ -23,19 +23,46 @@ void ServerGameController::preUpdate() {
 }
 
 void ServerGameController::update(const InputDef::PlayerInputs& pi, sf::Int32 delta_ms) {
-    computeGameState(pi, delta_ms);
+    switch (m_gameStateCore.status) {
+        case GameStatus::not_started: {
+            // noop
+            break;
+        }
+        case GameStatus::playing: {
+            computeGameState(pi, delta_ms);
+            break;
+        }
+        case GameStatus::game_over: {
+            // noop
+            break;
+        }
+    }
 }
 
 void ServerGameController::postUpdate() {
-    bool game_over;
-    uint32_t winner_player_id;
-    std::tie(game_over, winner_player_id) = m_gameObjectController->getGameOver();
-    if (game_over) {
-        m_gameStateCore.status = GameStatus::game_over;
-        m_gameStateCore.winner_player_id = winner_player_id;
+
+    switch (m_gameStateCore.status) {
+        case GameStatus::not_started: {
+            // noop
+            break;
+        }
+        case GameStatus::playing: {
+            bool game_over;
+            uint32_t winner_player_id;
+            std::tie(game_over, winner_player_id) = m_gameObjectController->getGameOver();
+            if (game_over) {
+                m_gameStateCore.status = GameStatus::game_over;
+                m_gameStateCore.winner_player_id = winner_player_id;
+            }
+            m_gameStateCore.tick = m_networkingServer->getTick();
+            setNetworkState();
+            break;
+        }
+        case GameStatus::game_over: {
+            // noop
+            break;
+        }
     }
-    m_gameStateCore.tick = m_networkingServer->getTick();
-    setNetworkState();
 }
 
 void ServerGameController::setNetworkState() {
