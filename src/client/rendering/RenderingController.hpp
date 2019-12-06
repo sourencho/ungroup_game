@@ -23,7 +23,7 @@ class RenderingController {
 
     void preUpdate();
     void update(sf::Int32 delta_ms);
-    void postUpdate(sf::Vector2f player_position, UIData ui_data);
+    void postUpdate(const sf::Vector2f& player_position, const UIData& ui_data);
 
   private:
     void drawGameOver();

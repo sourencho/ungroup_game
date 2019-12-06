@@ -4,7 +4,7 @@ RenderingController::RenderingController(sf::RenderWindow& window, GameObjectCon
                                          ResourceStore& rs) :
     m_window(window),
     m_gameObjectController(goc), m_resourceStore(rs), m_animationController(m_resourceStore),
-    m_guiController(m_window.getSize(), m_resourceStore) {
+    m_guiController(m_window.getSize(), m_resourceStore), m_uiData({}) {
     sf::Vector2f window_size = sf::Vector2f(m_window.getSize());
 
     // Create buffer to draw game onto. Buffer can be scaled to give pixelated effect
@@ -38,7 +38,7 @@ void RenderingController::update(sf::Int32 delta_ms) {
     m_animationController.update(delta_ms);
 }
 
-void RenderingController::postUpdate(sf::Vector2f player_position, UIData ui_data) {
+void RenderingController::postUpdate(const sf::Vector2f& player_position, const UIData& ui_data) {
     m_playerPosition = player_position;
     m_uiData = ui_data;
 

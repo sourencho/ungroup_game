@@ -22,7 +22,7 @@ ClientGameController::~ClientGameController() {
 }
 
 void ClientGameController::start() {
-    m_gameCoreState.status = GameStatus::not_started;
+    m_gameStateCore.status = GameStatus::not_started;
     registerClient();
     while (m_window.isOpen()) {
         step();
@@ -50,11 +50,11 @@ InputDef::PlayerInputs ClientGameController::getPlayerInputs() {
 void ClientGameController::preUpdate() {
     auto inputs = m_inputController->collectInputs(m_window);
 
-    switch (m_gameCoreState.status) {
+    switch (m_gameStateCore.status) {
         case GameStatus::not_started: {
             // Keep fetching game state to check if game status changed from not_started
             GameState game_state = m_networkingClient->getGameState();
-            m_gameCoreState = game_state.core;
+            m_gameStateCore = game_state.core;
             break;
         }
         case GameStatus::playing: {
@@ -76,7 +76,7 @@ void ClientGameController::preUpdate() {
 }
 
 void ClientGameController::update(const InputDef::PlayerInputs& pi, sf::Int32 delta_ms) {
-    switch (m_gameCoreState.status) {
+    switch (m_gameStateCore.status) {
         case GameStatus::not_started: {
             // noop
             break;
@@ -102,8 +102,8 @@ void ClientGameController::postUpdate() {
         .updates_per_second =
             static_cast<float>(m_updateCount) / (static_cast<float>(m_elapsedTime) / 1000.f),
         .resources = m_gameObjectController->getPlayerResources(m_playerId),
-        .game_status = m_gameCoreState.status,
-        .winner_player_id = m_gameCoreState.winner_player_id,
+        .game_status = m_gameStateCore.status,
+        .winner_player_id = m_gameStateCore.winner_player_id,
     };
     m_renderingController->postUpdate(player_position, ui_data);
 }
@@ -117,7 +117,7 @@ void ClientGameController::rewindAndReplay() {
 
     // Rewind
     m_gameObjectController->applyGameStateObject(game_state.object);
-    m_gameCoreState = game_state.core;
+    m_gameStateCore = game_state.core;
     setTick(server_tick);
 
     // Replay

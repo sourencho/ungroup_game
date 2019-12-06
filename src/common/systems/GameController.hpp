@@ -53,7 +53,7 @@ class GameController {
     sf::Int32 m_stepCount = 0;
     sf::Int32 m_updateCount = 0;
 
-    GameStateCore m_gameCoreState;
+    GameStateCore m_gameStateCore;
 };
 
 #endif /* GameController_hpp */

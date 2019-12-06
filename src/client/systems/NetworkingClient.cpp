@@ -15,7 +15,7 @@
 const sf::Time CLIENT_TCP_TIMEOUT = sf::milliseconds(100);
 ;
 
-NetworkingClient::NetworkingClient() : m_gameState_t() {
+NetworkingClient::NetworkingClient() : m_gameState_t({}) {
     std::cout << "Starting client..." << std::endl;
 
     createTcpSocket(SERVER_TCP_PORT);
