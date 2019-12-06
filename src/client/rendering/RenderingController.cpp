@@ -27,7 +27,6 @@ RenderingController::RenderingController(sf::RenderWindow& window, GameObjectCon
     m_winnerText.setString("WINNER: NO DATA");
     m_winnerText.setCharacterSize(100.f);
     m_winnerText.setFillColor(sf::Color::White);
-    m_winnerText.setPosition(window_size / 2.f);
 }
 
 void RenderingController::preUpdate() {
@@ -92,6 +91,10 @@ void RenderingController::drawPlaying() {
 void RenderingController::drawGameOver() {
     m_window.clear(sf::Color::Red);
     m_winnerText.setString("WINNER: " + std::to_string(m_uiData.winner_player_id));
+    sf::FloatRect text_bounds = m_winnerText.getLocalBounds();
+    m_winnerText.setPosition(
+        (sf::Vector2f(m_window.getSize()) - sf::Vector2f(text_bounds.width, text_bounds.height)) /
+        2.f);
     m_window.draw(m_winnerText);
     m_window.display();
 }
