@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# You can exit all tmux windows at once by pressing CTRL+B and typing :kill-window
+
+mkdir build
 cmake -S . -B build
 cmake --build build -- -j
 
