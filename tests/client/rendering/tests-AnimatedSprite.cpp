@@ -8,7 +8,7 @@ SCENARIO("AnimatedSprite is created and animation completed",
         sf::Texture texture;
         texture.loadFromFile("resources/images/test.png");
         AnimatedSprite animated_sprite =
-            AnimatedSprite(texture, {3, 3}, 200, {100.f, 100.f}, {1.f, 1.f});
+            AnimatedSprite(texture, {3, 3}, 200, {100.f, 100.f}, {1.f, 1.f}, sf::Color::White);
         WHEN("is updated one time at 100ms") {
             animated_sprite.update(100);
             REQUIRE(animated_sprite.isDone() == false);

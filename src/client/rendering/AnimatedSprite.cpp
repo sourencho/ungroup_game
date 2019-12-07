@@ -13,7 +13,7 @@
  */
 AnimatedSprite::AnimatedSprite(sf::Texture& spritesheet_texture, sf::Vector2u spritesheet_size,
                                sf::Int32 duration_ms, sf::Vector2f position,
-                               sf::Vector2f scale_factor) :
+                               sf::Vector2f scale_factor, sf::Color color) :
     m_sprite(spritesheet_texture),
     m_animation(m_sprite) {
     sf::Int32 frame_count = spritesheet_size.x * spritesheet_size.y;
@@ -27,7 +27,7 @@ AnimatedSprite::AnimatedSprite(sf::Texture& spritesheet_texture, sf::Vector2u sp
             m_animation.addFrame({sf::IntRect(position, size), duration_ms / frame_count});
         }
     }
-
+    m_sprite.setColor(color);
     m_sprite.scale(scale_factor);
     m_sprite.setOrigin({frame_width / 2.f, frame_height / 2.f});
     m_sprite.setPosition(position);

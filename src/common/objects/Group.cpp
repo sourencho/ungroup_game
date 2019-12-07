@@ -20,8 +20,7 @@ Group::~Group() {
 
 void Group::draw(sf::RenderTarget& render_target) {
     setOutlineThickness(0.f);
-
-    sf::Color outline_color = sf::Color::White;
+    sf::Color outline_color = RenderingDef::DEFAULT_GROUP_OUTLINE_COLOR;
 
     if (m_joinable) {
         setOutlineThickness(1.f);
@@ -30,15 +29,13 @@ void Group::draw(sf::RenderTarget& render_target) {
     // TODO(sourenp): This was only included for debugging purposes. Remove eventually.
     if (m_ungroup) {
         setOutlineThickness(1.f);
-        outline_color = sf::Color::Blue;
+        outline_color = RenderingDef::UNGROUP_COLOR;
     }
-
     setOutlineColor(outline_color);
 
     CircleGameObject::draw(render_target);
-
     m_directionArrow.draw(render_target, getRadius(), getPosition(), getVelocity(),
-                          m_targetDirections, sf::Color::White, m_isActive);
+                          m_targetDirections, RenderingDef::DIRECTION_ARROW_COLOR, m_isActive);
 }
 
 GroupUpdate Group::getUpdate() {
