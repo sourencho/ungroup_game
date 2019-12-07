@@ -21,11 +21,11 @@ Created by [@sourenp](https://github.com/SourenP) and [@copacetic](https://githu
 3. Configure and build:
 ```
 // With ninja (faster, colorless)
-cmake -GNinja -S . -B build
+cmake -DCMAKE_BUILD_TYPE=Release -GNinja -S . -B build
 ninja -C build
 
 // Without ninja (slower, colorful)
-cmake -S . -B build
+cmake -DCMAKE_BUILD_TYPE=Release -S . -B build
 cmake --build build -- -j
 ```
 4. Run server and client in seperate terminals:
@@ -66,9 +66,13 @@ To run tests, after building, run:
 
 ### Debugging
 
-#### Travis CI Debug Build
+#### Compile in debug mode
 
-Run this command to enable debug mode on a specific build: https://gist.github.com/SourenP/3ae15ba0e634a3e0ccceebbb7a27a391
+To compile in debug mode add the flag `-DCMAKE_BUILD_TYPE=Debug`:
+```
+cmake -DCMAKE_BUILD_TYPE=Debug -S . -B build
+cmake --build build -- -j
+```
 
 #### Vscode lldb
 
@@ -94,6 +98,11 @@ Debug build:
 Debug run:
 - Set breakpoints
 - Run `(lldb) Launch ug-server` and/or `(lldb) Launch ug-client` via the debug tab.
+
+#### Travis CI Debug Build
+
+Run this command to enable debug mode on a specific build: https://gist.github.com/SourenP/3ae15ba0e634a3e0ccceebbb7a27a391
+
 
 ## Resources
 
