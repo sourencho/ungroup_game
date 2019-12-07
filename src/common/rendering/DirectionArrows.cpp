@@ -10,6 +10,7 @@ const float MIN_SPEED = 1.f;            // Minimum speed at which velocity arrow
 const float TWO_MINUS_SQRT_3 = 0.2679f; // 2 - sqrt(3);
 const float TARGET_ALPHA = 0.5;         // How much to fade target arrows
 const float ARROW_SIZE = 6.f;           // Size of the triangle's base
+const float DISTANCE_FROM_EDGE = 1.f;   // Additional distance from cricle's edge
 
 DirectionArrows::DirectionArrows() : m_velocityTriangle(0, 3) {
     m_targetTriangles.reserve(MAX_PLAYER_COUNT);
@@ -85,5 +86,5 @@ void DirectionArrows::positionTriangle(sf::CircleShape& triangle, sf::Vector2f d
     triangle.setPosition(position.x + radius, position.y + radius);
 
     // Move to edge of circle
-    triangle.move(direction * radius + direction * (TWO_MINUS_SQRT_3 * size));
+    triangle.move(direction * (radius + (TWO_MINUS_SQRT_3 * size) + DISTANCE_FROM_EDGE));
 }

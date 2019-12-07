@@ -16,17 +16,31 @@ namespace RenderingDef {
         ShaderKey key = ShaderKey::none;
         std::shared_ptr<sf::Shader> shader = nullptr;
     };
+
+    // Group colors
+    const sf::Color DEFAULT_GROUP_COLOR(sf::Color::Transparent);
+    const sf::Color DEFAULT_GROUP_OUTLINE_COLOR(sf::Color::Black);
     const sf::Color JOINABLE_COLOR(227, 102, 68);
+    const sf::Color UNGROUP_COLOR(sf::Color::Blue);
+    const sf::Color DIRECTION_ARROW_COLOR(63, 154, 233);
+
+    // Resource colors
     const sf::Color DARKEST_COLOR(66, 118, 118);
     const sf::Color DARK_COLOR(63, 157, 130);
     const sf::Color LIGHT_COLOR(161, 205, 115);
     const sf::Color LIGHTEST_COLOR(236, 219, 96);
+
+    // Mine colors
+    const sf::Color DEFAULT_MINE_COLOR(sf::Color::Red);
+    const sf::Color EMPTY_MINE_COLOR(155, 155, 155);
     const std::array<sf::Color, RESOURCE_TYPE_COUNT> MINE_COLORS = {
         RenderingDef::DARKEST_COLOR, RenderingDef::DARK_COLOR, RenderingDef::LIGHT_COLOR,
         RenderingDef::LIGHTEST_COLOR};
-    const sf::Color EMPTY_MINE_COLOR = sf::Color::White;
-    const sf::Color DEFAULT_GROUP_COLOR = sf::Color::Transparent;
-    const sf::Color DEFAULT_MINE_COLOR = sf::Color::White;
+
+    // Misc colors
+    const sf::Color BACKGROUND_COLOR(203, 219, 252);
+    const sf::Color COLLISION_ANIMATION_COLOR(sf::Color::Yellow);
+
 }; // namespace RenderingDef
 
 #endif /* RenderingDef_hpp */

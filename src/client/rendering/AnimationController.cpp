@@ -47,8 +47,8 @@ void AnimationController::handleCollisionEvent(std::shared_ptr<Event> event) {
 }
 
 void AnimationController::createCollisionAnimation(const sf::Vector2f& collision_position) {
-    auto collision_sprite = std::unique_ptr<AnimatedSprite>(
-        new AnimatedSprite(*m_resourceStore.getTexture(RenderingDef::TextureKey::collision), {6, 1},
-                           240, collision_position, {2.f, 2.f}));
+    auto collision_sprite = std::unique_ptr<AnimatedSprite>(new AnimatedSprite(
+        *m_resourceStore.getTexture(RenderingDef::TextureKey::collision), {6, 1}, 240,
+        collision_position, {2.f, 2.f}, RenderingDef::COLLISION_ANIMATION_COLOR));
     add(std::move(collision_sprite));
 }

@@ -71,7 +71,7 @@ void RenderingController::drawNotStarted() {
 
 void RenderingController::drawPlaying() {
     m_window.clear(sf::Color::Green);
-    m_buffer.clear(BACKGROUND_COLOR);
+    m_buffer.clear(RenderingDef::BACKGROUND_COLOR);
 
     // Draw game from player view
     m_window.setView(m_playerView);
