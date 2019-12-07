@@ -6,6 +6,7 @@
 #include "../events/PlayerCreatedEvent.hpp"
 #include "../factories/IdFactory.hpp"
 #include "../util/game_def.hpp"
+#include "../util/game_settings.hpp"
 
 GameObjectController::GameObjectController(PhysicsController& physics_controller,
                                            ResourceStore& resource_store) :
@@ -82,21 +83,21 @@ uint32_t GameObjectController::createPlayerWithGroup(uint32_t client_id) {
     return new_player_id;
 }
 
-void GameObjectController::applyGameState(GameState game_state) {
-    for (auto gu : game_state.group_updates) {
+void GameObjectController::applyGameStateObject(GameStateObject game_state_object) {
+    for (auto gu : game_state_object.group_updates) {
         m_gameObjectStore.getGroup(gu.group_id)->applyUpdate(gu);
     }
-    for (auto mu : game_state.mine_updates) {
+    for (auto mu : game_state_object.mine_updates) {
         m_gameObjectStore.getMine(mu.mine_id)->applyUpdate(mu);
     }
-    for (auto pu : game_state.player_updates) {
+    for (auto pu : game_state_object.player_updates) {
         m_gameObjectStore.getPlayer(pu.player_id)->applyUpdate(pu);
     }
-    m_groupController.applyUpdate(game_state.gcu);
-    m_resourceController.applyUpdate(game_state.rcu);
+    m_groupController.applyUpdate(game_state_object.gcu);
+    m_resourceController.applyUpdate(game_state_object.rcu);
 }
 
-GameState GameObjectController::getGameState(uint32_t tick) {
+GameStateObject GameObjectController::getGameStateObject() {
     auto groups = m_gameObjectStore.getGroups();
     auto mines = m_gameObjectStore.getMines();
     auto players = m_gameObjectStore.getPlayers();
@@ -113,7 +114,7 @@ GameState GameObjectController::getGameState(uint32_t tick) {
     std::transform(players.begin(), players.end(), std::back_inserter(player_updates),
                    [](std::shared_ptr<Player> player) { return player->getUpdate(); });
 
-    GameState gs = {tick, group_updates, mine_updates, player_updates, gcu, rcu};
+    GameStateObject gs = {group_updates, mine_updates, player_updates, gcu, rcu};
 
     return gs;
 }
@@ -130,4 +131,13 @@ sf::Vector2f GameObjectController::getPlayerPosition(uint32_t player_id) {
 std::array<uint32_t, RESOURCE_TYPE_COUNT>
 GameObjectController::getPlayerResources(uint32_t player_id) {
     return m_resourceController.get(player_id);
+}
+
+std::pair<bool, uint32_t> GameObjectController::getGameOver() {
+    for (auto player_id : m_playerController.getActivePlayerIds()) {
+        if (m_resourceController.get(player_id) == WIN_CONDITION) {
+            return std::make_pair(true, player_id);
+        }
+    }
+    return std::make_pair(false, std::numeric_limits<uint32_t>::max());
 }

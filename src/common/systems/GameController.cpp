@@ -15,7 +15,8 @@
 
 GameController::GameController() :
     m_physicsController(new PhysicsController()), m_resourceStore(new ResourceStore()),
-    m_gameObjectController(new GameObjectController(*m_physicsController, *m_resourceStore)) {
+    m_gameObjectController(new GameObjectController(*m_physicsController, *m_resourceStore)),
+    m_gameStateCore({.tick = 0, .status = GameStatus::not_started, .winner_player_id = 0}) {
 }
 
 GameController::~GameController() {

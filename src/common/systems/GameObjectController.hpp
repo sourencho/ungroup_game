@@ -5,6 +5,7 @@
 
 #include "../physics/PhysicsController.hpp"
 #include "../util/StateDef.hpp"
+#include "../util/game_def.hpp"
 #include "GameObjectStore.hpp"
 #include "GroupController.hpp"
 #include "MineController.hpp"
@@ -19,11 +20,12 @@ class GameObjectController {
     void update(const InputDef::PlayerInputs& pi);
     void updatePostPhysics();
     uint32_t createPlayerWithGroup(uint32_t client_id);
-    GameState getGameState(uint32_t tick);
-    void applyGameState(GameState game_state);
+    GameStateObject getGameStateObject();
+    void applyGameStateObject(GameStateObject game_state_object);
     void draw(sf::RenderTexture& buffer);
     sf::Vector2f getPlayerPosition(uint32_t player_id);
     std::array<uint32_t, RESOURCE_TYPE_COUNT> getPlayerResources(uint32_t player_id);
+    std::pair<bool, uint32_t> getGameOver();
 
   private:
     void addEventListeners();

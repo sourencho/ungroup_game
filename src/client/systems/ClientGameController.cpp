@@ -2,6 +2,7 @@
 #include <thread>
 
 #include <SFML/Graphics.hpp>
+#include <thread>
 
 #include "../../common/physics/VectorUtil.hpp"
 #include "../../common/util/InputDef.hpp"
@@ -21,6 +22,7 @@ ClientGameController::~ClientGameController() {
 }
 
 void ClientGameController::start() {
+    m_gameStateCore.status = GameStatus::not_started;
     registerClient();
     while (m_window.isOpen()) {
         step();
@@ -47,18 +49,48 @@ InputDef::PlayerInputs ClientGameController::getPlayerInputs() {
 
 void ClientGameController::preUpdate() {
     auto inputs = m_inputController->collectInputs(m_window);
-    sendInputs(inputs);
-    saveInputs(inputs);
 
-    if (m_networkingClient->getGameStateIsFresh()) {
-        rewindAndReplay();
+    switch (m_gameStateCore.status) {
+        case GameStatus::not_started: {
+            // Keep fetching game state to check if game status changed from not_started
+            GameState game_state = m_networkingClient->getGameState();
+            m_gameStateCore = game_state.core;
+            break;
+        }
+        case GameStatus::playing: {
+            sendInputs(inputs);
+            saveInputs(inputs);
+
+            if (m_networkingClient->getGameStateIsFresh()) {
+                rewindAndReplay();
+            }
+            break;
+        }
+        case GameStatus::game_over: {
+            // noop
+            break;
+        }
     }
 
     m_renderingController->preUpdate();
 }
 
 void ClientGameController::update(const InputDef::PlayerInputs& pi, sf::Int32 delta_ms) {
-    computeGameState(pi, delta_ms);
+    switch (m_gameStateCore.status) {
+        case GameStatus::not_started: {
+            // noop
+            break;
+        }
+        case GameStatus::playing: {
+            computeGameState(pi, delta_ms);
+            break;
+        }
+        case GameStatus::game_over: {
+            // noop
+            break;
+        }
+    }
+
     m_renderingController->update(delta_ms);
 }
 
@@ -70,19 +102,23 @@ void ClientGameController::postUpdate() {
         .updates_per_second =
             static_cast<float>(m_updateCount) / (static_cast<float>(m_elapsedTime) / 1000.f),
         .resources = m_gameObjectController->getPlayerResources(m_playerId),
+        .game_status = m_gameStateCore.status,
+        .winner_player_id = m_gameStateCore.winner_player_id,
     };
     m_renderingController->postUpdate(player_position, ui_data);
 }
 
 void ClientGameController::rewindAndReplay() {
     GameState game_state = m_networkingClient->getGameState();
-    int client_tick = getTick();
-    int server_tick = game_state.tick;
+
+    unsigned int client_tick = getTick();
+    unsigned int server_tick = game_state.core.tick;
     int tick_delta = client_tick - server_tick;
 
     // Rewind
-    m_gameObjectController->applyGameState(game_state);
-    setTick(static_cast<unsigned int>(server_tick));
+    m_gameObjectController->applyGameStateObject(game_state.object);
+    m_gameStateCore = game_state.core;
+    setTick(server_tick);
 
     // Replay
     if (!USE_INTERPOLATION_REPLAY || tick_delta <= 0) {
@@ -91,7 +127,7 @@ void ClientGameController::rewindAndReplay() {
 
     // Loop through ticks that need to be replayed and apply client input from cache if present
     for (int i = 0; i < tick_delta; ++i) {
-        unsigned int replay_tick = game_state.tick + i;
+        unsigned int replay_tick = server_tick + i;
         if (m_tickToInput.count(replay_tick) > 0) {
             InputDef::ClientInputAndTick client_input_and_tick = m_tickToInput[replay_tick];
             auto pi = InputDef::PlayerInputs(m_inputController->getPlayerInputs(

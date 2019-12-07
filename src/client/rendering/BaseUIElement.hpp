@@ -13,6 +13,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "../../common/systems/ResourceController.hpp"
+#include "../../common/util/StateDef.hpp"
 
 enum Align { TOP_RIGHT, TOP_LEFT, BOTTOM_RIGHT, BOTTOM_LEFT };
 struct Padding {
@@ -25,6 +26,8 @@ struct UIData {
     float steps_per_second;
     float updates_per_second;
     std::array<uint32_t, RESOURCE_TYPE_COUNT> resources;
+    GameStatus game_status;
+    uint32_t winner_player_id;
 };
 
 class BaseUIElement {

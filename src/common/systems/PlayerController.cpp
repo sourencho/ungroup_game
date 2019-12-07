@@ -68,3 +68,13 @@ void PlayerController::updatePostPhysics() {
 std::shared_ptr<Player> PlayerController::getPlayer(uint32_t player_id) {
     return m_players[IdFactory::getInstance().getIndex(player_id)];
 }
+
+std::vector<uint32_t> PlayerController::getActivePlayerIds() const {
+    std::vector<uint32_t> active_player_ids;
+    for (auto&& player : m_players) {
+        if (player->isActive()) {
+            active_player_ids.push_back(player->getId());
+        }
+    }
+    return active_player_ids;
+}

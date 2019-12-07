@@ -333,7 +333,8 @@ void NetworkingServer::sendGameState() {
         std::lock_guard<std::mutex> m_gameState_guard(m_gameState_lock);
         game_state = m_gameState_t;
     }
-    sf::Packet packet = pack_game_state(game_state);
+    sf::Packet packet;
+    packet << game_state;
     {
         std::lock_guard<std::mutex> m_udpSocket_guard(m_udpSocket_lock);
         std::lock_guard<std::mutex> m_clientToUdpPorts_guard(m_clientToUdpPorts_lock);

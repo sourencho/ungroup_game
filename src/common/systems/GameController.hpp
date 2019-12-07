@@ -12,6 +12,7 @@
 #include "../objects/Player.hpp"
 #include "../physics/PhysicsController.hpp"
 #include "../util/StateDef.hpp"
+#include "../util/game_def.hpp"
 #include "GameObjectController.hpp"
 #include "GameObjectStore.hpp"
 
@@ -41,8 +42,6 @@ class GameController {
 
     virtual InputDef::PlayerInputs getPlayerInputs() = 0;
     virtual void incrementTick() = 0;
-    virtual unsigned int getTick() = 0;
-    virtual void setTick(unsigned int tick) = 0;
 
     std::unique_ptr<PhysicsController> m_physicsController;
     std::unique_ptr<ResourceStore> m_resourceStore;
@@ -53,6 +52,8 @@ class GameController {
     sf::Int32 m_timeAccumulator = 0;
     sf::Int32 m_stepCount = 0;
     sf::Int32 m_updateCount = 0;
+
+    GameStateCore m_gameStateCore;
 };
 
 #endif /* GameController_hpp */

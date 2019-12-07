@@ -31,10 +31,11 @@ class ClientGameController : public GameController {
     void postUpdate() override;
     InputDef::PlayerInputs getPlayerInputs() override;
     void incrementTick() override;
-    unsigned int getTick() override;
-    void setTick(unsigned int tick) override;
 
     // Methods
+
+    unsigned int getTick();
+    void setTick(unsigned int tick);
 
     /**
      * Register the client via the NetworkingClient.
