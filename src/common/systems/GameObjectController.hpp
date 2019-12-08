@@ -2,7 +2,9 @@
 #define GameObjectController_hpp
 
 #include <memory>
+#include <unordered_map>
 
+#include "../bots/Bot.hpp"
 #include "../physics/PhysicsController.hpp"
 #include "../util/StateDef.hpp"
 #include "../util/game_def.hpp"
@@ -38,6 +40,10 @@ class GameObjectController {
     std::array<uint32_t, RESOURCE_TYPE_COUNT> getPlayerResources(uint32_t player_id);
     std::pair<bool, uint32_t> getGameOver();
 
+    // bot methods
+    std::pair<InputDef::ReliableInput, InputDef::UnreliableInput> getBotMove(uint32_t bot_player_id,
+                                                                             BotStrategy strategy);
+
   private:
     void addEventListeners();
     void handleClientConnectedEvent(std::shared_ptr<Event> event);
@@ -49,6 +55,8 @@ class GameObjectController {
     PlayerController m_playerController;
     GroupController m_groupController;
     MineController m_mineController;
+
+    Bot m_bot;
 };
 
 #endif /* GameObjectController_hpp */

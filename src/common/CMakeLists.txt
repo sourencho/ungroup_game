@@ -2,6 +2,7 @@ add_library(common-lib
     util/network_util.cpp
     util/StateDef.cpp
     util/InputDef.cpp
+    util/InputUtil.cpp
     objects/CircleGameObject.cpp
     objects/Player.cpp
     objects/Mine.cpp
@@ -23,6 +24,7 @@ add_library(common-lib
     rendering/DirectionArrows.cpp
     rendering/DirectionLines.cpp
     rendering/RenderingUtil.cpp
+    bots/Bot.cpp
 )
 
 target_link_libraries(common-lib PUBLIC sfml-system sfml-graphics sfml-network)
