@@ -146,3 +146,21 @@ std::pair<bool, uint32_t> GameObjectController::getGameOver() {
     }
     return std::make_pair(false, std::numeric_limits<uint32_t>::max());
 }
+
+std::pair<InputDef::ReliableInput, InputDef::UnreliableInput>
+GameObjectController::getBotMove(uint32_t bot_player_id) {
+    auto mines = m_gameObjectStore.getMines();
+    auto current_resources = m_resourceController.get(bot_player_id);
+    auto bot_group_id = m_groupController.getGroupId(bot_player_id);
+    Group& bot_group = m_groupController.getGroup(bot_group_id);
+    auto bot_group_center = bot_group.getCenter();
+    std::unordered_map<uint32_t, uint32_t> mine_id_to_resource_count;
+    for (auto mine : mines) {
+        auto mine_id = mine->getId();
+        mine_id_to_resource_count[mine_id] = m_resourceController.get(
+                mine_id, mine->getResourceType());
+    }
+
+    return m_bot.getMove(BotStrategy::NearestGreedy, mines,
+            current_resources, bot_group_center, mine_id_to_resource_count);
+}

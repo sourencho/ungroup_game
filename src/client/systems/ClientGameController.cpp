@@ -48,6 +48,8 @@ InputDef::PlayerInputs ClientGameController::getPlayerInputs() {
 }
 
 void ClientGameController::preUpdate() {
+    // call collectinputs to process window events, but if we're in bot mode
+    // then override any user commands
     auto inputs = m_inputController->collectInputs(m_window);
 
     switch (m_gameStateCore.status) {
@@ -58,6 +60,9 @@ void ClientGameController::preUpdate() {
             break;
         }
         case GameStatus::playing: {
+            if (IS_BOT) {
+                inputs = m_gameObjectController->getBotMove(m_playerId);
+            }
             sendInputs(inputs);
             saveInputs(inputs);
 

@@ -34,10 +34,11 @@ const bool SHOW_DIRECTION_LINES = true;
 const bool SHOW_PLAYER_IDS = true;
 
 /* Game Logic */
+const bool IS_BOT = false;
 
 const bool USE_INTERPOLATION_REPLAY = false;
 
-const int MAX_PLAYER_COUNT = 10;
+const int MAX_PLAYER_COUNT = 20;
 const int MAX_MINE_COUNT = 4;
 const float GROUP_START_OFFSET_X = 20.f;
 const float GROUP_START_OFFSET_Y = 20.f;
@@ -46,7 +47,8 @@ const float MINE_START_OFFSET_Y = 200.f;
 const float GROUP_MEMBER_SIZE = 10.f;
 const float MINE_SIZE = 40.f;
 const float GROUP_SPEED = 100.f;
-const uint32_t MINE_RESOURCE_COUNT = 4;
+const uint32_t MINE_RESOURCE_COUNT = 10;
+
 const std::array<uint32_t, RESOURCE_TYPE_COUNT> WIN_CONDITION = {
     MINE_RESOURCE_COUNT,
     MINE_RESOURCE_COUNT,
