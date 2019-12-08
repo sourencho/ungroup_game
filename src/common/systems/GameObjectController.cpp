@@ -12,7 +12,8 @@ GameObjectController::GameObjectController(PhysicsController& physics_controller
                                            ResourceStore& resource_store) :
     m_gameObjectStore(physics_controller, resource_store),
     m_playerController(m_gameObjectStore.getPlayers()),
-    m_groupController(m_gameObjectStore.getGroups(), m_gameObjectStore.getPlayers()),
+    m_groupController(m_gameObjectStore.getGroups(), m_gameObjectStore.getPlayers(),
+                      resource_store),
     m_mineController(m_gameObjectStore.getMines(), m_resourceController) {
     addEventListeners();
 }
@@ -122,6 +123,10 @@ GameStateObject GameObjectController::getGameStateObject() {
 void GameObjectController::draw(sf::RenderTexture& buffer) {
     m_groupController.draw(buffer);
     m_mineController.draw(buffer);
+}
+
+void GameObjectController::drawUI(sf::RenderWindow& window, sf::View& player_view) {
+    m_groupController.drawUI(window, player_view);
 }
 
 sf::Vector2f GameObjectController::getPlayerPosition(uint32_t player_id) {
