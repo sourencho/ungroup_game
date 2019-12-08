@@ -33,6 +33,8 @@ void CircleRigidBody::setVelocity(sf::Vector2f velocity) {
 
     m_velocity = velocity;
     VectorUtil::clamp(m_velocity, PhysicsDef::MIN_VELOCITY, PhysicsDef::MAX_VELOCITY);
+
+    setTargetVelocity(velocity);
 }
 
 void CircleRigidBody::setTargetVelocity(sf::Vector2f target_velocity) {
