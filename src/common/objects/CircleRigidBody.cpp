@@ -5,9 +5,6 @@
 #include "../physics/VectorUtil.hpp"
 #include "CircleRigidBody.hpp"
 
-const float TRANSITION_SPEED = 10.f; // drag / friction
-const float PLAYER_VELOCITY = 200.f;
-
 CircleRigidBody::CircleRigidBody(uint32_t id, float radius, sf::Vector2f position, float mass,
                                  bool movable) :
     GameObject(id),
@@ -16,7 +13,7 @@ CircleRigidBody::CircleRigidBody(uint32_t id, float radius, sf::Vector2f positio
 }
 
 void CircleRigidBody::applyInput(sf::Vector2f input) {
-    m_targetVelocity = input * PLAYER_VELOCITY;
+    setTargetVelocity(input * PhysicsDef::PLAYER_VELOCITY);
 }
 
 /**
@@ -24,12 +21,9 @@ void CircleRigidBody::applyInput(sf::Vector2f input) {
  * Formulas taken from http://www.chrishecker.com/Rigid_Body_Dynamics
  */
 void CircleRigidBody::applyImpulse(const PhysicsDef::Impulse& impulse) {
-    if (!isActive() || !isMovable()) {
-        return;
-    }
-
     sf::Vector2f velocity = m_velocity + (impulse.magnitude / m_mass) * impulse.normal;
     setVelocity(velocity);
+    setTargetVelocity(velocity);
 }
 
 void CircleRigidBody::setVelocity(sf::Vector2f velocity) {
@@ -37,8 +31,17 @@ void CircleRigidBody::setVelocity(sf::Vector2f velocity) {
         return;
     }
 
-    m_targetVelocity = velocity;
     m_velocity = velocity;
+    VectorUtil::clamp(m_velocity, PhysicsDef::MIN_VELOCITY, PhysicsDef::MAX_VELOCITY);
+}
+
+void CircleRigidBody::setTargetVelocity(sf::Vector2f target_velocity) {
+    if (!isActive() || !isMovable()) {
+        return;
+    }
+
+    m_targetVelocity = target_velocity;
+    VectorUtil::clamp(m_targetVelocity, PhysicsDef::MIN_VELOCITY, PhysicsDef::MAX_VELOCITY);
 }
 
 void CircleRigidBody::move(sf::Vector2f offset) {
@@ -58,7 +61,8 @@ void CircleRigidBody::step(sf::Int32 delta_ms) {
 
     // Update velocity and position via Semi-implicit Euler
     // Instead of acceleration lerp towards a target velocity.
-    m_velocity = VectorUtil::lerp(m_velocity, m_targetVelocity, delta * TRANSITION_SPEED);
+    m_velocity =
+        VectorUtil::lerp(m_velocity, m_targetVelocity, delta * PhysicsDef::TRANSITION_SPEED);
     m_position += m_velocity * delta;
 }
 

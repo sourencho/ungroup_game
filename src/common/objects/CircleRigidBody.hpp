@@ -48,6 +48,7 @@ class CircleRigidBody : public GameObject {
         return m_targetVelocity;
     }
     void setVelocity(sf::Vector2f velocity);
+    void setTargetVelocity(sf::Vector2f target_velocity);
 
     void applyImpulse(const PhysicsDef::Impulse& impulse);
     void applyInput(sf::Vector2f input);
