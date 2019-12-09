@@ -1,5 +1,7 @@
 #include "RenderingController.hpp"
 
+#include "../../common/rendering/RenderingUtil.hpp"
+
 RenderingController::RenderingController(sf::RenderWindow& window, GameObjectController& goc,
                                          ResourceStore& rs) :
     m_window(window),
@@ -14,9 +16,7 @@ RenderingController::RenderingController(sf::RenderWindow& window, GameObjectCon
     m_buffer.setSmooth(false);
 
     m_bufferSprite = sf::Sprite(m_buffer.getTexture());
-    m_bufferScalingFactor = {GAME_SCALE * GAME_SIZE.x / WINDOW_RESOLUTION.x,
-                             GAME_SCALE * GAME_SIZE.y / WINDOW_RESOLUTION.y};
-    m_bufferSprite.setScale(m_bufferScalingFactor);
+    m_bufferSprite.setScale(GAME_SCALING_FACTOR);
 
     // Create views to draw GUI and player view
     m_windowView = sf::View(window_size / 2.f, window_size);
@@ -41,8 +41,8 @@ void RenderingController::postUpdate(const sf::Vector2f& player_position, const 
     m_playerPosition = player_position;
     m_uiData = ui_data;
 
-    sf::Vector2f player_view_position = {m_playerPosition.x * m_bufferScalingFactor.x,
-                                         m_playerPosition.y * m_bufferScalingFactor.y};
+    sf::Vector2f player_view_position = RenderingUtil::mapCoordToPixelScaled(
+        m_playerPosition, m_window, m_windowView, GAME_SCALING_FACTOR);
     m_playerView.setCenter(player_view_position);
     m_guiController.update(m_uiData);
 }
@@ -82,6 +82,7 @@ void RenderingController::drawPlaying() {
 
     // Draw GUI from window view
     m_window.setView(m_windowView);
+    m_gameObjectController.drawUI(m_window, m_playerView);
     m_guiController.draw(m_window);
 
     m_buffer.display();
@@ -91,10 +92,10 @@ void RenderingController::drawPlaying() {
 void RenderingController::drawGameOver() {
     m_window.clear(sf::Color::Red);
     m_winnerText.setString("WINNER: " + std::to_string(m_uiData.winner_player_id));
-    sf::FloatRect text_bounds = m_winnerText.getLocalBounds();
-    m_winnerText.setPosition(
-        (sf::Vector2f(m_window.getSize()) - sf::Vector2f(text_bounds.width, text_bounds.height)) /
-        2.f);
+    sf::FloatRect textRect = m_winnerText.getLocalBounds();
+    m_winnerText.setOrigin(textRect.left + textRect.width / 2.0f,
+                           textRect.top + textRect.height / 2.0f);
+    m_winnerText.setPosition(sf::Vector2f(m_window.getSize()) / 2.f);
     m_window.draw(m_winnerText);
     m_window.display();
 }

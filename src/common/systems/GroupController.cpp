@@ -9,15 +9,22 @@
 #include "../events/EventController.hpp"
 #include "../factories/IdFactory.hpp"
 #include "../rendering/RenderingDef.hpp"
+#include "../rendering/RenderingUtil.hpp"
 #include "../util/TypeDef.hpp"
 #include "../util/game_def.hpp"
 #include "../util/game_settings.hpp"
 
 GroupController::GroupController(std::vector<std::shared_ptr<Group>>& groups,
-                                 std::vector<std::shared_ptr<Player>>& players) :
+                                 std::vector<std::shared_ptr<Player>>& players, ResourceStore& rs) :
     m_players(players),
-    m_groups(groups) {
+    m_groups(groups), m_resourceStore(rs) {
     addEventListeners();
+    for (auto& group : m_groups) {
+        sf::Text player_text("", *m_resourceStore.getFont(RenderingDef::FontKey::monogram),
+                             RenderingDef::PLAYER_ID_TEXT_SIZE);
+        player_text.setFillColor(RenderingDef::PLAYER_ID_TEXT_COLOR);
+        m_groupPlayerTexts.push_back(player_text);
+    }
 }
 
 void GroupController::addEventListeners() {
@@ -43,9 +50,30 @@ uint32_t GroupController::createGroup(uint32_t player_id) {
     return new_group_id;
 }
 
-void GroupController::draw(sf::RenderTarget& target) {
+void GroupController::draw(sf::RenderTarget& buffer) {
     for (auto& group : m_groups) {
-        group->draw(target);
+        group->draw(buffer);
+    }
+}
+
+void GroupController::drawUI(sf::RenderWindow& window, sf::View& player_view) {
+    drawGroupPlayerIds(window, player_view);
+}
+
+void GroupController::drawGroupPlayerIds(sf::RenderWindow& window, sf::View& player_view) {
+    for (size_t i = 0; i < m_groups.size(); i++) {
+        auto group = m_groups[i];
+        if (group->isActive()) {
+            auto text = m_groupPlayerTexts[i];
+            const auto& player_ids = m_groupToPlayers[group->getId()];
+            text.setString(RenderingUtil::idVecToStr(player_ids, " "));
+            sf::FloatRect textRect = text.getLocalBounds();
+            text.setOrigin(textRect.left + textRect.width / 2.0f,
+                           textRect.top + textRect.height / 2.0f);
+            text.setPosition(RenderingUtil::mapCoordToPixelScaled(
+                group->getCenter(), window, player_view, GAME_SCALING_FACTOR));
+            window.draw(text);
+        }
     }
 }
 
@@ -68,8 +96,9 @@ void GroupController::updatePostPhysics() {
  * The algorithm used here:
  * 1. Get all filled group and empty groups
  * 2. Get a list of all players that have ungroup=true keeping track of their original group
- * 3. Assign each of those players a new group from the list of empty groups, updating that list as
- * you reassign. For groups with just one player that has the ungroup=true, no need to reassign.
+ * 3. Assign each of those players a new group from the list of empty groups, updating that list
+ * as you reassign. For groups with just one player that has the ungroup=true, no need to
+ * reassign.
  * 4. Reset the properties of the player and the group.
  */
 void GroupController::regroup(std::vector<std::shared_ptr<Group>>& groups) {
@@ -102,8 +131,8 @@ void GroupController::regroup(std::vector<std::shared_ptr<Group>>& groups) {
             continue;
         }
 
-        // There should always be an empty group to regroup to since there are an equal number of
-        // players and groups
+        // There should always be an empty group to regroup to since there are an equal number
+        // of players and groups
         if (empty_group_ids.size() == 0) {
             throw std::runtime_error("No empty group to regroup to.");
         }
@@ -174,8 +203,8 @@ void GroupController::updateGroup(std::shared_ptr<Group>& group) {
     group->setJoinable(joinable);
 
     // Group is ungroup if any member player is ungroup
-    // TODO(sourenp): This was only included for debugging purposes. A group doesn't need to know
-    // when it's in the ungroup state. Remove eventually.
+    // TODO(sourenp): This was only included for debugging purposes. A group doesn't need to
+    // know when it's in the ungroup state. Remove eventually.
     bool ungroup = std::accumulate(
         group_players.begin(), group_players.end(), false,
         [this](bool curr, int player_id) { return curr || getPlayer(player_id).getUngroup(); });

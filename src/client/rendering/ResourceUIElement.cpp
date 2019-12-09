@@ -15,8 +15,8 @@ ResourceUIElement::ResourceUIElement(sf::Vector2u window_size, sf::Vector2f size
     m_windowSize(window_size), m_align(align), m_padding(padding) {
     m_text.setFont(*rs.getFont(RenderingDef::FontKey::monogram));
     m_text.setString("NO DATA");
-    m_text.setCharacterSize(60.f);
-    m_text.setFillColor(sf::Color::White);
+    m_text.setCharacterSize(RenderingDef::RESOURCE_UI_TEXT_SIZE);
+    m_text.setFillColor(RenderingDef::RESOURCE_UI_TEXT_COLOR);
     m_text.setPosition(m_position);
 }
 

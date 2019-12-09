@@ -33,9 +33,8 @@ class RenderingController {
     sf::RenderWindow& m_window;
     sf::View m_playerView; // View specific to player
     sf::View m_windowView; // View of window. Used to draw UI elements independent of player view.
-    sf::Vector2f m_bufferScalingFactor; // Amount by which game is scaled.
-    sf::RenderTexture m_buffer;         // Buffer onto which game is drawn offscreen.
-    sf::Sprite m_bufferSprite;          // Sprite used to draw m_buffer.
+    sf::RenderTexture m_buffer; // Buffer onto which game is drawn offscreen.
+    sf::Sprite m_bufferSprite;  // Sprite used to draw m_buffer.
 
     // Data needed for rendering
     UIData m_uiData;

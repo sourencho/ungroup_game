@@ -35,12 +35,22 @@ sf::Packet& operator>>(sf::Packet& packet, GroupControllerUpdate& gcu);
 class GroupController {
   public:
     GroupController(std::vector<std::shared_ptr<Group>>& groups,
-                    std::vector<std::shared_ptr<Player>>& players);
+                    std::vector<std::shared_ptr<Player>>& players, ResourceStore& rs);
     ~GroupController(){};
     GroupController(const GroupController& temp_obj) = delete;
     GroupController& operator=(const GroupController& temp_obj) = delete;
 
-    void draw(sf::RenderTarget& target);
+    /**
+     * Draw the game object's onto the scalable buffer;
+     */
+    void draw(sf::RenderTarget& buffer);
+
+    /**
+     * Draw the game object specific UI onto the unscaled window.
+     * This is called after draw, so the UI is drawn over the game objects.
+     */
+    void drawUI(sf::RenderWindow& window, sf::View& player_view);
+
     void update();
     uint32_t createGroup(uint32_t player_id);
     void updatePostPhysics();
@@ -63,10 +73,17 @@ class GroupController {
     void removePlayer(uint32_t player_id);
     void addEventListeners();
 
+    /**
+     * Draws groups' player ids as text at the cneter of each group.
+     */
+    void drawGroupPlayerIds(sf::RenderWindow& window, sf::View& player_view);
+
     std::vector<std::shared_ptr<Player>> m_players;
     std::vector<std::shared_ptr<Group>> m_groups;
+    std::vector<sf::Text> m_groupPlayerTexts;
     std::unordered_map<uint32_t, std::vector<uint32_t>> m_groupToPlayers;
     std::unordered_map<uint32_t, uint32_t> m_playerToGroup;
+    ResourceStore& m_resourceStore;
 
     size_t nextGroupIndex = 0;
 };

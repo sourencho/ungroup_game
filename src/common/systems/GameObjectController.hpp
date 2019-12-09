@@ -22,7 +22,18 @@ class GameObjectController {
     uint32_t createPlayerWithGroup(uint32_t client_id);
     GameStateObject getGameStateObject();
     void applyGameStateObject(GameStateObject game_state_object);
+
+    /**
+     * Draw the game object's onto the scalable buffer;
+     */
     void draw(sf::RenderTexture& buffer);
+
+    /**
+     * Draw the game object specific UI onto the unscaled window.
+     * This is called after draw, so the UI is drawn over the game objects.
+     */
+    void drawUI(sf::RenderWindow& window, sf::View& player_view);
+
     sf::Vector2f getPlayerPosition(uint32_t player_id);
     std::array<uint32_t, RESOURCE_TYPE_COUNT> getPlayerResources(uint32_t player_id);
     std::pair<bool, uint32_t> getGameOver();

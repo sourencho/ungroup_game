@@ -24,6 +24,8 @@ const InputDef::InputKeys INPUT_KEYS = {
 const sf::Vector2f GAME_SIZE(2688 * 4, 1512 * 4);
 const sf::Vector2f WINDOW_RESOLUTION(2688, 1512);
 const float GAME_SCALE = 1.5f;
+const sf::Vector2f GAME_SCALING_FACTOR(GAME_SCALE* GAME_SIZE.x / WINDOW_RESOLUTION.x,
+                                       GAME_SCALE* GAME_SIZE.y / WINDOW_RESOLUTION.y);
 
 const bool USE_SHADER = true;
 const bool USE_INTERPOLATION_REPLAY = false;

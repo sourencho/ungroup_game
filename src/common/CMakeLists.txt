@@ -21,6 +21,7 @@ add_library(common-lib
     factories/IdFactory.cpp
     resources/ResourceStore.cpp
     rendering/DirectionArrows.cpp
+    rendering/RenderingUtil.cpp
 )
 
 target_link_libraries(common-lib PUBLIC sfml-system sfml-graphics sfml-network)

@@ -12,8 +12,8 @@ DebugUIElement::DebugUIElement(sf::Vector2u window_size, sf::Vector2f size, Alig
     m_windowSize(window_size), m_align(align), m_padding(padding) {
     m_text.setFont(*rs.getFont(RenderingDef::FontKey::monogram));
     m_text.setString("NO DATA");
-    m_text.setCharacterSize(50.f);
-    m_text.setFillColor(sf::Color::Cyan);
+    m_text.setCharacterSize(RenderingDef::DEBUG_UI_TEXT_SIZE);
+    m_text.setFillColor(RenderingDef::DEBUG_UI_TEXT_COLOR);
     m_text.setPosition(m_position);
 }
 
