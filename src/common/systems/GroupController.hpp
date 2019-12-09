@@ -43,7 +43,7 @@ class GroupController {
     /**
      * Draw the game object's onto the scalable buffer;
      */
-    void draw(sf::RenderTarget& target);
+    void draw(sf::RenderTarget& buffer);
 
     /**
      * Draw the game object specific UI onto the unscaled window.
@@ -74,7 +74,7 @@ class GroupController {
     void addEventListeners();
 
     /**
-     * Draws groups' player ids with text in the middle of each group.
+     * Draws groups' player ids as text at the cneter of each group.
      */
     void drawGroupPlayerIds(sf::RenderWindow& window, sf::View& player_view);
 
