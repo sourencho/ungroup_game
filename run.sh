@@ -1,10 +1,16 @@
 #!/bin/bash
 
-# You can exit all tmux windows at once by pressing CTRL+B and typing :kill-window
+if [[ $(which ninja) ]]; then
+    echo "Detected Ninja is installed. Using Ninja."
+    ninja -C build
+else
+    echo "Ninja not found. Using CMake directly."
+    mkdir build
+    cmake -S . -B build
+    cmake --build build -- -j
+fi
 
-mkdir build
-cmake -S . -B build
-cmake --build build -- -j
+# You can exit all tmux windows at once by pressing CTRL+B and typing :kill-window
 
 tmux new -s ungroup -d
 tmux rename-window -t ungroup game
