@@ -10,6 +10,7 @@
 
 #include "../physics/PhysicsController.hpp"
 #include "../rendering/DirectionArrows.hpp"
+#include "../rendering/DirectionLines.hpp"
 #include "../resources/ResourceStore.hpp"
 #include "CircleGameObject.hpp"
 #include "Player.hpp"
@@ -66,6 +67,7 @@ class Group : public CircleGameObject {
     std::vector<sf::Vector2f> m_targetDirections;
 
     DirectionArrows m_directionArrow;
+    DirectionLines m_directionLines;
 };
 
 #endif /* Group_hpp */

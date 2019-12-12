@@ -11,7 +11,7 @@
 Group::Group(uint32_t id, sf::Vector2f position, sf::Color color, PhysicsController& pc,
              ResourceStore& rs) :
     CircleGameObject(id, position, 0.f, color, pc, rs, 0.f),
-    m_directionArrow() {
+    m_directionArrow(), m_directionLines() {
     setShader(RenderingDef::ShaderKey::voronoi);
 }
 
@@ -33,9 +33,16 @@ void Group::draw(sf::RenderTarget& render_target) {
     }
     setOutlineColor(outline_color);
 
+    std::vector<std::pair<sf::Vector2f, sf::Color>> direction_color_pairs;
+    direction_color_pairs.reserve(m_targetDirections.size());
+    for (auto& direction : m_targetDirections) {
+        direction_color_pairs.push_back(std::make_pair(direction, sf::Color(50, 50, 50)));
+    }
+    m_directionLines.draw(render_target, getRadius(), getPosition(), direction_color_pairs,
+                          m_isActive);
     CircleGameObject::draw(render_target);
-    m_directionArrow.draw(render_target, getRadius(), getPosition(), getVelocity(),
-                          m_targetDirections, RenderingDef::DIRECTION_ARROW_COLOR, m_isActive);
+    // m_directionArrow.draw(render_target, getRadius(), getPosition(), getVelocity(),
+    //                       m_targetDirections, RenderingDef::DIRECTION_ARROW_COLOR, m_isActive);
 }
 
 GroupUpdate Group::getUpdate() {

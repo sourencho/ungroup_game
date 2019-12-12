@@ -23,7 +23,7 @@ const InputDef::InputKeys INPUT_KEYS = {
 /* Game Logic */
 const sf::Vector2f GAME_SIZE(2688 * 4, 1512 * 4);
 const sf::Vector2f WINDOW_RESOLUTION(2688, 1512);
-const float GAME_SCALE = 1.5f;
+const float GAME_SCALE = 3.f;
 const sf::Vector2f GAME_SCALING_FACTOR(GAME_SCALE* GAME_SIZE.x / WINDOW_RESOLUTION.x,
                                        GAME_SCALE* GAME_SIZE.y / WINDOW_RESOLUTION.y);
 
@@ -36,8 +36,8 @@ const float GROUP_START_OFFSET_X = 20.f;
 const float GROUP_START_OFFSET_Y = 20.f;
 const float MINE_START_OFFSET_X = 50.f;
 const float MINE_START_OFFSET_Y = 200.f;
-const float GROUP_MEMBER_SIZE = 14.f;
-const float MINE_SIZE = 80.f;
+const float GROUP_MEMBER_SIZE = 10.f;
+const float MINE_SIZE = 40.f;
 const float GROUP_SPEED = 100.f;
 const uint32_t MINE_RESOURCE_COUNT = 1;
 

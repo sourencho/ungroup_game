@@ -16,6 +16,11 @@ namespace VectorUtil {
     float dot(const sf::Vector2f& a, const sf::Vector2f& b);
     void clamp(sf::Vector2f& a, float min, float max);
     float angle(const sf::Vector2f& v);
+    struct vector_comparator {
+        bool operator()(sf::Vector2f lhs, sf::Vector2f rhs) const {
+            return lhs.x + 10.f * lhs.y < rhs.x + 10.f * rhs.y;
+        }
+    };
 } // namespace VectorUtil
 
 #endif /* VectorUtil_hpp */
