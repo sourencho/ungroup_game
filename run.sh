@@ -3,6 +3,12 @@
 
 ./build.sh
 
+if [ $? -ne 0 ]
+then
+    echo "Build failed!"
+    exit 1
+fi
+
 if [ "$1" != "" ]; then
     CLIENT_COUNT=$1
 else
