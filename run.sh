@@ -6,7 +6,7 @@
 if [ "$1" != "" ]; then
     CLIENT_COUNT=$1
 else
-    CLIENT_COUNT=2
+    CLIENT_COUNT=1
 fi
 
 tmux new -s ungroup -d
