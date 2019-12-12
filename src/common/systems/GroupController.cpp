@@ -19,7 +19,7 @@ GroupController::GroupController(std::vector<std::shared_ptr<Group>>& groups,
     m_players(players),
     m_groups(groups), m_resourceStore(rs) {
     addEventListeners();
-    for (auto& group : m_groups) {
+    for (size_t i = 0; i < m_groups.size(); i++) {
         sf::Text player_text("", *m_resourceStore.getFont(RenderingDef::FontKey::monogram),
                              RenderingDef::PLAYER_ID_TEXT_SIZE);
         player_text.setFillColor(RenderingDef::PLAYER_ID_TEXT_COLOR);
@@ -192,7 +192,7 @@ void GroupController::updateGroup(std::shared_ptr<Group>& group) {
     // Group's velocity is an accumilation of it's members directions
     sf::Vector2f group_vel = std::accumulate(
         player_directions.begin(), player_directions.end(), sf::Vector2f(0.f, 0.f),
-        [this](sf::Vector2f curr_vel, sf::Vector2f player_dir) { return curr_vel + player_dir; });
+        [](sf::Vector2f curr_vel, sf::Vector2f player_dir) { return curr_vel + player_dir; });
     group->setDirection(group_vel);
 
     // Group is joinable if any member player is joinable

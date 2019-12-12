@@ -3,11 +3,8 @@
 #include <iostream>
 
 #include "../rendering/RenderingDef.hpp"
+#include "../rendering/RenderingUtil.hpp"
 #include "../util/game_settings.hpp"
-
-const float LINE_LENGTH_RADIUS_RATIO = 1.f;
-const float LINE_COLOR_ALPHA = 255 * 0.5f;
-const float DISTANCE_FROM_EDGE = 1.f; // Additional distance from cricle's edge
 
 DirectionLines::DirectionLines() {
     m_lines.reserve(MAX_PLAYER_COUNT);
@@ -23,7 +20,7 @@ void DirectionLines::draw(
         return;
     }
 
-    // Populate direction counts
+    // Create a map of direction to list of colors
     m_directionToColors.clear();
     sf::Vector2f direction;
     sf::Color color;
@@ -32,6 +29,7 @@ void DirectionLines::draw(
         if (direction == sf::Vector2f(0.f, 0.f)) {
             continue;
         }
+        color.a = RenderingDef::DIRECTION_LINE_COLOR_ALPHA;
         if (m_directionToColors.count(direction) == 0) {
             m_directionToColors[direction] = {color};
         } else {
@@ -39,31 +37,15 @@ void DirectionLines::draw(
         }
     }
 
-    const float line_chunk_length =
-        radius * LINE_LENGTH_RADIUS_RATIO / direction_color_pairs.size();
+    // Draw each direction line as a stripped line
     const sf::Vector2f circle_center = position + sf::Vector2f(radius, radius);
-
-    size_t i = 0;
-    std::cout << m_directionToColors.size() << std::endl;
     for (auto const& direction_colors : m_directionToColors) {
         const auto& direction = direction_colors.first;
         const auto& colors = direction_colors.second;
-
-        auto& line = m_lines[i];
-        line.clear();
-
-        for (size_t c = 0; c < colors.size(); c++) {
-            sf::Color color = colors[c];
-            color.a = LINE_COLOR_ALPHA;
-            sf::Vector2f start_point =
-                circle_center + direction * (radius + DISTANCE_FROM_EDGE + (line_chunk_length * c));
-            sf::Vector2f end_point = circle_center + direction * (radius + DISTANCE_FROM_EDGE +
-                                                                  (line_chunk_length * (c + 1)));
-            line.append(sf::Vertex(start_point, color));
-            line.append(sf::Vertex(end_point, color));
-        }
-
+        sf::Vector2f circle_edge = circle_center + direction * radius;
+        auto line = RenderingUtil::strippedLine(
+            circle_edge + (RenderingDef::DIRECTION_LINE_DISTANCE_FROM_EDGE * direction), direction,
+            RenderingDef::DIRECTION_LINE_STRIP_LENGTH, colors);
         render_target.draw(line);
-        i++;
     }
 }

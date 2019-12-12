@@ -1,5 +1,8 @@
 /**
- * TODO
+ * Draws lines around the edge of a circle. The circle itself is not drawn.
+ * The lines represent the direction in which a player within a group wants to go and are colored in
+ * the player's desired resource.
+ * If several players point in the same direction then the line will be longer and have many colors.
  */
 
 #ifndef DirectionLines_hpp

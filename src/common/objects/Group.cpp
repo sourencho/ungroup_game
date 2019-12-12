@@ -36,8 +36,10 @@ void Group::draw(sf::RenderTarget& render_target) {
     std::vector<std::pair<sf::Vector2f, sf::Color>> direction_color_pairs;
     direction_color_pairs.reserve(m_targetDirections.size());
     for (auto& direction : m_targetDirections) {
-        direction_color_pairs.push_back(std::make_pair(direction, sf::Color(50, 50, 50)));
+        direction_color_pairs.push_back(
+            std::make_pair(direction, RenderingDef::DIRECTION_LINE_DEFAULT_COLOR));
     }
+
     m_directionLines.draw(render_target, getRadius(), getPosition(), direction_color_pairs,
                           m_isActive);
     CircleGameObject::draw(render_target);

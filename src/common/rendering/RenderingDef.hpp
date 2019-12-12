@@ -18,15 +18,26 @@ namespace RenderingDef {
     };
 
     /* Group */
+
     const sf::Color DEFAULT_GROUP_COLOR(sf::Color::Transparent);
     const sf::Color DEFAULT_GROUP_OUTLINE_COLOR(sf::Color::Black);
     const sf::Color JOINABLE_COLOR(0, 146, 199);
     const sf::Color UNGROUP_COLOR(sf::Color::Blue);
-    const sf::Color DIRECTION_ARROW_COLOR(63, 154, 233);
     const sf::Color PLAYER_ID_TEXT_COLOR(sf::Color::Black);
     const float PLAYER_ID_TEXT_SIZE(50.f);
 
+    /* Direction lines/arrows */
+
+    // Arrow
+    const sf::Color DIRECTION_ARROW_COLOR(63, 154, 233);
+    // Line
+    const sf::Color DIRECTION_LINE_DEFAULT_COLOR(120, 120, 120);
+    const float DIRECTION_LINE_STRIP_LENGTH(3.f);
+    const float DIRECTION_LINE_COLOR_ALPHA(255 * 0.5f);
+    const float DIRECTION_LINE_DISTANCE_FROM_EDGE(1.f);
+
     /* Resource */
+
     // Green palette
     // const sf::Color RESOURCE_A_COLOR(66, 118, 118);
     // const sf::Color RESOURCE_B_COLOR(63, 157, 130);
@@ -40,6 +51,7 @@ namespace RenderingDef {
     const sf::Color RESOURCE_D_COLOR(243, 156, 156);
 
     /* Mine */
+
     const sf::Color DEFAULT_MINE_COLOR(sf::Color::Red);
     const sf::Color EMPTY_MINE_COLOR(155, 155, 155);
     const std::array<sf::Color, RESOURCE_TYPE_COUNT>
@@ -47,10 +59,12 @@ namespace RenderingDef {
                      RenderingDef::RESOURCE_C_COLOR, RenderingDef::RESOURCE_D_COLOR});
 
     /* Misc */
+
     const sf::Color BACKGROUND_COLOR(sf::Color::White);
     const sf::Color COLLISION_ANIMATION_COLOR(0, 146, 199);
 
     /* UI */
+
     const sf::Color RESOURCE_UI_TEXT_COLOR(sf::Color::Black);
     const float RESOURCE_UI_TEXT_SIZE(60.f);
     const sf::Color DEBUG_UI_TEXT_COLOR(sf::Color::Blue);
