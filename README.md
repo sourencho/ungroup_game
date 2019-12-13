@@ -74,6 +74,8 @@ cmake -DCMAKE_BUILD_TYPE=Debug -S . -B build
 cmake --build build -- -j
 ```
 
+Compiling in debug mode will give you stacktraces for segfaults and detect memory issues.
+
 #### Vscode lldb
 
 In vscode on a mac you can debug using `lldb`.
