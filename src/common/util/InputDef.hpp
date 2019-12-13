@@ -6,7 +6,7 @@
 
 namespace InputDef {
     struct InputKeys {
-        sf::Keyboard::Key up, down, right, left, joinable, ungroup, stop;
+        sf::Keyboard::Key up, down, right, left, joinable, ungroup, stop, intent;
     };
 
     struct UnreliableInput {
@@ -15,15 +15,18 @@ namespace InputDef {
         bool toggle_right;
         bool toggle_left;
         bool toggle_stop;
+        bool toggle_intent;
         void setAll(bool value) {
             toggle_up = value;
             toggle_down = value;
             toggle_right = value;
             toggle_left = value;
             toggle_stop = value;
+            toggle_intent = value;
         };
         bool allFalse() {
-            return !toggle_up && !toggle_down && !toggle_right && !toggle_left && !toggle_stop;
+            return !toggle_up && !toggle_down && !toggle_right && !toggle_left && !toggle_stop &&
+                   !toggle_intent;
         };
     };
 

@@ -30,6 +30,7 @@ namespace RenderingDef {
 
     // Arrow
     const sf::Color DIRECTION_ARROW_COLOR(63, 154, 233);
+
     // Line
     const sf::Color DIRECTION_LINE_DEFAULT_COLOR(120, 120, 120);
     const float DIRECTION_LINE_STRIP_LENGTH(3.f);
@@ -55,8 +56,8 @@ namespace RenderingDef {
     const sf::Color DEFAULT_MINE_COLOR(sf::Color::Red);
     const sf::Color EMPTY_MINE_COLOR(155, 155, 155);
     const std::array<sf::Color, RESOURCE_TYPE_COUNT>
-        MINE_COLORS({RenderingDef::RESOURCE_A_COLOR, RenderingDef::RESOURCE_B_COLOR,
-                     RenderingDef::RESOURCE_C_COLOR, RenderingDef::RESOURCE_D_COLOR});
+        RESOURCE_COLORS({RenderingDef::RESOURCE_A_COLOR, RenderingDef::RESOURCE_B_COLOR,
+                         RenderingDef::RESOURCE_C_COLOR, RenderingDef::RESOURCE_D_COLOR});
 
     /* Misc */
 

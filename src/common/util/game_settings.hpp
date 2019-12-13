@@ -18,6 +18,7 @@ const InputDef::InputKeys INPUT_KEYS = {
     .joinable = sf::Keyboard::G,
     .ungroup = sf::Keyboard::Escape,
     .stop = sf::Keyboard::Space,
+    .intent = sf::Keyboard::E,
 };
 
 const sf::Vector2f GAME_SIZE(2688 * 4, 1512 * 4);

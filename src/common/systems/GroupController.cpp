@@ -52,7 +52,9 @@ uint32_t GroupController::createGroup(uint32_t player_id) {
 
 void GroupController::draw(sf::RenderTarget& buffer) {
     for (auto& group : m_groups) {
-        group->draw(buffer);
+        uint32_t group_id = group->getId();
+        group->draw(buffer, getJoinable(group_id), getUngroup(group_id),
+                    getPlayerDirections(group_id), getPlayerIntents(group_id));
     }
 }
 
@@ -89,6 +91,38 @@ void GroupController::updatePostPhysics() {
     for (auto& group : m_groups) {
         group->matchRigid();
     }
+}
+
+std::vector<sf::Vector2f> GroupController::getPlayerDirections(uint32_t group_id) {
+    const auto& group_players = m_groupToPlayers[group_id];
+    std::vector<sf::Vector2f> player_directions;
+    std::transform(
+        group_players.begin(), group_players.end(), std::back_inserter(player_directions),
+        [this](int player_id) -> sf::Vector2f { return getPlayer(player_id).getDirection(); });
+    return player_directions;
+}
+
+std::vector<ResourceType> GroupController::getPlayerIntents(uint32_t group_id) {
+    const auto& group_players = m_groupToPlayers[group_id];
+    std::vector<ResourceType> player_intents;
+    std::transform(
+        group_players.begin(), group_players.end(), std::back_inserter(player_intents),
+        [this](int player_id) -> ResourceType { return getPlayer(player_id).getIntent(); });
+    return player_intents;
+}
+
+bool GroupController::getUngroup(uint32_t group_id) {
+    const auto& group_players = m_groupToPlayers[group_id];
+    return std::accumulate(
+        group_players.begin(), group_players.end(), false,
+        [this](bool curr, int player_id) { return curr || getPlayer(player_id).getUngroup(); });
+}
+
+bool GroupController::getJoinable(uint32_t group_id) {
+    const auto& group_players = m_groupToPlayers[group_id];
+    return std::accumulate(
+        group_players.begin(), group_players.end(), false,
+        [this](bool curr, int player_id) { return curr || getPlayer(player_id).getJoinable(); });
 }
 
 /**
@@ -180,35 +214,16 @@ void GroupController::updateGroup(std::shared_ptr<Group>& group) {
         return;
 
     auto& group_players = m_groupToPlayers[group->getId()];
+    uint32_t group_id = group->getId();
 
     // Player directions
-    std::vector<sf::Vector2f> player_directions;
-    std::transform(
-        group_players.begin(), group_players.end(), std::back_inserter(player_directions),
-        [this](int player_id) -> sf::Vector2f { return getPlayer(player_id).getDirection(); });
-
-    group->setTargetDirections(player_directions);
+    std::vector<sf::Vector2f> player_directions = getPlayerDirections(group_id);
 
     // Group's velocity is an accumilation of it's members directions
     sf::Vector2f group_vel = std::accumulate(
         player_directions.begin(), player_directions.end(), sf::Vector2f(0.f, 0.f),
         [](sf::Vector2f curr_vel, sf::Vector2f player_dir) { return curr_vel + player_dir; });
     group->setDirection(group_vel);
-
-    // Group is joinable if any member player is joinable
-    // TODO(sourenp): Should probably switch to voting functionality later
-    bool joinable = std::accumulate(
-        group_players.begin(), group_players.end(), false,
-        [this](bool curr, int player_id) { return curr || getPlayer(player_id).getJoinable(); });
-    group->setJoinable(joinable);
-
-    // Group is ungroup if any member player is ungroup
-    // TODO(sourenp): This was only included for debugging purposes. A group doesn't need to
-    // know when it's in the ungroup state. Remove eventually.
-    bool ungroup = std::accumulate(
-        group_players.begin(), group_players.end(), false,
-        [this](bool curr, int player_id) { return curr || getPlayer(player_id).getUngroup(); });
-    group->setUngroup(ungroup);
 
     // Update group size
     group->setRadius(group_players.size() * GROUP_MEMBER_SIZE);
@@ -256,7 +271,7 @@ void GroupController::joinGroups(uint32_t circle_a_id, uint32_t circle_b_id) {
     Group& group_a = getGroup(circle_a_id);
     Group& group_b = getGroup(circle_b_id);
 
-    if (!group_a.getJoinable() || !group_b.getJoinable()) {
+    if (!getJoinable(circle_a_id) || !getJoinable(circle_b_id)) {
         return;
     }
 

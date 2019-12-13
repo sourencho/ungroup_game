@@ -72,6 +72,18 @@ class GroupController {
     void updateGroup(std::shared_ptr<Group>& group);
     void removePlayer(uint32_t player_id);
     void addEventListeners();
+    std::vector<sf::Vector2f> getPlayerDirections(uint32_t group_id);
+    std::vector<ResourceType> getPlayerIntents(uint32_t group_id);
+
+    /**
+     * Group is ungroup if any member player is ungroup
+     */
+    bool getUngroup(uint32_t group_id);
+
+    /**
+     * Group is joinable if any member player is joinable
+     */
+    bool getJoinable(uint32_t group_id);
 
     /**
      * Draws groups' player ids as text at the cneter of each group.
