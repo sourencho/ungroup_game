@@ -44,8 +44,8 @@ class RenderingController {
 
     GameObjectController& m_gameObjectController;
     ResourceStore& m_resourceStore;
-    GUIController m_guiController;
     AnimationController m_animationController;
+    GUIController m_guiController;
 };
 
 #endif /* RenderingController_hpp */

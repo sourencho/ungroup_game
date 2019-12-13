@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "../rendering/RenderingDef.hpp"
+#include "../util/game_settings.hpp"
 #include "Group.hpp"
 
 Group::Group(uint32_t id, sf::Vector2f position, sf::Color color, PhysicsController& pc,
@@ -40,11 +41,15 @@ void Group::draw(sf::RenderTarget& render_target) {
             std::make_pair(direction, RenderingDef::DIRECTION_LINE_DEFAULT_COLOR));
     }
 
-    m_directionLines.draw(render_target, getRadius(), getPosition(), direction_color_pairs,
-                          m_isActive);
+    if (SHOW_DIRECTION_ARROWS) {
+        m_directionLines.draw(render_target, getRadius(), getPosition(), direction_color_pairs,
+                              m_isActive);
+    }
+    if (SHOW_DIRECTION_LINES) {
+        m_directionArrow.draw(render_target, getRadius(), getPosition(), getVelocity(),
+                              m_targetDirections, RenderingDef::DIRECTION_ARROW_COLOR, m_isActive);
+    }
     CircleGameObject::draw(render_target);
-    // m_directionArrow.draw(render_target, getRadius(), getPosition(), getVelocity(),
-    //                       m_targetDirections, RenderingDef::DIRECTION_ARROW_COLOR, m_isActive);
 }
 
 GroupUpdate Group::getUpdate() {

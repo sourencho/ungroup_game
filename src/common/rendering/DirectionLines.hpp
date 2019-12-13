@@ -16,7 +16,7 @@
 
 class DirectionLines {
   public:
-    DirectionLines();
+    DirectionLines(){};
     ~DirectionLines(){};
 
     /**
@@ -32,7 +32,6 @@ class DirectionLines {
               bool active);
 
   private:
-    std::vector<sf::VertexArray> m_lines;
     std::map<sf::Vector2f, std::vector<sf::Color>, VectorUtil::vector_comparator>
         m_directionToColors;
 };

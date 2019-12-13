@@ -5,8 +5,8 @@
 RenderingController::RenderingController(sf::RenderWindow& window, GameObjectController& goc,
                                          ResourceStore& rs) :
     m_window(window),
-    m_gameObjectController(goc), m_resourceStore(rs), m_animationController(m_resourceStore),
-    m_guiController(m_window.getSize(), m_resourceStore), m_uiData({}) {
+    m_uiData({}), m_gameObjectController(goc), m_resourceStore(rs),
+    m_animationController(m_resourceStore), m_guiController(m_window.getSize(), m_resourceStore) {
     sf::Vector2f window_size = sf::Vector2f(m_window.getSize());
 
     // Create buffer to draw game onto. Buffer can be scaled to give pixelated effect
