@@ -268,9 +268,6 @@ void GroupController::joinGroups(uint32_t circle_a_id, uint32_t circle_b_id) {
         return;
     }
 
-    Group& group_a = getGroup(circle_a_id);
-    Group& group_b = getGroup(circle_b_id);
-
     if (!getJoinable(circle_a_id) || !getJoinable(circle_b_id)) {
         return;
     }
