@@ -47,17 +47,21 @@ void PlayerController::update(const InputDef::PlayerInputs& pi) {
     for (const auto& player_unreliable_input : pi.player_unreliable_inputs) {
         uint32_t player_id = player_unreliable_input.player_id;
         auto ui = player_unreliable_input.unreliable_input;
-        sf::Vector2f direction = Util::inputToDirection(
-            ui.toggle_up, ui.toggle_down, ui.toggle_right, ui.toggle_left, ui.toggle_stop);
-        getPlayer(player_id)->setDirection(direction);
+        auto player = getPlayer(player_id);
+
+        // Only set direction if direction input is present
+        if (ui.toggle_up || ui.toggle_down || ui.toggle_right || ui.toggle_left || ui.toggle_stop) {
+            player->setDirection(Util::inputToDirection(
+                ui.toggle_up, ui.toggle_down, ui.toggle_right, ui.toggle_left, ui.toggle_stop));
+        }
+        player->toggleIntent(ui.toggle_intent);
     }
     for (const auto& player_reliable_input : pi.player_reliable_inputs) {
         uint32_t player_id = player_reliable_input.player_id;
         auto player = getPlayer(player_id);
-        player->setJoinable(player->getJoinable() ^
-                            player_reliable_input.reliable_input.toggle_joinable);
-        player->setUngroup(player->getUngroup() ^
-                           player_reliable_input.reliable_input.toggle_ungroup);
+
+        player->toggleJoinable(player_reliable_input.reliable_input.toggle_joinable);
+        player->toggleUngroup(player_reliable_input.reliable_input.toggle_ungroup);
     }
 }
 

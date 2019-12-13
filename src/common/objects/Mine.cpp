@@ -33,7 +33,7 @@ void Mine::draw(sf::RenderTarget& render_target) {
     if (m_resourceCount == 0) {
         setColor(RenderingDef::EMPTY_MINE_COLOR);
     } else {
-        setColor(RenderingDef::MINE_COLORS[m_resourceType]);
+        setColor(RenderingDef::RESOURCE_COLORS[m_resourceType]);
     }
 
     CircleGameObject::draw(render_target);

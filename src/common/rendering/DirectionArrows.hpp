@@ -1,5 +1,5 @@
 /**
- * Draws arrows around the edge of a (not drawn) circle.
+ * Draws arrows around the edge of a circle. The circle itself is not drawn.
  *
  * This class is specifically written for a circle with a velocity and target directions so it's
  * optimized to draw those. It will draw one velocity arrow and many others, in a lighter shade,

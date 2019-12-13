@@ -28,10 +28,18 @@ void main() {
     // Cell colors
     const int COLOR_COUNT = 4;
     vec3 color_pool[COLOR_COUNT];
-    color_pool[0] = vec3(66. / 255., 118. / 255., 118. / 255.);
-    color_pool[1] = vec3(63. / 255., 157. / 255., 130. / 255.);
-    color_pool[2] = vec3(161. / 255., 205. / 255., 115. / 255.);
-    color_pool[3] = vec3(236. / 255., 219. / 255., 96. / 255.);
+
+    // Green palette
+    // color_pool[0] = vec3(66. / 255., 118. / 255., 118. / 255.);
+    // color_pool[1] = vec3(63. / 255., 157. / 255., 130. / 255.);
+    // color_pool[2] = vec3(161. / 255., 205. / 255., 115. / 255.);
+    // color_pool[3] = vec3(236. / 255., 219. / 255., 96. / 255.);
+
+    // Soft palette
+    color_pool[0] = vec3(159. / 255., 224. / 255., 246. / 255.);
+    color_pool[1] = vec3(243. / 255., 229. / 255., 154. / 255.);
+    color_pool[2] = vec3(243. / 255., 181. / 255., 155. / 255.);
+    color_pool[3] = vec3(243. / 255., 156. / 255., 156. / 255.);
 
     // Cell count
     const int MAX_CELL_COUNT = 100;

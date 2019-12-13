@@ -5,6 +5,7 @@
 #include <SFML/Network.hpp>
 #include <stdio.h>
 
+#include "../systems/ResourceController.hpp"
 #include "GameObject.hpp"
 
 struct PlayerUpdate {
@@ -41,14 +42,33 @@ class Player : public GameObject {
     bool getUngroup() const {
         return m_ungroup;
     };
+    ResourceType getIntent() const {
+        return m_intent;
+    }
+
+    void toggleUngroup(bool toggle) {
+        m_ungroup ^= toggle;
+    }
+
+    void toggleJoinable(bool toggle) {
+        m_joinable ^= toggle;
+    }
+
+    void toggleIntent(bool toggle) {
+        if (toggle) {
+            m_intent = ResourceType((m_intent + 1) % RESOURCE_TYPE_COUNT);
+        }
+    }
 
     PlayerUpdate getUpdate() const;
     void applyUpdate(PlayerUpdate pu);
 
   private:
     sf::Vector2f m_direction;
-    bool m_joinable = false;
-    bool m_ungroup = false;
+    bool m_joinable = false;                   // If player is joinable into a group.
+    bool m_ungroup = false;                    // If player wants to ungroup.
+    ResourceType m_intent = ResourceType::RED; // Resource player intends to collect. This is
+                                               // communicated to other players.
 };
 
 #endif /* Player_hpp */

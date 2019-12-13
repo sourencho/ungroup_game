@@ -21,6 +21,7 @@ add_library(common-lib
     factories/IdFactory.cpp
     resources/ResourceStore.cpp
     rendering/DirectionArrows.cpp
+    rendering/DirectionLines.cpp
     rendering/RenderingUtil.cpp
 )
 

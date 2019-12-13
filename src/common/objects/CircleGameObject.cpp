@@ -10,8 +10,8 @@ CircleGameObject::CircleGameObject(uint32_t id, sf::Vector2f position, float rad
     GameObject(id),
     m_circleShape(radius, RenderingDef::CIRCLE_POINT_COUNT),
     m_outlineShape(radius, RenderingDef::CIRCLE_POINT_COUNT),
-    m_circleRigidBody(pc.add(std::move(std::unique_ptr<CircleRigidBody>(
-        new CircleRigidBody(id, radius, position, mass, movable))))),
+    m_circleRigidBody(pc.add(std::unique_ptr<CircleRigidBody>(
+        new CircleRigidBody(id, radius, position, mass, movable)))),
     m_resourceStore(rs) {
     m_circleShape.setPosition(position);
     m_circleShape.setFillColor(color);

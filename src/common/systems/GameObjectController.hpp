@@ -46,8 +46,8 @@ class GameObjectController {
 
     ResourceController m_resourceController;
     GameObjectStore m_gameObjectStore;
-    GroupController m_groupController;
     PlayerController m_playerController;
+    GroupController m_groupController;
     MineController m_mineController;
 };
 
