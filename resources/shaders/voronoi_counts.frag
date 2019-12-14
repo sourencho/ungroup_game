@@ -6,7 +6,7 @@ precision mediump float;
 #endif
 
 const int MAX_CELL_COUNT = 100;
-const int RESOURCES_PER_CELL = 2;
+const int RESOURCES_PER_CELL = 1;
 const int COLOR_COUNT = 4;
 
 uniform vec2 u_resolution; // resolution of window
@@ -78,9 +78,9 @@ void main() {
         point[i] = random2(vec2(float(i), 1.0));
     }
 
-    float m_dist = 1.;  // minimun distance
+    float m_dist = 2.;  // minimun distance
     vec2 closest_point; // minimum position
-    vec3 closest_point_color;
+    vec3 closest_point_color = vec3(1.);
 
     // Iterate through the points positions
     for (int i = 0; i < CELL_COUNT; i++) {

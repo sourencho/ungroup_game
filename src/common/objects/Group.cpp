@@ -66,8 +66,9 @@ void Group::draw(sf::RenderTarget& render_target, size_t player_count, bool join
     // Set shader params
     std::copy(resource_counts.begin(), resource_counts.end(), m_resourceCounts);
     m_shader.shader->setUniformArray("u_resourceCounts", m_resourceCounts, RESOURCE_TYPE_COUNT);
-    m_shader.shader->setUniform("u_maxResources",
-                                static_cast<int>(GROUP_MAX_RESOURCE_COUNT * player_count));
+
+    int total_resource_count = std::accumulate(resource_counts.begin(), resource_counts.end(), 0);
+    m_shader.shader->setUniform("u_maxResources", total_resource_count);
 
     CircleGameObject::draw(render_target);
 }
