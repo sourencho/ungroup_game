@@ -35,7 +35,8 @@ sf::Packet& operator>>(sf::Packet& packet, GroupControllerUpdate& gcu);
 class GroupController {
   public:
     GroupController(std::vector<std::shared_ptr<Group>>& groups,
-                    std::vector<std::shared_ptr<Player>>& players, ResourceStore& rs);
+                    std::vector<std::shared_ptr<Player>>& players, ResourceStore& rs,
+                    ResourceController& rc);
     ~GroupController(){};
     GroupController(const GroupController& temp_obj) = delete;
     GroupController& operator=(const GroupController& temp_obj) = delete;
@@ -74,6 +75,7 @@ class GroupController {
     void addEventListeners();
     std::vector<sf::Vector2f> getPlayerDirections(uint32_t group_id);
     std::vector<ResourceType> getPlayerIntents(uint32_t group_id);
+    std::array<uint32_t, RESOURCE_TYPE_COUNT> getResources(uint32_t group_id);
 
     /**
      * Group is ungroup if any member player is ungroup
@@ -96,6 +98,7 @@ class GroupController {
     std::unordered_map<uint32_t, std::vector<uint32_t>> m_groupToPlayers;
     std::unordered_map<uint32_t, uint32_t> m_playerToGroup;
     ResourceStore& m_resourceStore;
+    ResourceController& m_resourceController;
 
     size_t nextGroupIndex = 0;
 };

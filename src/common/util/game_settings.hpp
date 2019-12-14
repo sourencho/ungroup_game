@@ -21,15 +21,17 @@ const InputDef::InputKeys INPUT_KEYS = {
     .intent = sf::Keyboard::E,
 };
 
-const sf::Vector2f GAME_SIZE(2688 * 4, 1512 * 4);
-const sf::Vector2f WINDOW_RESOLUTION(2688, 1512);
+/* Rendering */
+
+const sf::Vector2f GAME_SIZE(1600 * 2, 1200 * 2);
+const sf::Vector2f WINDOW_RESOLUTION(1600, 1200);
 const float GAME_SCALE = 3.f;
 const sf::Vector2f GAME_SCALING_FACTOR(GAME_SCALE* GAME_SIZE.x / WINDOW_RESOLUTION.x,
                                        GAME_SCALE* GAME_SIZE.y / WINDOW_RESOLUTION.y);
-
 const bool USE_SHADER = true;
 const bool SHOW_DIRECTION_ARROWS = false;
 const bool SHOW_DIRECTION_LINES = true;
+const bool SHOW_PLAYER_IDS = true;
 
 /* Game Logic */
 
@@ -44,14 +46,14 @@ const float MINE_START_OFFSET_Y = 200.f;
 const float GROUP_MEMBER_SIZE = 10.f;
 const float MINE_SIZE = 40.f;
 const float GROUP_SPEED = 100.f;
-const uint32_t MINE_RESOURCE_COUNT = 1;
-
+const uint32_t MINE_RESOURCE_COUNT = 4;
 const std::array<uint32_t, RESOURCE_TYPE_COUNT> WIN_CONDITION = {
     MINE_RESOURCE_COUNT,
     MINE_RESOURCE_COUNT,
     MINE_RESOURCE_COUNT,
     MINE_RESOURCE_COUNT,
 };
+const int GROUP_MAX_RESOURCE_COUNT = MINE_RESOURCE_COUNT * RESOURCE_TYPE_COUNT;
 
 /* Threads */
 

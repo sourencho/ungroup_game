@@ -12,8 +12,8 @@ GameObjectController::GameObjectController(PhysicsController& physics_controller
                                            ResourceStore& resource_store) :
     m_gameObjectStore(physics_controller, resource_store),
     m_playerController(m_gameObjectStore.getPlayers()),
-    m_groupController(m_gameObjectStore.getGroups(), m_gameObjectStore.getPlayers(),
-                      resource_store),
+    m_groupController(m_gameObjectStore.getGroups(), m_gameObjectStore.getPlayers(), resource_store,
+                      m_resourceController),
     m_mineController(m_gameObjectStore.getMines(), m_resourceController) {
     addEventListeners();
 }

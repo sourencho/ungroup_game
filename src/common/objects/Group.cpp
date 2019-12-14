@@ -13,23 +13,31 @@ Group::Group(uint32_t id, sf::Vector2f position, sf::Color color, PhysicsControl
              ResourceStore& rs) :
     CircleGameObject(id, position, 0.f, color, pc, rs, 0.f),
     m_directionArrow(), m_directionLines() {
-    setShader(RenderingDef::ShaderKey::voronoi);
+    setShader(RenderingDef::ShaderKey::voronoi_counts);
 }
 
 Group::~Group() {
 }
 
-void Group::draw(sf::RenderTarget& render_target, bool joinable, bool ungroup,
+void Group::draw(sf::RenderTarget& render_target, size_t player_count, bool joinable, bool ungroup,
                  std::vector<sf::Vector2f> player_directions,
-                 std::vector<ResourceType> player_intents) {
+                 std::vector<ResourceType> player_intents,
+                 std::array<uint32_t, RESOURCE_TYPE_COUNT> resource_counts) {
+    if (player_count != player_directions.size() || player_count != player_intents.size()) {
+        throw std::runtime_error("Size of player directions and intents should be the same.");
+    }
 
-    setOutlineThickness(0.f);
+    // Draw outline
+    setOutlineThickness(1.f);
     sf::Color outline_color = RenderingDef::DEFAULT_GROUP_OUTLINE_COLOR;
 
+    // Draw joinable
     if (joinable) {
         setOutlineThickness(1.f);
         outline_color = RenderingDef::JOINABLE_COLOR;
     }
+
+    // Draw ungroup
     // TODO(sourenp): This was only included for debugging purposes. Remove eventually.
     if (ungroup) {
         setOutlineThickness(1.f);
@@ -37,24 +45,30 @@ void Group::draw(sf::RenderTarget& render_target, bool joinable, bool ungroup,
     }
     setOutlineColor(outline_color);
 
-    if (player_directions.size() != player_intents.size()) {
-        throw std::runtime_error("Size of player directions and intents should be the same.");
-    }
+    // Draw direction lines
     std::vector<std::pair<sf::Vector2f, sf::Color>> direction_color_pairs;
-    direction_color_pairs.reserve(player_directions.size());
-    for (size_t i = 0; i < player_directions.size(); i++) {
+    direction_color_pairs.reserve(player_count);
+    for (size_t i = 0; i < player_count; i++) {
         direction_color_pairs.push_back(
             std::make_pair(player_directions[i], RenderingDef::RESOURCE_COLORS[player_intents[i]]));
     }
-
     if (SHOW_DIRECTION_LINES) {
         m_directionLines.draw(render_target, getRadius(), getPosition(), direction_color_pairs,
                               m_isActive);
     }
+
+    // Draw direction arrows
     if (SHOW_DIRECTION_ARROWS) {
         m_directionArrow.draw(render_target, getRadius(), getPosition(), getVelocity(),
                               player_directions, RenderingDef::DIRECTION_ARROW_COLOR, m_isActive);
     }
+
+    // Set shader params
+    std::copy(resource_counts.begin(), resource_counts.end(), m_resourceCounts);
+    m_shader.shader->setUniformArray("u_resourceCounts", m_resourceCounts, RESOURCE_TYPE_COUNT);
+    m_shader.shader->setUniform("u_maxResources",
+                                static_cast<int>(GROUP_MAX_RESOURCE_COUNT * player_count));
+
     CircleGameObject::draw(render_target);
 }
 
