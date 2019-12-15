@@ -24,13 +24,13 @@ BackgroundController::BackgroundController(sf::Vector2u background_size, Resourc
 void BackgroundController::update(sf::Vector2f player_position, sf::Vector2u window_size) {
     // Move texture position relative to player movement to achieve parallax effect
     m_backgroundSprite.setTextureRect(
-        {static_cast<int>(player_position.x) * RenderingDef::BACKGROUND_TEXUTURE_1_SPEED,
-         static_cast<int>(player_position.y) * RenderingDef::BACKGROUND_TEXUTURE_1_SPEED,
-         static_cast<int>(m_backgroundSize.x), static_cast<int>(m_backgroundSize.y)});
+        sf::IntRect(player_position.x * RenderingDef::BACKGROUND_TEXUTURE_1_SPEED,
+                    player_position.y * RenderingDef::BACKGROUND_TEXUTURE_1_SPEED,
+                    m_backgroundSize.x, m_backgroundSize.y));
     m_backgroundSprite2.setTextureRect(
-        {static_cast<int>(player_position.x) * RenderingDef::BACKGROUND_TEXUTURE_2_SPEED,
-         static_cast<int>(player_position.y) * RenderingDef::BACKGROUND_TEXUTURE_2_SPEED,
-         static_cast<int>(m_backgroundSize.x), static_cast<int>(m_backgroundSize.y)});
+        sf::IntRect(player_position.x * RenderingDef::BACKGROUND_TEXUTURE_2_SPEED,
+                    player_position.y * RenderingDef::BACKGROUND_TEXUTURE_2_SPEED,
+                    m_backgroundSize.x, m_backgroundSize.y));
 }
 
 void BackgroundController::draw(sf::RenderTarget& target) {
