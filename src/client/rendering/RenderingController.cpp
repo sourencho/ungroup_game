@@ -6,7 +6,8 @@ RenderingController::RenderingController(sf::RenderWindow& window, GameObjectCon
                                          ResourceStore& rs) :
     m_window(window),
     m_uiData({}), m_gameObjectController(goc), m_resourceStore(rs),
-    m_animationController(m_resourceStore), m_guiController(m_window.getSize(), m_resourceStore) {
+    m_animationController(m_resourceStore), m_guiController(m_window.getSize(), m_resourceStore),
+    m_backgroundController(m_window.getSize(), m_resourceStore) {
     m_window.setFramerateLimit(60);
     sf::Vector2f window_size = sf::Vector2f(m_window.getSize());
 
@@ -46,6 +47,7 @@ void RenderingController::postUpdate(const sf::Vector2f& player_position, const 
         m_playerPosition, m_window, m_windowView, GAME_SCALING_FACTOR);
     m_playerView.setCenter(player_view_position);
     m_guiController.update(m_uiData);
+    m_backgroundController.update(player_position, m_window.getSize());
 }
 
 void RenderingController::draw() {
@@ -77,6 +79,7 @@ void RenderingController::drawPlaying() {
     // Draw game from player view
     m_window.setView(m_playerView);
 
+    m_backgroundController.draw(m_buffer);
     m_gameObjectController.draw(m_buffer);
     m_animationController.draw(m_buffer);
     m_window.draw(m_bufferSprite);

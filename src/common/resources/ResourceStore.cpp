@@ -11,12 +11,14 @@ ResourceStore::ResourceStore() {
 void ResourceStore::load() {
     addTexture(RenderingDef::TextureKey::collision, "resources/images/spark.png");
     addTexture(RenderingDef::TextureKey::mine_pattern, "resources/images/mine_pattern.png", true);
+    addTexture(RenderingDef::TextureKey::dotted_background,
+               "resources/images/dotted_background.png", true);
+
     addShader(RenderingDef::ShaderKey::noop, "resources/shaders/noop.vert",
               "resources/shaders/noop.frag");
-    addShader(RenderingDef::ShaderKey::voronoi, "resources/shaders/noop.vert",
-              "resources/shaders/voronoi.frag");
     addShader(RenderingDef::ShaderKey::voronoi_counts, "resources/shaders/noop.vert",
               "resources/shaders/voronoi_counts.frag");
+
     addFont(RenderingDef::FontKey::monogram, "resources/fonts/monogram.ttf");
 }
 

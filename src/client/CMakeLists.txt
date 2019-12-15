@@ -15,6 +15,7 @@ add_library(client-lib
     rendering/DebugUIElement.cpp
     rendering/ResourceUIElement.cpp
     rendering/RenderingController.cpp
+    rendering/BackgroundController.cpp
 )
 
 target_link_libraries(ug-client PRIVATE client-lib common-lib)

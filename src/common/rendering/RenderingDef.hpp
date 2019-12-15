@@ -9,7 +9,7 @@
 namespace RenderingDef {
     const bool USE_SHADERS = true;
     const std::size_t CIRCLE_POINT_COUNT = 60;
-    enum TextureKey { collision, mine_pattern };
+    enum TextureKey { collision, mine_pattern, dotted_background };
     enum ShaderKey { none, noop, voronoi, voronoi_counts };
     enum FontKey { monogram };
     struct Shader {
@@ -57,6 +57,12 @@ namespace RenderingDef {
 
     /* Misc */
     const sf::Color BACKGROUND_COLOR(sf::Color::White);
+    const float BACKGROUND_TEXTURE_1_ALPHA = 255 * 0.8;
+    const float BACKGROUND_TEXTURE_2_ALPHA = 255 * 0.5;
+    const float BACKGROUND_TEXUTURE_1_SPEED =
+        1.f / 4.f; // Speed at which background texture 1 moves relative to player movement.
+    const float BACKGROUND_TEXUTURE_2_SPEED =
+        1.f / 8.f; // // Speed at which background texture 2 moves relative to player movement.
     const sf::Color COLLISION_ANIMATION_COLOR(0, 146, 199);
 
     /* UI */
