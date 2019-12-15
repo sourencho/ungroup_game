@@ -15,6 +15,8 @@ void ResourceStore::load() {
               "resources/shaders/noop.frag");
     addShader(RenderingDef::ShaderKey::voronoi, "resources/shaders/noop.vert",
               "resources/shaders/voronoi.frag");
+    addShader(RenderingDef::ShaderKey::voronoi_counts, "resources/shaders/noop.vert",
+              "resources/shaders/voronoi_counts.frag");
     addFont(RenderingDef::FontKey::monogram, "resources/fonts/monogram.ttf");
 }
 

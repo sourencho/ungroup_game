@@ -15,9 +15,10 @@
 #include "../util/game_settings.hpp"
 
 GroupController::GroupController(std::vector<std::shared_ptr<Group>>& groups,
-                                 std::vector<std::shared_ptr<Player>>& players, ResourceStore& rs) :
+                                 std::vector<std::shared_ptr<Player>>& players, ResourceStore& rs,
+                                 ResourceController& rc) :
     m_players(players),
-    m_groups(groups), m_resourceStore(rs) {
+    m_groups(groups), m_resourceStore(rs), m_resourceController(rc) {
     addEventListeners();
     for (size_t i = 0; i < m_groups.size(); i++) {
         sf::Text player_text("", *m_resourceStore.getFont(RenderingDef::FontKey::monogram),
@@ -53,8 +54,9 @@ uint32_t GroupController::createGroup(uint32_t player_id) {
 void GroupController::draw(sf::RenderTarget& buffer) {
     for (auto& group : m_groups) {
         uint32_t group_id = group->getId();
-        group->draw(buffer, getJoinable(group_id), getUngroup(group_id),
-                    getPlayerDirections(group_id), getPlayerIntents(group_id));
+        group->draw(buffer, m_groupToPlayers[group_id].size(), getJoinable(group_id),
+                    getUngroup(group_id), getPlayerDirections(group_id), getPlayerIntents(group_id),
+                    getResources(group_id));
     }
 }
 
@@ -63,6 +65,9 @@ void GroupController::drawUI(sf::RenderWindow& window, sf::View& player_view) {
 }
 
 void GroupController::drawGroupPlayerIds(sf::RenderWindow& window, sf::View& player_view) {
+    if (!SHOW_PLAYER_IDS) {
+        return;
+    }
     for (size_t i = 0; i < m_groups.size(); i++) {
         auto group = m_groups[i];
         if (group->isActive()) {
@@ -123,6 +128,18 @@ bool GroupController::getJoinable(uint32_t group_id) {
     return std::accumulate(
         group_players.begin(), group_players.end(), false,
         [this](bool curr, int player_id) { return curr || getPlayer(player_id).getJoinable(); });
+}
+
+std::array<uint32_t, RESOURCE_TYPE_COUNT> GroupController::getResources(uint32_t group_id) {
+    const auto& group_players = m_groupToPlayers[group_id];
+    std::array<uint32_t, RESOURCE_TYPE_COUNT> total_resources = {};
+    for (const auto& player_id : group_players) {
+        const auto player_resources = m_resourceController.get(player_id);
+        for (size_t i = 0; i < total_resources.size(); i++) {
+            total_resources[i] += player_resources[i];
+        }
+    }
+    return total_resources;
 }
 
 /**

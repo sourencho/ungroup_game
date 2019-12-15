@@ -12,6 +12,7 @@
 #include "../rendering/DirectionArrows.hpp"
 #include "../rendering/DirectionLines.hpp"
 #include "../resources/ResourceStore.hpp"
+#include "../systems/ResourceController.hpp"
 #include "CircleGameObject.hpp"
 #include "Player.hpp"
 
@@ -42,13 +43,14 @@ class Group : public CircleGameObject {
     GroupUpdate getUpdate();
     void applyUpdate(GroupUpdate gu);
 
-    void draw(sf::RenderTarget& render_target, bool joinable, bool ungroup,
-              std::vector<sf::Vector2f> player_directions,
-              std::vector<ResourceType> player_intents);
+    void draw(sf::RenderTarget& render_target, size_t player_count, bool joinable, bool ungroup,
+              std::vector<sf::Vector2f> player_directions, std::vector<ResourceType> player_intents,
+              std::array<uint32_t, RESOURCE_TYPE_COUNT> resource_counts);
 
   private:
     DirectionArrows m_directionArrow;
     DirectionLines m_directionLines;
+    float m_resourceCounts[RESOURCE_TYPE_COUNT] = {0}; // Used to pass resource counts to shader
 };
 
 #endif /* Group_hpp */
