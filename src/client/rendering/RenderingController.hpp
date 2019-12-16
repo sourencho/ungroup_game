@@ -13,6 +13,7 @@
 #include "../../common/util/game_settings.hpp"
 #include "../rendering/GUIController.hpp"
 #include "AnimationController.hpp"
+#include "BackgroundController.hpp"
 
 class RenderingController {
   public:
@@ -46,6 +47,7 @@ class RenderingController {
     ResourceStore& m_resourceStore;
     AnimationController m_animationController;
     GUIController m_guiController;
+    BackgroundController m_backgroundController;
 };
 
 #endif /* RenderingController_hpp */
