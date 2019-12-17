@@ -3,9 +3,9 @@
 #include "../common/bots/Bot.hpp"
 #include "../common/util/game_def.hpp"
 #include "../common/util/game_settings.hpp"
-#include "extern/cxxopts/include/cxxopts.hpp"
 #include "systems/ClientGameController.hpp"
 #include <SFML/Graphics.hpp>
+#include <cxxopts.hpp>
 
 int main(int argc, char** argv) {
     try {
