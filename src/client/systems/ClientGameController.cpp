@@ -10,8 +10,8 @@
 #include "../../common/util/game_settings.hpp"
 #include "ClientGameController.hpp"
 
-ClientGameController::ClientGameController() :
-    GameController(),
+ClientGameController::ClientGameController(bool is_headless, bool is_bot, BotStrategy strategy) :
+    m_headless(is_headless), m_isBot(is_bot), m_strategy(strategy), GameController(),
     m_window(sf::VideoMode(WINDOW_RESOLUTION.x, WINDOW_RESOLUTION.y), "Ungroup", sf::Style::Close),
     m_networkingClient(new NetworkingClient()), m_inputController(new InputController(INPUT_KEYS)),
     m_renderingController(
@@ -26,7 +26,14 @@ void ClientGameController::start() {
     registerClient();
     while (m_window.isOpen()) {
         step();
-        draw();
+        if (!m_headless) {
+            draw();
+        } else {
+            // unfortunately, the game will buffer up a ton of
+            // non-relevant moves, unless we slow it down. previously
+            // the draw was slowing it.
+            std::this_thread::sleep_for(std::chrono::milliseconds(50));
+        }
     }
 }
 
@@ -48,6 +55,8 @@ InputDef::PlayerInputs ClientGameController::getPlayerInputs() {
 }
 
 void ClientGameController::preUpdate() {
+    // call collectinputs to process window events, but if we're in bot mode
+    // then override any user commands
     auto inputs = m_inputController->collectInputs(m_window);
 
     switch (m_gameStateCore.status) {
@@ -58,6 +67,9 @@ void ClientGameController::preUpdate() {
             break;
         }
         case GameStatus::playing: {
+            if (m_isBot) {
+                inputs = m_gameObjectController->getBotMove(m_playerId, m_strategy);
+            }
             sendInputs(inputs);
             saveInputs(inputs);
 

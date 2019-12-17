@@ -41,6 +41,25 @@ float VectorUtil::dot(const sf::Vector2f& a, const sf::Vector2f& b) {
     return a.x * b.x + a.y * b.y;
 }
 
+double VectorUtil::cos_sim(sf::Vector2f A, sf::Vector2f B) {
+    double dot = 0.0, denom_a = 0.0, denom_b = 0.0;
+
+    dot += A.x * B.x;
+    denom_a += A.x * A.x;
+    denom_b += B.x * B.x;
+
+    dot += A.y * B.y;
+    denom_a += A.y * A.y;
+    denom_b += B.y * B.y;
+
+    if (denom_a == 0 || denom_b == 0) {
+        std::cerr << "cosine similarity is not defined whenever one or both "
+                  << "input vectors are zero-vectors." << std::endl;
+    }
+
+    return dot / (sqrt(denom_a) * sqrt(denom_b));
+}
+
 void VectorUtil::clamp(sf::Vector2f& a, float min, float max) {
     a.x = std::min(a.x, max);
     a.x = std::max(a.x, min);

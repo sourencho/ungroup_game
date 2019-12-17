@@ -18,4 +18,4 @@ add_library(client-lib
     rendering/BackgroundController.cpp
 )
 
-target_link_libraries(ug-client PRIVATE client-lib common-lib)
+target_link_libraries(ug-client PRIVATE client-lib common-lib cxxopts)

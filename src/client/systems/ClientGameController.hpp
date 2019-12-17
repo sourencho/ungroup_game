@@ -4,6 +4,7 @@
 #include <memory>
 #include <queue>
 #include <stdio.h>
+#include <thread>
 #include <unordered_map>
 #include <vector>
 
@@ -19,7 +20,8 @@
 class ClientGameController : public GameController {
 
   public:
-    explicit ClientGameController();
+    explicit ClientGameController(bool is_headless = false, bool is_bot = false,
+                                  BotStrategy strategy = BotStrategy::Random);
     ~ClientGameController();
 
     void start() override;
@@ -64,6 +66,8 @@ class ClientGameController : public GameController {
 
     // Variables
     uint32_t m_playerId = 0;
+    bool m_headless, m_isBot;
+    BotStrategy m_strategy;
 
     std::unordered_map<unsigned int, InputDef::ClientInputAndTick>
         m_tickToInput; // Cache of past inputs
