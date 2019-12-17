@@ -157,10 +157,10 @@ GameObjectController::getBotMove(uint32_t bot_player_id, BotStrategy strategy) {
     std::unordered_map<uint32_t, uint32_t> mine_id_to_resource_count;
     for (auto mine : mines) {
         auto mine_id = mine->getId();
-        mine_id_to_resource_count[mine_id] = m_resourceController.get(
-                mine_id, mine->getResourceType());
+        mine_id_to_resource_count[mine_id] =
+            m_resourceController.get(mine_id, mine->getResourceType());
     }
 
-    return m_bot.getMove(strategy, mines,
-            current_resources, bot_group_center, mine_id_to_resource_count);
+    return m_bot.getMove(strategy, mines, current_resources, bot_group_center,
+                         mine_id_to_resource_count);
 }

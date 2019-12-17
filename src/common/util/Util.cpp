@@ -1,16 +1,14 @@
 #include "Util.hpp"
 
 std::pair<InputDef::ReliableInput, InputDef::UnreliableInput>
-    Util::vectorToNearestMove(sf::Vector2f v) {
+Util::vectorToNearestMove(sf::Vector2f v) {
     InputDef::ReliableInput reliable_input;
     reliable_input.setAll(false);
 
     auto directions = VectorUtil::DIRECTIONS;
-    std::sort(directions.begin(), directions.end(),
-        [v](sf::Vector2f dir_a, sf::Vector2f dir_b) {
-            return VectorUtil::cos_sim(dir_a, v) > VectorUtil::cos_sim(dir_b, v);
-        }
-    );
+    std::sort(directions.begin(), directions.end(), [v](sf::Vector2f dir_a, sf::Vector2f dir_b) {
+        return VectorUtil::cos_sim(dir_a, v) > VectorUtil::cos_sim(dir_b, v);
+    });
 
     auto closestAllowedDirection = directions[0];
     bool go_left = (closestAllowedDirection.x == -1);
@@ -29,7 +27,7 @@ std::pair<InputDef::ReliableInput, InputDef::UnreliableInput>
 }
 
 sf::Vector2f Util::inputToDirection(bool toggle_up, bool toggle_down, bool toggle_right,
-                              bool toggle_left, bool toggle_stop) {
+                                    bool toggle_left, bool toggle_stop) {
     if (toggle_stop) {
         return sf::Vector2f(0.f, 0.f);
     }

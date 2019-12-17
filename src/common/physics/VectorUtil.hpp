@@ -7,14 +7,14 @@
 
 namespace VectorUtil {
     const std::array<sf::Vector2f, 8> DIRECTIONS = {
-        sf::Vector2f(0.f,-1.f),  //up
-        sf::Vector2f(0.f,1.f),   //down
-        sf::Vector2f(-1.f,0.f),  //left
-        sf::Vector2f(1.f,0.f),   //right
-        sf::Vector2f(-1.f,-1.f), //left-up
-        sf::Vector2f(1.f,1.f),   //right-down
-        sf::Vector2f(-1.f,1.f),  //left-down
-        sf::Vector2f(1.f,-1.f),  //right-up
+        sf::Vector2f(0.f, -1.f),  // up
+        sf::Vector2f(0.f, 1.f),   // down
+        sf::Vector2f(-1.f, 0.f),  // left
+        sf::Vector2f(1.f, 0.f),   // right
+        sf::Vector2f(-1.f, -1.f), // left-up
+        sf::Vector2f(1.f, 1.f),   // right-down
+        sf::Vector2f(-1.f, 1.f),  // left-down
+        sf::Vector2f(1.f, -1.f),  // right-up
     };
     sf::Vector2f normalize(const sf::Vector2f& source);
     float distance(const sf::Vector2f& point_a, const sf::Vector2f& point_b);

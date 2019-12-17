@@ -19,8 +19,7 @@ ClientGameController::ClientGameController() :
 }
 
 ClientGameController::ClientGameController(bool is_headless, bool is_bot, BotStrategy strategy) :
-    m_headless(is_headless), m_isBot(is_bot), m_strategy(strategy),
-    GameController(),
+    m_headless(is_headless), m_isBot(is_bot), m_strategy(strategy), GameController(),
     m_window(sf::VideoMode(WINDOW_RESOLUTION.x, WINDOW_RESOLUTION.y), "Ungroup", sf::Style::Close),
     m_networkingClient(new NetworkingClient()), m_inputController(new InputController(INPUT_KEYS)),
     m_renderingController(
