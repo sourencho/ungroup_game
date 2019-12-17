@@ -11,7 +11,7 @@
 #include "ClientGameController.hpp"
 
 ClientGameController::ClientGameController() :
-    GameController(),
+    m_headless(false), m_isBot(false), m_strategy(BotStrategy::Random), GameController(),
     m_window(sf::VideoMode(WINDOW_RESOLUTION.x, WINDOW_RESOLUTION.y), "Ungroup", sf::Style::Close),
     m_networkingClient(new NetworkingClient()), m_inputController(new InputController(INPUT_KEYS)),
     m_renderingController(
