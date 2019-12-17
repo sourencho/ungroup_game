@@ -17,4 +17,6 @@ add_library(client-lib
     rendering/RenderingController.cpp
 )
 
+add_subdirectory("extern/cxxopts")
+
 target_link_libraries(ug-client PRIVATE client-lib common-lib)

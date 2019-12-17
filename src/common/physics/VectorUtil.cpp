@@ -55,7 +55,7 @@ double VectorUtil::cos_sim(sf::Vector2f A, sf::Vector2f B)
 
     if (denom_a == 0 || denom_b == 0)
     {
-        std::cout   << "cosine similarity is not defined whenever one or both "
+        std::cerr   << "cosine similarity is not defined whenever one or both "
                     << "input vectors are zero-vectors." << std::endl;
     }
 

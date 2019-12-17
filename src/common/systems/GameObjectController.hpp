@@ -41,7 +41,7 @@ class GameObjectController {
     std::pair<bool, uint32_t> getGameOver();
 
     // bot methods
-    std::pair<InputDef::ReliableInput, InputDef::UnreliableInput> getBotMove(uint32_t bot_player_id);
+    std::pair<InputDef::ReliableInput, InputDef::UnreliableInput> getBotMove(uint32_t bot_player_id, BotStrategy strategy);
 
   private:
     void addEventListeners();

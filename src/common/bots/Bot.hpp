@@ -33,10 +33,10 @@ class Bot {
     std::pair<InputDef::ReliableInput, InputDef::UnreliableInput>
         getRandomMove();
     std::pair<InputDef::ReliableInput, InputDef::UnreliableInput>
-        getMove(BotStrategy strat, std::vector<std::shared_ptr<Mine>> mines,
+        getMove(BotStrategy strategy, const std::vector<std::shared_ptr<Mine>>& mines,
                 std::array<uint32_t, RESOURCE_TYPE_COUNT> current_resources,
                 sf::Vector2f bot_center,
-                std::unordered_map<uint32_t, uint32_t> mine_id_to_resource_count
+                const std::unordered_map<uint32_t, uint32_t>& mine_id_to_resource_count
                 );
 };
 

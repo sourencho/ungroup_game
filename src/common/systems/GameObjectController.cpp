@@ -148,7 +148,7 @@ std::pair<bool, uint32_t> GameObjectController::getGameOver() {
 }
 
 std::pair<InputDef::ReliableInput, InputDef::UnreliableInput>
-GameObjectController::getBotMove(uint32_t bot_player_id) {
+GameObjectController::getBotMove(uint32_t bot_player_id, BotStrategy strategy) {
     auto mines = m_gameObjectStore.getMines();
     auto current_resources = m_resourceController.get(bot_player_id);
     auto bot_group_id = m_groupController.getGroupId(bot_player_id);
@@ -161,6 +161,6 @@ GameObjectController::getBotMove(uint32_t bot_player_id) {
                 mine_id, mine->getResourceType());
     }
 
-    return m_bot.getMove(BotStrategy::NearestGreedy, mines,
+    return m_bot.getMove(strategy, mines,
             current_resources, bot_group_center, mine_id_to_resource_count);
 }

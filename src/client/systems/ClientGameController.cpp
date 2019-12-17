@@ -18,6 +18,15 @@ ClientGameController::ClientGameController() :
         new RenderingController(m_window, *m_gameObjectController, *m_resourceStore)) {
 }
 
+ClientGameController::ClientGameController(bool is_headless, bool is_bot, BotStrategy strategy) :
+    m_headless(is_headless), m_isBot(is_bot), m_strategy(strategy),
+    GameController(),
+    m_window(sf::VideoMode(WINDOW_RESOLUTION.x, WINDOW_RESOLUTION.y), "Ungroup", sf::Style::Close),
+    m_networkingClient(new NetworkingClient()), m_inputController(new InputController(INPUT_KEYS)),
+    m_renderingController(
+        new RenderingController(m_window, *m_gameObjectController, *m_resourceStore)) {
+}
+
 ClientGameController::~ClientGameController() {
 }
 
@@ -26,7 +35,9 @@ void ClientGameController::start() {
     registerClient();
     while (m_window.isOpen()) {
         step();
-        draw();
+        if (!m_headless) {
+            draw();
+        }
     }
 }
 
@@ -60,8 +71,8 @@ void ClientGameController::preUpdate() {
             break;
         }
         case GameStatus::playing: {
-            if (IS_BOT) {
-                inputs = m_gameObjectController->getBotMove(m_playerId);
+            if (m_isBot) {
+                inputs = m_gameObjectController->getBotMove(m_playerId, m_strategy);
             }
             sendInputs(inputs);
             saveInputs(inputs);
