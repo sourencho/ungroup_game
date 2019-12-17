@@ -2,6 +2,7 @@
 #define VectorUtil_hpp
 
 #include <SFML/Graphics.hpp>
+#include <array>
 #include <memory>
 #include <stdio.h>
 

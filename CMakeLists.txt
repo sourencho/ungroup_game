@@ -16,4 +16,5 @@ find_package(SFML 2.5 COMPONENTS audio graphics window system REQUIRED)
 
 add_subdirectory(src)
 add_subdirectory(extern/catch)
+add_subdirectory(extern/cxxopts)
 add_subdirectory(tests)
