@@ -20,6 +20,7 @@ class PhysicsController {
     void resolveCollisions();
     void resolveCollision(CircleRigidBody& circle_a, CircleRigidBody& circle_b,
                           const Collision& collision);
+    void resolveMapBounds();
     void fireCollisionEvent(const Collision& collision);
 
     std::vector<std::unique_ptr<CircleRigidBody>> m_circleRigidBodies;

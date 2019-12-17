@@ -22,12 +22,14 @@ const InputDef::InputKeys INPUT_KEYS = {
 };
 
 /* Rendering */
-
-const sf::Vector2f GAME_SIZE(1600 * 2, 1200 * 2);
-const sf::Vector2f WINDOW_RESOLUTION(1600, 1200);
-const float GAME_SCALE = 3.f;
+const float GAME_BOUNDS_RADIUS = 500;
+const sf::Vector2f WINDOW_RESOLUTION(1000, 1000);
+const sf::Vector2f GAME_CENTER(GAME_BOUNDS_RADIUS, GAME_BOUNDS_RADIUS);
+const sf::Vector2f GAME_SIZE(GAME_BOUNDS_RADIUS * 2.f, GAME_BOUNDS_RADIUS * 2.f);
+const float GAME_SCALE = 5.f;
 const sf::Vector2f GAME_SCALING_FACTOR(GAME_SCALE* GAME_SIZE.x / WINDOW_RESOLUTION.x,
                                        GAME_SCALE* GAME_SIZE.y / WINDOW_RESOLUTION.y);
+
 const bool USE_SHADER = true;
 const bool SHOW_DIRECTION_ARROWS = false;
 const bool SHOW_DIRECTION_LINES = true;
