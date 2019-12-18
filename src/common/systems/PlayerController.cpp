@@ -3,7 +3,7 @@
 #include "../events/ClientDisconnectedEvent.hpp"
 #include "../events/EventController.hpp"
 #include "../factories/IdFactory.hpp"
-#include "../util/Util.hpp"
+#include "../util/InputUtil.hpp"
 #include "../util/game_settings.hpp"
 #include <exception>
 
@@ -51,7 +51,7 @@ void PlayerController::update(const InputDef::PlayerInputs& pi) {
 
         // Only set direction if direction input is present
         if (ui.toggle_up || ui.toggle_down || ui.toggle_right || ui.toggle_left || ui.toggle_stop) {
-            player->setDirection(Util::inputToDirection(
+            player->setDirection(InputUtil::inputToDirection(
                 ui.toggle_up, ui.toggle_down, ui.toggle_right, ui.toggle_left, ui.toggle_stop));
         }
         player->toggleIntent(ui.toggle_intent);
