@@ -33,6 +33,7 @@ namespace VectorUtil {
             return lhs.x + 10.f * lhs.y < rhs.x + 10.f * rhs.y;
         }
     };
+    sf::Vector2f direction(float angle_degrees);
 } // namespace VectorUtil
 
 #endif /* VectorUtil_hpp */

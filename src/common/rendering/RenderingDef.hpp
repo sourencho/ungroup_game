@@ -56,24 +56,24 @@ namespace RenderingDef {
                          RenderingDef::RESOURCE_C_COLOR, RenderingDef::RESOURCE_D_COLOR});
 
     /* Misc */
-    const sf::Color BACKGROUND_COLOR(sf::Color::White);
-    const sf::Color OUT_OF_BOUNDS_COLOR(sf::Color::Black);
+    const sf::Color BACKGROUND_COLOR(20, 20, 20);
+    const sf::Color OUT_OF_BOUNDS_COLOR(100, 100, 100);
     const size_t GAME_BOUNDS_CIRCLE_SIDES = 80;
-    const float BACKGROUND_TEXTURE_1_ALPHA = 255 * 0.6;
-    const float BACKGROUND_TEXTURE_2_ALPHA = 255 * 0.4;
+    const float BACKGROUND_TEXTURE_1_ALPHA = 255 * .8;
+    const float BACKGROUND_TEXTURE_2_ALPHA = 255 * .7;
     const float BACKGROUND_TEXUTURE_1_SPEED =
-        1.f / 4.f; // Speed at which background texture 1 moves relative to player movement.
+        1.f / 10.f; // Speed at which background texture 1 moves relative to player movement.
     const float BACKGROUND_TEXUTURE_2_SPEED =
-        1.f / 16.f; // // Speed at which background texture 2 moves relative to player movement.
+        1.f / 5.f; // // Speed at which background texture 2 moves relative to player movement.
     const sf::Vector2f BACKGROUND_TEXTURE_1_SCALE = {2.f, 2.f};
-    const sf::Vector2f BACKGROUND_TEXTURE_2_SCALE = {2.f, 2.f};
+    const sf::Vector2f BACKGROUND_TEXTURE_2_SCALE = {1.f, 1.f};
 
-    const sf::Color COLLISION_ANIMATION_COLOR(0, 146, 199);
+    const sf::Color COLLISION_ANIMATION_COLOR(sf::Color::White);
 
     /* UI */
-    const sf::Color RESOURCE_UI_TEXT_COLOR(sf::Color::Black);
+    const sf::Color RESOURCE_UI_TEXT_COLOR(sf::Color::White);
     const float RESOURCE_UI_TEXT_SIZE(60.f);
-    const sf::Color DEBUG_UI_TEXT_COLOR(sf::Color::Blue);
+    const sf::Color DEBUG_UI_TEXT_COLOR(sf::Color::Green);
     const float DEBUG_UI_TEXT_SIZE(50.f);
 
 }; // namespace RenderingDef

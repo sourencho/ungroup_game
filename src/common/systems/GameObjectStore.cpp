@@ -30,10 +30,9 @@ GameObjectStore::GameObjectStore(PhysicsController& pc, ResourceStore& rs) :
     // Initialize Mines
     for (int i = 0; i < MAX_MINE_COUNT; i++) {
         uint32_t new_mine_id = IdFactory::getInstance().getNextId(GameObjectType::mine);
-        m_mines.push_back(std::shared_ptr<Mine>(new Mine(
-            new_mine_id, sf::Vector2f(MINE_START_OFFSET_X, MINE_START_OFFSET_Y * (i + 1) - 100.f),
-            MINE_SIZE, RenderingDef::DEFAULT_MINE_COLOR, ResourceType(i % RESOURCE_TYPE_COUNT),
-            m_physicsController, m_resourceStore)));
+        m_mines.push_back(std::shared_ptr<Mine>(
+            new Mine(new_mine_id, {0.f, 0.f}, MINE_SIZE, RenderingDef::DEFAULT_MINE_COLOR,
+                     ResourceType(i % RESOURCE_TYPE_COUNT), m_physicsController, m_resourceStore)));
     }
 }
 
