@@ -52,6 +52,9 @@ namespace CollisionUtil {
                                                                     const CircleRigidBody& circle_b,
                                                                     const Collision& collision);
 
+    /**
+     * Returns the amount to move a circle to get it back in bounds.
+     */
     sf::Vector2f getBoundsCorrection(const CircleRigidBody& circle, sf::Vector2f bounds_center,
                                      float bounds_radius);
 } // namespace CollisionUtil
