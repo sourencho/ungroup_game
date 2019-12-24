@@ -85,15 +85,11 @@ void PhysicsController::resolveMapBounds() {
 
     for (auto circle_it = m_circleRigidBodies.begin(); circle_it != inactive_crbs; ++circle_it) {
         CircleRigidBody& circle = **circle_it;
-        if (!circle.isMovable()) {
-            continue;
-        }
-        if (VectorUtil::distance(GAME_CENTER, circle.getCenter()) >
-            GAME_BOUNDS_RADIUS - circle.getRadius()) {
-            sf::Vector2f between = VectorUtil::getVector(circle.getCenter(), GAME_CENTER);
-            sf::Vector2f normal = VectorUtil::normalize(between);
-            float overlap = circle.getRadius() + GAME_BOUNDS_RADIUS - VectorUtil::length(between);
-            circle.move(normal * (2.f * circle.getRadius() - overlap));
+        if (circle.isMovable() &&
+            !CollisionUtil::isInBounds(circle, GAME_CENTER, GAME_BOUNDS_RADIUS)) {
+            circle.move(
+                CollisionUtil::getBoundsCorrection(circle, GAME_CENTER, GAME_BOUNDS_RADIUS));
+            circle.setVelocity({0, 0});
         }
     }
 }
