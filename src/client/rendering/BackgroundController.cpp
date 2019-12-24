@@ -8,6 +8,8 @@
 BackgroundController::BackgroundController(sf::Vector2u background_size, ResourceStore& rs) :
     m_resourceStore(rs), m_backgroundSize(background_size),
     m_boundsCircle(GAME_BOUNDS_RADIUS, RenderingDef::GAME_BOUNDS_CIRCLE_SIDES) {
+    m_shaderClock.restart();
+
     m_boundsCircle.setFillColor(RenderingDef::BACKGROUND_COLOR);
 
     auto dotted_background =
@@ -42,7 +44,12 @@ void BackgroundController::update(sf::Vector2f player_position, sf::Vector2u win
 }
 
 void BackgroundController::draw(sf::RenderTarget& target) {
-    target.draw(m_boundsCircle);
+    if (m_boundsCircleShader != nullptr && RenderingDef::USE_SHADERS) {
+        m_boundsCircleShader->setUniform("u_time", m_shaderClock.getElapsedTime().asSeconds());
+        target.draw(m_boundsCircle, m_boundsCircleShader.get());
+    } else {
+        target.draw(m_boundsCircle);
+    }
     target.draw(m_backgroundSprite2);
     target.draw(m_backgroundSprite);
 }
