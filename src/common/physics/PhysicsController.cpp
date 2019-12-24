@@ -7,6 +7,7 @@
 
 #include "../events/CollisionEvent.hpp"
 #include "../events/EventController.hpp"
+#include "../util/game_settings.hpp"
 #include "PhysicsDef.hpp"
 #include "VectorUtil.hpp"
 
@@ -22,6 +23,7 @@ CircleRigidBody& PhysicsController::add(std::unique_ptr<CircleRigidBody> circle_
 void PhysicsController::update(sf::Int32 delta_ms) {
     step(delta_ms);
     resolveCollisions();
+    resolveMapBounds();
 }
 
 /**
@@ -74,6 +76,22 @@ void PhysicsController::resolveCollision(CircleRigidBody& circle_a, CircleRigidB
 
     circle_a.applyImpulse(impulses.first);
     circle_b.applyImpulse(impulses.second);
+}
+
+void PhysicsController::resolveMapBounds() {
+    auto inactive_crbs = std::stable_partition(
+        m_circleRigidBodies.begin(), m_circleRigidBodies.end(),
+        [](const std::unique_ptr<CircleRigidBody>& crb) { return crb->isActive(); });
+
+    for (auto circle_it = m_circleRigidBodies.begin(); circle_it != inactive_crbs; ++circle_it) {
+        CircleRigidBody& circle = **circle_it;
+        if (circle.isMovable() &&
+            !CollisionUtil::isInBounds(circle, GAME_CENTER, GAME_BOUNDS_RADIUS)) {
+            circle.move(
+                CollisionUtil::getBoundsCorrection(circle, GAME_CENTER, GAME_BOUNDS_RADIUS));
+            circle.setVelocity({0, 0});
+        }
+    }
 }
 
 void PhysicsController::fireCollisionEvent(const Collision& collision) {

@@ -50,6 +50,10 @@ class CircleGameObject : public GameObject {
         m_outlineShape.setPosition(position);
     };
 
+    void setCenterPosition(sf::Vector2f position) {
+        setPosition({position.x - getRadius(), position.y - getRadius()});
+    }
+
     void setOutlineThickness(float thickness) {
         m_outlineShape.setOutlineThickness(thickness);
     };

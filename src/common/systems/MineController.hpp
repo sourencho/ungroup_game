@@ -14,7 +14,7 @@ class MineController {
     MineController(const MineController& temp_obj) = delete;
     MineController& operator=(const MineController& temp_obj) = delete;
 
-    uint32_t createMine();
+    uint32_t createMine(sf::Vector2f center_position);
     void draw(sf::RenderTarget& target);
     void update();
     void updatePostPhysics();

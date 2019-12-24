@@ -40,6 +40,10 @@ class CircleRigidBody : public GameObject {
         m_position = position;
     }
 
+    void setCenterPosition(sf::Vector2f position) {
+        setPosition({position.x - getRadius(), position.y - getRadius()});
+    }
+
     sf::Vector2f getVelocity() const {
         return m_velocity;
     }

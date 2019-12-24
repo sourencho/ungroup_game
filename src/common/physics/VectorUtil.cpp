@@ -3,8 +3,6 @@
 #include <cmath>
 #include <iostream>
 
-#define PI 3.14159265
-
 float VectorUtil::length(const sf::Vector2f& source) {
     return sqrt((source.x * source.x) + (source.y * source.y));
 }
@@ -68,5 +66,10 @@ void VectorUtil::clamp(sf::Vector2f& a, float min, float max) {
 }
 
 float VectorUtil::angle(const sf::Vector2f& v) {
-    return atan2(v.y, v.x) * 180.f / PI;
+    return atan2(v.y, v.x) * 180.f / M_PI;
+}
+
+sf::Vector2f VectorUtil::direction(float angle_degrees) {
+    float angle_radians = angle_degrees * M_PI / 180.f;
+    return sf::Vector2f(std::cos(angle_radians), std::sin(angle_radians));
 }

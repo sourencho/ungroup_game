@@ -23,6 +23,7 @@ class BackgroundController {
   private:
     ResourceStore& m_resourceStore;
     sf::Vector2u m_backgroundSize;
+    sf::CircleShape m_boundsCircle;
 
     sf::Sprite m_backgroundSprite;  // first background layer
     sf::Sprite m_backgroundSprite2; // second background layer
