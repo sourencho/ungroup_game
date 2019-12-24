@@ -23,7 +23,10 @@ class BackgroundController {
   private:
     ResourceStore& m_resourceStore;
     sf::Vector2u m_backgroundSize;
+
     sf::CircleShape m_boundsCircle;
+    std::shared_ptr<sf::Shader> m_boundsCircleShader = nullptr;
+    sf::Clock m_shaderClock;
 
     sf::Sprite m_backgroundSprite;  // first background layer
     sf::Sprite m_backgroundSprite2; // second background layer

@@ -10,7 +10,7 @@ namespace RenderingDef {
     const bool USE_SHADERS = true;
     const std::size_t CIRCLE_POINT_COUNT = 60;
     enum TextureKey { collision, mine_pattern, dotted_background };
-    enum ShaderKey { none, noop, voronoi, voronoi_counts };
+    enum ShaderKey { none, noop, voronoi_counts };
     enum FontKey { monogram };
     struct Shader {
         ShaderKey key = ShaderKey::none;
@@ -56,7 +56,7 @@ namespace RenderingDef {
                          RenderingDef::RESOURCE_C_COLOR, RenderingDef::RESOURCE_D_COLOR});
 
     /* Misc */
-    const sf::Color BACKGROUND_COLOR(20, 20, 20);
+    const sf::Color BACKGROUND_COLOR(10, 10, 10);
     const sf::Color OUT_OF_BOUNDS_COLOR(100, 100, 100);
     const size_t GAME_BOUNDS_CIRCLE_SIDES = 80;
     const float BACKGROUND_TEXTURE_1_ALPHA = 255 * .8;
