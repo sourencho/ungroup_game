@@ -1,7 +1,7 @@
 #include <catch.hpp>
 
 #include "../../../src/client/rendering/AnimationController.hpp"
-#include "../../../src/common/resources/ResourceStore.hpp"
+#include "../../../src/client/resources/ResourceStore.hpp"
 
 SCENARIO("AnimatedSprite is added to AnimationController and removed on completion",
          "[common][rendering][AnimationController]") {

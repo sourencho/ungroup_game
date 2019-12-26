@@ -1,7 +1,7 @@
 
 #include <iostream>
 
-#include "../util/game_settings.hpp"
+#include "../../common/util/game_settings.hpp"
 #include "ResourceStore.hpp"
 
 ResourceStore::ResourceStore() {

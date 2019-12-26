@@ -65,10 +65,6 @@ void PlayerController::update(const InputDef::PlayerInputs& pi) {
     }
 }
 
-void PlayerController::updatePostPhysics() {
-    // noop
-}
-
 std::shared_ptr<Player> PlayerController::getPlayer(uint32_t player_id) {
     return m_players[IdFactory::getInstance().getIndex(player_id)];
 }

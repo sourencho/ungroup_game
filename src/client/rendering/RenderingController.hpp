@@ -10,14 +10,16 @@
 #include <SFML/Graphics.hpp>
 
 #include "../../common/systems/GameObjectController.hpp"
+#include "../../common/systems/GameObjectStore.hpp"
 #include "../../common/util/game_settings.hpp"
 #include "../rendering/GUIController.hpp"
 #include "AnimationController.hpp"
 #include "BackgroundController.hpp"
+#include "GameObjectRenderer.hpp"
 
 class RenderingController {
   public:
-    RenderingController(sf::RenderWindow& window, GameObjectController& goc, ResourceStore& rs);
+    RenderingController(sf::RenderWindow& window, GameObjectController& goc, GameObjectStore& gos);
     ~RenderingController(){};
 
     void draw();
@@ -44,10 +46,11 @@ class RenderingController {
     sf::Text m_winnerText;
 
     GameObjectController& m_gameObjectController;
-    ResourceStore& m_resourceStore;
+    ResourceStore m_resourceStore;
     AnimationController m_animationController;
     GUIController m_guiController;
     BackgroundController m_backgroundController;
+    GameObjectRenderer m_gameObjectRenderer;
 };
 
 #endif /* RenderingController_hpp */

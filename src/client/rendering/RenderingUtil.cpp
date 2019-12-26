@@ -1,6 +1,6 @@
 #include "RenderingUtil.hpp"
 
-#include "../physics/VectorUtil.hpp"
+#include "../../common/physics/VectorUtil.hpp"
 
 #include <sstream>
 

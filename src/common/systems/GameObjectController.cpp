@@ -8,11 +8,9 @@
 #include "../util/game_def.hpp"
 #include "../util/game_settings.hpp"
 
-GameObjectController::GameObjectController(PhysicsController& physics_controller,
-                                           ResourceStore& resource_store) :
-    m_gameObjectStore(physics_controller, resource_store),
-    m_playerController(m_gameObjectStore.getPlayers()),
-    m_groupController(m_gameObjectStore.getGroups(), m_gameObjectStore.getPlayers(), resource_store,
+GameObjectController::GameObjectController(GameObjectStore& gos) :
+    m_gameObjectStore(gos), m_playerController(m_gameObjectStore.getPlayers()),
+    m_groupController(m_gameObjectStore.getGroups(), m_gameObjectStore.getPlayers(),
                       m_resourceController),
     m_mineController(m_gameObjectStore.getMines(), m_resourceController) {
     addEventListeners();
@@ -72,12 +70,6 @@ void GameObjectController::update(const InputDef::PlayerInputs& pi) {
     m_mineController.update();
 }
 
-void GameObjectController::updatePostPhysics() {
-    m_playerController.updatePostPhysics();
-    m_groupController.updatePostPhysics();
-    m_mineController.updatePostPhysics();
-}
-
 uint32_t GameObjectController::createPlayerWithGroup(uint32_t client_id) {
     uint32_t new_player_id = m_playerController.createPlayer(client_id);
     m_groupController.createGroup(new_player_id);
@@ -120,15 +112,6 @@ GameStateObject GameObjectController::getGameStateObject() {
     return gs;
 }
 
-void GameObjectController::draw(sf::RenderTexture& buffer) {
-    m_groupController.draw(buffer);
-    m_mineController.draw(buffer);
-}
-
-void GameObjectController::drawUI(sf::RenderWindow& window, sf::View& player_view) {
-    m_groupController.drawUI(window, player_view);
-}
-
 sf::Vector2f GameObjectController::getPlayerPosition(uint32_t player_id) {
     return m_gameObjectStore.getGroup(m_groupController.getGroupId(player_id))->getCenter();
 }
@@ -163,4 +146,16 @@ GameObjectController::getBotMove(uint32_t bot_player_id, BotStrategy strategy) {
 
     return m_bot.getMove(strategy, mines, current_resources, bot_group_center,
                          mine_id_to_resource_count);
+}
+
+GroupController& GameObjectController::getGroupController() {
+    return m_groupController;
+}
+
+MineController& GameObjectController::getMineController() {
+    return m_mineController;
+}
+
+ResourceController& GameObjectController::getResourceController() {
+    return m_resourceController;
 }

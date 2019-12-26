@@ -44,7 +44,7 @@ class GameController {
     virtual void incrementTick() = 0;
 
     std::unique_ptr<PhysicsController> m_physicsController;
-    std::unique_ptr<ResourceStore> m_resourceStore;
+    std::unique_ptr<GameObjectStore> m_gameObjectStore;
     std::unique_ptr<GameObjectController> m_gameObjectController;
 
     sf::Clock m_clock;

@@ -8,7 +8,6 @@
 #include <unordered_map>
 #include <vector>
 
-#include "../../common/resources/ResourceStore.hpp"
 #include "../../common/systems/GameController.hpp"
 #include "../rendering/Animation.hpp"
 #include "../rendering/AnimationController.hpp"

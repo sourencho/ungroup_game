@@ -3,7 +3,7 @@
 #include <iomanip>
 #include <sstream>
 
-#include "../../common/rendering/RenderingDef.hpp"
+#include "RenderingDef.hpp"
 
 // Pad count with this many zeroes. If a count has more digits than this then things will look
 // misaligned.

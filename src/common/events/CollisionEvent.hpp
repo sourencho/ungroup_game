@@ -3,7 +3,6 @@
 
 #include "../physics/PhysicsController.hpp"
 #include "Event.hpp"
-#include <SFML/Graphics.hpp>
 
 class CollisionEvent : public Event {
   public:

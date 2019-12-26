@@ -20,10 +20,6 @@ add_library(common-lib
     systems/GameController.cpp
     systems/ResourceController.cpp
     factories/IdFactory.cpp
-    resources/ResourceStore.cpp
-    rendering/DirectionArrows.cpp
-    rendering/DirectionLines.cpp
-    rendering/RenderingUtil.cpp
     bots/Bot.cpp
 )
 

@@ -4,8 +4,6 @@
 #include <memory>
 #include <vector>
 
-#include <SFML/Graphics.hpp>
-
 #include "../objects/CircleRigidBody.hpp"
 #include "CollisionUtil.hpp"
 

@@ -1,7 +1,7 @@
 #ifndef game_def_hpp
 #define game_def_hpp
 
-#include <SFML/Graphics.hpp>
+#include <SFML/Network.hpp>
 
 struct UnreliableCommand {
     sf::Uint32 client_id;

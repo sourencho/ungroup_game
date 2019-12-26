@@ -1,13 +1,16 @@
 #include "RenderingController.hpp"
 
-#include "../../common/rendering/RenderingUtil.hpp"
+#include "RenderingUtil.hpp"
 
 RenderingController::RenderingController(sf::RenderWindow& window, GameObjectController& goc,
-                                         ResourceStore& rs) :
+                                         GameObjectStore& gos) :
     m_window(window),
-    m_uiData({}), m_gameObjectController(goc), m_resourceStore(rs),
+    m_uiData({}), m_gameObjectController(goc), m_resourceStore(),
     m_animationController(m_resourceStore), m_guiController(m_window.getSize(), m_resourceStore),
-    m_backgroundController(m_window.getSize(), m_resourceStore) {
+    m_backgroundController(m_window.getSize(), m_resourceStore),
+    m_gameObjectRenderer(m_resourceStore, m_gameObjectController.getResourceController(),
+                         m_gameObjectController.getGroupController(),
+                         m_gameObjectController.getMineController()) {
     m_window.setFramerateLimit(60);
     sf::Vector2f window_size = sf::Vector2f(m_window.getSize());
 
@@ -25,7 +28,7 @@ RenderingController::RenderingController(sf::RenderWindow& window, GameObjectCon
     m_playerView = sf::View({}, sf::Vector2f(m_window.getSize()));
 
     // Winner text parameters
-    m_winnerText.setFont(*rs.getFont(RenderingDef::FontKey::monogram));
+    m_winnerText.setFont(*m_resourceStore.getFont(RenderingDef::FontKey::monogram));
     m_winnerText.setString("WINNER: NO DATA");
     m_winnerText.setCharacterSize(100.f);
     m_winnerText.setFillColor(sf::Color::White);
@@ -80,13 +83,13 @@ void RenderingController::drawPlaying() {
     m_window.setView(m_playerView);
 
     m_backgroundController.draw(m_buffer);
-    m_gameObjectController.draw(m_buffer);
+    m_gameObjectRenderer.draw(m_buffer);
     m_animationController.draw(m_buffer);
     m_window.draw(m_bufferSprite);
 
     // Draw GUI from window view
     m_window.setView(m_windowView);
-    m_gameObjectController.drawUI(m_window, m_playerView);
+    m_gameObjectRenderer.drawUI(m_window, m_playerView);
     m_guiController.draw(m_window);
 
     m_buffer.display();

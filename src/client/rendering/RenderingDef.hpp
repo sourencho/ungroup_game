@@ -4,7 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include <memory>
 
-#include "../systems/ResourceController.hpp"
+#include "../../common/systems/ResourceController.hpp"
 
 namespace RenderingDef {
     const bool USE_SHADERS = true;
@@ -19,7 +19,7 @@ namespace RenderingDef {
 
     /* Group */
     const sf::Color DEFAULT_GROUP_COLOR(sf::Color::Transparent);
-    const sf::Color DEFAULT_GROUP_OUTLINE_COLOR(200, 200, 200);
+    const sf::Color DEFAULT_GROUP_OUTLINE_COLOR(sf::Color::Transparent);
     const sf::Color JOINABLE_COLOR(sf::Color::Green);
     const sf::Color UNGROUP_COLOR(sf::Color::Blue);
     const sf::Color PLAYER_ID_TEXT_COLOR(sf::Color::Black);

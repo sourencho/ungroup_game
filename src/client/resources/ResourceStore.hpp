@@ -2,7 +2,6 @@
 #define ResourceStore_hpp
 
 #include <SFML/Graphics.hpp>
-
 #include <memory>
 #include <unordered_map>
 #include <vector>

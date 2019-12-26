@@ -4,7 +4,6 @@
 #include <vector>
 
 #include "../objects/Mine.hpp"
-#include "../resources/ResourceStore.hpp"
 #include "ResourceController.hpp"
 
 class MineController {
@@ -15,10 +14,9 @@ class MineController {
     MineController& operator=(const MineController& temp_obj) = delete;
 
     uint32_t createMine(sf::Vector2f center_position);
-    void draw(sf::RenderTarget& target);
     void update();
-    void updatePostPhysics();
     Mine& getMine(uint32_t mine_id);
+    std::vector<uint32_t> getMineIds();
 
   private:
     std::vector<std::shared_ptr<Mine>> m_mines;

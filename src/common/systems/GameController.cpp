@@ -12,10 +12,12 @@
 #include "../factories/IdFactory.hpp"
 #include "../util/game_def.hpp"
 #include "../util/game_settings.hpp"
+#include "GameObjectStore.hpp"
 
 GameController::GameController() :
-    m_physicsController(new PhysicsController()), m_resourceStore(new ResourceStore()),
-    m_gameObjectController(new GameObjectController(*m_physicsController, *m_resourceStore)),
+    m_physicsController(new PhysicsController()),
+    m_gameObjectStore(new GameObjectStore(*m_physicsController)),
+    m_gameObjectController(new GameObjectController(*m_gameObjectStore)),
     m_gameStateCore({.tick = 0, .status = GameStatus::not_started, .winner_player_id = 0}) {
 }
 
@@ -51,7 +53,6 @@ void GameController::step() {
 void GameController::computeGameState(const InputDef::PlayerInputs& pi, sf::Int32 delta_ms) {
     m_gameObjectController->update(pi);
     m_physicsController->update(delta_ms);
-    m_gameObjectController->updatePostPhysics();
     EventController::getInstance().forceProcessEvents();
     incrementTick();
 }

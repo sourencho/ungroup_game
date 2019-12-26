@@ -7,7 +7,7 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "../../common/resources/ResourceStore.hpp"
+#include "../resources/ResourceStore.hpp"
 #include "BaseUIElement.hpp"
 
 class ResourceUIElement : public BaseUIElement {

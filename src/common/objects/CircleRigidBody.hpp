@@ -7,7 +7,6 @@
 #include "../physics/PhysicsDef.hpp"
 #include "../physics/VectorUtil.hpp"
 #include "GameObject.hpp"
-#include <SFML/Graphics.hpp>
 
 class CircleRigidBody : public GameObject {
   public:

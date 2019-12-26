@@ -8,7 +8,7 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "../../common/resources/ResourceStore.hpp"
+#include "../resources/ResourceStore.hpp"
 
 class BackgroundController {
   public:

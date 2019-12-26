@@ -7,11 +7,10 @@
 #include "../objects/Group.hpp"
 #include "../objects/Mine.hpp"
 #include "../objects/Player.hpp"
-#include "../resources/ResourceStore.hpp"
 
 class GameObjectStore {
   public:
-    explicit GameObjectStore(PhysicsController& pc, ResourceStore& rs);
+    explicit GameObjectStore(PhysicsController& pc);
     ~GameObjectStore();
     GameObjectStore(const GameObjectStore& temp_obj) = delete;
     GameObjectStore& operator=(const GameObjectStore& temp_obj) = delete;
@@ -32,8 +31,6 @@ class GameObjectStore {
     std::vector<std::shared_ptr<Mine>> m_mines;
 
     PhysicsController& m_physicsController;
-    ResourceStore& m_resourceStore;
-
     unsigned int m_nextPlayerId = 0;
 };
 

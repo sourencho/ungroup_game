@@ -19,7 +19,6 @@ class PlayerController {
     std::vector<uint32_t> getActivePlayerIds() const;
     uint32_t createPlayer(uint32_t client_id);
     void update(const InputDef::PlayerInputs& pi);
-    void updatePostPhysics();
 
   private:
     void addEventListeners();
