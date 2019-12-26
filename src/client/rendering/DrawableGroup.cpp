@@ -22,8 +22,6 @@ void DrawableGroup::draw(sf::RenderTarget& target, Group& group, bool joinable, 
         throw std::runtime_error("Size of player directions and intents should be the same.");
     }
 
-    size_t player_count = player_directions.size();
-
     if (SHOW_DIRECTION_LINES) {
         drawDirectionLines(target, group, player_directions, player_intents);
     }
