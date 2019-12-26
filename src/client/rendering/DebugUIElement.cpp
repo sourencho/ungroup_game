@@ -4,7 +4,7 @@
 #include <iostream>
 #include <sstream>
 
-#include "../../common/rendering/RenderingDef.hpp"
+#include "RenderingDef.hpp"
 
 DebugUIElement::DebugUIElement(sf::Vector2u window_size, sf::Vector2f size, Align align,
                                Padding padding, ResourceStore& rs) :

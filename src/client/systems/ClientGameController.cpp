@@ -15,7 +15,7 @@ ClientGameController::ClientGameController(bool is_headless, bool is_bot, BotStr
     m_window(sf::VideoMode(WINDOW_RESOLUTION.x, WINDOW_RESOLUTION.y), "Ungroup", sf::Style::Close),
     m_networkingClient(new NetworkingClient()), m_inputController(new InputController(INPUT_KEYS)),
     m_renderingController(
-        new RenderingController(m_window, *m_gameObjectController, *m_resourceStore)) {
+        new RenderingController(m_window, *m_gameObjectController, *m_gameObjectStore)) {
 }
 
 ClientGameController::~ClientGameController() {

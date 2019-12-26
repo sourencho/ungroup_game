@@ -8,24 +8,16 @@
 #include "../events/CollisionEvent.hpp"
 #include "../events/EventController.hpp"
 #include "../factories/IdFactory.hpp"
-#include "../rendering/RenderingDef.hpp"
-#include "../rendering/RenderingUtil.hpp"
 #include "../util/TypeDef.hpp"
 #include "../util/game_def.hpp"
 #include "../util/game_settings.hpp"
 
 GroupController::GroupController(std::vector<std::shared_ptr<Group>>& groups,
-                                 std::vector<std::shared_ptr<Player>>& players, ResourceStore& rs,
+                                 std::vector<std::shared_ptr<Player>>& players,
                                  ResourceController& rc) :
     m_players(players),
-    m_groups(groups), m_resourceStore(rs), m_resourceController(rc) {
+    m_groups(groups), m_resourceController(rc) {
     addEventListeners();
-    for (size_t i = 0; i < m_groups.size(); i++) {
-        sf::Text player_text("", *m_resourceStore.getFont(RenderingDef::FontKey::monogram),
-                             RenderingDef::PLAYER_ID_TEXT_SIZE);
-        player_text.setFillColor(RenderingDef::PLAYER_ID_TEXT_COLOR);
-        m_groupPlayerTexts.push_back(player_text);
-    }
 }
 
 void GroupController::addEventListeners() {
@@ -51,50 +43,11 @@ uint32_t GroupController::createGroup(uint32_t player_id) {
     return new_group_id;
 }
 
-void GroupController::draw(sf::RenderTarget& buffer) {
-    for (auto& group : m_groups) {
-        uint32_t group_id = group->getId();
-        group->draw(buffer, m_groupToPlayers[group_id].size(), getJoinable(group_id),
-                    getUngroup(group_id), getPlayerDirections(group_id), getPlayerIntents(group_id),
-                    getResources(group_id));
-    }
-}
-
-void GroupController::drawUI(sf::RenderWindow& window, sf::View& player_view) {
-    drawGroupPlayerIds(window, player_view);
-}
-
-void GroupController::drawGroupPlayerIds(sf::RenderWindow& window, sf::View& player_view) {
-    if (!SHOW_PLAYER_IDS) {
-        return;
-    }
-    for (size_t i = 0; i < m_groups.size(); i++) {
-        auto group = m_groups[i];
-        if (group->isActive()) {
-            auto text = m_groupPlayerTexts[i];
-            const auto& player_ids = m_groupToPlayers[group->getId()];
-            text.setString(RenderingUtil::idVecToStr(player_ids, " "));
-            sf::FloatRect textRect = text.getLocalBounds();
-            text.setOrigin(textRect.left + textRect.width / 2.0f,
-                           textRect.top + textRect.height / 2.0f);
-            text.setPosition(RenderingUtil::mapCoordToPixelScaled(
-                group->getCenter(), window, player_view, GAME_SCALING_FACTOR));
-            window.draw(text);
-        }
-    }
-}
-
 void GroupController::update() {
     regroup(m_groups);
     for (auto& group : m_groups) {
         refreshGroup(group);
         updateGroup(group);
-    }
-}
-
-void GroupController::updatePostPhysics() {
-    for (auto& group : m_groups) {
-        group->matchRigid();
     }
 }
 
@@ -325,6 +278,13 @@ void GroupController::removePlayer(uint32_t player_id) {
 
 std::vector<uint32_t> GroupController::getGroupPlayerIds(uint32_t group_id) {
     return m_groupToPlayers[group_id];
+}
+
+std::vector<uint32_t> GroupController::getGroupIds() {
+    std::vector<uint32_t> group_ids;
+    std::transform(m_groups.begin(), m_groups.end(), std::back_inserter(group_ids),
+                   [this](std::shared_ptr<Group> group) -> uint32_t { return group->getId(); });
+    return group_ids;
 }
 
 /* Network utilities */

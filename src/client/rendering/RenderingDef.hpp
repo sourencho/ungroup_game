@@ -4,7 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include <memory>
 
-#include "../systems/ResourceController.hpp"
+#include "../../common/systems/ResourceController.hpp"
 
 namespace RenderingDef {
     const bool USE_SHADERS = true;

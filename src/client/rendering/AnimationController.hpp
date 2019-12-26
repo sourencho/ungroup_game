@@ -2,7 +2,7 @@
 #define AnimationController_hpp
 
 #include "../../common/events/Event.hpp"
-#include "../../common/resources/ResourceStore.hpp"
+#include "../resources/ResourceStore.hpp"
 #include "AnimatedSprite.hpp"
 
 class AnimationController {

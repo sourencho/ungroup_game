@@ -2,16 +2,13 @@
 
 #include <iostream>
 
-#include "../rendering/RenderingDef.hpp"
-#include "../rendering/RenderingUtil.hpp"
-#include "../util/game_settings.hpp"
+#include "../../common/util/game_settings.hpp"
+#include "RenderingDef.hpp"
+#include "RenderingUtil.hpp"
 
 void DirectionLines::draw(
     sf::RenderTarget& render_target, float radius, sf::Vector2f position,
-    const std::vector<std::pair<sf::Vector2f, sf::Color>>& direction_color_pairs, bool active) {
-    if (!active) {
-        return;
-    }
+    const std::vector<std::pair<sf::Vector2f, sf::Color>>& direction_color_pairs) {
 
     // Create a map of direction to list of colors
     m_directionToColors.clear();

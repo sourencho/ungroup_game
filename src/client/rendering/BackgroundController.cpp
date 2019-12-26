@@ -2,8 +2,8 @@
 
 #include <iostream>
 
-#include "../../common/rendering/RenderingDef.hpp"
 #include "../../common/util/game_settings.hpp"
+#include "RenderingDef.hpp"
 
 BackgroundController::BackgroundController(sf::Vector2u background_size, ResourceStore& rs) :
     m_resourceStore(rs), m_backgroundSize(background_size),

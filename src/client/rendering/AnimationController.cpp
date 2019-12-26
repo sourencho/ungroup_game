@@ -5,7 +5,7 @@
 
 #include "../../common/events/CollisionEvent.hpp"
 #include "../../common/events/EventController.hpp"
-#include "../../common/rendering/RenderingDef.hpp"
+#include "RenderingDef.hpp"
 
 AnimationController::AnimationController(ResourceStore& rs) : m_resourceStore(rs) {
     addEventListeners();

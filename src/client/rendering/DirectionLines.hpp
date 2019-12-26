@@ -12,7 +12,7 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "../physics/VectorUtil.hpp"
+#include "../../common/physics/VectorUtil.hpp"
 
 class DirectionLines {
   public:
@@ -25,11 +25,9 @@ class DirectionLines {
      * @radius: size of circle
      * @position: position of circle
      * @directions: list of directions
-     * @active: whether or not to draw the arrows
      */
     void draw(sf::RenderTarget& render_target, float radius, sf::Vector2f position,
-              const std::vector<std::pair<sf::Vector2f, sf::Color>>& direction_color_pairs,
-              bool active);
+              const std::vector<std::pair<sf::Vector2f, sf::Color>>& direction_color_pairs);
 
   private:
     std::map<sf::Vector2f, std::vector<sf::Color>, VectorUtil::vector_comparator>

@@ -2,13 +2,11 @@
 #include <vector>
 
 #include "../factories/IdFactory.hpp"
-#include "../rendering/RenderingDef.hpp"
 #include "../util/game_def.hpp"
 #include "../util/game_settings.hpp"
 #include "GameObjectStore.hpp"
 
-GameObjectStore::GameObjectStore(PhysicsController& pc, ResourceStore& rs) :
-    m_physicsController(pc), m_resourceStore(rs) {
+GameObjectStore::GameObjectStore(PhysicsController& pc) : m_physicsController(pc) {
     m_players.reserve(MAX_PLAYER_COUNT);
     m_groups.reserve(MAX_PLAYER_COUNT);
     m_mines.reserve(MAX_MINE_COUNT);
@@ -22,17 +20,16 @@ GameObjectStore::GameObjectStore(PhysicsController& pc, ResourceStore& rs) :
     // Initialize Groups
     for (int i = 0; i < MAX_PLAYER_COUNT; i++) {
         uint32_t new_group_id = IdFactory::getInstance().getNextId(GameObjectType::group);
-        m_groups.push_back(std::shared_ptr<Group>(new Group(new_group_id, GAME_CENTER,
-                                                            RenderingDef::DEFAULT_GROUP_COLOR,
-                                                            m_physicsController, m_resourceStore)));
+        m_groups.push_back(
+            std::shared_ptr<Group>(new Group(new_group_id, GAME_CENTER, m_physicsController)));
     }
 
     // Initialize Mines
     for (int i = 0; i < MAX_MINE_COUNT; i++) {
         uint32_t new_mine_id = IdFactory::getInstance().getNextId(GameObjectType::mine);
-        m_mines.push_back(std::shared_ptr<Mine>(
-            new Mine(new_mine_id, {0.f, 0.f}, MINE_SIZE, RenderingDef::DEFAULT_MINE_COLOR,
-                     ResourceType(i % RESOURCE_TYPE_COUNT), m_physicsController, m_resourceStore)));
+        m_mines.push_back(std::shared_ptr<Mine>(new Mine(new_mine_id, {0.f, 0.f}, MINE_SIZE,
+                                                         ResourceType(i % RESOURCE_TYPE_COUNT),
+                                                         m_physicsController)));
     }
 }
 

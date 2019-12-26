@@ -24,11 +24,9 @@ class DirectionArrows {
      * @velocity: velocity of circle
      * @targets: list of target directions
      * @color: color of arrows
-     * @active: whether or not to draw the arrows
      */
     void draw(sf::RenderTarget& render_target, float radius, sf::Vector2f position,
-              sf::Vector2f velocity, const std::vector<sf::Vector2f>& targets, sf::Color color,
-              bool active);
+              sf::Vector2f velocity, const std::vector<sf::Vector2f>& targets, sf::Color color);
 
   private:
     /**

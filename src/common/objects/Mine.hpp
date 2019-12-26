@@ -5,10 +5,8 @@
 #include <stdio.h>
 #include <vector>
 
-#include <SFML/Graphics.hpp>
 #include <SFML/Network.hpp>
 
-#include "../resources/ResourceStore.hpp"
 #include "../systems/ResourceController.hpp"
 #include "CircleGameObject.hpp"
 
@@ -18,7 +16,6 @@ struct MineUpdate {
     float x_pos;
     float y_pos;
     float radius;
-    sf::Uint32 shader_key;
 };
 
 sf::Packet& operator<<(sf::Packet& packet, const MineUpdate& mine_update);
@@ -26,8 +23,8 @@ sf::Packet& operator>>(sf::Packet& packet, MineUpdate& mine_update);
 
 class Mine : public CircleGameObject {
   public:
-    Mine(uint32_t id, sf::Vector2f position, float size, sf::Color color,
-         ResourceType resource_type, PhysicsController& pc, ResourceStore& rs);
+    Mine(uint32_t id, sf::Vector2f position, float size, ResourceType resource_type,
+         PhysicsController& pc);
     ~Mine();
     Mine(const Mine& temp_obj) = delete;            // TODO: define this
     Mine& operator=(const Mine& temp_obj) = delete; // TODO: define this
@@ -42,8 +39,6 @@ class Mine : public CircleGameObject {
 
     MineUpdate getUpdate();
     void applyUpdate(MineUpdate mu);
-
-    void draw(sf::RenderTarget& render_target);
 
   private:
     ResourceType m_resourceType;

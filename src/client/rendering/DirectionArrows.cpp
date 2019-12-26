@@ -3,8 +3,8 @@
 #include <iostream>
 #include <math.h>
 
-#include "../physics/VectorUtil.hpp"
-#include "../util/game_settings.hpp"
+#include "../../common/physics/VectorUtil.hpp"
+#include "../../common/util/game_settings.hpp"
 
 const float MIN_SPEED = 1.f;            // Minimum speed at which velocity arrow will still show
 const float TWO_MINUS_SQRT_3 = 0.2679f; // 2 - sqrt(3);
@@ -21,11 +21,7 @@ DirectionArrows::DirectionArrows() : m_velocityTriangle(0, 3) {
 
 void DirectionArrows::draw(sf::RenderTarget& render_target, float radius, sf::Vector2f position,
                            sf::Vector2f velocity, const std::vector<sf::Vector2f>& targets,
-                           sf::Color color, bool active) {
-
-    if (!active) {
-        return;
-    }
+                           sf::Color color) {
 
     drawTargetArrows(render_target, radius, position, targets, color);
     drawVelocityArrow(render_target, radius, position, velocity, color);
