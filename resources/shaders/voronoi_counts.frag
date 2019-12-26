@@ -18,16 +18,16 @@ uniform float u_resourceCounts[COLOR_COUNT]; // Order of resources needs to corr
                                              // colors in  color_pool.
 
 // Green palette
-const vec3 green_a = vec3(66. / 255., 118. / 255., 118. / 255.);
-const vec3 green_b = vec3(63. / 255., 157. / 255., 130. / 255.);
-const vec3 green_c = vec3(161. / 255., 205. / 255., 115. / 255.);
-const vec3 green_d = vec3(236. / 255., 219. / 255., 96. / 255.);
+const vec4 green_a = vec4(66. / 255., 118. / 255., 118. / 255., 1.);
+const vec4 green_b = vec4(63. / 255., 157. / 255., 130. / 255., 1.);
+const vec4 green_c = vec4(161. / 255., 205. / 255., 115. / 255., 1.);
+const vec4 green_d = vec4(236. / 255., 219. / 255., 96. / 255., 1.);
 
 // Soft palette
-const vec3 soft_a = vec3(159. / 255., 224. / 255., 246. / 255.);
-const vec3 soft_b = vec3(243. / 255., 229. / 255., 154. / 255.);
-const vec3 soft_c = vec3(243. / 255., 181. / 255., 155. / 255.);
-const vec3 soft_d = vec3(243. / 255., 156. / 255., 156. / 255.);
+const vec4 soft_a = vec4(159. / 255., 224. / 255., 246. / 255., 1.);
+const vec4 soft_b = vec4(243. / 255., 229. / 255., 154. / 255., 1.);
+const vec4 soft_c = vec4(243. / 255., 181. / 255., 155. / 255., 1.);
+const vec4 soft_d = vec4(243. / 255., 156. / 255., 156. / 255., 1.);
 
 vec2 random2(vec2 p) {
     return fract(sin(vec2(dot(p, vec2(127.1, 311.7)), dot(p, vec2(269.5, 183.3)))) * 43758.5453);
@@ -42,10 +42,10 @@ void main() {
     st *= u_resolution / (u_radius * 2.);
     st = fract(st);
 
-    vec3 color = vec3(.0);
+    vec4 color = vec4(1., 1., 1., .0);
 
     // Cell colors
-    vec3 color_pool[COLOR_COUNT];
+    vec4 color_pool[COLOR_COUNT];
     color_pool[0] = soft_a;
     color_pool[1] = soft_b;
     color_pool[2] = soft_c;
@@ -54,11 +54,11 @@ void main() {
     int CELL_COUNT = u_maxResources / RESOURCES_PER_CELL;
 
     /* Cell colors */
-    vec3 point_color[MAX_CELL_COUNT];
+    vec4 point_color[MAX_CELL_COUNT];
 
-    // Set all to white
+    // Set all to transparent
     for (int i = 0; i < u_maxResources; i++) {
-        point_color[i] = vec3(1.);
+        point_color[i] = vec4(1., 1., 1., 0.);
     }
 
     // Populate resources
@@ -80,7 +80,7 @@ void main() {
 
     float m_dist = 2.;  // minimun distance
     vec2 closest_point; // minimum position
-    vec3 closest_point_color = vec3(1.);
+    vec4 closest_point_color = vec4(1., 1., 1., 0.);
 
     // Iterate through the points positions
     for (int i = 0; i < CELL_COUNT; i++) {
@@ -99,5 +99,5 @@ void main() {
     // Set color to closest point color
     color = closest_point_color;
 
-    gl_FragColor = vec4(color, 1.0);
+    gl_FragColor = color;
 }

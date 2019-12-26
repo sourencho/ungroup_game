@@ -18,9 +18,11 @@ class DrawableMine : public DrawableCircle {
     DrawableMine(const DrawableMine& temp_obj) = delete;
     DrawableMine& operator=(const DrawableMine& temp_obj) = delete;
 
-    void draw(sf::RenderTarget& target, Mine& mine, uint32_t resource_count);
+    void draw(sf::RenderTarget& target, Mine& mine, uint32_t resource_count,
+              const std::array<uint32_t, RESOURCE_TYPE_COUNT>& resource_counts);
 
   private:
+    float m_resourceCounts[RESOURCE_TYPE_COUNT] = {0}; // Used to pass resource counts to shader
 };
 
 #endif /* DrawableMine_hpp */

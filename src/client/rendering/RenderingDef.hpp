@@ -19,7 +19,7 @@ namespace RenderingDef {
 
     /* Group */
     const sf::Color DEFAULT_GROUP_COLOR(sf::Color::Transparent);
-    const sf::Color DEFAULT_GROUP_OUTLINE_COLOR(sf::Color::Transparent);
+    const sf::Color DEFAULT_GROUP_OUTLINE_COLOR(sf::Color::White);
     const sf::Color JOINABLE_COLOR(sf::Color::Green);
     const sf::Color UNGROUP_COLOR(sf::Color::Blue);
     const sf::Color PLAYER_ID_TEXT_COLOR(sf::Color::Black);
