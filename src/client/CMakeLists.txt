@@ -22,6 +22,7 @@ add_library(client-lib
     rendering/DirectionArrows.cpp
     rendering/DirectionLines.cpp
     rendering/RenderingUtil.cpp
+    rendering/DrawableCircle.cpp
     resources/ResourceStore.cpp
 )
 

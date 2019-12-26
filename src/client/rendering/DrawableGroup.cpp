@@ -6,17 +6,14 @@
 #include "RenderingDef.hpp"
 
 DrawableGroup::DrawableGroup(ResourceStore& rs) :
-    m_resourceStore(rs), m_directionArrow(), m_directionLines() {
-    m_outlineShape.setFillColor(sf::Color::Transparent);
-    m_circleShape.setFillColor(sf::Color::Blue);
-    m_shaderClock.restart();
+    DrawableCircle(rs), m_directionArrow(), m_directionLines() {
     setShader(RenderingDef::ShaderKey::voronoi_counts);
 }
 
 void DrawableGroup::draw(sf::RenderTarget& target, Group& group, bool joinable, bool ungroup,
-                         std::vector<sf::Vector2f> player_directions,
-                         std::vector<ResourceType> player_intents,
-                         std::array<uint32_t, RESOURCE_TYPE_COUNT> resource_counts) {
+                         const std::vector<sf::Vector2f>& player_directions,
+                         const std::vector<ResourceType>& player_intents,
+                         const std::array<uint32_t, RESOURCE_TYPE_COUNT>& resource_counts) {
     if (!group.isActive()) {
         return;
     }
@@ -27,25 +24,38 @@ void DrawableGroup::draw(sf::RenderTarget& target, Group& group, bool joinable, 
 
     size_t player_count = player_directions.size();
 
-    // Draw direction lines
+    if (SHOW_DIRECTION_LINES) {
+        drawDirectionLines(target, group, player_directions, player_intents);
+    }
+
+    if (SHOW_DIRECTION_ARROWS) {
+        drawDirectionArrows(target, group, player_directions);
+    }
+
+    drawGroup(target, group, joinable, ungroup, resource_counts);
+}
+
+void DrawableGroup::drawDirectionLines(sf::RenderTarget& target, Group& group,
+                                       const std::vector<sf::Vector2f>& player_directions,
+                                       const std::vector<ResourceType>& player_intents) {
+    size_t player_count = player_directions.size();
     std::vector<std::pair<sf::Vector2f, sf::Color>> direction_color_pairs;
     direction_color_pairs.reserve(player_count);
     for (size_t i = 0; i < player_count; i++) {
         direction_color_pairs.push_back(
             std::make_pair(player_directions[i], RenderingDef::RESOURCE_COLORS[player_intents[i]]));
     }
-    if (SHOW_DIRECTION_LINES) {
-        m_directionLines.draw(target, group.getRadius(), group.getPosition(),
-                              direction_color_pairs);
-    }
+    m_directionLines.draw(target, group.getRadius(), group.getPosition(), direction_color_pairs);
+}
 
-    // Draw direction arrows
-    if (SHOW_DIRECTION_ARROWS) {
-        m_directionArrow.draw(target, group.getRadius(), group.getPosition(), group.getVelocity(),
-                              player_directions, RenderingDef::DIRECTION_ARROW_COLOR);
-    }
+void DrawableGroup::drawDirectionArrows(sf::RenderTarget& target, Group& group,
+                                        const std::vector<sf::Vector2f>& player_directions) {
+    m_directionArrow.draw(target, group.getRadius(), group.getPosition(), group.getVelocity(),
+                          player_directions, RenderingDef::DIRECTION_ARROW_COLOR);
+}
 
-    // Draw group
+void DrawableGroup::drawGroup(sf::RenderTarget& target, Group& group, bool joinable, bool ungroup,
+                              const std::array<uint32_t, RESOURCE_TYPE_COUNT>& resource_counts) {
     m_circleShape.setPosition(group.getPosition());
     m_circleShape.setRadius(group.getRadius());
 
@@ -84,13 +94,4 @@ void DrawableGroup::draw(sf::RenderTarget& target, Group& group, bool joinable, 
         target.draw(m_circleShape);
     }
     target.draw(m_outlineShape);
-}
-
-void DrawableGroup::setShader(RenderingDef::ShaderKey shader_key) {
-    m_shader.key = shader_key;
-    m_shader.shader = m_resourceStore.getShader(shader_key);
-}
-
-void DrawableGroup::setTexture(RenderingDef::TextureKey texture_key) {
-    m_circleShape.setTexture(m_resourceStore.getTexture(texture_key).get());
 }

@@ -1,9 +1,12 @@
 #include "DrawableMine.hpp"
 
-DrawableMine::DrawableMine(ResourceStore& rs) : m_resourceStore(rs) {
+#include "RenderingDef.hpp"
+
+DrawableMine::DrawableMine(ResourceStore& rs) : DrawableCircle(rs) {
+    setTexture(RenderingDef::TextureKey::mine_pattern);
 }
 
-void DrawableMine::update(Mine& mine, uint32_t resource_count) {
+void DrawableMine::draw(sf::RenderTarget& target, Mine& mine, uint32_t resource_count) {
     if (!mine.isActive()) {
         return;
     }
@@ -16,10 +19,6 @@ void DrawableMine::update(Mine& mine, uint32_t resource_count) {
     } else {
         m_circleShape.setFillColor(RenderingDef::RESOURCE_COLORS[mine.getResourceType()]);
     }
-}
 
-void DrawableMine::draw(sf::RenderTarget& target, bool active) {
-    if (active) {
-        target.draw(m_circleShape);
-    }
+    target.draw(m_circleShape);
 }

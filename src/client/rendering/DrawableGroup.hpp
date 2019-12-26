@@ -13,8 +13,9 @@
 #include "../resources/ResourceStore.hpp"
 #include "DirectionArrows.hpp"
 #include "DirectionLines.hpp"
+#include "DrawableCircle.hpp"
 
-class DrawableGroup {
+class DrawableGroup : public DrawableCircle {
   public:
     explicit DrawableGroup(ResourceStore& rs);
     ~DrawableGroup(){};
@@ -22,26 +23,23 @@ class DrawableGroup {
     DrawableGroup& operator=(const DrawableGroup& temp_obj) = delete;
 
     void draw(sf::RenderTarget& target, Group& group, bool joinable, bool ungroup,
-              std::vector<sf::Vector2f> player_directions, std::vector<ResourceType> player_intents,
-              std::array<uint32_t, RESOURCE_TYPE_COUNT> resource_counts);
-
-    void setShader(RenderingDef::ShaderKey shader_key);
-    void setTexture(RenderingDef::TextureKey texture_key);
+              const std::vector<sf::Vector2f>& player_directions,
+              const std::vector<ResourceType>& player_intents,
+              const std::array<uint32_t, RESOURCE_TYPE_COUNT>& resource_counts);
 
   private:
-    ResourceStore& m_resourceStore;
+    void drawDirectionLines(sf::RenderTarget& target, Group& group,
+                            const std::vector<sf::Vector2f>& player_directions,
+                            const std::vector<ResourceType>& player_intents);
 
-    sf::CircleShape m_circleShape;
-    sf::CircleShape
-        m_outlineShape; // We need another circle hidden behind to draw the outline on. We can't use
-                        // the original circle because the shader draw over the outline.
+    void drawDirectionArrows(sf::RenderTarget& target, Group& group,
+                             const std::vector<sf::Vector2f>& player_directions);
 
-    RenderingDef::Shader m_shader;
-    sf::Clock m_shaderClock;
+    void drawGroup(sf::RenderTarget& target, Group& group, bool joinable, bool ungroup,
+                   const std::array<uint32_t, RESOURCE_TYPE_COUNT>& resource_counts);
 
     DirectionArrows m_directionArrow;
     DirectionLines m_directionLines;
-
     float m_resourceCounts[RESOURCE_TYPE_COUNT] = {0}; // Used to pass resource counts to shader
 };
 
