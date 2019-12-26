@@ -54,23 +54,10 @@ void DrawableGroup::drawDirectionArrows(sf::RenderTarget& target, Group& group,
 
 void DrawableGroup::drawGroup(sf::RenderTarget& target, Group& group, bool joinable, bool ungroup,
                               const std::array<uint32_t, RESOURCE_TYPE_COUNT>& resource_counts) {
+
+    // Circle
     m_circleShape.setPosition(group.getPosition());
     m_circleShape.setRadius(group.getRadius());
-
-    m_outlineShape.setPosition(group.getPosition());
-    m_outlineShape.setRadius(group.getRadius());
-
-    m_outlineShape.setOutlineThickness(1.f);
-    sf::Color outline_color = RenderingDef::DEFAULT_GROUP_OUTLINE_COLOR;
-
-    if (joinable) {
-        outline_color = RenderingDef::JOINABLE_COLOR;
-    }
-
-    // TODO(sourenp): This was only included for debugging purposes. Remove eventually.
-    if (ungroup) {
-        outline_color = RenderingDef::UNGROUP_COLOR;
-    }
 
     if (m_shader.shader != nullptr && RenderingDef::USE_SHADERS) {
         std::copy(resource_counts.begin(), resource_counts.end(), m_resourceCounts);
@@ -84,12 +71,27 @@ void DrawableGroup::drawGroup(sf::RenderTarget& target, Group& group, bool joina
         m_shader.shader->setUniform("u_maxResources", total_resource_count);
     }
 
-    m_outlineShape.setOutlineColor(outline_color);
-
     if (m_shader.shader != nullptr && RenderingDef::USE_SHADERS) {
         target.draw(m_circleShape, m_shader.shader.get());
     } else {
         target.draw(m_circleShape);
     }
+
+    // Outline
+    m_outlineShape.setPosition(group.getPosition());
+    m_outlineShape.setRadius(group.getRadius());
+    m_outlineShape.setOutlineThickness(1.f);
+    sf::Color outline_color = RenderingDef::DEFAULT_GROUP_OUTLINE_COLOR;
+
+    if (joinable) {
+        outline_color = RenderingDef::JOINABLE_COLOR;
+    }
+
+    // TODO(sourenp): This was only included for debugging purposes. Remove eventually.
+    if (ungroup) {
+        outline_color = RenderingDef::UNGROUP_COLOR;
+    }
+
+    m_outlineShape.setOutlineColor(outline_color);
     target.draw(m_outlineShape);
 }

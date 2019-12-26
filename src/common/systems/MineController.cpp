@@ -32,7 +32,8 @@ uint32_t MineController::createMine(sf::Vector2f center_position) {
     uint32_t new_mine_id = new_mine.getId();
     new_mine.setCenterPosition(center_position);
     new_mine.setActive(true);
-    m_resourceController.add(new_mine_id, new_mine.getResourceType(), MINE_RESOURCE_COUNT);
+    m_resourceController.add(new_mine_id, new_mine.getResourceType(),
+                             new_mine.getResourceCapacity());
     return new_mine_id;
 }
 

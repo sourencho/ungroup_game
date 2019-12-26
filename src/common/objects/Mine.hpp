@@ -8,6 +8,7 @@
 #include <SFML/Network.hpp>
 
 #include "../systems/ResourceController.hpp"
+#include "../util/game_settings.hpp"
 #include "CircleGameObject.hpp"
 
 struct MineUpdate {
@@ -37,12 +38,17 @@ class Mine : public CircleGameObject {
         return m_resourceType;
     }
 
+    uint32_t getResourceCapacity() const {
+        return m_resourceCapacity;
+    }
+
     MineUpdate getUpdate();
     void applyUpdate(MineUpdate mu);
 
   private:
     ResourceType m_resourceType;
     uint32_t m_resourceCount = 0;
+    uint32_t m_resourceCapacity = MINE_RESOURCE_COUNT;
 };
 
 #endif /* Mine_hpp */

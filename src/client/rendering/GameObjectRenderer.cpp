@@ -54,8 +54,8 @@ void GameObjectRenderer::drawMines(sf::RenderTarget& target) {
         auto& drawable_mine = m_drawableMines[i];
         Mine& mine = m_mineController.getMine(mine_id);
 
-        drawable_mine->draw(target, mine,
-                            m_resourceController.get(mine_id, mine.getResourceType()));
+        drawable_mine->draw(target, mine, m_resourceController.get(mine_id, mine.getResourceType()),
+                            m_resourceController.get(mine_id));
     }
 }
 
