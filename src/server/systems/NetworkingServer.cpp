@@ -13,7 +13,6 @@
 #include "../../common/util/network_util.hpp"
 
 sf::Time TCP_TIMEOUT = sf::milliseconds(100);
-;
 
 NetworkingServer::NetworkingServer() : m_gameState_t() {
     std::cout << "Starting ungroup game server." << std::endl;
@@ -130,6 +129,10 @@ void NetworkingServer::handleUnreliableCommand(sf::Socket::Status status, sf::Pa
     UnreliableCommand unreliable_command;
     command_packet >> unreliable_command;
     switch (unreliable_command.command) {
+        // noop case meant for populating NAT table on client-side
+        case (sf::Uint32)UnreliableCommandType::nat_punch: {
+            break;
+        }
         case (sf::Uint32)UnreliableCommandType::unreliable_input: {
             setClientUnreliableUpdate(command_packet, unreliable_command.client_id,
                                       unreliable_command.tick);
@@ -192,7 +195,13 @@ void NetworkingServer::reliableRecvSend() {
                 auto socket = std::unique_ptr<sf::TcpSocket>(new sf::TcpSocket());
                 if (listener.accept(*socket) == sf::Socket::Done) {
                     selector.add(*socket);
-                    m_clients.push_back(std::make_pair(m_clientIdCounter++, std::move(socket)));
+                    int new_client_id = m_clientIdCounter++;
+                    // store the IP for sending UDP replies later
+                    {
+                        std::lock_guard<std::mutex> m_clientToIps_guard(m_clientToIps_lock);
+                        m_clientToIps_t[new_client_id] = (*socket).getRemoteAddress();
+                    }
+                    m_clients.push_back(std::make_pair(new_client_id, std::move(socket)));
                 } else {
                     socket.reset();
                 }
@@ -343,7 +352,12 @@ void NetworkingServer::sendGameState() {
             sf::Uint16& client_udp_port = it.second;
             sf::Socket::Status status = sf::Socket::Partial;
             while (status == sf::Socket::Partial) {
-                status = m_udpSocket_t->send(packet, CLIENT_IP, client_udp_port);
+                int client_id = it.first;
+                {
+                    std::lock_guard<std::mutex> m_clientToIps_guard(m_clientToIps_lock);
+                    status =
+                        m_udpSocket_t->send(packet, m_clientToIps_t[client_id], client_udp_port);
+                }
             }
         }
     }

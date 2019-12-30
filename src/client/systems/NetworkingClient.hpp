@@ -1,6 +1,8 @@
 #ifndef NetworkingClient_hpp
 #define NetworkingClient_hpp
 
+#include <time.h>
+
 #include <atomic>
 #include <memory>
 #include <mutex>
@@ -18,7 +20,7 @@
 class NetworkingClient {
 
   public:
-    NetworkingClient();
+    NetworkingClient(const std::string& server_ip);
     ~NetworkingClient();
 
     /**
@@ -56,6 +58,10 @@ class NetworkingClient {
     // Sockets
     void createTcpSocket(unsigned short port);
     void createUdpSocket();
+    void sendUnreliable(sf::Packet packet);
+
+    time_t m_lastSentNatPunch = time(0) - NAT_PUNCH_INTERVAL;
+    std::string m_serverIp;
 
     std::mutex m_tcpSocket_lock;
     std::unique_ptr<sf::TcpSocket> m_tcpSocket_t;
@@ -77,6 +83,13 @@ class NetworkingClient {
     std::atomic<bool> m_stopThreads_ta{false};
 
     // Methods
+    /**
+     * Send noop UDP to server for NAT table population.
+     * Otherwise, in scenario where client has sent no UDP packets
+     * server game state broadcasts will never reach client.
+     */
+    void sendNatPunch();
+
     /**
      * Send client inputs to server via UDP.
      */

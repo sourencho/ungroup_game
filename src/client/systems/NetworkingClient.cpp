@@ -12,11 +12,12 @@
 #include "../../common/util/game_settings.hpp"
 #include "../../common/util/network_util.hpp"
 
-const sf::Time CLIENT_TCP_TIMEOUT = sf::milliseconds(100);
+const sf::Time CLIENT_TCP_TIMEOUT = sf::milliseconds(300);
 ;
 
-NetworkingClient::NetworkingClient() : m_gameState_t({}) {
-    std::cout << "Starting client..." << std::endl;
+NetworkingClient::NetworkingClient(const std::string& server_ip) :
+    m_gameState_t({}), m_serverIp(server_ip) {
+    std::cout << "Starting client." << std::endl;
 
     createTcpSocket(SERVER_TCP_PORT);
     createUdpSocket();
@@ -45,7 +46,8 @@ NetworkingClient::~NetworkingClient() {
 void NetworkingClient::createTcpSocket(unsigned short port) {
     std::lock_guard<std::mutex> m_tcpSocket_guard(m_tcpSocket_lock);
     m_tcpSocket_t = std::unique_ptr<sf::TcpSocket>(new sf::TcpSocket);
-    m_tcpSocket_t->connect(SERVER_IP, port);
+
+    m_tcpSocket_t->connect(sf::IpAddress(m_serverIp), port);
 }
 
 void NetworkingClient::createUdpSocket() {
@@ -129,7 +131,8 @@ void NetworkingClient::readRegistrationResponse() {
             m_tick_ta = static_cast<uint>(reliable_command.tick);
             registration_response >> m_serverUdpPort;
             std::cout << "Registered as client " << m_clientId_ta << " at tick " << m_tick_ta
-                      << std::endl;
+                      << std::endl
+                      << "Server UDP port is: " << m_serverUdpPort << std::endl;
             return;
         }
     }
@@ -260,9 +263,36 @@ void NetworkingClient::unreliableSend() {
     }
 }
 
+void NetworkingClient::sendUnreliable(sf::Packet packet) {
+    std::lock_guard<std::mutex> m_udpSocket_guard(m_udpSocket_lock);
+    sf::Socket::Status status = sf::Socket::Partial;
+
+    while (status == sf::Socket::Partial) {
+        status = m_udpSocket_t->send(packet, sf::IpAddress(m_serverIp), m_serverUdpPort);
+    }
+}
+void NetworkingClient::sendNatPunch() {
+    sf::Packet packet;
+    sf::Uint32 unreliable_input_cmd = UnreliableCommandType::nat_punch;
+    UnreliableCommand unreliable_command = {(sf::Uint32)m_clientId_ta, unreliable_input_cmd,
+                                            m_tick_ta};
+
+    if (packet << unreliable_command) {
+        sendUnreliable(packet);
+    } else {
+        std::cout << "Failed to form packet" << std::endl;
+    }
+}
+
 void NetworkingClient::sendUnreliableInput() {
     std::lock_guard<std::mutex> m_unreliableInputs_guard(m_unreliableInputs_lock);
     if (m_unreliableInputs_t.empty()) {
+        time_t seconds_passed = time(0) - m_lastSentNatPunch;
+        if (seconds_passed > NAT_PUNCH_INTERVAL) {
+            // keep the NAT tables populated by sending a nat punch noop to the server
+            sendNatPunch();
+            m_lastSentNatPunch = time(0);
+        }
         return;
     }
 
@@ -275,11 +305,7 @@ void NetworkingClient::sendUnreliableInput() {
                                             m_tick_ta};
 
     if (packet << unreliable_command && packet << unreliable_input) {
-        std::lock_guard<std::mutex> m_udpSocket_guard(m_udpSocket_lock);
-        sf::Socket::Status status = sf::Socket::Partial;
-        while (status == sf::Socket::Partial) {
-            status = m_udpSocket_t->send(packet, SERVER_IP, m_serverUdpPort);
-        }
+        sendUnreliable(packet);
     } else {
         std::cout << "Failed to form packet" << std::endl;
     }

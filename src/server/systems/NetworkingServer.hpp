@@ -72,6 +72,9 @@ class NetworkingServer {
     // Misc
     std::vector<std::pair<sf::Uint32, std::unique_ptr<sf::TcpSocket>>> m_clients;
 
+    std::mutex m_clientToIps_lock;
+    std::unordered_map<int, sf::IpAddress> m_clientToIps_t;
+
     std::mutex m_clientToPlayerIds_lock;
     std::unordered_map<int, sf::Uint32> m_clientToPlayerIds_t;
 
