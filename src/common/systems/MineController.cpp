@@ -9,14 +9,6 @@
 
 MineController::MineController(std::vector<std::shared_ptr<Mine>>& mines, ResourceController& rc) :
     m_mines(mines), m_resourceController(rc) {
-    // Create mines in a ring around the center of the game
-    for (int i = 0; i < MAX_MINE_COUNT; i++) {
-        float radius = GAME_BOUNDS_RADIUS * 0.8f;
-        float angle = i * 360.f / MAX_MINE_COUNT;
-        sf::Vector2f direction = VectorUtil::direction(angle);
-        sf::Vector2f mine_center_position = GAME_CENTER + direction * radius;
-        createMine(mine_center_position);
-    }
 }
 
 MineController::~MineController() {

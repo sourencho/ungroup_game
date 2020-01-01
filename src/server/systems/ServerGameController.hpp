@@ -8,11 +8,12 @@
 
 #include "../../common/events/Event.hpp"
 #include "../../common/systems/GameController.hpp"
+#include "../../common/systems/LevelController.hpp"
 #include "NetworkingServer.hpp"
 
 class ServerGameController : public GameController {
   public:
-    explicit ServerGameController();
+    explicit ServerGameController(LevelKey level_key = LevelKey::mine_ring);
     ~ServerGameController();
 
     void start() override;

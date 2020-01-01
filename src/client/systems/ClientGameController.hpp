@@ -20,7 +20,8 @@ class ClientGameController : public GameController {
 
   public:
     explicit ClientGameController(bool is_headless = false, bool is_bot = false,
-                                  BotStrategy strategy = BotStrategy::Random);
+                                  BotStrategy strategy = BotStrategy::Random,
+                                  LevelKey level_key = LevelKey::empty);
     ~ClientGameController();
 
     void start() override;

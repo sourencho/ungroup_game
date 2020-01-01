@@ -1,7 +1,7 @@
 #include "ServerGameController.hpp"
 
-ServerGameController::ServerGameController() :
-    GameController(), m_networkingServer(new NetworkingServer()) {
+ServerGameController::ServerGameController(LevelKey level_key) :
+    GameController(level_key), m_networkingServer(new NetworkingServer()) {
 }
 
 ServerGameController::~ServerGameController() {

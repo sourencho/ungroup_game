@@ -8,12 +8,14 @@
 #include "../util/game_def.hpp"
 #include "../util/game_settings.hpp"
 
-GameObjectController::GameObjectController(GameObjectStore& gos) :
+GameObjectController::GameObjectController(GameObjectStore& gos, LevelKey level_key) :
     m_gameObjectStore(gos), m_playerController(m_gameObjectStore.getPlayers()),
     m_groupController(m_gameObjectStore.getGroups(), m_gameObjectStore.getPlayers(),
                       m_resourceController),
-    m_mineController(m_gameObjectStore.getMines(), m_resourceController) {
+    m_mineController(m_gameObjectStore.getMines(), m_resourceController),
+    m_levelController(m_groupController, m_mineController) {
     addEventListeners();
+    m_levelController.loadLevel(level_key);
 }
 
 GameObjectController::~GameObjectController(){};
