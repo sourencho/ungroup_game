@@ -16,7 +16,7 @@ struct ReliableCommand {
 };
 
 enum ReliableCommandType { register_client, player_id, reliable_input };
-enum UnreliableCommandType { unreliable_input, fetch_state };
+enum UnreliableCommandType { unreliable_input, nat_punch };
 
 enum GameObjectType {
     player,

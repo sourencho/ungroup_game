@@ -20,7 +20,8 @@ class ClientGameController : public GameController {
 
   public:
     explicit ClientGameController(bool is_headless = false, bool is_bot = false,
-                                  BotStrategy strategy = BotStrategy::Random);
+                                  BotStrategy strategy = BotStrategy::Random,
+                                  const std::string& server_ip = LOCALHOST_IP);
     ~ClientGameController();
 
     void start() override;
@@ -67,6 +68,7 @@ class ClientGameController : public GameController {
     uint32_t m_playerId = 0;
     bool m_headless, m_isBot;
     BotStrategy m_strategy;
+    std::string m_server_ip;
 
     std::unordered_map<unsigned int, InputDef::ClientInputAndTick>
         m_tickToInput; // Cache of past inputs
