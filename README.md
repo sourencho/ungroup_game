@@ -18,15 +18,9 @@ Created by [@sourenp](https://github.com/SourenP) and [@copacetic](https://githu
 ### Unix
 1. Clone this repo
 2. Install [SFML 2.5.1](https://www.sfml-dev.org/download/sfml/2.5.1/) package
-3. Configure and build:
+3. Build:
 ```
-// With ninja (faster, colorless)
-cmake -DCMAKE_BUILD_TYPE=Release -GNinja -S . -B build
-ninja -C build
-
-// Without ninja (slower, colorful)
-cmake -DCMAKE_BUILD_TYPE=Release -S . -B build
-cmake --build build -- -j
+./build.sh
 ```
 4. Run server and client in seperate terminals:
 ```
