@@ -19,6 +19,7 @@ add_library(common-lib
     systems/GameObjectController.cpp
     systems/GameController.cpp
     systems/ResourceController.cpp
+    systems/LevelController.cpp
     factories/IdFactory.cpp
     bots/Bot.cpp
 )

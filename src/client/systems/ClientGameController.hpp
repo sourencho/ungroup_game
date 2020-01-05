@@ -21,7 +21,8 @@ class ClientGameController : public GameController {
   public:
     explicit ClientGameController(bool is_headless = false, bool is_bot = false,
                                   BotStrategy strategy = BotStrategy::Random,
-                                  const std::string& server_ip = LOCALHOST_IP);
+                                  const std::string& server_ip = LOCALHOST_IP,
+                                  LevelKey level_key = LevelKey::empty);
     ~ClientGameController();
 
     void start() override;

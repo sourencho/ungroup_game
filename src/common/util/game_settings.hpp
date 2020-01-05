@@ -30,7 +30,6 @@ const float GAME_SCALE = 5.f;
 const sf::Vector2f GAME_SCALING_FACTOR(GAME_SCALE* GAME_SIZE.x / WINDOW_RESOLUTION.x,
                                        GAME_SCALE* GAME_SIZE.y / WINDOW_RESOLUTION.y);
 
-const bool USE_SHADER = true;
 const bool SHOW_DIRECTION_ARROWS = false;
 const bool SHOW_DIRECTION_LINES = true;
 const bool SHOW_PLAYER_IDS = true;

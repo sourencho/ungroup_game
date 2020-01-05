@@ -17,12 +17,15 @@ namespace RenderingDef {
         std::shared_ptr<sf::Shader> shader = nullptr;
     };
 
+    /* Debug */
+    const sf::Color DEBUG_TEXT_COLOR(sf::Color::Green);
+
     /* Group */
     const sf::Color DEFAULT_GROUP_COLOR(sf::Color::Transparent);
     const sf::Color DEFAULT_GROUP_OUTLINE_COLOR(sf::Color::White);
     const sf::Color JOINABLE_COLOR(sf::Color::Green);
     const sf::Color UNGROUP_COLOR(sf::Color::Blue);
-    const sf::Color PLAYER_ID_TEXT_COLOR(sf::Color::Black);
+    const sf::Color PLAYER_ID_TEXT_COLOR(DEBUG_TEXT_COLOR);
     const float PLAYER_ID_TEXT_SIZE(50.f);
 
     /* Direction lines and arrows */
@@ -56,7 +59,7 @@ namespace RenderingDef {
                          RenderingDef::RESOURCE_C_COLOR, RenderingDef::RESOURCE_D_COLOR});
 
     /* Misc */
-    const sf::Color BACKGROUND_COLOR(10, 10, 10);
+    const sf::Color BACKGROUND_COLOR(34, 32, 52);
     const sf::Color OUT_OF_BOUNDS_COLOR(100, 100, 100);
     const size_t GAME_BOUNDS_CIRCLE_SIDES = 80;
     const float BACKGROUND_TEXTURE_1_ALPHA = 255 * .8;
@@ -73,7 +76,7 @@ namespace RenderingDef {
     /* UI */
     const sf::Color RESOURCE_UI_TEXT_COLOR(sf::Color::White);
     const float RESOURCE_UI_TEXT_SIZE(60.f);
-    const sf::Color DEBUG_UI_TEXT_COLOR(sf::Color::Green);
+    const sf::Color DEBUG_UI_TEXT_COLOR(DEBUG_TEXT_COLOR);
     const float DEBUG_UI_TEXT_SIZE(50.f);
 
 }; // namespace RenderingDef

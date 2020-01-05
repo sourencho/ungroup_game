@@ -10,13 +10,14 @@
 #include "../util/game_def.hpp"
 #include "GameObjectStore.hpp"
 #include "GroupController.hpp"
+#include "LevelController.hpp"
 #include "MineController.hpp"
 #include "PlayerController.hpp"
 #include "ResourceController.hpp"
 
 class GameObjectController {
   public:
-    GameObjectController(GameObjectStore& gos);
+    GameObjectController(GameObjectStore& gos, LevelKey level_key);
     ~GameObjectController();
 
     void update(const InputDef::PlayerInputs& pi);
@@ -47,6 +48,7 @@ class GameObjectController {
     PlayerController m_playerController;
     GroupController m_groupController;
     MineController m_mineController;
+    LevelController m_levelController;
 
     Bot m_bot;
 };

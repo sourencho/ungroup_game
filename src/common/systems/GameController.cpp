@@ -14,10 +14,10 @@
 #include "../util/game_settings.hpp"
 #include "GameObjectStore.hpp"
 
-GameController::GameController() :
+GameController::GameController(LevelKey level_key) :
     m_physicsController(new PhysicsController()),
     m_gameObjectStore(new GameObjectStore(*m_physicsController)),
-    m_gameObjectController(new GameObjectController(*m_gameObjectStore)),
+    m_gameObjectController(new GameObjectController(*m_gameObjectStore, level_key)),
     m_gameStateCore({.tick = 0, .status = GameStatus::not_started, .winner_player_id = 0}) {
 }
 
