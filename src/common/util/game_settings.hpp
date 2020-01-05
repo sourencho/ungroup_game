@@ -37,6 +37,7 @@ const bool SHOW_PLAYER_IDS = true;
 /* Game Logic */
 const bool USE_INTERPOLATION_REPLAY = false;
 
+const int NAT_PUNCH_INTERVAL = 30;
 const int MAX_PLAYER_COUNT = 20;
 const int MAX_MINE_COUNT = 8;
 const float GROUP_MEMBER_SIZE = 10.f;
@@ -70,8 +71,7 @@ const std::chrono::milliseconds SERVER_BROADCAST_GAME_STATE_SLEEP(16);
 const std::chrono::milliseconds CLIENT_UNRELIABLE_RECV_SLEEP(SERVER_BROADCAST_GAME_STATE_SLEEP / 2);
 
 /* Networking */
-static const char* CLIENT_IP = "127.0.0.1";
 static const unsigned short SERVER_TCP_PORT = 4844;
-static const char* SERVER_IP = "127.0.0.1";
+static const std::string LOCALHOST_IP = "127.0.0.1";
 
 #endif /* game_settings_hpp */

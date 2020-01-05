@@ -11,11 +11,12 @@
 #include "ClientGameController.hpp"
 
 ClientGameController::ClientGameController(bool is_headless, bool is_bot, BotStrategy strategy,
-                                           LevelKey level_key) :
+                                           const std::string& server_ip, LevelKey level_key) :
     m_headless(is_headless),
-    m_isBot(is_bot), m_strategy(strategy), GameController(level_key),
+    m_isBot(is_bot), m_strategy(strategy), m_server_ip(server_ip), GameController(level_key),
     m_window(sf::VideoMode(WINDOW_RESOLUTION.x, WINDOW_RESOLUTION.y), "Ungroup", sf::Style::Close),
-    m_networkingClient(new NetworkingClient()), m_inputController(new InputController(INPUT_KEYS)),
+    m_networkingClient(new NetworkingClient(m_server_ip)),
+    m_inputController(new InputController(INPUT_KEYS)),
     m_renderingController(
         new RenderingController(m_window, *m_gameObjectController, *m_gameObjectStore)) {
 }
