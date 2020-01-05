@@ -44,6 +44,7 @@ class RenderingController {
     sf::Vector2f m_playerPosition;
 
     sf::Text m_winnerText;
+    sf::Text m_connectingText;
 
     GameObjectController& m_gameObjectController;
     ResourceStore m_resourceStore;

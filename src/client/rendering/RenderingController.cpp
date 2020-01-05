@@ -27,9 +27,13 @@ RenderingController::RenderingController(sf::RenderWindow& window, GameObjectCon
     m_windowView = sf::View(window_size / 2.f, window_size);
     m_playerView = sf::View({}, sf::Vector2f(m_window.getSize()));
 
+    // Connecting text parameters
+    m_connectingText.setFont(*m_resourceStore.getFont(RenderingDef::FontKey::monogram));
+    m_connectingText.setCharacterSize(100.f);
+    m_connectingText.setFillColor(sf::Color::White);
+
     // Winner text parameters
     m_winnerText.setFont(*m_resourceStore.getFont(RenderingDef::FontKey::monogram));
-    m_winnerText.setString("WINNER: NO DATA");
     m_winnerText.setCharacterSize(100.f);
     m_winnerText.setFillColor(sf::Color::White);
 }
@@ -71,7 +75,15 @@ void RenderingController::draw() {
 }
 
 void RenderingController::drawNotStarted() {
-    m_window.clear(sf::Color::Blue);
+    m_window.clear(RenderingDef::CONNECTING_SCREEN_COLOR);
+
+    m_connectingText.setString("Connecting...");
+    sf::FloatRect textRect = m_connectingText.getLocalBounds();
+    m_connectingText.setOrigin(textRect.left + textRect.width / 2.0f,
+                               textRect.top + textRect.height / 2.0f);
+    m_connectingText.setPosition(sf::Vector2f(m_window.getSize()) / 2.f);
+    m_window.draw(m_connectingText);
+
     m_window.display();
 }
 
@@ -97,12 +109,14 @@ void RenderingController::drawPlaying() {
 }
 
 void RenderingController::drawGameOver() {
-    m_window.clear(sf::Color::Red);
-    m_winnerText.setString("WINNER: " + std::to_string(m_uiData.winner_player_id));
+    m_window.clear(RenderingDef::WINNER_SCREEN_COLOR);
+
+    m_winnerText.setString("Winner: " + std::to_string(m_uiData.winner_player_id));
     sf::FloatRect textRect = m_winnerText.getLocalBounds();
     m_winnerText.setOrigin(textRect.left + textRect.width / 2.0f,
                            textRect.top + textRect.height / 2.0f);
     m_winnerText.setPosition(sf::Vector2f(m_window.getSize()) / 2.f);
     m_window.draw(m_winnerText);
+
     m_window.display();
 }
