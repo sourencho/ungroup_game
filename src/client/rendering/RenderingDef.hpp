@@ -59,7 +59,7 @@ namespace RenderingDef {
                          RenderingDef::RESOURCE_C_COLOR, RenderingDef::RESOURCE_D_COLOR});
 
     /* Misc */
-    const sf::Color BACKGROUND_COLOR(10, 10, 10);
+    const sf::Color BACKGROUND_COLOR(34, 32, 52);
     const sf::Color OUT_OF_BOUNDS_COLOR(100, 100, 100);
     const size_t GAME_BOUNDS_CIRCLE_SIDES = 80;
     const float BACKGROUND_TEXTURE_1_ALPHA = 255 * .8;

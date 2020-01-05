@@ -21,7 +21,7 @@ GameObjectStore::GameObjectStore(PhysicsController& pc) : m_physicsController(pc
     for (int i = 0; i < MAX_PLAYER_COUNT; i++) {
         uint32_t new_group_id = IdFactory::getInstance().getNextId(GameObjectType::group);
         m_groups.push_back(
-            std::shared_ptr<Group>(new Group(new_group_id, GAME_CENTER, m_physicsController)));
+            std::shared_ptr<Group>(new Group(new_group_id, {0.f, 0.f}, m_physicsController)));
     }
 
     // Initialize Mines

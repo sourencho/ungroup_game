@@ -26,4 +26,9 @@ void LevelController::loadLevelMineRing() {
         sf::Vector2f mine_center_position = GAME_CENTER + direction * radius;
         m_mineController.createMine(mine_center_position);
     }
+
+    // Set groups at the center of the game
+    for (uint32_t group_id : m_groupController.getGroupIds()) {
+        m_groupController.getGroup(group_id).setPosition(GAME_CENTER);
+    }
 }
