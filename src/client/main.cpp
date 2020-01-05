@@ -12,13 +12,20 @@ int main(int argc, char** argv) {
     try {
         cxxopts::Options options("Ungroup Client",
                                  "The client for Ungroup - a game about temporary allainces.");
-        options.add_options()("x,headless", "Runs game without updating window.")(
-            "b,bot", "Runs game using a bot.")(
+        options.add_options()("h,help", "Displays options.")(
+            "x,headless", "Runs game without updating window.")("b,bot", "Runs game using a bot.")(
             "a,server-ip", "The server's IP address in CIDR notation (ex. 127.0.0.1)",
             cxxopts::value<std::string>())(
             "s,strategy", "Runs game using specified strategy. Options are Random, NearestGreedy.",
             cxxopts::value<int>());
         auto result = options.parse(argc, argv);
+
+        bool is_help = result["help"].as<bool>();
+        if (is_help) {
+            std::cout << options.help() << std::endl;
+            return EXIT_SUCCESS;
+        }
+
         bool is_headless = result["headless"].as<bool>();
         bool is_bot = result["bot"].as<bool>();
 
