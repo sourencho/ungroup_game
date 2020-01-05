@@ -79,6 +79,10 @@ namespace RenderingDef {
     const sf::Color DEBUG_UI_TEXT_COLOR(DEBUG_TEXT_COLOR);
     const float DEBUG_UI_TEXT_SIZE(50.f);
 
+    /* Screens */
+    const sf::Color CONNECTING_SCREEN_COLOR(RESOURCE_A_COLOR);
+    const sf::Color WINNER_SCREEN_COLOR(RESOURCE_D_COLOR);
+
 }; // namespace RenderingDef
 
 #endif /* RenderingDef_hpp */
