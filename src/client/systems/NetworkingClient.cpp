@@ -237,6 +237,7 @@ void NetworkingClient::unreliableRecv() {
         {
             std::lock_guard<std::mutex> m_udpSocket_guard(m_udpSocket_lock);
             status = m_udpSocket_t->receive(packet, sender, port);
+            std::cout << "sender-port" << sender << "-" << port << std::endl;
         }
 
         if (status != sf::Socket::NotReady) {

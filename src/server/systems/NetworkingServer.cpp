@@ -357,6 +357,8 @@ void NetworkingServer::sendGameState() {
                     std::lock_guard<std::mutex> m_clientToIps_guard(m_clientToIps_lock);
                     status =
                         m_udpSocket_t->send(packet, m_clientToIps_t[client_id], client_udp_port);
+                    std::cout << "reciever-port" << m_clientToIps_t[client_id] << "-"
+                              << client_udp_port << std::endl;
                 }
             }
         }
