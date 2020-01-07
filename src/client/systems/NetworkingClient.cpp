@@ -237,7 +237,6 @@ void NetworkingClient::unreliableRecv() {
         {
             std::lock_guard<std::mutex> m_udpSocket_guard(m_udpSocket_lock);
             status = m_udpSocket_t->receive(packet, sender, port);
-            std::cout << "sender-port" << sender << "-" << port << std::endl;
         }
 
         if (status != sf::Socket::NotReady) {
@@ -246,6 +245,7 @@ void NetworkingClient::unreliableRecv() {
             m_gameStateIsFresh_ta = true;
             std::lock_guard<std::mutex> m_gameState_guard(m_gameState_lock);
             m_gameState_t = game_state;
+            std::cout << "sender-port" << sender << "-" << port << std::endl;
         }
 
         std::this_thread::sleep_for(CLIENT_UNRELIABLE_RECV_SLEEP);
