@@ -24,4 +24,4 @@ add_library(common-lib
     bots/Bot.cpp
 )
 
-target_link_libraries(common-lib PUBLIC sfml-system sfml-graphics sfml-network)
+target_link_libraries(common-lib PUBLIC sfml-system sfml-graphics sfml-network Boost::boost)
