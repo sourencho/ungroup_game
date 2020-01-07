@@ -20,7 +20,7 @@ Created by [@sourenp](https://github.com/SourenP) and [@copacetic](https://githu
 2. Install [SFML 2.5.1](https://www.sfml-dev.org/download/sfml/2.5.1/) package
 3. Build:
 ```
-./build.sh
+./scripts/build.sh
 ```
 4. Run server and client in seperate terminals:
 ```
