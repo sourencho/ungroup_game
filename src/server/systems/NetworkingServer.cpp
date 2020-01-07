@@ -131,6 +131,7 @@ void NetworkingServer::handleUnreliableCommand(sf::Socket::Status status, sf::Pa
     switch (unreliable_command.command) {
         // noop case meant for populating NAT table on client-side
         case (sf::Uint32)UnreliableCommandType::nat_punch: {
+            std::cout << "GOT NAT" << std::endl;
             break;
         }
         case (sf::Uint32)UnreliableCommandType::unreliable_input: {
