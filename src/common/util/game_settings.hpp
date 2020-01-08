@@ -72,6 +72,7 @@ const std::chrono::milliseconds CLIENT_UNRELIABLE_RECV_SLEEP(SERVER_BROADCAST_GA
 
 /* Networking */
 static const unsigned short SERVER_TCP_PORT = 4844;
+static const unsigned short SERVER_UDP_PORT = 4845;
 static const std::string LOCALHOST_IP = "127.0.0.1";
 
 #endif /* game_settings_hpp */
