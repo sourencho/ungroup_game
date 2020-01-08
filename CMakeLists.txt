@@ -15,7 +15,7 @@ set (CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 find_package(SFML 2.5 COMPONENTS audio graphics window system REQUIRED)
 
 # find boost
-find_package(Boost 1.70.0 COMPONENTS REQUIRED)
+find_package(Boost 1.65 COMPONENTS REQUIRED)
 
 add_subdirectory(src)
 add_subdirectory(extern/catch)

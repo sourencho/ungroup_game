@@ -14,7 +14,7 @@ addons:
     - libsndfile1-dev
     - libxcb-image0-dev
     - libjpeg-dev
-    - libboost-all-dev
+    - libboost1.65-dev
 language: cpp
 compiler: clang
 services: xvfb
