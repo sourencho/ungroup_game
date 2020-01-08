@@ -12,7 +12,7 @@
 #include "../../common/util/game_settings.hpp"
 #include "../../common/util/network_util.hpp"
 
-sf::Time TCP_TIMEOUT = sf::milliseconds(100);
+sf::Time TCP_TIMEOUT = sf::milliseconds(300);
 
 NetworkingServer::NetworkingServer() : m_gameState_t() {
     std::cout << "Starting ungroup game server." << std::endl;
@@ -49,7 +49,7 @@ void NetworkingServer::addEventListeners() {
 void NetworkingServer::createUdpSocket() {
     std::lock_guard<std::mutex> m_udpSocket_guard(m_udpSocket_lock);
     m_udpSocket_t = std::unique_ptr<sf::UdpSocket>(new sf::UdpSocket);
-    m_udpSocket_t->bind(sf::Socket::AnyPort);
+    m_udpSocket_t->bind(SERVER_UDP_PORT);
     m_udpSocket_t->setBlocking(false);
 }
 
@@ -129,8 +129,19 @@ void NetworkingServer::handleUnreliableCommand(sf::Socket::Status status, sf::Pa
     UnreliableCommand unreliable_command;
     command_packet >> unreliable_command;
     switch (unreliable_command.command) {
-        // noop case meant for populating NAT table on client-side
+        // We overwrite the client UDP port to send to in case it's different from
+        // what we receive during registration. The only time this is the case is if
+        // a router is rewriting the src port field of the UDP packets flowing from the client.
+        // This can happen in the case of a Symmetric NAT. If we send the reply packet to the port
+        // we get during registration, the NAT won't accept our reply and will drop it.
+        // Thus, this update block is necessary for functioning in Symmetric NAT territory.
         case (sf::Uint32)UnreliableCommandType::nat_punch: {
+            {
+                std::lock_guard<std::mutex> m_clientToUdpPorts_guard(m_clientToUdpPorts_lock);
+                if (m_clientToUdpPorts_t[unreliable_command.client_id] != port) {
+                    m_clientToUdpPorts_t[unreliable_command.client_id] = port;
+                }
+            }
             break;
         }
         case (sf::Uint32)UnreliableCommandType::unreliable_input: {
