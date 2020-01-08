@@ -19,7 +19,7 @@ DebugUIElement::DebugUIElement(sf::Vector2u window_size, sf::Vector2f size, Alig
 
 void DebugUIElement::update(const UIData& ui_data) {
     std::stringstream stream;
-    stream << "SPS: " << std::fixed << std::setprecision(0) << ui_data.steps_per_second << "\n"
+    stream << "FPS: " << std::fixed << std::setprecision(0) << ui_data.steps_per_second << "\n"
            << "UPS: " << std::fixed << std::setprecision(0) << ui_data.updates_per_second;
     m_text.setString(stream.str());
 

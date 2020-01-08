@@ -22,6 +22,7 @@ add_library(common-lib
     systems/LevelController.cpp
     factories/IdFactory.cpp
     bots/Bot.cpp
+    metrics/TemporalMetric.cpp
 )
 
 target_link_libraries(common-lib PUBLIC sfml-system sfml-graphics sfml-network Boost::boost)

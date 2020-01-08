@@ -69,7 +69,8 @@ class ClientGameController : public GameController {
     uint32_t m_playerId = 0;
     bool m_headless, m_isBot;
     BotStrategy m_strategy;
-    std::string m_server_ip;
+    std::string m_serverIP;
+    uint m_applyServerStateCount = 0;
 
     std::unordered_map<unsigned int, InputDef::ClientInputAndTick>
         m_tickToInput; // Cache of past inputs

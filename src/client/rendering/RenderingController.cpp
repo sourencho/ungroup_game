@@ -11,7 +11,7 @@ RenderingController::RenderingController(sf::RenderWindow& window, GameObjectCon
     m_gameObjectRenderer(m_resourceStore, m_gameObjectController.getResourceController(),
                          m_gameObjectController.getGroupController(),
                          m_gameObjectController.getMineController()) {
-    m_window.setFramerateLimit(60);
+    m_window.setFramerateLimit(RenderingDef::WINDOW_FRAME_LIMIT);
     sf::Vector2f window_size = sf::Vector2f(m_window.getSize());
 
     // Create buffer to draw game onto. Buffer can be scaled to give pixelated effect
