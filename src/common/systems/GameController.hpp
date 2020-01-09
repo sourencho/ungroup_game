@@ -6,8 +6,6 @@
 #include <unordered_map>
 #include <vector>
 
-#include <boost/circular_buffer.hpp>
-
 #include "../events/Event.hpp"
 #include "../metrics/TemporalMetric.hpp"
 #include "../objects/Group.hpp"
@@ -54,8 +52,8 @@ class GameController {
     sf::Int32 m_elapsedTime = 0;
     sf::Int32 m_timeAccumulator = 0;
 
-    TemporalMetric m_stepMetric{120, sf::seconds(0.5f)};
-    TemporalMetric m_updateMetric{120, sf::seconds(0.5f)};
+    TemporalMetric m_gameStepMetric{120, sf::seconds(0.5f)};
+    TemporalMetric m_gameUpdateMetric{120, sf::seconds(0.5f)};
 
     GameStateCore m_gameStateCore;
 };

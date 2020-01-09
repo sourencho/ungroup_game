@@ -6,8 +6,10 @@
  * start accumilating in a new slot. There are a limited number of slots and each time a new slot is
  * used, the oldest is discarded.
  *
- * This class currenly only supports uint counts.
+ * This class currenly only supports int counts.
  */
+
+#include <vector>
 
 #include <SFML/System.hpp>
 #include <boost/circular_buffer.hpp>
@@ -33,25 +35,35 @@ class TemporalMetric {
     void update();
 
     /**
-     * Increment the count of the metric by one.
+     * Push a count of one.
      */
-    void incrementCount();
+    void pushCount();
 
     /**
-     * Increment the count of the metric by @n.
+     * Push a count of @n.
      */
-    void incrementCount(uint n);
+    void pushCount(int n);
 
     /**
      * Get rate of metric per @interval amount of time
      */
     float getRate(sf::Time interval);
 
+    /**
+     * Get average value of metric over the entire time span tracked.
+     */
+    float getAverage();
+
   private:
+    /**
+     * Flattens m_counts, which is a circular buffer of vectors, into a single vector.
+     */
+    std::vector<int> getAllCounts();
+
     sf::Clock m_clock;
-    boost::circular_buffer<uint> m_counts;
+    boost::circular_buffer<std::vector<int>> m_counts;
     sf::Time m_timeGranularity;
-    uint m_currentCount = 0;
+    std::vector<int> m_currentCounts;
 };
 
 #endif /* TemporalMetric_hpp */
