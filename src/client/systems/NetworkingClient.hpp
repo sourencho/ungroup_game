@@ -57,28 +57,31 @@ class NetworkingClient {
   private:
     // Sockets
     void createTcpSocket(unsigned short port);
-    void createUdpSocket();
-    void sendUnreliable(sf::Packet packet);
+    void createInputUdpSocket();
+    void createStateUdpSocket();
 
-    time_t m_lastSentNatPunch = time(0) - NAT_PUNCH_INTERVAL;
     std::string m_serverIp;
 
     std::mutex m_tcpSocket_lock;
     std::unique_ptr<sf::TcpSocket> m_tcpSocket_t;
 
-    std::mutex m_udpSocket_lock;
-    std::unique_ptr<sf::UdpSocket> m_udpSocket_t;
+    std::mutex m_stateUdpSocket_lock;
+    std::unique_ptr<sf::UdpSocket> m_stateUdpSocket;
+
+    std::unique_ptr<sf::UdpSocket> m_inputUdpSocket;
 
     // Threads
     void unreliableSend();
     void unreliableRecv();
     void reliableSend();
     void reliableRecv();
+    void natSend();
 
     std::thread m_reliableRecv;
     std::thread m_reliableSend;
     std::thread m_unreliableRecv;
     std::thread m_unreliableSend;
+    std::thread m_natSend;
 
     std::atomic<bool> m_stopThreads_ta{false};
 
@@ -126,7 +129,8 @@ class NetworkingClient {
     std::mutex m_reliableInputs_lock;
     std::queue<InputDef::ReliableInput> m_reliableInputs_t;
 
-    sf::Uint16 m_serverUdpPort = 0;
+    sf::Uint16 m_serverStateUdpPort = 0;
+    sf::Uint16 m_serverInputUdpPort = 0;
 };
 
 #endif /* NetworkingClient_hpp */

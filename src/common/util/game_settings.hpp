@@ -70,9 +70,13 @@ const std::chrono::milliseconds
 const std::chrono::milliseconds SERVER_BROADCAST_GAME_STATE_SLEEP(16);
 const std::chrono::milliseconds CLIENT_UNRELIABLE_RECV_SLEEP(SERVER_BROADCAST_GAME_STATE_SLEEP / 2);
 
+const std::chrono::milliseconds CLIENT_NAT_SEND_SLEEP(3000);
+const std::chrono::milliseconds SERVER_NAT_RECV_SLEEP(CLIENT_NAT_SEND_SLEEP / MAX_PLAYER_COUNT);
+
 /* Networking */
 static const unsigned short SERVER_TCP_PORT = 4844;
-static const unsigned short SERVER_UDP_PORT = 4845;
+static const unsigned short SERVER_STATE_UDP_PORT = 4845;
+static const unsigned short SERVER_INPUT_UDP_PORT = 4846;
 static const std::string LOCALHOST_IP = "127.0.0.1";
 
 #endif /* game_settings_hpp */
