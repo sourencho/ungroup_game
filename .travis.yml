@@ -15,6 +15,9 @@ addons:
     - libxcb-image0-dev
     - libjpeg-dev
     - libboost1.65-dev
+    - google-perftools
+    - libgoogle-perftools-dev
+
 language: cpp
 compiler: clang
 services: xvfb

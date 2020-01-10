@@ -7,4 +7,4 @@ add_library(server-lib
     systems/ServerGameController.cpp
 )
 
-target_link_libraries(ug-server PRIVATE server-lib common-lib cxxopts)
+target_link_libraries(ug-server PRIVATE server-lib common-lib cxxopts ${GPERFTOOLS_PROFILER})
