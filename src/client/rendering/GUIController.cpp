@@ -13,10 +13,10 @@ void GUIController::load(sf::Vector2u window_size) {
     // add(std::unique_ptr<TestUIElement>(new TestUIElement(
     //     window_size, {100.f, 200.f}, Align::TOP_LEFT, (Padding){50.f, 50.f, 50.f, 50.f})));
     add(std::unique_ptr<DebugUIElement>(new DebugUIElement(window_size, {0.f, 0.f},
-                                                           Align::BOTTOM_RIGHT,
+                                                           Align::BOTTOM_LEFT,
                                                            (Padding){
-                                                               .right = 24.f,
-                                                               .left = 0.f,
+                                                               .right = 0.f,
+                                                               .left = 24.f,
                                                                .top = 0.f,
                                                                .bottom = 24.f,
                                                            },

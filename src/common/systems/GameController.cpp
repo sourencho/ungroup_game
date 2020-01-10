@@ -36,17 +36,20 @@ void GameController::step() {
     while (m_timeAccumulator >= MIN_TIME_STEP) {
         update(pi, MIN_TIME_STEP);
 
+        // Update metrics
+        m_gameStepMetric.update();
+        m_gameUpdateMetric.update();
+
         // Clear updates since they've already been consumed
         pi.player_reliable_inputs.clear();
         pi.player_unreliable_inputs.clear();
 
+        m_gameUpdateMetric.pushCount();
+
         m_timeAccumulator -= MIN_TIME_STEP;
         m_elapsedTime += MIN_TIME_STEP;
-        m_updateCount += 1;
     }
-
-    m_stepCount += 1;
-
+    m_gameStepMetric.pushCount();
     postUpdate();
 }
 

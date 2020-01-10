@@ -1,8 +1,8 @@
 #include <iostream>
+#include <numeric>
 #include <thread>
 
 #include <SFML/Graphics.hpp>
-#include <thread>
 
 #include "../../common/physics/VectorUtil.hpp"
 #include "../../common/util/InputDef.hpp"
@@ -13,9 +13,9 @@
 ClientGameController::ClientGameController(bool is_headless, bool is_bot, BotStrategy strategy,
                                            const std::string& server_ip, LevelKey level_key) :
     m_headless(is_headless),
-    m_isBot(is_bot), m_strategy(strategy), m_server_ip(server_ip), GameController(level_key),
+    m_isBot(is_bot), m_strategy(strategy), m_serverIP(server_ip), GameController(level_key),
     m_window(sf::VideoMode(WINDOW_RESOLUTION.x, WINDOW_RESOLUTION.y), "Ungroup", sf::Style::Close),
-    m_networkingClient(new NetworkingClient(m_server_ip)),
+    m_networkingClient(new NetworkingClient(m_serverIP)),
     m_inputController(new InputController(INPUT_KEYS)),
     m_renderingController(
         new RenderingController(m_window, *m_gameObjectController, *m_gameObjectStore)) {
@@ -58,8 +58,6 @@ InputDef::PlayerInputs ClientGameController::getPlayerInputs() {
 }
 
 void ClientGameController::preUpdate() {
-    // call collectinputs to process window events, but if we're in bot mode
-    // then override any user commands
     auto inputs = m_inputController->collectInputs(m_window);
 
     switch (m_gameStateCore.status) {
@@ -71,14 +69,12 @@ void ClientGameController::preUpdate() {
         }
         case GameStatus::playing: {
             if (m_isBot) {
+                // Override user input with bot input
                 inputs = m_gameObjectController->getBotMove(m_playerId, m_strategy);
             }
             sendInputs(inputs);
             saveInputs(inputs);
-
-            if (m_networkingClient->getGameStateIsFresh()) {
-                rewindAndReplay();
-            }
+            rewindAndReplay();
             break;
         }
         case GameStatus::game_over: {
@@ -107,33 +103,42 @@ void ClientGameController::update(const InputDef::PlayerInputs& pi, sf::Int32 de
     }
 
     m_renderingController->update(delta_ms);
+    m_networkUpdateMetric.update();
+    m_tickDeltaMetric.update();
 }
 
 void ClientGameController::postUpdate() {
     sf::Vector2f player_position = m_gameObjectController->getPlayerPosition(m_playerId);
     UIData ui_data = {
-        .steps_per_second =
-            static_cast<float>(m_stepCount) / (static_cast<float>(m_elapsedTime) / 1000.f),
-        .updates_per_second =
-            static_cast<float>(m_updateCount) / (static_cast<float>(m_elapsedTime) / 1000.f),
+        .game_steps_per_second = m_gameStepMetric.getRate(sf::seconds(1)),
+        .game_updates_per_second = m_gameUpdateMetric.getRate(sf::seconds(1)),
+        .network_updates_per_second = m_networkUpdateMetric.getRate(sf::seconds(1)),
+        .tick_delta_average = m_tickDeltaMetric.getAverage(),
         .resources = m_gameObjectController->getPlayerResources(m_playerId),
         .game_status = m_gameStateCore.status,
         .winner_player_id = m_gameStateCore.winner_player_id,
+        .tick = getTick(),
     };
     m_renderingController->postUpdate(player_position, ui_data);
 }
 
 void ClientGameController::rewindAndReplay() {
+    if (!m_networkingClient->getGameStateIsFresh()) {
+        return;
+    }
+
     GameState game_state = m_networkingClient->getGameState();
 
-    unsigned int client_tick = getTick();
-    unsigned int server_tick = game_state.core.tick;
+    uint client_tick = getTick();
+    uint server_tick = game_state.core.tick;
     int tick_delta = client_tick - server_tick;
 
     // Rewind
     m_gameObjectController->applyGameStateObject(game_state.object);
     m_gameStateCore = game_state.core;
     setTick(server_tick);
+    m_networkUpdateMetric.pushCount();
+    m_tickDeltaMetric.pushCount(tick_delta);
 
     // Replay
     if (!USE_INTERPOLATION_REPLAY || tick_delta <= 0) {
@@ -142,7 +147,7 @@ void ClientGameController::rewindAndReplay() {
 
     // Loop through ticks that need to be replayed and apply client input from cache if present
     for (int i = 0; i < tick_delta; ++i) {
-        unsigned int replay_tick = server_tick + i;
+        uint replay_tick = server_tick + i;
         if (m_tickToInput.count(replay_tick) > 0) {
             InputDef::ClientInputAndTick client_input_and_tick = m_tickToInput[replay_tick];
             auto pi = InputDef::PlayerInputs(m_inputController->getPlayerInputs(

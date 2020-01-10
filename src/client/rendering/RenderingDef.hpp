@@ -7,6 +7,7 @@
 #include "../../common/systems/ResourceController.hpp"
 
 namespace RenderingDef {
+    const uint WINDOW_FRAME_LIMIT = 60;
     const bool USE_SHADERS = true;
     const std::size_t CIRCLE_POINT_COUNT = 60;
     enum TextureKey { collision, mine_pattern, dotted_background };
@@ -17,8 +18,12 @@ namespace RenderingDef {
         std::shared_ptr<sf::Shader> shader = nullptr;
     };
 
-    /* Debug */
+    /* UI */
     const sf::Color DEBUG_TEXT_COLOR(sf::Color::Green);
+    const sf::Color RESOURCE_UI_TEXT_COLOR(sf::Color::White);
+    const float RESOURCE_UI_TEXT_SIZE(60.f);
+    const sf::Color DEBUG_UI_TEXT_COLOR(DEBUG_TEXT_COLOR);
+    const float DEBUG_UI_TEXT_SIZE(40.f);
 
     /* Group */
     const sf::Color DEFAULT_GROUP_COLOR(sf::Color::Transparent);
@@ -72,12 +77,6 @@ namespace RenderingDef {
     const sf::Vector2f BACKGROUND_TEXTURE_2_SCALE = {1.f, 1.f};
 
     const sf::Color COLLISION_ANIMATION_COLOR(sf::Color::White);
-
-    /* UI */
-    const sf::Color RESOURCE_UI_TEXT_COLOR(sf::Color::White);
-    const float RESOURCE_UI_TEXT_SIZE(60.f);
-    const sf::Color DEBUG_UI_TEXT_COLOR(DEBUG_TEXT_COLOR);
-    const float DEBUG_UI_TEXT_SIZE(50.f);
 
     /* Screens */
     const sf::Color CONNECTING_SCREEN_COLOR(RESOURCE_A_COLOR);

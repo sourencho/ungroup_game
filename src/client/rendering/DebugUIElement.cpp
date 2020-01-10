@@ -19,8 +19,13 @@ DebugUIElement::DebugUIElement(sf::Vector2u window_size, sf::Vector2f size, Alig
 
 void DebugUIElement::update(const UIData& ui_data) {
     std::stringstream stream;
-    stream << "SPS: " << std::fixed << std::setprecision(0) << ui_data.steps_per_second << "\n"
-           << "UPS: " << std::fixed << std::setprecision(0) << ui_data.updates_per_second;
+    stream << "FPS: " << std::fixed << std::setprecision(0) << ui_data.game_steps_per_second << "\n"
+           << "UPS: " << std::fixed << std::setprecision(0) << ui_data.game_updates_per_second
+           << "\n"
+           << "XPS: " << std::fixed << std::setprecision(0) << ui_data.network_updates_per_second
+           << "\n"
+           << "TDA: " << std::fixed << std::setprecision(0) << ui_data.tick_delta_average << "\n"
+           << "TIK: " << ui_data.tick;
     m_text.setString(stream.str());
 
     // Update position according to text size

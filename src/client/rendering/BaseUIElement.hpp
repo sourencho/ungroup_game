@@ -16,18 +16,23 @@
 #include "../../common/util/StateDef.hpp"
 
 enum Align { TOP_RIGHT, TOP_LEFT, BOTTOM_RIGHT, BOTTOM_LEFT };
+
 struct Padding {
     float right;
     float left;
     float top;
     float bottom;
 };
+
 struct UIData {
-    float steps_per_second;
-    float updates_per_second;
+    float game_steps_per_second;
+    float game_updates_per_second;
+    float network_updates_per_second;
+    float tick_delta_average;
     std::array<uint32_t, RESOURCE_TYPE_COUNT> resources;
     GameStatus game_status;
     uint32_t winner_player_id;
+    uint tick;
 };
 
 class BaseUIElement {

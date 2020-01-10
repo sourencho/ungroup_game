@@ -7,6 +7,7 @@
 #include <vector>
 
 #include "../events/Event.hpp"
+#include "../metrics/TemporalMetric.hpp"
 #include "../objects/Group.hpp"
 #include "../objects/Mine.hpp"
 #include "../objects/Player.hpp"
@@ -50,8 +51,9 @@ class GameController {
     sf::Clock m_clock;
     sf::Int32 m_elapsedTime = 0;
     sf::Int32 m_timeAccumulator = 0;
-    sf::Int32 m_stepCount = 0;
-    sf::Int32 m_updateCount = 0;
+
+    TemporalMetric m_gameStepMetric{120, sf::seconds(0.5f)};
+    TemporalMetric m_gameUpdateMetric{120, sf::seconds(0.5f)};
 
     GameStateCore m_gameStateCore;
 };
