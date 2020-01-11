@@ -70,6 +70,10 @@ cmake --build build -- -j
 
 Compiling in debug mode will give you stacktraces for segfaults and detect memory issues.
 
+#### Profiling
+
+Use [gperftools](https://github.com/gperftools/gperftools) ([cpuprofile tutorial](https://gperftools.github.io/gperftools/cpuprofile.html))
+
 #### Vscode lldb
 
 In vscode on a mac you can debug using `lldb`.
