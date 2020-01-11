@@ -36,7 +36,11 @@ NetworkingClient::~NetworkingClient() {
         m_tcpSocket_t->disconnect();
     }
 
+    m_stateUdpSocket->unbind();
+    m_inputUdpSocket->unbind();
+
     m_stopThreads_ta = true;
+
     // m_reliableRecv.join();
     m_reliableSend.join();
     m_unreliableRecv.join();

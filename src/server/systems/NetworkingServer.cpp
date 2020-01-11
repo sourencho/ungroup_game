@@ -32,8 +32,14 @@ NetworkingServer::~NetworkingServer() {
     m_playerReliableUpdates_lock.unlock();
     m_playerUnreliableUpdates_lock.unlock();
     m_gameState_lock.unlock();
-
     EventController::getInstance().unlock();
+
+    {
+        std::lock_guard<std::mutex> m_stateUdpSocket_guard(m_stateUdpSocket_lock);
+        m_stateUdpSocket_t->unbind();
+    }
+
+    m_inputUdpSocket->unbind();
 
     m_stopThreads_ta = true;
 
