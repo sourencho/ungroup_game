@@ -9,6 +9,7 @@ add_executable(ug-test
     client/rendering/tests-AnimatedSprite.cpp
     client/rendering/tests-AnimationController.cpp
     common/systems/tests-ResourceController.cpp
+    common/metrics/tests-TemporalMetric.cpp
 )
 
 target_link_libraries(ug-test PRIVATE server-lib common-lib client-lib catch)
