@@ -11,20 +11,22 @@ float TemporalMetric::getRate(sf::Time interval) {
     if (total_time.asSeconds() == 0 || interval.asSeconds() == 0) {
         return 0;
     }
-    std::vector<int> all_counts = getAllCounts();
-    int total_count = std::accumulate(all_counts.begin(), all_counts.end(), 0);
-    float count_per_second = static_cast<float>(total_count) / total_time.asSeconds();
+    size_t total_count;
+    int total_sum;
+    std::tie(total_count, total_sum) = accumulateCounts();
+    float count_per_second = static_cast<float>(total_sum) / total_time.asSeconds();
     float rate = count_per_second / interval.asSeconds();
     return rate;
 }
 
 float TemporalMetric::getAverage() {
-    std::vector<int> all_counts = getAllCounts();
-    int total_count = std::accumulate(all_counts.begin(), all_counts.end(), 0);
-    if (all_counts.size() == 0) {
+    size_t total_count;
+    int total_sum;
+    std::tie(total_count, total_sum) = accumulateCounts();
+    if (total_count == 0) {
         return 0;
     }
-    return static_cast<float>(total_count) / all_counts.size();
+    return static_cast<float>(total_sum) / total_count;
 }
 
 void TemporalMetric::pushCount() {
@@ -43,10 +45,14 @@ void TemporalMetric::update() {
     }
 }
 
-std::vector<int> TemporalMetric::getAllCounts() {
-    return std::accumulate(m_counts.begin(), m_counts.end(), std::vector<int>(),
-                           [](std::vector<int> a, std::vector<int> b) {
-                               a.insert(a.end(), b.begin(), b.end());
-                               return a;
-                           });
+std::pair<size_t, int> TemporalMetric::accumulateCounts() {
+    size_t total_count = 0;
+    int total_sum = 0;
+    for (auto& counts : m_counts) {
+        for (auto& count : counts) {
+            total_count += 1;
+            total_sum += count;
+        }
+    }
+    return std::make_pair(total_count, total_sum);
 }

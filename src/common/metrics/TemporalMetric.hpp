@@ -2,7 +2,7 @@
  * Keeps track of a metric temporally in order to produce it's rate over an interval of time.
  *
  * Counts are stored in a specified number of slots each representing an equal amount of time.
- * Counts are accumilated in a slot until the interval of time has passed, at which point counts
+ * Counts are accumulated in a slot until the interval of time has passed, at which point counts
  * start accumilating in a new slot. There are a limited number of slots and each time a new slot is
  * used, the oldest is discarded.
  *
@@ -56,9 +56,9 @@ class TemporalMetric {
 
   private:
     /**
-     * Flattens m_counts, which is a circular buffer of vectors, into a single vector.
+     * Returns the count and sum of all the counts.
      */
-    std::vector<int> getAllCounts();
+    std::pair<size_t, int> accumulateCounts();
 
     sf::Clock m_clock;
     boost::circular_buffer<std::vector<int>> m_counts;
