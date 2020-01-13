@@ -36,9 +36,6 @@ NetworkingClient::~NetworkingClient() {
         m_tcpSocket_t->disconnect();
     }
 
-    m_stateUdpSocket->unbind();
-    m_inputUdpSocket->unbind();
-
     m_stopThreads_ta = true;
 
     // m_reliableRecv.join();
@@ -53,7 +50,6 @@ NetworkingClient::~NetworkingClient() {
 void NetworkingClient::createTcpSocket(unsigned short port) {
     std::lock_guard<std::mutex> m_tcpSocket_guard(m_tcpSocket_lock);
     m_tcpSocket_t = std::unique_ptr<sf::TcpSocket>(new sf::TcpSocket);
-
     m_tcpSocket_t->connect(sf::IpAddress(m_serverIp), port);
 }
 
@@ -82,13 +78,15 @@ uint32_t NetworkingClient::registerClientAndFetchPlayerId() {
  * Server won't return a response if the player id isn't ready.
  */
 uint32_t NetworkingClient::fetchPlayerId() {
-    std::lock_guard<std::mutex> m_tcpSocket_guard(m_tcpSocket_lock);
 
     while (true) {
         // Send request
         sf::Packet packet;
         if (packet << (sf::Uint32)ReliableCommandType::player_id) {
-            m_tcpSocket_t->send(packet);
+            {
+                std::lock_guard<std::mutex> m_tcpSocket_guard(m_tcpSocket_lock);
+                m_tcpSocket_t->send(packet);
+            }
         } else {
             std::cout << "Failed to form packet" << std::endl;
             throw std::runtime_error("Unable to get player id.");
@@ -98,7 +96,10 @@ uint32_t NetworkingClient::fetchPlayerId() {
         sf::Socket::Status status;
         sf::Packet reliable_response;
         ReliableCommand reliable_command;
-        status = receiveWithTimeout(*m_tcpSocket_t, reliable_response, CLIENT_TCP_TIMEOUT);
+        {
+            std::lock_guard<std::mutex> m_tcpSocket_guard(m_tcpSocket_lock);
+            status = receiveWithTimeout(*m_tcpSocket_t, reliable_response, CLIENT_TCP_TIMEOUT);
+        }
         if (status == sf::Socket::Done) {
             reliable_response >> reliable_command;
             if (reliable_command.command == ReliableCommandType::player_id) {
@@ -118,8 +119,10 @@ void NetworkingClient::registerClient() {
     sf::Packet registration_request;
     sf::Uint16 udp_port = m_stateUdpSocket->getLocalPort();
     if (registration_request << ReliableCommandType::register_client << udp_port) {
-        std::lock_guard<std::mutex> m_tcpSocket_guard(m_tcpSocket_lock);
-        m_tcpSocket_t->send(registration_request);
+        {
+            std::lock_guard<std::mutex> m_tcpSocket_guard(m_tcpSocket_lock);
+            m_tcpSocket_t->send(registration_request);
+        }
         return readRegistrationResponse();
     } else {
         std::cout << "Failed to form packet" << std::endl;
@@ -130,8 +133,14 @@ void NetworkingClient::registerClient() {
 void NetworkingClient::readRegistrationResponse() {
     sf::Packet registration_response;
     ReliableCommand reliable_command;
+    sf::Socket::Status status;
 
-    if (m_tcpSocket_t->receive(registration_response) == sf::Socket::Done) {
+    {
+        std::lock_guard<std::mutex> m_tcpSocket_guard(m_tcpSocket_lock);
+        status = m_tcpSocket_t->receive(registration_response);
+    }
+
+    if (status == sf::Socket::Done) {
         if (registration_response >> reliable_command &&
             reliable_command.command == ReliableCommandType::register_client) {
             m_clientId_ta = static_cast<uint>(reliable_command.client_id);
@@ -224,10 +233,12 @@ void NetworkingClient::sendReliableInput() {
     InputDef::ReliableInput reliable_input = m_reliableInputs_t.front();
     m_reliableInputs_t.pop();
 
-    std::lock_guard<std::mutex> m_tcpSocket_guard(m_tcpSocket_lock);
     sf::Packet packet;
     if (packet << ReliableCommandType::reliable_input && packet << reliable_input) {
-        m_tcpSocket_t->send(packet);
+        {
+            std::lock_guard<std::mutex> m_tcpSocket_guard(m_tcpSocket_lock);
+            m_tcpSocket_t->send(packet);
+        }
     } else {
         std::cout << "Failed to form packet" << std::endl;
     }

@@ -39,8 +39,6 @@ NetworkingServer::~NetworkingServer() {
         m_stateUdpSocket_t->unbind();
     }
 
-    m_inputUdpSocket->unbind();
-
     m_stopThreads_ta = true;
 
     m_reliableRecvSend.join();
@@ -123,13 +121,19 @@ void NetworkingServer::setTick(unsigned int tick) {
 /* UnreliableServer thread methods */
 
 void NetworkingServer::unreliableRecv() {
-    while (!m_stopThreads_ta) {
-        sf::IpAddress sender;
-        unsigned short port;
-        sf::Packet command_packet;
+    sf::SocketSelector selector;
+    selector.add(*m_inputUdpSocket);
 
-        if (m_inputUdpSocket->receive(command_packet, sender, port) == sf::Socket::Done) {
-            handleUnreliableCommand(sf::Socket::Done, command_packet, sender, port);
+    sf::IpAddress sender;
+    unsigned short port;
+    sf::Packet command_packet;
+    while (!m_stopThreads_ta) {
+        if (selector.wait(SERVER_UNRELIABLE_RECV_TIMEOUT)) {
+            if (selector.isReady(*m_inputUdpSocket)) {
+                if (m_inputUdpSocket->receive(command_packet, sender, port) == sf::Socket::Done) {
+                    handleUnreliableCommand(sf::Socket::Done, command_packet, sender, port);
+                }
+            }
         }
     }
 }
@@ -386,12 +390,11 @@ void NetworkingServer::sendGameState() {
 /* natRecv thread methods */
 
 void NetworkingServer::natRecv() {
+    sf::IpAddress sender;
+    unsigned short port;
+    sf::Packet command_packet;
+    sf::Socket::Status status;
     while (!m_stopThreads_ta) {
-        sf::IpAddress sender;
-        unsigned short port;
-        sf::Packet command_packet;
-        sf::Socket::Status status;
-
         {
             std::lock_guard<std::mutex> m_stateUdpSocket_guard(m_stateUdpSocket_lock);
             status = m_stateUdpSocket_t->receive(command_packet, sender, port);

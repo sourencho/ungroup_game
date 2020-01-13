@@ -1,7 +1,7 @@
 #!/bin/bash
 # You can exit all tmux windows at once by pressing CTRL+B and typing :kill-window
 
-./build.sh
+./scripts/build.sh
 
 if [ $? -ne 0 ]
 then
