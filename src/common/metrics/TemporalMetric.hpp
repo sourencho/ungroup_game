@@ -29,7 +29,7 @@ class TemporalMetric {
     TemporalMetric& operator=(const TemporalMetric& temp_obj) = delete;
 
     /**
-     * Updates the slot currently accumilating the metric if need be.
+     * If enough time has elapsed then updates slot currently accumulating counts.
      * Should be called as often as possible.
      */
     void update();
@@ -54,6 +54,11 @@ class TemporalMetric {
      */
     float getAverage();
 
+    /**
+     * Updates the slot currently accumilating the metric.
+     */
+    void stepSlot();
+
   private:
     /**
      * Returns the count and sum of all the counts.
@@ -61,7 +66,7 @@ class TemporalMetric {
     std::pair<size_t, int> accumulateCounts();
 
     sf::Clock m_clock;
-    boost::circular_buffer<std::vector<int>> m_counts;
+    boost::circular_buffer<std::vector<int>> m_countSlots;
     sf::Time m_timeGranularity;
     std::vector<int> m_currentCounts;
 };
