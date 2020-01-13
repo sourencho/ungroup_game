@@ -8,7 +8,7 @@
 
 namespace RenderingDef {
     const uint WINDOW_FRAME_LIMIT = 60;
-    const bool USE_SHADERS = false;
+    const bool USE_SHADERS = true;
     const std::size_t CIRCLE_POINT_COUNT = 60;
     enum TextureKey { collision, mine_pattern, dotted_background };
     enum ShaderKey { none, noop, voronoi_counts };

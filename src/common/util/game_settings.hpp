@@ -65,8 +65,6 @@ const std::chrono::milliseconds
 const std::chrono::milliseconds CLIENT_RELIBALE_RECV_SLEEP(SERVER_RELIABLE_REVC_SEND_SLEEP / 2);
 
 const std::chrono::milliseconds CLIENT_UNRELIABLE_SEND_SLEEP(16);
-const std::chrono::milliseconds
-    SERVER_UNRELIABLE_RECV_SLEEP((CLIENT_UNRELIABLE_SEND_SLEEP / MAX_PLAYER_COUNT) / 2);
 
 const std::chrono::milliseconds SERVER_BROADCAST_GAME_STATE_SLEEP(16);
 const std::chrono::milliseconds CLIENT_UNRELIABLE_RECV_SLEEP(SERVER_BROADCAST_GAME_STATE_SLEEP / 2);
