@@ -36,5 +36,5 @@ before_script:
   - make -j VERBOSE=1
   - cd ..
 script:
-  - bash -c 'if ! ASAN_OPTIONS=detect_leaks=0 ./build/tests/ug-test "~[skip]"; then >&2 echo "Fail"; exit 1; fi'
+  - bash -c 'if ! ASAN_OPTIONS=detect_leaks=0 ./build/tests/ug-test "~[skip] -s"; then >&2 echo "Fail"; exit 1; fi'
   - bash -c 'if ! xvfb-run --server-args="-screen 0 1280x1024x24" -e /dev/stdout -a node tests/integration/smoke_tests.js; then >&2 echo "Fail"; exit 1; fi'
