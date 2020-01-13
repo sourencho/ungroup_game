@@ -30,6 +30,8 @@ Created by [@sourenp](https://github.com/SourenP) and [@copacetic](https://githu
 ./build/src/client/ug-client
 ```
 
+*Note: if you are running from a remote server, you might need to open the tcp and udp ports on your machine*
+
 ## Testing
 
 To run tests, after building, run:
