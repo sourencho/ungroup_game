@@ -62,6 +62,7 @@ Features:
   - 2D Cirlce shapes, textures and shaders
   - Animations with texture sprite sheets
   - Parallax background
+  - Variable window size support and zooming/scaling
 - Resources
   - Resource manager for textures, fonts, and shaders
 - Levelling
