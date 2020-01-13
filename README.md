@@ -10,9 +10,46 @@
 
 A game about temporary alliances.
 
-Engine written from scratch using the [SFML](https://www.sfml-dev.org/) framework.
-
 Created by [@sourenp](https://github.com/SourenP) and [@copacetic](https://github.com/copacetic)
+
+Engine written from scratch in C++11 using the [SFML](https://www.sfml-dev.org/) framework.
+
+Engine Features:
+- Game functionality
+  - Variable time step
+  - Unique ID system for game objects
+- Physics
+  - Velocity
+  - 2D Circle collision detection and handling
+  - 2D Circle perfect ellastic collision impulses
+- Networking
+  - Server-Client seperation
+  - Authoritative server
+  - Multi threaded UDP/TCP communication between server and client
+  - Reliable (TCP) and Unreliable (UDP) client inputs sent to server
+  - Unreliable (UDP) game state broadcasted to client
+  - Works locally and over the internet 
+- Interpolation
+  - Snapshot interpolation
+- Rendering
+  - 2D Cirlce shapes, textures and shaders
+  - Animations with texture sprite sheets
+  - Parallax background
+- Resources
+  - Resource manager for textures, fonts, and shaders
+- Levelling
+  - Configurable levels
+- UI
+  - Configurable UI elements allignable to window edges 
+- Bots
+  - Template for writing bots that query game state and input moves as a client
+- Events
+  - Custom event objects with data
+  - Subscribe callback to event
+- Metrics
+  - Track temporal metrics
+- Util
+  - 2D vector operations
 
 ## Building and Running
 ### Unix
