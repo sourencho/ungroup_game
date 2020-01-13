@@ -46,7 +46,7 @@ Features:
   - Variable time step
   - Unique ID system for game objects
 - Physics
-  - Velocity
+  - Velocity with lerping
   - 2D Circle collision detection and handling
   - 2D Circle perfect ellastic collision impulses
 - Networking
@@ -63,6 +63,7 @@ Features:
   - Animations with texture sprite sheets
   - Parallax background
   - Variable window size support and zooming/scaling
+  - Camera centering
 - Resources
   - Resource manager for textures, fonts, and shaders
 - Levelling
