@@ -12,9 +12,36 @@ A game about temporary alliances.
 
 Created by [@sourenp](https://github.com/SourenP) and [@copacetic](https://github.com/copacetic)
 
+## Building and Running
+### Unix
+1. Clone this repo
+2. Install [SFML 2.5.1](https://www.sfml-dev.org/download/sfml/2.5.1/) package
+3. Build:
+```
+./scripts/build.sh
+```
+4. Run server and client in seperate terminals:
+```
+./build/src/server/ug-server
+```
+```
+./build/src/client/ug-client
+```
+
+*Note: if you are running from a remote server, you might need to open the tcp and udp ports on your machine*
+
+## Testing
+
+To run tests, after building, run:
+```
+./build/tests/ug-test
+```
+
+## Engine
+
 Engine written from scratch in C++11 using the [SFML](https://www.sfml-dev.org/) framework.
 
-Engine Features:
+Features:
 - Game functionality
   - Variable time step
   - Unique ID system for game objects
@@ -50,31 +77,6 @@ Engine Features:
   - Track temporal metrics
 - Util
   - 2D vector operations
-
-## Building and Running
-### Unix
-1. Clone this repo
-2. Install [SFML 2.5.1](https://www.sfml-dev.org/download/sfml/2.5.1/) package
-3. Build:
-```
-./scripts/build.sh
-```
-4. Run server and client in seperate terminals:
-```
-./build/src/server/ug-server
-```
-```
-./build/src/client/ug-client
-```
-
-*Note: if you are running from a remote server, you might need to open the tcp and udp ports on your machine*
-
-## Testing
-
-To run tests, after building, run:
-```
-./build/tests/ug-test
-```
 
 ## Development
 
