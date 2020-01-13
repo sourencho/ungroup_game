@@ -13,19 +13,21 @@
 #include "../../common/util/network_util.hpp"
 
 const sf::Time CLIENT_TCP_TIMEOUT = sf::milliseconds(300);
-;
 
 NetworkingClient::NetworkingClient(const std::string& server_ip) :
     m_gameState_t({}), m_serverIp(server_ip) {
     std::cout << "Starting client." << std::endl;
 
     createTcpSocket(SERVER_TCP_PORT);
-    createUdpSocket();
+
+    createInputUdpSocket();
+    createStateUdpSocket();
 
     // m_reliableRecv = std::thread(&NetworkingClient::reliableRecv, this);
     m_reliableSend = std::thread(&NetworkingClient::reliableSend, this);
     m_unreliableRecv = std::thread(&NetworkingClient::unreliableRecv, this);
     m_unreliableSend = std::thread(&NetworkingClient::unreliableSend, this);
+    m_natSend = std::thread(&NetworkingClient::natSend, this);
 }
 
 NetworkingClient::~NetworkingClient() {
@@ -35,10 +37,12 @@ NetworkingClient::~NetworkingClient() {
     }
 
     m_stopThreads_ta = true;
+
     // m_reliableRecv.join();
     m_reliableSend.join();
     m_unreliableRecv.join();
     m_unreliableSend.join();
+    m_natSend.join();
 }
 
 /* Main thread methods */
@@ -46,15 +50,18 @@ NetworkingClient::~NetworkingClient() {
 void NetworkingClient::createTcpSocket(unsigned short port) {
     std::lock_guard<std::mutex> m_tcpSocket_guard(m_tcpSocket_lock);
     m_tcpSocket_t = std::unique_ptr<sf::TcpSocket>(new sf::TcpSocket);
-
     m_tcpSocket_t->connect(sf::IpAddress(m_serverIp), port);
 }
 
-void NetworkingClient::createUdpSocket() {
-    std::lock_guard<std::mutex> m_udpSocket_guard(m_udpSocket_lock);
-    m_udpSocket_t = std::unique_ptr<sf::UdpSocket>(new sf::UdpSocket);
-    m_udpSocket_t->bind(sf::Socket::AnyPort);
-    m_udpSocket_t->setBlocking(false);
+void NetworkingClient::createInputUdpSocket() {
+    m_inputUdpSocket = std::unique_ptr<sf::UdpSocket>(new sf::UdpSocket);
+    m_inputUdpSocket->bind(sf::Socket::AnyPort);
+}
+
+void NetworkingClient::createStateUdpSocket() {
+    m_stateUdpSocket = std::unique_ptr<sf::UdpSocket>(new sf::UdpSocket);
+    m_stateUdpSocket->bind(sf::Socket::AnyPort);
+    m_stateUdpSocket->setBlocking(false);
 }
 
 /**
@@ -71,13 +78,15 @@ uint32_t NetworkingClient::registerClientAndFetchPlayerId() {
  * Server won't return a response if the player id isn't ready.
  */
 uint32_t NetworkingClient::fetchPlayerId() {
-    std::lock_guard<std::mutex> m_tcpSocket_guard(m_tcpSocket_lock);
 
     while (true) {
         // Send request
         sf::Packet packet;
         if (packet << (sf::Uint32)ReliableCommandType::player_id) {
-            m_tcpSocket_t->send(packet);
+            {
+                std::lock_guard<std::mutex> m_tcpSocket_guard(m_tcpSocket_lock);
+                m_tcpSocket_t->send(packet);
+            }
         } else {
             std::cout << "Failed to form packet" << std::endl;
             throw std::runtime_error("Unable to get player id.");
@@ -87,7 +96,10 @@ uint32_t NetworkingClient::fetchPlayerId() {
         sf::Socket::Status status;
         sf::Packet reliable_response;
         ReliableCommand reliable_command;
-        status = receiveWithTimeout(*m_tcpSocket_t, reliable_response, CLIENT_TCP_TIMEOUT);
+        {
+            std::lock_guard<std::mutex> m_tcpSocket_guard(m_tcpSocket_lock);
+            status = receiveWithTimeout(*m_tcpSocket_t, reliable_response, CLIENT_TCP_TIMEOUT);
+        }
         if (status == sf::Socket::Done) {
             reliable_response >> reliable_command;
             if (reliable_command.command == ReliableCommandType::player_id) {
@@ -105,14 +117,12 @@ uint32_t NetworkingClient::fetchPlayerId() {
 
 void NetworkingClient::registerClient() {
     sf::Packet registration_request;
-    sf::Uint16 udp_port;
-    {
-        std::lock_guard<std::mutex> m_udpSocket_guard(m_udpSocket_lock);
-        udp_port = m_udpSocket_t->getLocalPort();
-    }
+    sf::Uint16 udp_port = m_stateUdpSocket->getLocalPort();
     if (registration_request << ReliableCommandType::register_client << udp_port) {
-        std::lock_guard<std::mutex> m_tcpSocket_guard(m_tcpSocket_lock);
-        m_tcpSocket_t->send(registration_request);
+        {
+            std::lock_guard<std::mutex> m_tcpSocket_guard(m_tcpSocket_lock);
+            m_tcpSocket_t->send(registration_request);
+        }
         return readRegistrationResponse();
     } else {
         std::cout << "Failed to form packet" << std::endl;
@@ -123,16 +133,23 @@ void NetworkingClient::registerClient() {
 void NetworkingClient::readRegistrationResponse() {
     sf::Packet registration_response;
     ReliableCommand reliable_command;
+    sf::Socket::Status status;
 
-    if (m_tcpSocket_t->receive(registration_response) == sf::Socket::Done) {
+    {
+        std::lock_guard<std::mutex> m_tcpSocket_guard(m_tcpSocket_lock);
+        status = m_tcpSocket_t->receive(registration_response);
+    }
+
+    if (status == sf::Socket::Done) {
         if (registration_response >> reliable_command &&
             reliable_command.command == ReliableCommandType::register_client) {
             m_clientId_ta = static_cast<uint>(reliable_command.client_id);
             m_tick_ta = static_cast<uint>(reliable_command.tick);
-            registration_response >> m_serverUdpPort;
+            registration_response >> m_serverInputUdpPort >> m_serverStateUdpPort;
             std::cout << "Registered as client " << m_clientId_ta << " at tick " << m_tick_ta
                       << std::endl
-                      << "Server UDP port is: " << m_serverUdpPort << std::endl;
+                      << "Server Input UDP port is: " << m_serverInputUdpPort << std::endl
+                      << "Server State UDP port is: " << m_serverStateUdpPort << std::endl;
             return;
         }
     }
@@ -216,10 +233,12 @@ void NetworkingClient::sendReliableInput() {
     InputDef::ReliableInput reliable_input = m_reliableInputs_t.front();
     m_reliableInputs_t.pop();
 
-    std::lock_guard<std::mutex> m_tcpSocket_guard(m_tcpSocket_lock);
     sf::Packet packet;
     if (packet << ReliableCommandType::reliable_input && packet << reliable_input) {
-        m_tcpSocket_t->send(packet);
+        {
+            std::lock_guard<std::mutex> m_tcpSocket_guard(m_tcpSocket_lock);
+            m_tcpSocket_t->send(packet);
+        }
     } else {
         std::cout << "Failed to form packet" << std::endl;
     }
@@ -229,14 +248,15 @@ void NetworkingClient::sendReliableInput() {
 
 void NetworkingClient::unreliableRecv() {
     while (!m_stopThreads_ta) {
+        // Recieve State
         sf::Packet packet;
         sf::IpAddress sender;
         unsigned short port;
         sf::Socket::Status status;
 
         {
-            std::lock_guard<std::mutex> m_udpSocket_guard(m_udpSocket_lock);
-            status = m_udpSocket_t->receive(packet, sender, port);
+            std::lock_guard<std::mutex> m_stateUdpSocket_guard(m_stateUdpSocket_lock);
+            status = m_stateUdpSocket->receive(packet, sender, port);
         }
 
         if (status != sf::Socket::NotReady) {
@@ -255,7 +275,7 @@ void NetworkingClient::unreliableRecv() {
 
 void NetworkingClient::unreliableSend() {
     while (!m_stopThreads_ta) {
-        if (m_serverUdpPort != 0) {
+        if (m_serverInputUdpPort != 0) {
             sendUnreliableInput();
         }
 
@@ -263,36 +283,9 @@ void NetworkingClient::unreliableSend() {
     }
 }
 
-void NetworkingClient::sendUnreliable(sf::Packet packet) {
-    std::lock_guard<std::mutex> m_udpSocket_guard(m_udpSocket_lock);
-    sf::Socket::Status status = sf::Socket::Partial;
-
-    while (status == sf::Socket::Partial) {
-        status = m_udpSocket_t->send(packet, sf::IpAddress(m_serverIp), m_serverUdpPort);
-    }
-}
-void NetworkingClient::sendNatPunch() {
-    sf::Packet packet;
-    sf::Uint32 unreliable_input_cmd = UnreliableCommandType::nat_punch;
-    UnreliableCommand unreliable_command = {(sf::Uint32)m_clientId_ta, unreliable_input_cmd,
-                                            m_tick_ta};
-
-    if (packet << unreliable_command) {
-        sendUnreliable(packet);
-    } else {
-        std::cout << "Failed to form packet" << std::endl;
-    }
-}
-
 void NetworkingClient::sendUnreliableInput() {
     std::lock_guard<std::mutex> m_unreliableInputs_guard(m_unreliableInputs_lock);
     if (m_unreliableInputs_t.empty()) {
-        time_t seconds_passed = time(0) - m_lastSentNatPunch;
-        if (seconds_passed > NAT_PUNCH_INTERVAL) {
-            // keep the NAT tables populated by sending a nat punch noop to the server
-            sendNatPunch();
-            m_lastSentNatPunch = time(0);
-        }
         return;
     }
 
@@ -305,7 +298,38 @@ void NetworkingClient::sendUnreliableInput() {
                                             m_tick_ta};
 
     if (packet << unreliable_command && packet << unreliable_input) {
-        sendUnreliable(packet);
+        sf::Socket::Status status = sf::Socket::Partial;
+
+        while (status == sf::Socket::Partial) {
+            status =
+                m_inputUdpSocket->send(packet, sf::IpAddress(m_serverIp), m_serverInputUdpPort);
+        }
+    } else {
+        std::cout << "Failed to form packet" << std::endl;
+    }
+}
+
+/* m_natSend thread methods */
+
+void NetworkingClient::natSend() {
+    while (!m_stopThreads_ta) {
+        sendNatPunch();
+        std::this_thread::sleep_for(CLIENT_NAT_SEND_SLEEP);
+    }
+}
+
+void NetworkingClient::sendNatPunch() {
+    sf::Packet packet;
+    sf::Uint32 unreliable_input_cmd = UnreliableCommandType::nat_punch;
+    UnreliableCommand unreliable_command = {(sf::Uint32)m_clientId_ta, unreliable_input_cmd,
+                                            m_tick_ta};
+    if (packet << unreliable_command) {
+        std::lock_guard<std::mutex> m_stateUdpSocket_guard(m_stateUdpSocket_lock);
+        sf::Socket::Status status = sf::Socket::Partial;
+        while (status == sf::Socket::Partial) {
+            status =
+                m_stateUdpSocket->send(packet, sf::IpAddress(m_serverIp), m_serverStateUdpPort);
+        }
     } else {
         std::cout << "Failed to form packet" << std::endl;
     }

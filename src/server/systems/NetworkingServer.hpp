@@ -37,19 +37,26 @@ class NetworkingServer {
 
   private:
     // Sockets
-    void createUdpSocket();
+    sf::Uint16 createInputUdpSocket();
+    sf::Uint16 createStateUdpSocket();
 
-    std::mutex m_udpSocket_lock;
-    std::unique_ptr<sf::UdpSocket> m_udpSocket_t;
+    std::mutex m_stateUdpSocket_lock;
+    std::unique_ptr<sf::UdpSocket> m_stateUdpSocket_t;
+    sf::Uint16 m_stateUdpSocketPort;
+
+    std::unique_ptr<sf::UdpSocket> m_inputUdpSocket;
+    sf::Uint16 m_inputUdpSocketPort;
 
     // Threads
     void reliableRecvSend();
     void unreliableRecv();
     void broadcastGameState();
+    void natRecv();
 
     std::thread m_reliableRecvSend;
     std::thread m_unreliableRecv;
     std::thread m_broadcastGameStateThread;
+    std::thread m_natRecvThread;
 
     std::atomic<bool> m_stopThreads_ta{false};
 
