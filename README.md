@@ -37,9 +37,9 @@ To run tests, after building, run:
 ./build/tests/ug-test
 ```
 
-## Engine
+## Game Engine
 
-Engine written from scratch in C++11 using the [SFML](https://www.sfml-dev.org/) framework.
+Custom engine written in C++11 using the [SFML](https://www.sfml-dev.org/) framework.
 
 Features:
 - Game functionality
