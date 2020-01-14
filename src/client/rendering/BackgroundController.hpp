@@ -17,7 +17,7 @@ class BackgroundController {
     BackgroundController(const BackgroundController& temp_obj) = delete;
     BackgroundController& operator=(const BackgroundController& temp_obj) = delete;
 
-    void update(sf::Vector2f player_position, sf::Vector2u window_size);
+    void update(sf::Vector2f player_position);
     void draw(sf::RenderTarget& target);
 
   private:

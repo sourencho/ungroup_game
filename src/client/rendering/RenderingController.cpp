@@ -7,7 +7,7 @@ RenderingController::RenderingController(sf::RenderWindow& window, GameObjectCon
     m_window(window),
     m_uiData({}), m_gameObjectController(goc), m_resourceStore(),
     m_animationController(m_resourceStore), m_guiController(m_window.getSize(), m_resourceStore),
-    m_backgroundController(m_window.getSize(), m_resourceStore),
+    m_backgroundController(sf::Vector2u(GAME_SIZE), m_resourceStore),
     m_gameObjectRenderer(m_resourceStore, m_gameObjectController.getResourceController(),
                          m_gameObjectController.getGroupController(),
                          m_gameObjectController.getMineController()) {
@@ -15,7 +15,7 @@ RenderingController::RenderingController(sf::RenderWindow& window, GameObjectCon
     sf::Vector2f window_size = sf::Vector2f(m_window.getSize());
 
     // Create buffer to draw game onto. Buffer can be scaled to give pixelated effect
-    if (!m_buffer.create(window_size.x, window_size.y)) {
+    if (!m_buffer.create(GAME_SIZE.x, GAME_SIZE.y)) {
         throw std::runtime_error("Failed to create buffer.");
     }
     m_buffer.setSmooth(false);
@@ -54,7 +54,7 @@ void RenderingController::postUpdate(const sf::Vector2f& player_position, const 
         m_playerPosition, m_window, m_windowView, GAME_SCALING_FACTOR);
     m_playerView.setCenter(player_view_position);
     m_guiController.update(m_uiData);
-    m_backgroundController.update(player_position, m_window.getSize());
+    m_backgroundController.update(player_position);
 }
 
 void RenderingController::draw() {
