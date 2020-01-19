@@ -14,7 +14,8 @@ ClientGameController::ClientGameController(bool is_headless, bool is_bot, BotStr
                                            const std::string& server_ip, LevelKey level_key) :
     m_headless(is_headless),
     m_isBot(is_bot), m_strategy(strategy), m_serverIP(server_ip), GameController(level_key),
-    m_window(sf::VideoMode(WINDOW_RESOLUTION.x, WINDOW_RESOLUTION.y), "Ungroup", sf::Style::Close),
+    m_window(sf::VideoMode(RenderingDef::WINDOW_RESOLUTION.x, RenderingDef::WINDOW_RESOLUTION.y),
+             "Ungroup", sf::Style::Close),
     m_networkingClient(new NetworkingClient(m_serverIP)),
     m_inputController(new InputController(INPUT_KEYS)),
     m_renderingController(

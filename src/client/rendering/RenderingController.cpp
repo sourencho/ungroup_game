@@ -21,7 +21,7 @@ RenderingController::RenderingController(sf::RenderWindow& window, GameObjectCon
     m_buffer.setSmooth(false);
 
     m_bufferSprite = sf::Sprite(m_buffer.getTexture());
-    m_bufferSprite.setScale(GAME_SCALING_FACTOR);
+    m_bufferSprite.setScale(RenderingDef::GAME_SCALING_FACTOR);
 
     // Create views to draw GUI and player view
     m_windowView = sf::View(window_size / 2.f, window_size);
@@ -51,7 +51,7 @@ void RenderingController::postUpdate(const sf::Vector2f& player_position, const 
     m_uiData = ui_data;
 
     sf::Vector2f player_view_position = RenderingUtil::mapCoordToPixelScaled(
-        m_playerPosition, m_window, m_windowView, GAME_SCALING_FACTOR);
+        m_playerPosition, m_window, m_windowView, RenderingDef::GAME_SCALING_FACTOR);
     m_playerView.setCenter(player_view_position);
     m_guiController.update(m_uiData);
     m_backgroundController.update(player_position);

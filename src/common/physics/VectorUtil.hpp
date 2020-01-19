@@ -19,6 +19,7 @@ namespace VectorUtil {
     };
     sf::Vector2f normalize(const sf::Vector2f& source);
     float distance(const sf::Vector2f& point_a, const sf::Vector2f& point_b);
+    float lengthSquared(const sf::Vector2f& point_a, const sf::Vector2f& point_b);
     sf::Vector2f getVector(const sf::Vector2f& point_a, const sf::Vector2f& point_b);
     float length(const sf::Vector2f& source);
     sf::Vector2f getMidpoint(const sf::Vector2f& point_a, const sf::Vector2f& point_b);
@@ -27,6 +28,7 @@ namespace VectorUtil {
     float dot(const sf::Vector2f& a, const sf::Vector2f& b);
     double cos_sim(sf::Vector2f A, sf::Vector2f B);
     void clamp(sf::Vector2f& a, float min, float max);
+    float clamp(float a, float min, float max);
     float angle(const sf::Vector2f& v);
     struct vector_comparator {
         bool operator()(sf::Vector2f lhs, sf::Vector2f rhs) const {

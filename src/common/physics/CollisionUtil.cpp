@@ -13,6 +13,59 @@ bool CollisionUtil::areIntersecting(const CircleRigidBody& circle_a,
     return dist < circle_a.getRadius() + circle_b.getRadius();
 }
 
+/**
+ * Implementation of https://stackoverflow.com/a/402019
+ */
+bool CollisionUtil::areIntersecting(const CircleRigidBody& circle, const sf::FloatRect& rectangle) {
+    sf::Vector2f top_left(rectangle.left, rectangle.top);
+    sf::Vector2f top_right(rectangle.left + rectangle.width, rectangle.top);
+    sf::Vector2f bottom_left(rectangle.left, rectangle.top + rectangle.height);
+    sf::Vector2f bottom_right(rectangle.left + rectangle.width, rectangle.top + rectangle.height);
+
+    return rectangle.contains(circle.getCenter()) ||
+           areIntersecting(circle, std::make_pair(top_left, top_right)) ||
+           areIntersecting(circle, std::make_pair(top_right, bottom_right)) ||
+           areIntersecting(circle, std::make_pair(bottom_right, bottom_left)) ||
+           areIntersecting(circle, std::make_pair(bottom_left, top_left));
+}
+
+bool CollisionUtil::areIntersecting(const CircleRigidBody& circle,
+                                    std::pair<sf::Vector2f, sf::Vector2f> line) {
+    return CollisionUtil::minimumDistance(line.first, line.second, circle.getCenter()) <=
+           circle.getRadius();
+}
+
+/**
+ * Implementation of https://stackoverflow.com/a/1501725
+ */
+float CollisionUtil::minimumDistance(const sf::Vector2f& v, const sf::Vector2f& w,
+                                     const sf::Vector2f& p) {
+    const float l2 = VectorUtil::lengthSquared(v, w); // i.e. |w-v|^2 -  avoid a sqrt
+    if (l2 == 0.0)
+        return VectorUtil::distance(p, v); // v == w case
+    // Consider the line extending the segment, parameterized as v + t (w - v).
+    // We find projection of point p onto the line.
+    // It falls where t = [(p-v) . (w-v)] / |w-v|^2
+    // We clamp t from [0,1] to handle points outside the segment vw.
+    const float t = std::max(0.f, std::min(1.f, VectorUtil::dot(p - v, w - v) / l2));
+    const sf::Vector2f projection = v + t * (w - v); // Projection falls on the segment
+    return VectorUtil::distance(p, projection);
+}
+
+Orientation CollisionUtil::getOrientation(const sf::Vector2f p, const sf::FloatRect& rectangle) {
+    if (rectangle.contains(p)) {
+        return Orientation::inside;
+    } else if (p.y <= rectangle.top) {
+        return Orientation::above;
+    } else if (p.x >= rectangle.left + rectangle.width) {
+        return Orientation::right;
+    } else if (p.y >= rectangle.top + rectangle.height) {
+        return Orientation::below;
+    } else {
+        return Orientation::left;
+    }
+}
+
 Collision CollisionUtil::getCollision(const CircleRigidBody& circle_a,
                                       const CircleRigidBody& circle_b) {
     bool collided = true;

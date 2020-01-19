@@ -44,6 +44,10 @@ class CircleGameObject : public GameObject {
 
     sf::Vector2f getVelocity() const;
 
+    const CircleRigidBody& getRigidBody() const {
+        return m_circleRigidBody;
+    }
+
   protected:
     CircleRigidBody& m_circleRigidBody;
 };

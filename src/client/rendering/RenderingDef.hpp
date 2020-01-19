@@ -5,10 +5,14 @@
 #include <memory>
 
 #include "../../common/systems/ResourceController.hpp"
+#include "../../common/util/game_settings.hpp"
 
 namespace RenderingDef {
     const uint WINDOW_FRAME_LIMIT = 60;
-    const bool USE_SHADERS = true;
+    const sf::Vector2f WINDOW_RESOLUTION(1000, 1000);
+    const float GAME_SCALE = 3.f;
+    const sf::Vector2f GAME_SCALING_FACTOR(GAME_SCALE, GAME_SCALE);
+    const bool USE_SHADERS = false;
     const std::size_t CIRCLE_POINT_COUNT = 60;
     enum TextureKey { collision, mine_pattern, dotted_background };
     enum ShaderKey { none, noop, voronoi_counts };
@@ -33,15 +37,19 @@ namespace RenderingDef {
     const sf::Color PLAYER_ID_TEXT_COLOR(DEBUG_TEXT_COLOR);
     const float PLAYER_ID_TEXT_SIZE(50.f);
 
-    /* Direction lines and arrows */
-    // Arrow
+    // Direction Arrow
+    const bool SHOW_DIRECTION_ARROWS = false;
     const sf::Color DIRECTION_ARROW_COLOR(63, 154, 233);
 
-    // Line
+    // Direction Line
+    const bool SHOW_DIRECTION_LINES = true;
     const sf::Color DIRECTION_LINE_DEFAULT_COLOR(120, 120, 120);
     const float DIRECTION_LINE_STRIP_LENGTH(3.f);
     const float DIRECTION_LINE_COLOR_ALPHA(255 * 1.f);
     const float DIRECTION_LINE_DISTANCE_FROM_EDGE(1.f);
+
+    // Player IDs
+    const bool SHOW_PLAYER_IDS = true;
 
     /* Resource */
     // Green palette
@@ -62,6 +70,9 @@ namespace RenderingDef {
     const std::array<sf::Color, RESOURCE_TYPE_COUNT>
         RESOURCE_COLORS({RenderingDef::RESOURCE_A_COLOR, RenderingDef::RESOURCE_B_COLOR,
                          RenderingDef::RESOURCE_C_COLOR, RenderingDef::RESOURCE_D_COLOR});
+
+    // Directions
+    const bool SHOW_MINE_DIRECTIONS = true;
 
     /* Misc */
     const sf::Color BACKGROUND_COLOR(34, 32, 52);

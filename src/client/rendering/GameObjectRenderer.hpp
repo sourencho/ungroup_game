@@ -36,10 +36,12 @@ class GameObjectRenderer {
     void drawGroups(sf::RenderTarget& target);
     void drawMines(sf::RenderTarget& target);
     void drawGroupPlayerIds(sf::RenderWindow& window, sf::View& player_view);
+    void drawMineDirections(sf::RenderWindow& window, sf::View& player_view);
 
     std::vector<std::unique_ptr<DrawableGroup>> m_drawableGroups;
     std::vector<std::unique_ptr<DrawableMine>> m_drawableMines;
     std::vector<sf::Text> m_groupPlayerTexts;
+    std::vector<sf::RectangleShape> m_mineDirections;
 
     MineController& m_mineController;
     GroupController& m_groupController;
