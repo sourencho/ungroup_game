@@ -23,8 +23,13 @@ namespace RenderingDef {
     };
 
     /* UI */
+    // Debug
+    const bool SHOW_DEBUG_UI_ELEMENT = false;
     const sf::Color DEBUG_TEXT_COLOR(sf::Color::Green);
     const sf::Color RESOURCE_UI_TEXT_COLOR(sf::Color::White);
+
+    // Resource
+    const bool SHOW_RESOURCE_UI_ELEMENT = false;
     const float RESOURCE_UI_TEXT_SIZE(60.f);
     const sf::Color DEBUG_UI_TEXT_COLOR(DEBUG_TEXT_COLOR);
     const float DEBUG_UI_TEXT_SIZE(40.f);
@@ -49,7 +54,7 @@ namespace RenderingDef {
     const float DIRECTION_LINE_DISTANCE_FROM_EDGE(1.f);
 
     // Player IDs
-    const bool SHOW_PLAYER_IDS = true;
+    const bool SHOW_PLAYER_IDS = false;
 
     /* Resource */
     // Green palette
