@@ -136,28 +136,30 @@ void GameObjectRenderer::drawMineDirections(sf::RenderWindow& window, sf::View& 
             Orientation orientation = CollisionUtil::getOrientation(mine_center, view_rect);
             switch (orientation) {
                 case Orientation::above:
-                    direction_position = {VectorUtil::clamp(mine_center.x,
-                                                            left + (direction_size.width / 2.f),
-                                                            right - (direction_size.width / 2.f)),
-                                          top + (direction_size.height / 2.f)};
+                    direction_position = {
+                        VectorUtil::clamp(mine_center.x,
+                                          left + RenderingDef::MINE_DIRECTION_PADDING,
+                                          right - RenderingDef::MINE_DIRECTION_PADDING),
+                        top + RenderingDef::MINE_DIRECTION_PADDING};
                     break;
                 case Orientation::right:
                     direction_position = {
-                        right - (direction_size.width / 2.f),
-                        VectorUtil::clamp(mine_center.y, top + (direction_size.height / 2.f),
-                                          bottom - (direction_size.height / 2.f))};
+                        right - RenderingDef::MINE_DIRECTION_PADDING,
+                        VectorUtil::clamp(mine_center.y, top + RenderingDef::MINE_DIRECTION_PADDING,
+                                          bottom - RenderingDef::MINE_DIRECTION_PADDING)};
                     break;
                 case Orientation::below:
-                    direction_position = {VectorUtil::clamp(mine_center.x,
-                                                            left + (direction_size.width / 2.f),
-                                                            right - (direction_size.width / 2.f)),
-                                          bottom - (direction_size.height / 2.f)};
+                    direction_position = {
+                        VectorUtil::clamp(mine_center.x,
+                                          left + RenderingDef::MINE_DIRECTION_PADDING,
+                                          right - RenderingDef::MINE_DIRECTION_PADDING),
+                        bottom - RenderingDef::MINE_DIRECTION_PADDING};
                     break;
                 case Orientation::left:
                     direction_position = {
-                        left + (direction_size.width / 2.f),
-                        VectorUtil::clamp(mine_center.y, top + (direction_size.height / 2.f),
-                                          bottom - (direction_size.height / 2.f))};
+                        left + RenderingDef::MINE_DIRECTION_PADDING,
+                        VectorUtil::clamp(mine_center.y, top + RenderingDef::MINE_DIRECTION_PADDING,
+                                          bottom - RenderingDef::MINE_DIRECTION_PADDING)};
                     break;
                 default:
                     break;

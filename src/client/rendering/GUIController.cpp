@@ -4,13 +4,6 @@
 #include "ResourceUIElement.hpp"
 #include "TestUIElement.hpp"
 
-const RenderingDef::Padding RESOURCE_UI_PADDING({
-    .right = 65.f,
-    .left = 0.f,
-    .top = 30.f,
-    .bottom = 0.f,
-});
-
 GUIController::GUIController(sf::Vector2u window_size, ResourceStore& rs) : m_resourceStore(rs) {
     load(window_size);
 }
@@ -28,7 +21,7 @@ void GUIController::load(sf::Vector2u window_size) {
     if (RenderingDef::SHOW_RESOURCE_UI_ELEMENT) {
         add(std::unique_ptr<ResourceUIElement>(
             new ResourceUIElement(window_size, {0.f, 0.f}, RenderingDef::Align::TOP_RIGHT,
-                                  RESOURCE_UI_PADDING, m_resourceStore)));
+                                  RenderingDef::RESOURCE_UI_PADDING, m_resourceStore)));
     }
 }
 

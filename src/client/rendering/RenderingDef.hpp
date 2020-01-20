@@ -9,8 +9,8 @@
 
 namespace RenderingDef {
     const uint WINDOW_FRAME_LIMIT = 60;
-    const sf::Vector2f WINDOW_RESOLUTION(1000, 1000);
-    const float GAME_SCALE = 3.f;
+    const sf::Vector2f WINDOW_RESOLUTION(1200, 900);
+    const float GAME_SCALE = 4.f;
     const sf::Vector2f GAME_SCALING_FACTOR(GAME_SCALE, GAME_SCALE);
     const bool USE_SHADERS = true;
     const std::size_t CIRCLE_POINT_COUNT = 60;
@@ -37,37 +37,15 @@ namespace RenderingDef {
         float bottom;
     };
 
-    /* UI */
-    // Debug
-    const bool SHOW_DEBUG_UI_ELEMENT = true;
+    /* Debug */
+    const bool RENDER_DEBUG = false;
     const sf::Color DEBUG_TEXT_COLOR(sf::Color::Green);
-    const sf::Color DEBUG_UI_TEXT_COLOR(DEBUG_TEXT_COLOR);
-    const float DEBUG_UI_TEXT_SIZE(40.f);
-    const RenderingDef::Padding DEBUG_UI_PADDING({
-        .right = 0.f,
-        .left = 24.f,
-        .top = 0.f,
-        .bottom = 24.f,
-    });
-
-    // Resource
-    const bool SHOW_RESOURCE_UI_ELEMENT = true;
-    const float RESOURCE_UI_TEXT_SIZE(60.f);
-    const sf::Color RESOURCE_UI_TEXT_COLOR(sf::Color::White);
-    const RenderingDef::Padding RESOURCE_UI_PADDING({
-        .right = 65.f,
-        .left = 0.f,
-        .top = 45.f,
-        .bottom = 0.f,
-    });
 
     /* Group */
     const sf::Color DEFAULT_GROUP_COLOR(sf::Color::Transparent);
     const sf::Color DEFAULT_GROUP_OUTLINE_COLOR(sf::Color::White);
     const sf::Color JOINABLE_COLOR(sf::Color::Green);
     const sf::Color UNGROUP_COLOR(sf::Color::Blue);
-    const sf::Color PLAYER_ID_TEXT_COLOR(DEBUG_TEXT_COLOR);
-    const float PLAYER_ID_TEXT_SIZE(50.f);
 
     // Direction Arrow
     const bool SHOW_DIRECTION_ARROWS = false;
@@ -81,7 +59,9 @@ namespace RenderingDef {
     const float DIRECTION_LINE_DISTANCE_FROM_EDGE(1.f);
 
     // Player IDs
-    const bool SHOW_PLAYER_IDS = true;
+    const sf::Color PLAYER_ID_TEXT_COLOR(DEBUG_TEXT_COLOR);
+    const float PLAYER_ID_TEXT_SIZE(50.f);
+    const bool SHOW_PLAYER_IDS = true && RENDER_DEBUG;
 
     /* Resource */
     // Green palette
@@ -107,6 +87,7 @@ namespace RenderingDef {
 
     // Directions
     const bool SHOW_MINE_DIRECTIONS = true;
+    const float MINE_DIRECTION_PADDING = 8.f;
 
     /* Misc */
     const sf::Color BACKGROUND_COLOR(34, 32, 52);
@@ -122,6 +103,29 @@ namespace RenderingDef {
     const sf::Vector2f BACKGROUND_TEXTURE_2_SCALE = {1.f, 1.f};
 
     const sf::Color COLLISION_ANIMATION_COLOR(sf::Color::White);
+
+    /* UI */
+    // Debug
+    const bool SHOW_DEBUG_UI_ELEMENT = true && RENDER_DEBUG;
+    const sf::Color DEBUG_UI_TEXT_COLOR(DEBUG_TEXT_COLOR);
+    const float DEBUG_UI_TEXT_SIZE(40.f);
+    const RenderingDef::Padding DEBUG_UI_PADDING({
+        .right = 0.f,
+        .left = 24.f,
+        .top = 0.f,
+        .bottom = 24.f,
+    });
+
+    // Resource
+    const bool SHOW_RESOURCE_UI_ELEMENT = true;
+    const float RESOURCE_UI_TEXT_SIZE(58.f);
+    const sf::Color RESOURCE_UI_TEXT_COLOR(sf::Color::White);
+    const RenderingDef::Padding RESOURCE_UI_PADDING({
+        .right = MINE_DIRECTION_PADDING + 56.f,
+        .left = 0.f,
+        .top = MINE_DIRECTION_PADDING + 20.f, // Text seems to add padding to the top
+        .bottom = 0.f,
+    });
 
     /* Screens */
     const sf::Color CONNECTING_SCREEN_COLOR(RESOURCE_A_COLOR);

@@ -22,7 +22,8 @@ class ResourceUIElement : public BaseUIElement {
   private:
     std::string getResourceCountString(ResourceType resource_type, uint32_t resource_count);
 
-    sf::Text m_text;
+    std::array<sf::Text, RESOURCE_TYPE_COUNT> m_resourceCountTexts;
+    std::array<sf::Sprite, RESOURCE_TYPE_COUNT> m_resourceLetterSprites;
     sf::Vector2u m_windowSize;
     RenderingDef::Align m_align;
     RenderingDef::Padding m_padding;
