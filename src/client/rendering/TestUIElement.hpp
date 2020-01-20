@@ -11,7 +11,8 @@
 
 class TestUIElement : public BaseUIElement {
   public:
-    TestUIElement(sf::Vector2u window_size, sf::Vector2f size, Align align, Padding padding);
+    TestUIElement(sf::Vector2u window_size, sf::Vector2f size, RenderingDef::Align align,
+                  RenderingDef::Padding padding);
     ~TestUIElement(){};
 
     void update(const UIData& ui_data) override;

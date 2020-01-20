@@ -2,8 +2,8 @@
 
 #include <iostream>
 
-TestUIElement::TestUIElement(sf::Vector2u window_size, sf::Vector2f size, Align align,
-                             Padding padding) :
+TestUIElement::TestUIElement(sf::Vector2u window_size, sf::Vector2f size, RenderingDef::Align align,
+                             RenderingDef::Padding padding) :
     BaseUIElement(window_size, size, align, padding),
     m_rectangle(size) {
     m_rectangle.setPosition(m_position);

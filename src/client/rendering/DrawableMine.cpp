@@ -6,7 +6,7 @@
 #include "RenderingDef.hpp"
 
 DrawableMine::DrawableMine(ResourceStore& rs) : DrawableCircle(rs) {
-    // setTexture(RenderingDef::TextureKey::mine_pattern);
+    setTexture(RenderingDef::TextureKey::mine_pattern);
     m_outlineShape.setOutlineThickness(2.f);
     setShader(RenderingDef::ShaderKey::voronoi_counts);
 }

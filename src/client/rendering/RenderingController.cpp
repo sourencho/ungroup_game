@@ -3,14 +3,16 @@
 #include "RenderingUtil.hpp"
 
 RenderingController::RenderingController(sf::RenderWindow& window, GameObjectController& goc,
-                                         GameObjectStore& gos) :
+                                         GameObjectStore& gos, uint32_t player_id, bool headless) :
     m_window(window),
     m_uiData({}), m_gameObjectController(goc), m_resourceStore(),
-    m_animationController(m_resourceStore), m_guiController(m_window.getSize(), m_resourceStore),
-    m_backgroundController(sf::Vector2u(GAME_SIZE), m_resourceStore),
+    m_animationController(m_resourceStore),
+    m_backgroundController(sf::Vector2u(GAME_SIZE), m_resourceStore), m_playerId(player_id),
     m_gameObjectRenderer(m_resourceStore, m_gameObjectController.getResourceController(),
                          m_gameObjectController.getGroupController(),
-                         m_gameObjectController.getMineController()) {
+                         m_gameObjectController.getMineController(),
+                         m_gameObjectController.getPlayerController(), m_playerId),
+    m_guiController(m_window.getSize(), m_resourceStore), m_headless(headless) {
     m_window.setFramerateLimit(RenderingDef::WINDOW_FRAME_LIMIT);
     sf::Vector2f window_size = sf::Vector2f(m_window.getSize());
 
@@ -43,21 +45,33 @@ void RenderingController::preUpdate() {
 }
 
 void RenderingController::update(sf::Int32 delta_ms) {
+    if (m_headless) {
+        return;
+    }
+
     m_animationController.update(delta_ms);
 }
 
-void RenderingController::postUpdate(const sf::Vector2f& player_position, const UIData& ui_data) {
-    m_playerPosition = player_position;
+void RenderingController::postUpdate(const UIData& ui_data) {
+    if (m_headless) {
+        return;
+    }
+
+    auto player_position = m_gameObjectController.getPlayerPosition(m_playerId);
     m_uiData = ui_data;
 
     sf::Vector2f player_view_position = RenderingUtil::mapCoordToPixelScaled(
-        m_playerPosition, m_window, m_windowView, RenderingDef::GAME_SCALING_FACTOR);
+        player_position, m_window, m_windowView, RenderingDef::GAME_SCALING_FACTOR);
     m_playerView.setCenter(player_view_position);
     m_guiController.update(m_uiData);
     m_backgroundController.update(player_position);
 }
 
 void RenderingController::draw() {
+    if (m_headless) {
+        return;
+    }
+
     switch (m_uiData.game_status) {
         case GameStatus::not_started: {
             drawNotStarted();

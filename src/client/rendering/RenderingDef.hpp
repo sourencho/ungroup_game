@@ -12,27 +12,54 @@ namespace RenderingDef {
     const sf::Vector2f WINDOW_RESOLUTION(1000, 1000);
     const float GAME_SCALE = 3.f;
     const sf::Vector2f GAME_SCALING_FACTOR(GAME_SCALE, GAME_SCALE);
-    const bool USE_SHADERS = false;
+    const bool USE_SHADERS = true;
     const std::size_t CIRCLE_POINT_COUNT = 60;
-    enum TextureKey { collision, mine_pattern, dotted_background };
+    enum TextureKey {
+        collision,
+        mine_pattern,
+        dotted_background,
+        k_letter,
+        n_letter,
+        m_letter,
+        t_letter
+    };
     enum ShaderKey { none, noop, voronoi_counts };
     enum FontKey { monogram };
     struct Shader {
         ShaderKey key = ShaderKey::none;
         std::shared_ptr<sf::Shader> shader = nullptr;
     };
+    enum Align { TOP_RIGHT, TOP_LEFT, BOTTOM_RIGHT, BOTTOM_LEFT };
+    struct Padding {
+        float right;
+        float left;
+        float top;
+        float bottom;
+    };
 
     /* UI */
     // Debug
-    const bool SHOW_DEBUG_UI_ELEMENT = false;
+    const bool SHOW_DEBUG_UI_ELEMENT = true;
     const sf::Color DEBUG_TEXT_COLOR(sf::Color::Green);
-    const sf::Color RESOURCE_UI_TEXT_COLOR(sf::Color::White);
-
-    // Resource
-    const bool SHOW_RESOURCE_UI_ELEMENT = false;
-    const float RESOURCE_UI_TEXT_SIZE(60.f);
     const sf::Color DEBUG_UI_TEXT_COLOR(DEBUG_TEXT_COLOR);
     const float DEBUG_UI_TEXT_SIZE(40.f);
+    const RenderingDef::Padding DEBUG_UI_PADDING({
+        .right = 0.f,
+        .left = 24.f,
+        .top = 0.f,
+        .bottom = 24.f,
+    });
+
+    // Resource
+    const bool SHOW_RESOURCE_UI_ELEMENT = true;
+    const float RESOURCE_UI_TEXT_SIZE(60.f);
+    const sf::Color RESOURCE_UI_TEXT_COLOR(sf::Color::White);
+    const RenderingDef::Padding RESOURCE_UI_PADDING({
+        .right = 65.f,
+        .left = 0.f,
+        .top = 45.f,
+        .bottom = 0.f,
+    });
 
     /* Group */
     const sf::Color DEFAULT_GROUP_COLOR(sf::Color::Transparent);
@@ -54,7 +81,7 @@ namespace RenderingDef {
     const float DIRECTION_LINE_DISTANCE_FROM_EDGE(1.f);
 
     // Player IDs
-    const bool SHOW_PLAYER_IDS = false;
+    const bool SHOW_PLAYER_IDS = true;
 
     /* Resource */
     // Green palette
@@ -75,6 +102,8 @@ namespace RenderingDef {
     const std::array<sf::Color, RESOURCE_TYPE_COUNT>
         RESOURCE_COLORS({RenderingDef::RESOURCE_A_COLOR, RenderingDef::RESOURCE_B_COLOR,
                          RenderingDef::RESOURCE_C_COLOR, RenderingDef::RESOURCE_D_COLOR});
+    const std::array<TextureKey, RESOURCE_TYPE_COUNT> RESOURCE_TEXTURE_KEYS(
+        {TextureKey::k_letter, TextureKey::n_letter, TextureKey::m_letter, TextureKey::t_letter});
 
     // Directions
     const bool SHOW_MINE_DIRECTIONS = true;

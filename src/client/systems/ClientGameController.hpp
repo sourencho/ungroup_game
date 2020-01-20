@@ -46,6 +46,8 @@ class ClientGameController : public GameController {
      */
     void registerClient();
 
+    void postRegisterInit();
+
     void draw();
 
     /*

@@ -4,9 +4,10 @@
 #include "RenderingUtil.hpp"
 
 GameObjectRenderer::GameObjectRenderer(ResourceStore& rs, ResourceController& rc,
-                                       GroupController& gc, MineController& mc) :
+                                       GroupController& gc, MineController& mc,
+                                       PlayerController& pc, uint32_t player_id) :
     m_groupController(gc),
-    m_mineController(mc), m_resourceController(rc) {
+    m_mineController(mc), m_playerController(pc), m_resourceController(rc), m_playerId(player_id) {
     // Init drawable groups
     for (size_t i = 0; i < m_groupController.getGroupIds().size(); i++) {
         m_drawableGroups.push_back(std::unique_ptr<DrawableGroup>(new DrawableGroup(rs)));
@@ -26,13 +27,15 @@ GameObjectRenderer::GameObjectRenderer(ResourceStore& rs, ResourceController& rc
     }
 
     // Init mine directions
-    for (size_t i = 0; i < m_mineController.getMineIds().size(); i++) {
-        sf::RectangleShape rectangle({10.f, 10.f});
-        rectangle.setFillColor(sf::Color::Magenta);
-        rectangle.setOutlineColor(sf::Color::White);
-        rectangle.setOutlineThickness(2.f);
-        rectangle.setOrigin(rectangle.getSize().x / 2.f, rectangle.getSize().y / 2.f);
-        m_mineDirections.push_back(rectangle);
+    for (uint32_t mine_id : m_mineController.getMineIds()) {
+        Mine& mine = m_mineController.getMine(mine_id);
+        sf::Sprite direction_sprite(
+            *rs.getTexture(RenderingDef::RESOURCE_TEXTURE_KEYS[mine.getResourceType()]).get());
+        direction_sprite.setScale({2.5f, 2.5f});
+        direction_sprite.setColor(RenderingDef::RESOURCE_COLORS[mine.getResourceType()]);
+        direction_sprite.setOrigin(direction_sprite.getTexture()->getSize().x / 2.f,
+                                   direction_sprite.getTexture()->getSize().y / 2.f);
+        m_mineDirections.push_back(direction_sprite);
     }
 }
 
@@ -114,6 +117,12 @@ void GameObjectRenderer::drawMineDirections(sf::RenderWindow& window, sf::View& 
         Mine& mine = m_mineController.getMine(mine_id);
         const sf::Vector2f& mine_center = mine.getCenter();
 
+        // Only show direction if it's the player's intended resource
+        if (mine.getResourceType() != m_playerController.getPlayer(m_playerId)->getIntent()) {
+            continue;
+        }
+
+        // Only show direction if mine is out of view
         if (!CollisionUtil::areIntersecting(mine.getRigidBody(), view_rect)) {
             float left = view_rect.left;
             float right = view_rect.left + view_rect.width;
@@ -121,37 +130,40 @@ void GameObjectRenderer::drawMineDirections(sf::RenderWindow& window, sf::View& 
             float bottom = view_rect.top + view_rect.height;
 
             auto& direction = m_mineDirections[i];
-            auto& direction_size = direction.getSize();
+            const sf::FloatRect direction_size = direction.getGlobalBounds();
             sf::Vector2f direction_position;
 
             Orientation orientation = CollisionUtil::getOrientation(mine_center, view_rect);
             switch (orientation) {
                 case Orientation::above:
-                    direction_position = {VectorUtil::clamp(mine_center.x, left + direction_size.x,
-                                                            right - direction_size.x),
-                                          view_rect.top + direction_size.y};
+                    direction_position = {VectorUtil::clamp(mine_center.x,
+                                                            left + (direction_size.width / 2.f),
+                                                            right - (direction_size.width / 2.f)),
+                                          top + (direction_size.height / 2.f)};
                     break;
                 case Orientation::right:
-                    direction_position = {right - direction_size.x,
-                                          VectorUtil::clamp(mine_center.y, top + direction_size.y,
-                                                            bottom - direction_size.y)};
+                    direction_position = {
+                        right - (direction_size.width / 2.f),
+                        VectorUtil::clamp(mine_center.y, top + (direction_size.height / 2.f),
+                                          bottom - (direction_size.height / 2.f))};
                     break;
                 case Orientation::below:
-                    direction_position = {VectorUtil::clamp(mine_center.x, left + direction_size.x,
-                                                            right - direction_size.x),
-                                          bottom - direction_size.y};
+                    direction_position = {VectorUtil::clamp(mine_center.x,
+                                                            left + (direction_size.width / 2.f),
+                                                            right - (direction_size.width / 2.f)),
+                                          bottom - (direction_size.height / 2.f)};
                     break;
                 case Orientation::left:
-                    direction_position = {view_rect.left + direction_size.x,
-                                          VectorUtil::clamp(mine_center.y, top + direction_size.y,
-                                                            bottom - direction_size.y)};
+                    direction_position = {
+                        left + (direction_size.width / 2.f),
+                        VectorUtil::clamp(mine_center.y, top + (direction_size.height / 2.f),
+                                          bottom - (direction_size.height / 2.f))};
                     break;
                 default:
                     break;
             }
             direction.setPosition(RenderingUtil::mapCoordToPixelScaled(
                 direction_position, window, player_view, RenderingDef::GAME_SCALING_FACTOR));
-            direction.setFillColor(RenderingDef::RESOURCE_COLORS[mine.getResourceType()]);
             window.draw(direction);
         }
     }

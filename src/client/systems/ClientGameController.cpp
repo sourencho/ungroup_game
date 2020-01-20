@@ -14,12 +14,7 @@ ClientGameController::ClientGameController(bool is_headless, bool is_bot, BotStr
                                            const std::string& server_ip, LevelKey level_key) :
     m_headless(is_headless),
     m_isBot(is_bot), m_strategy(strategy), m_serverIP(server_ip), GameController(level_key),
-    m_window(sf::VideoMode(RenderingDef::WINDOW_RESOLUTION.x, RenderingDef::WINDOW_RESOLUTION.y),
-             "Ungroup", sf::Style::Close),
-    m_networkingClient(new NetworkingClient(m_serverIP)),
-    m_inputController(new InputController(INPUT_KEYS)),
-    m_renderingController(
-        new RenderingController(m_window, *m_gameObjectController, *m_gameObjectStore)) {
+    m_networkingClient(new NetworkingClient(m_serverIP)) {
 }
 
 ClientGameController::~ClientGameController() {
@@ -28,11 +23,11 @@ ClientGameController::~ClientGameController() {
 void ClientGameController::start() {
     m_gameStateCore.status = GameStatus::not_started;
     registerClient();
+    postRegisterInit();
     while (m_window.isOpen()) {
         step();
-        if (!m_headless) {
-            draw();
-        } else {
+        draw();
+        if (m_headless) {
             // unfortunately, the game will buffer up a ton of
             // non-relevant moves, unless we slow it down. previously
             // the draw was slowing it.
@@ -44,6 +39,15 @@ void ClientGameController::start() {
 void ClientGameController::registerClient() {
     std::cout << "Registering client with server..." << std::endl;
     m_playerId = m_networkingClient->registerClientAndFetchPlayerId();
+}
+
+void ClientGameController::postRegisterInit() {
+    m_window.create(
+        sf::VideoMode(RenderingDef::WINDOW_RESOLUTION.x, RenderingDef::WINDOW_RESOLUTION.y),
+        "Ungroup", sf::Style::Close);
+    m_renderingController = std::unique_ptr<RenderingController>(new RenderingController(
+        m_window, *m_gameObjectController, *m_gameObjectStore, m_playerId, m_headless));
+    m_inputController = std::unique_ptr<InputController>(new InputController(INPUT_KEYS));
 }
 
 void ClientGameController::incrementTick() {
@@ -109,7 +113,6 @@ void ClientGameController::update(const InputDef::PlayerInputs& pi, sf::Int32 de
 }
 
 void ClientGameController::postUpdate() {
-    sf::Vector2f player_position = m_gameObjectController->getPlayerPosition(m_playerId);
     UIData ui_data = {
         .game_steps_per_second = m_gameStepMetric.getRate(sf::seconds(1)),
         .game_updates_per_second = m_gameUpdateMetric.getRate(sf::seconds(1)),
@@ -120,7 +123,7 @@ void ClientGameController::postUpdate() {
         .winner_player_id = m_gameStateCore.winner_player_id,
         .tick = getTick(),
     };
-    m_renderingController->postUpdate(player_position, ui_data);
+    m_renderingController->postUpdate(ui_data);
 }
 
 void ClientGameController::rewindAndReplay() {

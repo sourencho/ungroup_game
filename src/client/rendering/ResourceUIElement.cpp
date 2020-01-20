@@ -9,8 +9,9 @@
 // misaligned.
 const int FILL_DIGIT_COUNT = 3;
 
-ResourceUIElement::ResourceUIElement(sf::Vector2u window_size, sf::Vector2f size, Align align,
-                                     Padding padding, ResourceStore& rs) :
+ResourceUIElement::ResourceUIElement(sf::Vector2u window_size, sf::Vector2f size,
+                                     RenderingDef::Align align, RenderingDef::Padding padding,
+                                     ResourceStore& rs) :
     BaseUIElement(window_size, size, align, padding),
     m_windowSize(window_size), m_align(align), m_padding(padding) {
     m_text.setFont(*rs.getFont(RenderingDef::FontKey::monogram));
