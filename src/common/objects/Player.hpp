@@ -6,6 +6,7 @@
 #include <stdio.h>
 
 #include "../systems/ResourceController.hpp"
+#include "../models/WinCondition.hpp"
 #include "GameObject.hpp"
 
 struct PlayerUpdate {
@@ -14,6 +15,7 @@ struct PlayerUpdate {
     sf::Vector2f direction;
     bool joinable;
     bool ungroup;
+    WinCondition win_condition;
 };
 
 sf::Packet& operator<<(sf::Packet& packet, const PlayerUpdate& player_update);
@@ -42,6 +44,12 @@ class Player : public GameObject {
     bool getUngroup() const {
         return m_ungroup;
     };
+    void setWinCondition(WinCondition wc) {
+        m_win_condition = wc;
+    };
+    WinCondition getWinCondition() const {
+        return m_win_condition;
+    };
     ResourceType getIntent() const {
         return m_intent;
     }
@@ -69,6 +77,7 @@ class Player : public GameObject {
     bool m_ungroup = false;                    // If player wants to ungroup.
     ResourceType m_intent = ResourceType::RED; // Resource player intends to collect. This is
                                                // communicated to other players.
+    WinCondition m_win_condition;
 };
 
 #endif /* Player_hpp */
