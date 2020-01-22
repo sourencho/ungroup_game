@@ -32,6 +32,7 @@ class GameObjectController {
     GroupController& getGroupController();
     MineController& getMineController();
     ResourceController& getResourceController();
+    PlayerController& getPlayerController();
 
     // bot methods
     std::pair<InputDef::ReliableInput, InputDef::UnreliableInput> getBotMove(uint32_t bot_player_id,

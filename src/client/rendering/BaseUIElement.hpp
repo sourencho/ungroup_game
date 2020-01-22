@@ -14,15 +14,7 @@
 
 #include "../../common/systems/ResourceController.hpp"
 #include "../../common/util/StateDef.hpp"
-
-enum Align { TOP_RIGHT, TOP_LEFT, BOTTOM_RIGHT, BOTTOM_LEFT };
-
-struct Padding {
-    float right;
-    float left;
-    float top;
-    float bottom;
-};
+#include "RenderingDef.hpp"
 
 struct UIData {
     float game_steps_per_second;
@@ -37,8 +29,8 @@ struct UIData {
 
 class BaseUIElement {
   public:
-    BaseUIElement(sf::Vector2u window_size, sf::Vector2f element_size, Align align,
-                  Padding padding);
+    BaseUIElement(sf::Vector2u window_size, sf::Vector2f element_size, RenderingDef::Align align,
+                  RenderingDef::Padding padding);
     virtual ~BaseUIElement(){};
 
     virtual void draw(sf::RenderTarget& render_target) = 0;
@@ -46,8 +38,8 @@ class BaseUIElement {
 
   protected:
     sf::Vector2f m_position;
-    void setPosition(sf::Vector2u window_size, sf::Vector2f element_size, Align align,
-                     Padding padding);
+    void setPosition(sf::Vector2u window_size, sf::Vector2f element_size, RenderingDef::Align align,
+                     RenderingDef::Padding padding);
 };
 
 #endif /* BaseUIElement_hpp */

@@ -19,6 +19,11 @@ float VectorUtil::distance(const sf::Vector2f& point_a, const sf::Vector2f& poin
     return sqrt(pow((point_b.x - point_a.x), 2.f) + pow((point_b.y - point_a.y), 2.f));
 }
 
+float VectorUtil::lengthSquared(const sf::Vector2f& point_a, const sf::Vector2f& point_b) {
+    auto ab = getVector(point_a, point_b);
+    return (ab.x * ab.x) + (ab.y * ab.y);
+}
+
 sf::Vector2f VectorUtil::getVector(const sf::Vector2f& point_a, const sf::Vector2f& point_b) {
     return sf::Vector2f(point_b.x - point_a.x, point_b.y - point_a.y);
 }
@@ -63,6 +68,13 @@ void VectorUtil::clamp(sf::Vector2f& a, float min, float max) {
     a.x = std::max(a.x, min);
     a.y = std::min(a.y, max);
     a.y = std::max(a.y, min);
+}
+
+float VectorUtil::clamp(float a, float min, float max) {
+    float c = a;
+    c = std::min(c, max);
+    c = std::max(c, min);
+    return c;
 }
 
 float VectorUtil::angle(const sf::Vector2f& v) {

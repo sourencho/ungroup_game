@@ -22,11 +22,11 @@ void DrawableGroup::draw(sf::RenderTarget& target, Group& group, bool joinable, 
         throw std::runtime_error("Size of player directions and intents should be the same.");
     }
 
-    if (SHOW_DIRECTION_LINES) {
+    if (RenderingDef::SHOW_DIRECTION_LINES) {
         drawDirectionLines(target, group, player_directions, player_intents);
     }
 
-    if (SHOW_DIRECTION_ARROWS) {
+    if (RenderingDef::SHOW_DIRECTION_ARROWS) {
         drawDirectionArrows(target, group, player_directions);
     }
 
@@ -63,7 +63,7 @@ void DrawableGroup::drawGroup(sf::RenderTarget& target, Group& group, bool joina
         std::copy(resource_counts.begin(), resource_counts.end(), m_resourceCounts);
         int total_resource_count =
             std::accumulate(resource_counts.begin(), resource_counts.end(), 0);
-        m_shader.shader->setUniform("u_resolution", sf::Vector2f(WINDOW_RESOLUTION));
+        m_shader.shader->setUniform("u_resolution", sf::Vector2f(RenderingDef::WINDOW_RESOLUTION));
         m_shader.shader->setUniform("u_position", group.getPosition());
         m_shader.shader->setUniform("u_radius", group.getRadius());
         m_shader.shader->setUniform("u_time", m_shaderClock.getElapsedTime().asSeconds());

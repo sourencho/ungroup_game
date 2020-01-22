@@ -6,7 +6,7 @@
 #include "RenderingDef.hpp"
 
 DrawableMine::DrawableMine(ResourceStore& rs) : DrawableCircle(rs) {
-    // setTexture(RenderingDef::TextureKey::mine_pattern);
+    setTexture(RenderingDef::TextureKey::mine_pattern);
     m_outlineShape.setOutlineThickness(2.f);
     setShader(RenderingDef::ShaderKey::voronoi_counts);
 }
@@ -24,7 +24,7 @@ void DrawableMine::draw(sf::RenderTarget& target, Mine& mine, uint32_t resource_
     if (m_shader.shader != nullptr && RenderingDef::USE_SHADERS) {
         std::copy(resource_counts.begin(), resource_counts.end(), m_resourceCounts);
         int total_resource_count = mine.getResourceCapacity();
-        m_shader.shader->setUniform("u_resolution", sf::Vector2f(WINDOW_RESOLUTION));
+        m_shader.shader->setUniform("u_resolution", sf::Vector2f(RenderingDef::WINDOW_RESOLUTION));
         m_shader.shader->setUniform("u_position", mine.getPosition());
         m_shader.shader->setUniform("u_radius", mine.getRadius());
         m_shader.shader->setUniform("u_time", m_shaderClock.getElapsedTime().asSeconds());

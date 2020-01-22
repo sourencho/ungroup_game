@@ -161,3 +161,7 @@ MineController& GameObjectController::getMineController() {
 ResourceController& GameObjectController::getResourceController() {
     return m_resourceController;
 }
+
+PlayerController& GameObjectController::getPlayerController() {
+    return m_playerController;
+}

@@ -13,6 +13,10 @@ void ResourceStore::load() {
     addTexture(RenderingDef::TextureKey::mine_pattern, "resources/images/mine_pattern.png", true);
     addTexture(RenderingDef::TextureKey::dotted_background,
                "resources/images/dotted_background.png", true);
+    addTexture(RenderingDef::TextureKey::k_letter, "resources/images/k_letter.png");
+    addTexture(RenderingDef::TextureKey::n_letter, "resources/images/n_letter.png");
+    addTexture(RenderingDef::TextureKey::m_letter, "resources/images/m_letter.png");
+    addTexture(RenderingDef::TextureKey::t_letter, "resources/images/t_letter.png");
 
     addShader(RenderingDef::ShaderKey::noop, "resources/shaders/noop.vert",
               "resources/shaders/noop.frag");

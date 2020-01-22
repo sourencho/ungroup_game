@@ -8,43 +8,54 @@
 // Pad count with this many zeroes. If a count has more digits than this then things will look
 // misaligned.
 const int FILL_DIGIT_COUNT = 3;
+const float LETTER_COUNT_PADDING = 16.f;
+const float COUNT_ROW_PADDING = 16.f;
 
-ResourceUIElement::ResourceUIElement(sf::Vector2u window_size, sf::Vector2f size, Align align,
-                                     Padding padding, ResourceStore& rs) :
+ResourceUIElement::ResourceUIElement(sf::Vector2u window_size, sf::Vector2f size,
+                                     RenderingDef::Align align, RenderingDef::Padding padding,
+                                     ResourceStore& rs) :
     BaseUIElement(window_size, size, align, padding),
     m_windowSize(window_size), m_align(align), m_padding(padding) {
-    m_text.setFont(*rs.getFont(RenderingDef::FontKey::monogram));
-    m_text.setString("NO DATA");
-    m_text.setCharacterSize(RenderingDef::RESOURCE_UI_TEXT_SIZE);
-    m_text.setFillColor(RenderingDef::RESOURCE_UI_TEXT_COLOR);
-    m_text.setPosition(m_position);
+
+    sf::Vector2f row_position = m_position;
+    for (size_t i = 0; i < RESOURCE_TYPE_COUNT; i++) {
+        auto& text = m_resourceCountTexts[i];
+        text.setFont(*rs.getFont(RenderingDef::FontKey::monogram));
+        text.setString("XXX");
+        text.setCharacterSize(55.f);
+        text.setFillColor(RenderingDef::RESOURCE_UI_TEXT_COLOR);
+        sf::FloatRect text_rect = text.getGlobalBounds();
+        text.setPosition({row_position.x - text_rect.width, row_position.y});
+        text_rect = text.getGlobalBounds();
+
+        auto& sprite = m_resourceLetterSprites[i] =
+            sf::Sprite(*rs.getTexture(RenderingDef::RESOURCE_TEXTURE_KEYS[i]).get());
+        sprite.setScale({2.5f, 2.5f});
+        sprite.setColor(RenderingDef::RESOURCE_COLORS[i]);
+        const sf::FloatRect sprite_rect = sprite.getGlobalBounds();
+        sprite.setPosition(
+            {text_rect.left - sprite_rect.width - LETTER_COUNT_PADDING, text_rect.top});
+        row_position.y += text_rect.height + COUNT_ROW_PADDING;
+    }
 }
 
 void ResourceUIElement::update(const UIData& ui_data) {
-    std::string resource_str =
-        getResourceCountString(ResourceType::RED, ui_data.resources[ResourceType::RED]) + "\n" +
-        getResourceCountString(ResourceType::GREEN, ui_data.resources[ResourceType::GREEN]) + "\n" +
-        getResourceCountString(ResourceType::BLUE, ui_data.resources[ResourceType::BLUE]) + "\n" +
-        getResourceCountString(ResourceType::YELLOW, ui_data.resources[ResourceType::YELLOW]);
-    m_text.setString(resource_str);
-
-    // Update position according to text size
-    // This doesn't seem to be aligning perfectly and I can't figure out why.
-    // For now we can manually adjust it with padding to fix.
-    sf::FloatRect bounds = m_text.getLocalBounds();
-    BaseUIElement::setPosition(
-        m_windowSize, {bounds.left + bounds.width, bounds.height + bounds.top}, m_align, m_padding);
-    m_text.setPosition(m_position);
+    for (size_t i = 0; i < RESOURCE_TYPE_COUNT; i++) {
+        m_resourceCountTexts[i].setString(
+            getResourceCountString(ResourceType(i), ui_data.resources[i]));
+    }
 }
 
 void ResourceUIElement::draw(sf::RenderTarget& render_target) {
-    render_target.draw(m_text);
+    for (size_t i = 0; i < RESOURCE_TYPE_COUNT; i++) {
+        render_target.draw(m_resourceLetterSprites[i]);
+        render_target.draw(m_resourceCountTexts[i]);
+    }
 }
 
 std::string ResourceUIElement::getResourceCountString(ResourceType resource_type,
                                                       uint32_t resource_count) {
     std::stringstream stream;
-    stream << RESOURCE_NAME[resource_type] << " " << std::setw(FILL_DIGIT_COUNT)
-           << std::setfill('0') << resource_count;
+    stream << std::setw(FILL_DIGIT_COUNT) << std::setfill('0') << resource_count;
     return stream.str();
 }

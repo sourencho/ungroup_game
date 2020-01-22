@@ -12,8 +12,8 @@
 
 class DebugUIElement : public BaseUIElement {
   public:
-    DebugUIElement(sf::Vector2u window_size, sf::Vector2f size, Align align, Padding padding,
-                   ResourceStore& rs);
+    DebugUIElement(sf::Vector2u window_size, sf::Vector2f size, RenderingDef::Align align,
+                   RenderingDef::Padding padding, ResourceStore& rs);
     ~DebugUIElement(){};
 
     void update(const UIData& ui_data) override;
@@ -22,8 +22,8 @@ class DebugUIElement : public BaseUIElement {
   private:
     sf::Text m_text;
     sf::Vector2u m_windowSize;
-    Align m_align;
-    Padding m_padding;
+    RenderingDef::Align m_align;
+    RenderingDef::Padding m_padding;
 };
 
 #endif /* DebugUIElement_hpp */

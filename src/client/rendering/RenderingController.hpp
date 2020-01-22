@@ -19,14 +19,15 @@
 
 class RenderingController {
   public:
-    RenderingController(sf::RenderWindow& window, GameObjectController& goc, GameObjectStore& gos);
+    RenderingController(sf::RenderWindow& window, GameObjectController& goc, GameObjectStore& gos,
+                        uint32_t player_id, bool headless);
     ~RenderingController(){};
 
     void draw();
 
     void preUpdate();
     void update(sf::Int32 delta_ms);
-    void postUpdate(const sf::Vector2f& player_position, const UIData& ui_data);
+    void postUpdate(const UIData& ui_data);
 
   private:
     void drawGameOver();
@@ -41,7 +42,7 @@ class RenderingController {
 
     // Data needed for rendering
     UIData m_uiData;
-    sf::Vector2f m_playerPosition;
+    uint32_t m_playerId;
 
     sf::Text m_winnerText;
     sf::Text m_connectingText;
@@ -52,6 +53,8 @@ class RenderingController {
     GUIController m_guiController;
     BackgroundController m_backgroundController;
     GameObjectRenderer m_gameObjectRenderer;
+
+    bool m_headless;
 };
 
 #endif /* RenderingController_hpp */

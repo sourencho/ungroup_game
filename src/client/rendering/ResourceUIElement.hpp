@@ -12,8 +12,8 @@
 
 class ResourceUIElement : public BaseUIElement {
   public:
-    ResourceUIElement(sf::Vector2u window_size, sf::Vector2f size, Align align, Padding padding,
-                      ResourceStore& rs);
+    ResourceUIElement(sf::Vector2u window_size, sf::Vector2f size, RenderingDef::Align align,
+                      RenderingDef::Padding padding, ResourceStore& rs);
     ~ResourceUIElement(){};
 
     void update(const UIData& ui_data) override;
@@ -22,10 +22,11 @@ class ResourceUIElement : public BaseUIElement {
   private:
     std::string getResourceCountString(ResourceType resource_type, uint32_t resource_count);
 
-    sf::Text m_text;
+    std::array<sf::Text, RESOURCE_TYPE_COUNT> m_resourceCountTexts;
+    std::array<sf::Sprite, RESOURCE_TYPE_COUNT> m_resourceLetterSprites;
     sf::Vector2u m_windowSize;
-    Align m_align;
-    Padding m_padding;
+    RenderingDef::Align m_align;
+    RenderingDef::Padding m_padding;
 };
 
 #endif /* ResourceUIElement_hpp */
