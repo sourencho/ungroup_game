@@ -8,6 +8,7 @@
 DrawableGroup::DrawableGroup(ResourceStore& rs) :
     DrawableCircle(rs), m_directionArrow(), m_directionLines() {
     setShader(RenderingDef::ShaderKey::voronoi_counts);
+    m_circleShape.setFillColor(RenderingDef::DEFAULT_GROUP_COLOR);
 }
 
 void DrawableGroup::draw(sf::RenderTarget& target, Group& group, bool joinable, bool ungroup,
@@ -78,17 +79,20 @@ void DrawableGroup::drawGroup(sf::RenderTarget& target, Group& group, bool joina
     }
 
     // Outline
-    m_outlineShape.setPosition(group.getPosition());
-    m_outlineShape.setRadius(group.getRadius());
-    m_outlineShape.setOutlineThickness(1.f);
+    m_outlineShape.setRadius(group.getRadius() + RenderingDef::GROUP_OUTLINE_DISTANCE);
+    m_outlineShape.setPosition(
+        group.getCenter() - sf::Vector2f(m_outlineShape.getRadius(), m_outlineShape.getRadius()));
+    m_outlineShape.setOutlineThickness(RenderingDef::GROUP_OUTLINE_THICKNESS);
     sf::Color outline_color = RenderingDef::DEFAULT_GROUP_OUTLINE_COLOR;
 
     if (joinable) {
+        m_outlineShape.setOutlineThickness(RenderingDef::GROUP_JOINABLE_THICKNESS);
         outline_color = RenderingDef::JOINABLE_COLOR;
     }
 
     // TODO(sourenp): This was only included for debugging purposes. Remove eventually.
     if (ungroup) {
+        m_outlineShape.setOutlineThickness(RenderingDef::GROUP_JOINABLE_THICKNESS);
         outline_color = RenderingDef::UNGROUP_COLOR;
     }
 

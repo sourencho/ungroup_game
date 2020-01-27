@@ -42,7 +42,7 @@ void main() {
     st *= u_resolution / (u_radius * 2.);
     st = fract(st);
 
-    vec4 color = vec4(1., 1., 1., .0);
+    vec4 color = vec4(1., 1., 1., 0.);
 
     // Cell colors
     vec4 color_pool[COLOR_COUNT];
@@ -58,7 +58,7 @@ void main() {
 
     // Set all to transparent
     for (int i = 0; i < u_maxResources; i++) {
-        point_color[i] = vec4(1., 1., 1., 0.);
+        point_color[i] = vec4(1., 1., 1., .0);
     }
 
     // Populate resources
@@ -80,7 +80,7 @@ void main() {
 
     float m_dist = 2.;  // minimun distance
     vec2 closest_point; // minimum position
-    vec4 closest_point_color = vec4(1., 1., 1., 0.);
+    vec4 closest_point_color = vec4(1., 1., 1., 0.05);
 
     // Iterate through the points positions
     for (int i = 0; i < CELL_COUNT; i++) {

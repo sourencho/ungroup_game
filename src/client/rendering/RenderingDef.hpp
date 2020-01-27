@@ -42,10 +42,13 @@ namespace RenderingDef {
     const sf::Color DEBUG_TEXT_COLOR(sf::Color::Green);
 
     /* Group */
-    const sf::Color DEFAULT_GROUP_COLOR(sf::Color::Transparent);
+    const sf::Color DEFAULT_GROUP_COLOR(255, 255, 255, 0.05 * 255);
     const sf::Color DEFAULT_GROUP_OUTLINE_COLOR(sf::Color::White);
-    const sf::Color JOINABLE_COLOR(sf::Color::Green);
-    const sf::Color UNGROUP_COLOR(sf::Color::Blue);
+    const sf::Color JOINABLE_COLOR(255, 255, 255, 1.f * 255);
+    const sf::Color UNGROUP_COLOR(0, 146, 199, 1.f * 255);
+    const float GROUP_OUTLINE_THICKNESS(0.f);
+    const float GROUP_OUTLINE_DISTANCE(1.f);
+    const float GROUP_JOINABLE_THICKNESS(1.f);
 
     // Direction Arrow
     const bool SHOW_DIRECTION_ARROWS = false;
@@ -56,7 +59,7 @@ namespace RenderingDef {
     const sf::Color DIRECTION_LINE_DEFAULT_COLOR(120, 120, 120);
     const float DIRECTION_LINE_STRIP_LENGTH(3.f);
     const float DIRECTION_LINE_COLOR_ALPHA(255 * 1.f);
-    const float DIRECTION_LINE_DISTANCE_FROM_EDGE(1.f);
+    const float DIRECTION_LINE_DISTANCE_FROM_EDGE(2.f);
 
     // Player IDs
     const sf::Color PLAYER_ID_TEXT_COLOR(DEBUG_TEXT_COLOR);
