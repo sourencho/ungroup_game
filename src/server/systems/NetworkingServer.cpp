@@ -1,4 +1,16 @@
 #include "NetworkingServer.hpp"
+#include <atomic>
+#include <memory>
+#include <utility>
+#include <vector>
+
+#include "../../common/events/ClientConnectedEvent.hpp"
+#include "../../common/events/ClientDisconnectedEvent.hpp"
+#include "../../common/events/EventController.hpp"
+#include "../../common/events/PlayerCreatedEvent.hpp"
+#include "../../common/util/InputDef.hpp"
+#include "../../common/util/game_settings.hpp"
+#include "../../common/util/network_util.hpp"
 
 sf::Time TCP_TIMEOUT = sf::milliseconds(300);
 
