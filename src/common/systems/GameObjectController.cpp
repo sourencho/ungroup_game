@@ -125,7 +125,9 @@ GameObjectController::getPlayerResources(uint32_t player_id) {
 
 std::pair<bool, uint32_t> GameObjectController::getGameOver() {
     for (auto player_id : m_playerController.getActivePlayerIds()) {
-        if (m_resourceController.get(player_id) == WIN_CONDITION) {
+        auto player = m_playerController.getPlayer(player_id);
+        auto win_condition = player->getWinCondition();
+        if (player->getWinCondition().satisfiesCondition(m_resourceController.get(player_id))) {
             return std::make_pair(true, player_id);
         }
     }

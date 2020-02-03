@@ -124,7 +124,7 @@ namespace RenderingDef {
     const float RESOURCE_UI_TEXT_SIZE(58.f);
     const sf::Color RESOURCE_UI_TEXT_COLOR(sf::Color::White);
     const RenderingDef::Padding RESOURCE_UI_PADDING({
-        .right = MINE_DIRECTION_PADDING + 56.f,
+        .right = MINE_DIRECTION_PADDING + 93.f,
         .left = 0.f,
         .top = MINE_DIRECTION_PADDING + 20.f, // Text seems to add padding to the top
         .bottom = 0.f,

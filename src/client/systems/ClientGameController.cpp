@@ -119,6 +119,10 @@ void ClientGameController::postUpdate() {
         .network_updates_per_second = m_networkUpdateMetric.getRate(sf::seconds(1)),
         .tick_delta_average = m_tickDeltaMetric.getAverage(),
         .resources = m_gameObjectController->getPlayerResources(m_playerId),
+        .resource_goals = m_gameObjectController->getPlayerController()
+                              .getPlayer(m_playerId)
+                              ->getWinCondition()
+                              .getResourceCountsToWin(),
         .game_status = m_gameStateCore.status,
         .winner_player_id = m_gameStateCore.winner_player_id,
         .tick = getTick(),
