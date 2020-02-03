@@ -43,7 +43,7 @@ void WinCondition::setResourceCountToWin(ResourceType resource_type, uint32_t co
     m_resourceCountsToWin[resource_type] = count;
 }
 
-sf::Packet& operator<<(sf::Packet& packet, WinCondition wc) {
+sf::Packet& operator<<(sf::Packet& packet, const WinCondition& wc) {
     auto resourceCountsToWin = wc.getResourceCountsToWin();
     for (auto& count : resourceCountsToWin) {
         packet << static_cast<sf::Uint32>(count);

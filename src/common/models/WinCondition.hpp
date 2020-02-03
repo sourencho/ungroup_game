@@ -19,7 +19,7 @@ class WinCondition {
     std::array<uint32_t, RESOURCE_TYPE_COUNT> m_resourceCountsToWin;
 };
 
-sf::Packet& operator<<(sf::Packet& packet, WinCondition wc);
+sf::Packet& operator<<(sf::Packet& packet, const WinCondition& wc);
 sf::Packet& operator>>(sf::Packet& packet, WinCondition& wc);
 
 #endif /* WinCondition_hpp */
