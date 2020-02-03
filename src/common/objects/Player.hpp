@@ -5,8 +5,8 @@
 #include <SFML/Network.hpp>
 #include <stdio.h>
 
-#include "../systems/ResourceController.hpp"
 #include "../models/WinCondition.hpp"
+#include "../systems/ResourceController.hpp"
 #include "GameObject.hpp"
 
 struct PlayerUpdate {
@@ -45,10 +45,10 @@ class Player : public GameObject {
         return m_ungroup;
     };
     void setWinCondition(WinCondition wc) {
-        m_win_condition = wc;
+        m_winCondition = wc;
     };
     WinCondition getWinCondition() const {
-        return m_win_condition;
+        return m_winCondition;
     };
     ResourceType getIntent() const {
         return m_intent;
@@ -77,7 +77,7 @@ class Player : public GameObject {
     bool m_ungroup = false;                    // If player wants to ungroup.
     ResourceType m_intent = ResourceType::RED; // Resource player intends to collect. This is
                                                // communicated to other players.
-    WinCondition m_win_condition;
+    WinCondition m_winCondition;
 };
 
 #endif /* Player_hpp */
