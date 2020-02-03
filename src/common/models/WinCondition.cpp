@@ -25,7 +25,8 @@ WinCondition::WinCondition() {
     }
 }
 
-bool WinCondition::satisfiesCondition(std::array<uint32_t, RESOURCE_TYPE_COUNT> current_resources) {
+bool WinCondition::satisfiesCondition(
+    std::array<uint32_t, RESOURCE_TYPE_COUNT> current_resources) const {
     for (size_t i = 0; i < RESOURCE_TYPE_COUNT; i++) {
         if (current_resources[i] < m_resourceCountsToWin[i]) {
             return false;
@@ -34,7 +35,7 @@ bool WinCondition::satisfiesCondition(std::array<uint32_t, RESOURCE_TYPE_COUNT> 
     return true;
 }
 
-std::array<uint32_t, RESOURCE_TYPE_COUNT> WinCondition::getResourceCountsToWin() {
+const std::array<uint32_t, RESOURCE_TYPE_COUNT>& WinCondition::getResourceCountsToWin() const {
     return m_resourceCountsToWin;
 }
 

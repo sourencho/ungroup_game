@@ -47,27 +47,23 @@ class Player : public GameObject {
     void setWinCondition(WinCondition wc) {
         m_winCondition = wc;
     };
-    WinCondition getWinCondition() const {
+    const WinCondition& getWinCondition() const {
         return m_winCondition;
     };
     ResourceType getIntent() const {
         return m_intent;
-    }
-
+    };
     void toggleUngroup(bool toggle) {
         m_ungroup ^= toggle;
-    }
-
+    };
     void toggleJoinable(bool toggle) {
         m_joinable ^= toggle;
-    }
-
+    };
     void toggleIntent(bool toggle) {
         if (toggle) {
             m_intent = ResourceType((m_intent + 1) % RESOURCE_TYPE_COUNT);
         }
     }
-
     PlayerUpdate getUpdate() const;
     void applyUpdate(PlayerUpdate pu);
 

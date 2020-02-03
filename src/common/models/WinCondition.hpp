@@ -11,8 +11,8 @@ class WinCondition {
     WinCondition();
     ~WinCondition();
 
-    bool satisfiesCondition(std::array<uint32_t, RESOURCE_TYPE_COUNT> current_resources);
-    std::array<uint32_t, RESOURCE_TYPE_COUNT> getResourceCountsToWin();
+    bool satisfiesCondition(std::array<uint32_t, RESOURCE_TYPE_COUNT> current_resources) const;
+    const std::array<uint32_t, RESOURCE_TYPE_COUNT>& getResourceCountsToWin() const;
     void setResourceCountToWin(ResourceType resource_type, uint32_t count);
 
   private:
