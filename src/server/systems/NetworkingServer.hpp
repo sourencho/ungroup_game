@@ -20,13 +20,12 @@
 #include "../../common/events/ClientDisconnectedEvent.hpp"
 #include "../../common/events/EventController.hpp"
 #include "../../common/events/PlayerCreatedEvent.hpp"
-#include "../../common/util/InputDef.hpp"
-#include "../../common/util/game_settings.hpp"
-#include "../../common/util/network_util.hpp"
-#include "../../common/util/InputDef.hpp"
-#include "../../common/util/StateDef.hpp"
 #include "../../common/objects/Group.hpp"
 #include "../../common/objects/Mine.hpp"
+#include "../../common/util/InputDef.hpp"
+#include "../../common/util/StateDef.hpp"
+#include "../../common/util/game_settings.hpp"
+#include "../../common/util/network_util.hpp"
 
 class NetworkingServer {
     const unsigned int CMD_DRIFT_THRESHOLD = 200;

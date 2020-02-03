@@ -1,13 +1,15 @@
 #include "WinCondition.hpp"
 
-WinCondition::~WinCondition() {}
+WinCondition::~WinCondition() {
+}
 
 WinCondition::WinCondition() {
     auto total_resource_requirements = WIN_CONDITION_RESOURCE_TOTAL;
     srand(time(NULL));
 
     // define amount of resources required for "primary" required resource
-    size_t quantityRequiredForPrimaryResource = (total_resource_requirements / RESOURCE_TYPE_COUNT) * 2;
+    size_t quantityRequiredForPrimaryResource =
+        (total_resource_requirements / RESOURCE_TYPE_COUNT) * 2;
     total_resource_requirements -= quantityRequiredForPrimaryResource;
     // pick which resource player will need the most of
     size_t primaryResource = (rand() % RESOURCE_TYPE_COUNT);

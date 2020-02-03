@@ -39,6 +39,6 @@ sf::Packet& operator<<(sf::Packet& packet, const PlayerUpdate& player_update) {
 
 sf::Packet& operator>>(sf::Packet& packet, PlayerUpdate& player_update) {
     return packet >> player_update.player_id >> player_update.is_active >>
-           player_update.direction >> player_update.joinable >> player_update.ungroup
-           >> player_update.win_condition;
+           player_update.direction >> player_update.joinable >> player_update.ungroup >>
+           player_update.win_condition;
 }
