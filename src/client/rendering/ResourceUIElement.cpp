@@ -7,7 +7,7 @@
 
 // Pad count with this many zeroes. If a count has more digits than this then things will look
 // misaligned.
-const int FILL_DIGIT_COUNT = 3;
+const int FILL_DIGIT_COUNT = 2;
 const float LETTER_COUNT_PADDING = 16.f;
 const float COUNT_ROW_PADDING = 16.f;
 
@@ -41,8 +41,8 @@ ResourceUIElement::ResourceUIElement(sf::Vector2u window_size, sf::Vector2f size
 
 void ResourceUIElement::update(const UIData& ui_data) {
     for (size_t i = 0; i < RESOURCE_TYPE_COUNT; i++) {
-        m_resourceCountTexts[i].setString(
-            getResourceCountString(ResourceType(i), ui_data.resources[i]));
+        m_resourceCountTexts[i].setString(getResourceCountString(
+            ResourceType(i), ui_data.resources[i], ui_data.resource_goals[i]));
     }
 }
 
@@ -54,8 +54,10 @@ void ResourceUIElement::draw(sf::RenderTarget& render_target) {
 }
 
 std::string ResourceUIElement::getResourceCountString(ResourceType resource_type,
-                                                      uint32_t resource_count) {
+                                                      uint32_t resource_count,
+                                                      uint32_t resource_goal_count) {
     std::stringstream stream;
     stream << std::setw(FILL_DIGIT_COUNT) << std::setfill('0') << resource_count;
+    stream << "/" << std::setw(FILL_DIGIT_COUNT) << std::setfill('0') << resource_goal_count;
     return stream.str();
 }

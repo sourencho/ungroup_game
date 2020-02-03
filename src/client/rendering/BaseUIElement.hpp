@@ -22,6 +22,7 @@ struct UIData {
     float network_updates_per_second;
     float tick_delta_average;
     std::array<uint32_t, RESOURCE_TYPE_COUNT> resources;
+    std::array<uint32_t, RESOURCE_TYPE_COUNT> resource_goals;
     GameStatus game_status;
     uint32_t winner_player_id;
     uint tick;

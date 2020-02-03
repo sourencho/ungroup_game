@@ -20,7 +20,8 @@ class ResourceUIElement : public BaseUIElement {
     void draw(sf::RenderTarget& render_target) override;
 
   private:
-    std::string getResourceCountString(ResourceType resource_type, uint32_t resource_count);
+    std::string getResourceCountString(ResourceType resource_type, uint32_t resource_count,
+                                       uint32_t resource_goal_count);
 
     std::array<sf::Text, RESOURCE_TYPE_COUNT> m_resourceCountTexts;
     std::array<sf::Sprite, RESOURCE_TYPE_COUNT> m_resourceLetterSprites;

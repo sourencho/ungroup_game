@@ -1,5 +1,7 @@
 #include "WinCondition.hpp"
 
+#include <iostream>
+
 WinCondition::~WinCondition() {
 }
 
@@ -36,6 +38,10 @@ std::array<uint32_t, RESOURCE_TYPE_COUNT> WinCondition::getResourceCountsToWin()
     return m_resourceCountsToWin;
 }
 
+void WinCondition::setResourceCountToWin(ResourceType resource_type, uint32_t count) {
+    m_resourceCountsToWin[resource_type] = count;
+}
+
 sf::Packet& operator<<(sf::Packet& packet, WinCondition wc) {
     auto resourceCountsToWin = wc.getResourceCountsToWin();
     for (auto& count : resourceCountsToWin) {
@@ -45,11 +51,10 @@ sf::Packet& operator<<(sf::Packet& packet, WinCondition wc) {
 }
 
 sf::Packet& operator>>(sf::Packet& packet, WinCondition& wc) {
-    std::array<uint32_t, RESOURCE_TYPE_COUNT> counts;
     for (size_t i = 0; i < RESOURCE_TYPE_COUNT; i++) {
         sf::Uint32 count;
         packet >> count;
-        counts[i] = static_cast<uint32_t>(count);
+        wc.setResourceCountToWin(ResourceType(i), count);
     }
     return packet;
 }
