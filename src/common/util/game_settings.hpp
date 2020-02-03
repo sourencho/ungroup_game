@@ -24,15 +24,8 @@ const InputDef::InputKeys INPUT_KEYS = {
 
 /* Rendering */
 const float GAME_BOUNDS_RADIUS = 500;
-const sf::Vector2f WINDOW_RESOLUTION(1200, 800);
 const sf::Vector2f GAME_CENTER(GAME_BOUNDS_RADIUS, GAME_BOUNDS_RADIUS);
 const sf::Vector2f GAME_SIZE(GAME_BOUNDS_RADIUS * 2.f, GAME_BOUNDS_RADIUS * 2.f);
-const float GAME_SCALE = 3.f;
-const sf::Vector2f GAME_SCALING_FACTOR(GAME_SCALE, GAME_SCALE);
-
-const bool SHOW_DIRECTION_ARROWS = false;
-const bool SHOW_DIRECTION_LINES = true;
-const bool SHOW_PLAYER_IDS = true;
 
 /* Game Logic */
 const bool USE_INTERPOLATION_REPLAY = false;

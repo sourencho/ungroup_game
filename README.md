@@ -2,9 +2,7 @@
 
 [![Build Status](https://travis-ci.com/SourenP/ungroup_game.svg?branch=master)](https://travis-ci.com/SourenP/ungroup_game)
 
-![Group](docs/images/group_green.gif)
-![Group](docs/images/group_soft.gif)
-![Group](docs/images/group_underwater.gif)
+![screenshot](https://user-images.githubusercontent.com/3184499/72916611-5438c880-3d10-11ea-846b-57579872f243.png)
 
 ## Intro
 
