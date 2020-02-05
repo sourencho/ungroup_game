@@ -7,7 +7,6 @@
 
 DrawableMine::DrawableMine(ResourceStore& rs) : DrawableCircle(rs) {
     setTexture(RenderingDef::TextureKey::mine_pattern);
-    m_outlineShape.setOutlineThickness(2.f);
     setShader(RenderingDef::ShaderKey::voronoi_counts);
 }
 
@@ -41,7 +40,7 @@ void DrawableMine::draw(sf::RenderTarget& target, Mine& mine, uint32_t resource_
     // Outline
     m_outlineShape.setPosition(mine.getPosition());
     m_outlineShape.setRadius(mine.getRadius());
-    m_outlineShape.setOutlineThickness(1.f);
+    m_outlineShape.setOutlineThickness(RenderingDef::MINE_OUTLINE_THICKNESS);
     m_outlineShape.setOutlineColor(RenderingDef::RESOURCE_COLORS[mine.getResourceType()]);
 
     target.draw(m_outlineShape);

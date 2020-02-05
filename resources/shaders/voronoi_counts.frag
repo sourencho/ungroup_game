@@ -5,8 +5,7 @@
 precision mediump float;
 #endif
 
-const int MAX_CELL_COUNT = 100;
-const int RESOURCES_PER_CELL = 1;
+const int MAX_CELL_COUNT = 30;
 const int COLOR_COUNT = 4;
 
 uniform vec2 u_resolution; // resolution of window
@@ -51,25 +50,31 @@ void main() {
     color_pool[2] = soft_c;
     color_pool[3] = soft_d;
 
-    int CELL_COUNT = u_maxResources / RESOURCES_PER_CELL;
+    int CELL_COUNT = int(min(float(MAX_CELL_COUNT), float(u_maxResources)));
 
     /* Cell colors */
     vec4 point_color[MAX_CELL_COUNT];
-
-    // Set all to transparent
-    for (int i = 0; i < u_maxResources; i++) {
-        point_color[i] = vec4(1., 1., 1., .0);
+    for (int i = 0; i < CELL_COUNT; i++) {
+        point_color[i] = vec4(1., 1., 1., .05); // Set all to transparent
     }
 
-    // Populate resources
-    int color_index = 0;
-    int point_color_index = 0;
-    while (color_index < COLOR_COUNT) {
-        for (int i = 0; i < int(u_resourceCounts[color_index]); i += RESOURCES_PER_CELL) {
-            point_color[point_color_index] = color_pool[color_index];
-            point_color_index += 1;
+    // Copy color counts
+    float color_counts[COLOR_COUNT];
+    for (int i = 0; i < COLOR_COUNT; i++) {
+        color_counts[i] = u_resourceCounts[i];
+    }
+
+    // Fill in colors evenly
+    int counter = 0;
+    for (int i = 0; i < MAX_CELL_COUNT; i++) {
+        for (int c = 0; c < COLOR_COUNT; c++) {
+            int color_index = int(mod(float(i + c), float(COLOR_COUNT)));
+            if (color_counts[color_index] != 0.) {
+                point_color[counter] = color_pool[color_index];
+                counter += 1;
+                color_counts[color_index] -= 1.;
+            }
         }
-        color_index += 1;
     }
 
     /* Cell positions */
@@ -78,7 +83,7 @@ void main() {
         point[i] = random2(vec2(float(i), 1.0));
     }
 
-    float m_dist = 2.;  // minimun distance
+    float m_dist = 20.; // minimun distance
     vec2 closest_point; // minimum position
     vec4 closest_point_color = vec4(1., 1., 1., 0.05);
 

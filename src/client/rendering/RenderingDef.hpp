@@ -81,7 +81,7 @@ namespace RenderingDef {
 
     /* Mine */
     const sf::Color DEFAULT_MINE_COLOR(sf::Color::Red);
-    const sf::Color EMPTY_MINE_COLOR(155, 155, 155);
+    const float MINE_OUTLINE_THICKNESS = 0.f;
     const std::array<sf::Color, RESOURCE_TYPE_COUNT>
         RESOURCE_COLORS({RenderingDef::RESOURCE_A_COLOR, RenderingDef::RESOURCE_B_COLOR,
                          RenderingDef::RESOURCE_C_COLOR, RenderingDef::RESOURCE_D_COLOR});
