@@ -18,10 +18,10 @@ namespace RenderingDef {
         collision,
         mine_pattern,
         dotted_background,
-        k_letter,
-        n_letter,
+        a_letter,
         m_letter,
-        t_letter
+        e_letter,
+        n_letter
     };
     enum ShaderKey { none, noop, voronoi_counts };
     enum FontKey { monogram };
@@ -86,7 +86,7 @@ namespace RenderingDef {
         RESOURCE_COLORS({RenderingDef::RESOURCE_A_COLOR, RenderingDef::RESOURCE_B_COLOR,
                          RenderingDef::RESOURCE_C_COLOR, RenderingDef::RESOURCE_D_COLOR});
     const std::array<TextureKey, RESOURCE_TYPE_COUNT> RESOURCE_TEXTURE_KEYS(
-        {TextureKey::k_letter, TextureKey::n_letter, TextureKey::m_letter, TextureKey::t_letter});
+        {TextureKey::a_letter, TextureKey::m_letter, TextureKey::e_letter, TextureKey::n_letter});
 
     // Directions
     const bool SHOW_MINE_DIRECTIONS = true;
