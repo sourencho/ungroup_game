@@ -177,6 +177,7 @@ Run this command to enable debug mode on a specific build: https://gist.github.c
 
 - [lefticus: CPP Best Practices](https://github.com/lefticus/cppbestpractices)
 - [cliutils: An Introduction to Modern CMake](https://cliutils.gitlab.io/modern-cmake/)
+- [rigtorp: Awesome Modern C++](https://github.com/rigtorp/awesome-modern-cpp)
 
 ### SFML
 
