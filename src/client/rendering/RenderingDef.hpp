@@ -51,11 +51,11 @@ namespace RenderingDef {
     const float GROUP_JOINABLE_THICKNESS(1.f);
 
     // Direction Arrow
-    const bool SHOW_DIRECTION_ARROWS = false;
-    const sf::Color DIRECTION_ARROW_COLOR(63, 154, 233);
+    const bool SHOW_DIRECTION_ARROWS = true;
+    const sf::Color DIRECTION_ARROW_COLOR(sf::Color::White);
 
     // Direction Line
-    const bool SHOW_DIRECTION_LINES = true;
+    const bool SHOW_DIRECTION_LINES = false;
     const sf::Color DIRECTION_LINE_DEFAULT_COLOR(120, 120, 120);
     const float DIRECTION_LINE_STRIP_LENGTH(3.f);
     const float DIRECTION_LINE_COLOR_ALPHA(255 * 1.f);
