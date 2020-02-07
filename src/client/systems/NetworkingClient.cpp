@@ -18,7 +18,7 @@ NetworkingClient::NetworkingClient(const std::string& server_ip) :
     m_gameState_t({}), m_serverIp(server_ip) {
     std::cout << "Starting client." << std::endl;
 
-    createTcpSocket(SERVER_TCP_PORT);
+    createTcpSocket(GAME_SETTINGS.SERVER_TCP_PORT);
 
     createInputUdpSocket();
     createStateUdpSocket();
@@ -111,7 +111,7 @@ uint32_t NetworkingClient::fetchPlayerId() {
                 throw std::runtime_error("Unable to get player id.");
             }
         }
-        std::this_thread::sleep_for(CLIENT_FETCH_PLAYER_ID_SLEEP);
+        std::this_thread::sleep_for(GAME_SETTINGS.CLIENT_FETCH_PLAYER_ID_SLEEP);
     }
 }
 
@@ -208,7 +208,7 @@ void NetworkingClient::reliableRecv() {
             std::cout << "Unexpected reliable command type." << std::endl;
         }
 
-        std::this_thread::sleep_for(CLIENT_RELIBALE_RECV_SLEEP);
+        std::this_thread::sleep_for(GAME_SETTINGS.CLIENT_RELIBALE_RECV_SLEEP);
     }
 }
 
@@ -219,7 +219,7 @@ void NetworkingClient::reliableSend() {
     while (!m_stopThreads_ta) {
         sendReliableInput();
 
-        std::this_thread::sleep_for(CLIENT_RELIABLE_SEND_SLEEP);
+        std::this_thread::sleep_for(GAME_SETTINGS.CLIENT_RELIABLE_SEND_SLEEP);
     }
 }
 
@@ -267,7 +267,7 @@ void NetworkingClient::unreliableRecv() {
             m_gameStateIsFresh_ta = true;
         }
 
-        std::this_thread::sleep_for(CLIENT_UNRELIABLE_RECV_SLEEP);
+        std::this_thread::sleep_for(GAME_SETTINGS.CLIENT_UNRELIABLE_RECV_SLEEP);
     }
 }
 
@@ -279,7 +279,7 @@ void NetworkingClient::unreliableSend() {
             sendUnreliableInput();
         }
 
-        std::this_thread::sleep_for(CLIENT_UNRELIABLE_SEND_SLEEP);
+        std::this_thread::sleep_for(GAME_SETTINGS.CLIENT_UNRELIABLE_SEND_SLEEP);
     }
 }
 
@@ -314,7 +314,7 @@ void NetworkingClient::sendUnreliableInput() {
 void NetworkingClient::natSend() {
     while (!m_stopThreads_ta) {
         sendNatPunch();
-        std::this_thread::sleep_for(CLIENT_NAT_SEND_SLEEP);
+        std::this_thread::sleep_for(GAME_SETTINGS.CLIENT_NAT_SEND_SLEEP);
     }
 }
 

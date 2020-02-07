@@ -85,10 +85,10 @@ void PhysicsController::resolveMapBounds() {
 
     for (auto circle_it = m_circleRigidBodies.begin(); circle_it != inactive_crbs; ++circle_it) {
         CircleRigidBody& circle = **circle_it;
-        if (circle.isMovable() &&
-            !CollisionUtil::isInBounds(circle, GAME_CENTER, GAME_BOUNDS_RADIUS)) {
-            circle.move(
-                CollisionUtil::getBoundsCorrection(circle, GAME_CENTER, GAME_BOUNDS_RADIUS));
+        if (circle.isMovable() && !CollisionUtil::isInBounds(circle, GAME_SETTINGS.GAME_CENTER,
+                                                             GAME_SETTINGS.GAME_BOUNDS_RADIUS)) {
+            circle.move(CollisionUtil::getBoundsCorrection(circle, GAME_SETTINGS.GAME_CENTER,
+                                                           GAME_SETTINGS.GAME_BOUNDS_RADIUS));
             circle.setVelocity({0, 0});
         }
     }

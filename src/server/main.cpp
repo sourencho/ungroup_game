@@ -5,6 +5,9 @@
 #include "../common/util/game_settings.hpp"
 #include "systems/ServerGameController.hpp"
 
+// Load constants from config
+// const GameSettings GAME_SETTINGS =
+
 int main(int argc, char** argv) {
     try {
         cxxopts::Options options("Ungroup Server",

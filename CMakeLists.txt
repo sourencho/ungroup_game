@@ -21,6 +21,9 @@ find_package(SFML 2.5 COMPONENTS audio graphics window system REQUIRED)
 # find boost
 find_package(Boost 1.65 COMPONENTS REQUIRED)
 
+# find nlohmann_json
+find_package(nlohmann_json 3.2.0 REQUIRED)
+
 add_subdirectory(src)
 add_subdirectory(extern/catch)
 add_subdirectory(extern/cxxopts)
