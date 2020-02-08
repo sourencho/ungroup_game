@@ -3,7 +3,6 @@ cmake_minimum_required(VERSION 3.11..14)
 # set the project name, version and language:w
 project(Ungroup VERSION 1.0 LANGUAGES CXX)
 
-set(CMAKE_CXX_COMPILER "clang++")
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -pthread")
@@ -20,9 +19,6 @@ find_package(SFML 2.5 COMPONENTS audio graphics window system REQUIRED)
 
 # find boost
 find_package(Boost 1.65 COMPONENTS REQUIRED)
-
-# find nlohmann_json
-find_package(nlohmann_json 3.2.0 REQUIRED)
 
 add_subdirectory(src)
 add_subdirectory(extern/catch)

@@ -27,4 +27,4 @@ add_library(common-lib
     models/WinCondition.cpp
 )
 
-target_link_libraries(common-lib PUBLIC sfml-system sfml-graphics sfml-network Boost::boost nlohmann_json::nlohmann_json)
+target_link_libraries(common-lib PUBLIC sfml-system sfml-graphics sfml-network Boost::boost)

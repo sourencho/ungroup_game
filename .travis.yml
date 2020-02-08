@@ -17,6 +17,7 @@ addons:
     - libboost1.65-dev
     - google-perftools
     - libgoogle-perftools-dev
+    - nlohmann-json-dev
 
 language: cpp
 compiler: clang
