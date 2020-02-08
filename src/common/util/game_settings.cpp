@@ -7,7 +7,7 @@
 
 using json = nlohmann::json;
 
-GameSettings load_game_setting_globals(std::string path) {
+GameSettings load_game_setting_globals(const std::string& path) {
     std::ifstream i(path);
     json j;
     i >> j;
