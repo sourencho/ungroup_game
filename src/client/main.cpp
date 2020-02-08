@@ -30,7 +30,7 @@ int main(int argc, char** argv) {
         bool is_bot = result["bot"].as<bool>();
 
         // only access the server-ip if strategy is actually present, otherwise segfaults.
-        std::string server_ip = LOCALHOST_IP;
+        std::string server_ip = GAME_SETTINGS.LOCALHOST_IP;
         if (result.count("server-ip")) {
             server_ip = result["server-ip"].as<std::string>();
         }

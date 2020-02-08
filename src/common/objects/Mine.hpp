@@ -48,7 +48,7 @@ class Mine : public CircleGameObject {
   private:
     ResourceType m_resourceType;
     uint32_t m_resourceCount = 0;
-    uint32_t m_resourceCapacity = MINE_RESOURCE_COUNT;
+    uint32_t m_resourceCapacity = GAME_SETTINGS.MINE_RESOURCE_COUNT;
 };
 
 #endif /* Mine_hpp */

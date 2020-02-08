@@ -149,7 +149,7 @@ void ClientGameController::rewindAndReplay() {
     m_tickDeltaMetric.pushCount(tick_delta);
 
     // Replay
-    if (!USE_INTERPOLATION_REPLAY || tick_delta <= 0) {
+    if (!RenderingDef::USE_INTERPOLATION_REPLAY || tick_delta <= 0) {
         return;
     } // If the client is behind the server we don't need to replay
 

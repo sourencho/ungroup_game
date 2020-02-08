@@ -1,0 +1,26 @@
+{
+    "gameplay": {
+        "MAX_PLAYER_COUNT": 10,
+        "MAX_MINE_COUNT": 8,
+        "GROUP_MEMBER_SIZE": 10.0,
+        "MINE_SIZE": 40.0,
+        "GROUP_SPEED": 50.0,
+        "MINE_RESOURCE_COUNT": 10.0,
+        "GAME_BOUNDS_RADIUS": 600.0
+    },
+    "threads": {
+        "CLIENT_FETCH_PLAYER_ID_SLEEP": 16,
+        "SERVER_INPUT_WINDOW_SLEEP": 50,
+        "CLIENT_RELIABLE_SEND_SLEEP": 16,
+        "CLIENT_UNRELIABLE_SEND_SLEEP": 16,
+        "SERVER_BROADCAST_GAME_STATE_SLEEP": 16,
+        "CLIENT_NAT_SEND_SLEEP": 3000
+    },
+    "networking": {
+        "SERVER_UNRELIABLE_RECV_TIMEOUT_SEC": 1,
+        "SERVER_TCP_PORT": 4844,
+        "SERVER_STATE_UDP_PORT": 4845,
+        "SERVER_INPUT_UDP_PORT": 4846,
+        "LOCALHOST_IP": "127.0.0.1"
+    }
+}

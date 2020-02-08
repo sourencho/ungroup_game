@@ -13,8 +13,8 @@ const float ARROW_SIZE = 6.f;           // Size of the triangle's base
 const float DISTANCE_FROM_EDGE = 1.f;   // Additional distance from cricle's edge
 
 DirectionArrows::DirectionArrows() : m_velocityTriangle(0, 3) {
-    m_targetTriangles.reserve(MAX_PLAYER_COUNT);
-    for (size_t i = 0; i < MAX_PLAYER_COUNT; i++) {
+    m_targetTriangles.reserve(GAME_SETTINGS.MAX_PLAYER_COUNT);
+    for (size_t i = 0; i < GAME_SETTINGS.MAX_PLAYER_COUNT; i++) {
         m_targetTriangles.push_back(sf::CircleShape(0, 3));
     }
 }
