@@ -21,6 +21,8 @@ GameSettings load_game_setting_globals(const std::string& path) {
     float GAME_BOUNDS_RADIUS = j["gameplay"]["GAME_BOUNDS_RADIUS"].get<float>();
     sf::Vector2f GAME_CENTER(GAME_BOUNDS_RADIUS, GAME_BOUNDS_RADIUS);
     sf::Vector2f GAME_SIZE(GAME_BOUNDS_RADIUS * 2.f, GAME_BOUNDS_RADIUS * 2.f);
+    uint32_t TOTAL_RESOURCE_REQUIREMENTS =
+        j["gameplay"]["TOTAL_RESOURCE_REQUIREMENTS"].get<uint32_t>();
 
     std::chrono::milliseconds CLIENT_FETCH_PLAYER_ID_SLEEP(
         j["threads"]["CLIENT_FETCH_PLAYER_ID_SLEEP"].get<uint32_t>());
@@ -60,6 +62,7 @@ GameSettings load_game_setting_globals(const std::string& path) {
         .GAME_BOUNDS_RADIUS = GAME_BOUNDS_RADIUS,
         .GAME_CENTER = GAME_CENTER,
         .GAME_SIZE = GAME_SIZE,
+        .TOTAL_RESOURCE_REQUIREMENTS = TOTAL_RESOURCE_REQUIREMENTS,
         .CLIENT_FETCH_PLAYER_ID_SLEEP = CLIENT_FETCH_PLAYER_ID_SLEEP,
         .SERVER_INPUT_WINDOW_SLEEP = SERVER_INPUT_WINDOW_SLEEP,
         .CLIENT_RELIABLE_SEND_SLEEP = CLIENT_RELIABLE_SEND_SLEEP,

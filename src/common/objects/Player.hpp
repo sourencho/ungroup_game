@@ -15,7 +15,7 @@ struct PlayerUpdate {
     sf::Vector2f direction;
     bool joinable;
     bool ungroup;
-    WinCondition win_condition;
+    std::array<uint32_t, RESOURCE_TYPE_COUNT> resource_counts_to_win;
 };
 
 sf::Packet& operator<<(sf::Packet& packet, const PlayerUpdate& player_update);
@@ -44,11 +44,14 @@ class Player : public GameObject {
     bool getUngroup() const {
         return m_ungroup;
     };
-    void setWinCondition(WinCondition wc) {
-        m_winCondition = wc;
+    void setResourceCountToWin(std::array<uint32_t, RESOURCE_TYPE_COUNT> resource_counts_to_win) {
+        m_winCondition.setResourceCountToWin(resource_counts_to_win);
     };
-    const WinCondition& getWinCondition() const {
+    const WinCondition& getWinCondition() {
         return m_winCondition;
+    };
+    const std::array<uint32_t, RESOURCE_TYPE_COUNT>& getResourceCountsToWin() const {
+        return m_winCondition.getResourceCountsToWin();
     };
     ResourceType getIntent() const {
         return m_intent;

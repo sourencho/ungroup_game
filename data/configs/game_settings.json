@@ -6,7 +6,8 @@
         "MINE_SIZE": 40.0,
         "GROUP_SPEED": 50.0,
         "MINE_RESOURCE_COUNT": 10.0,
-        "GAME_BOUNDS_RADIUS": 600.0
+        "GAME_BOUNDS_RADIUS": 600.0,
+        "TOTAL_RESOURCE_REQUIREMENTS": 20
     },
     "threads": {
         "CLIENT_FETCH_PLAYER_ID_SLEEP": 16,

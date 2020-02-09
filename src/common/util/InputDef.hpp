@@ -31,8 +31,8 @@ namespace InputDef {
     };
 
     struct ReliableInput {
-        bool toggle_joinable;
         bool toggle_ungroup;
+        bool toggle_joinable;
         void setAll(bool value) {
             toggle_joinable = value;
             toggle_ungroup = value;

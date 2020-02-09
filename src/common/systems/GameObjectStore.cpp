@@ -27,9 +27,9 @@ GameObjectStore::GameObjectStore(PhysicsController& pc) : m_physicsController(pc
     // Initialize Mines
     for (int i = 0; i < GAME_SETTINGS.MAX_MINE_COUNT; i++) {
         uint32_t new_mine_id = IdFactory::getInstance().getNextId(GameObjectType::mine);
-        m_mines.push_back(std::shared_ptr<Mine>(new Mine(new_mine_id, {0.f, 0.f}, GAME_SETTINGS.MINE_SIZE,
-                                                         ResourceType(i % RESOURCE_TYPE_COUNT),
-                                                         m_physicsController)));
+        m_mines.push_back(std::shared_ptr<Mine>(
+            new Mine(new_mine_id, {0.f, 0.f}, GAME_SETTINGS.MINE_SIZE,
+                     ResourceType(i % RESOURCE_TYPE_COUNT), m_physicsController)));
     }
 }
 

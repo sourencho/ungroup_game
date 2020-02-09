@@ -4,7 +4,7 @@
 
 #include "../util/network_util.hpp"
 
-Player::Player(uint32_t id) : GameObject(id), m_direction(0.0, 0.0) {
+Player::Player(uint32_t id) : GameObject(id), m_direction(0.0, 0.0), m_winCondition(id) {
 }
 
 Player::~Player() {
@@ -19,7 +19,7 @@ PlayerUpdate Player::getUpdate() const {
         .direction = getDirection(),
         .joinable = getJoinable(),
         .ungroup = getUngroup(),
-        .win_condition = getWinCondition(),
+        .resource_counts_to_win = getResourceCountsToWin(),
     };
     return pu;
 }
@@ -29,16 +29,17 @@ void Player::applyUpdate(PlayerUpdate pu) {
     setDirection(pu.direction);
     setJoinable(pu.joinable);
     setUngroup(pu.ungroup);
-    setWinCondition(pu.win_condition);
+    setResourceCountToWin(pu.resource_counts_to_win);
 }
 
 sf::Packet& operator<<(sf::Packet& packet, const PlayerUpdate& player_update) {
     return packet << player_update.player_id << player_update.is_active << player_update.direction
-                  << player_update.joinable << player_update.ungroup << player_update.win_condition;
+                  << player_update.joinable << player_update.ungroup
+                  << player_update.resource_counts_to_win;
 }
 
 sf::Packet& operator>>(sf::Packet& packet, PlayerUpdate& player_update) {
     return packet >> player_update.player_id >> player_update.is_active >>
            player_update.direction >> player_update.joinable >> player_update.ungroup >>
-           player_update.win_condition;
+           player_update.resource_counts_to_win;
 }

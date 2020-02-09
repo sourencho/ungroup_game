@@ -2,12 +2,14 @@
 
 #include <iostream>
 
+#include "../util/game_settings.hpp"
+
 WinCondition::~WinCondition() {
 }
 
-WinCondition::WinCondition() {
-    auto total_resource_requirements = WIN_CONDITION_RESOURCE_TOTAL;
-    srand(time(NULL));
+WinCondition::WinCondition(uint32_t player_id) {
+    auto total_resource_requirements = GAME_SETTINGS.TOTAL_RESOURCE_REQUIREMENTS;
+    srand(time(NULL) + player_id);
 
     // define amount of resources required for "primary" required resource
     size_t quantity_required_for_primary_resource =
@@ -39,23 +41,25 @@ const std::array<uint32_t, RESOURCE_TYPE_COUNT>& WinCondition::getResourceCounts
     return m_resourceCountsToWin;
 }
 
-void WinCondition::setResourceCountToWin(ResourceType resource_type, uint32_t count) {
-    m_resourceCountsToWin[resource_type] = count;
+void WinCondition::setResourceCountToWin(
+    const std::array<uint32_t, RESOURCE_TYPE_COUNT>& resource_counts_to_win) {
+    m_resourceCountsToWin = resource_counts_to_win;
 }
 
-sf::Packet& operator<<(sf::Packet& packet, const WinCondition& wc) {
-    auto resourceCountsToWin = wc.getResourceCountsToWin();
-    for (auto& count : resourceCountsToWin) {
+sf::Packet& operator<<(sf::Packet& packet,
+                       const std::array<uint32_t, RESOURCE_TYPE_COUNT>& resource_counts_to_win) {
+    for (auto& count : resource_counts_to_win) {
         packet << static_cast<sf::Uint32>(count);
     }
     return packet;
 }
 
-sf::Packet& operator>>(sf::Packet& packet, WinCondition& wc) {
+sf::Packet& operator>>(sf::Packet& packet,
+                       std::array<uint32_t, RESOURCE_TYPE_COUNT>& resource_counts_to_win) {
     for (size_t i = 0; i < RESOURCE_TYPE_COUNT; i++) {
         sf::Uint32 count;
         packet >> count;
-        wc.setResourceCountToWin(ResourceType(i), count);
+        resource_counts_to_win[ResourceType(i)] = count;
     }
     return packet;
 }
