@@ -22,11 +22,10 @@ class DirectionArrows {
      * @radius: size of circle
      * @position: position of circle
      * @velocity: velocity of circle
-     * @targets: list of target directions
-     * @color: color of arrows
+     * @direction_color_pairs: directions and color of arrows
      */
     void draw(sf::RenderTarget& render_target, float radius, sf::Vector2f position,
-              sf::Vector2f velocity, const std::vector<sf::Vector2f>& targets,
+              sf::Vector2f velocity,
               const std::vector<std::pair<sf::Vector2f, sf::Color>>& direction_color_pairs);
 
   private:
@@ -42,7 +41,6 @@ class DirectionArrows {
      */
     void
     drawTargetArrows(sf::RenderTarget& render_target, float radius, sf::Vector2f position,
-                     std::vector<sf::Vector2f> directions,
                      const std::vector<std::pair<sf::Vector2f, sf::Color>>& direction_color_pairs);
 
     /**

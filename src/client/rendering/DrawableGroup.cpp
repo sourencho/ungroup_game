@@ -58,7 +58,7 @@ void DrawableGroup::drawDirectionArrows(sf::RenderTarget& target, Group& group,
             std::make_pair(player_directions[i], RenderingDef::RESOURCE_COLORS[player_intents[i]]));
     }
     m_directionArrow.draw(target, group.getRadius(), group.getPosition(), group.getVelocity(),
-                          player_directions, direction_color_pairs);
+                          direction_color_pairs);
 }
 
 void DrawableGroup::drawGroup(sf::RenderTarget& target, Group& group, bool joinable, bool ungroup,

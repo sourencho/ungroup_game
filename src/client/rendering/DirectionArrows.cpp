@@ -22,12 +22,13 @@ DirectionArrows::DirectionArrows() : m_velocityTriangle(0, 3) {
 
 void DirectionArrows::draw(
     sf::RenderTarget& render_target, float radius, sf::Vector2f position, sf::Vector2f velocity,
-    const std::vector<sf::Vector2f>& targets,
     const std::vector<std::pair<sf::Vector2f, sf::Color>>& direction_color_pairs) {
 
-    drawTargetArrows(render_target, radius, position, targets, direction_color_pairs);
-    // drawVelocityArrow(render_target, radius, position, velocity,
-    //                   RenderingDef::DIRECTION_ARROW_COLOR);
+    drawTargetArrows(render_target, radius, position, direction_color_pairs);
+    if (RenderingDef::SHOW_VELOCITY_ARROW) {
+        drawVelocityArrow(render_target, radius, position, velocity,
+                          RenderingDef::DIRECTION_ARROW_COLOR);
+    }
 }
 
 void DirectionArrows::drawVelocityArrow(sf::RenderTarget& render_target, float radius,
@@ -49,7 +50,6 @@ void DirectionArrows::drawVelocityArrow(sf::RenderTarget& render_target, float r
 
 void DirectionArrows::drawTargetArrows(
     sf::RenderTarget& render_target, float radius, sf::Vector2f position,
-    std::vector<sf::Vector2f> directions,
     const std::vector<std::pair<sf::Vector2f, sf::Color>>& direction_color_pairs) {
     // Keep track of directions we've already drawn to avoid drawing same direction more than once
     std::vector<sf::Vector2f> seen_directions;
