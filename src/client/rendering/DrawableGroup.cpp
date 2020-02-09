@@ -28,7 +28,7 @@ void DrawableGroup::draw(sf::RenderTarget& target, Group& group, bool joinable, 
     }
 
     if (RenderingDef::SHOW_DIRECTION_ARROWS) {
-        drawDirectionArrows(target, group, player_directions);
+        drawDirectionArrows(target, group, player_directions, player_intents);
     }
 
     drawGroup(target, group, joinable, ungroup, resource_counts);
@@ -48,9 +48,17 @@ void DrawableGroup::drawDirectionLines(sf::RenderTarget& target, Group& group,
 }
 
 void DrawableGroup::drawDirectionArrows(sf::RenderTarget& target, Group& group,
-                                        const std::vector<sf::Vector2f>& player_directions) {
+                                        const std::vector<sf::Vector2f>& player_directions,
+                                        const std::vector<ResourceType>& player_intents) {
+    size_t player_count = player_directions.size();
+    std::vector<std::pair<sf::Vector2f, sf::Color>> direction_color_pairs;
+    direction_color_pairs.reserve(player_count);
+    for (size_t i = 0; i < player_count; i++) {
+        direction_color_pairs.push_back(
+            std::make_pair(player_directions[i], RenderingDef::RESOURCE_COLORS[player_intents[i]]));
+    }
     m_directionArrow.draw(target, group.getRadius(), group.getPosition(), group.getVelocity(),
-                          player_directions, RenderingDef::DIRECTION_ARROW_COLOR);
+                          player_directions, direction_color_pairs);
 }
 
 void DrawableGroup::drawGroup(sf::RenderTarget& target, Group& group, bool joinable, bool ungroup,

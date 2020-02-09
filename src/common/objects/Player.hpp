@@ -16,6 +16,7 @@ struct PlayerUpdate {
     bool joinable;
     bool ungroup;
     std::array<uint32_t, RESOURCE_TYPE_COUNT> resource_counts_to_win;
+    sf::Uint32 intent;
 };
 
 sf::Packet& operator<<(sf::Packet& packet, const PlayerUpdate& player_update);
@@ -55,6 +56,9 @@ class Player : public GameObject {
     };
     ResourceType getIntent() const {
         return m_intent;
+    };
+    void setIntent(ResourceType intent) {
+        m_intent = intent;
     };
     void toggleUngroup(bool toggle) {
         m_ungroup ^= toggle;
