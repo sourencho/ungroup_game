@@ -33,7 +33,8 @@ class DrawableGroup : public DrawableCircle {
                             const std::vector<ResourceType>& player_intents);
 
     void drawDirectionArrows(sf::RenderTarget& target, Group& group,
-                             const std::vector<sf::Vector2f>& player_directions);
+                             const std::vector<sf::Vector2f>& player_directions,
+                             const std::vector<ResourceType>& player_intents);
 
     void drawGroup(sf::RenderTarget& target, Group& group, bool joinable, bool ungroup,
                    const std::array<uint32_t, RESOURCE_TYPE_COUNT>& resource_counts);

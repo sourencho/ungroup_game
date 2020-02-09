@@ -22,11 +22,11 @@ class DirectionArrows {
      * @radius: size of circle
      * @position: position of circle
      * @velocity: velocity of circle
-     * @targets: list of target directions
-     * @color: color of arrows
+     * @direction_color_pairs: directions and color of arrows
      */
     void draw(sf::RenderTarget& render_target, float radius, sf::Vector2f position,
-              sf::Vector2f velocity, const std::vector<sf::Vector2f>& targets, sf::Color color);
+              sf::Vector2f velocity,
+              const std::vector<std::pair<sf::Vector2f, sf::Color>>& direction_color_pairs);
 
   private:
     /**
@@ -39,8 +39,9 @@ class DirectionArrows {
     /**
      * Draw arrows in all directions passed in as long as they aren't (0,0).
      */
-    void drawTargetArrows(sf::RenderTarget& render_target, float radius, sf::Vector2f position,
-                          std::vector<sf::Vector2f> directions, sf::Color color);
+    void
+    drawTargetArrows(sf::RenderTarget& render_target, float radius, sf::Vector2f position,
+                     const std::vector<std::pair<sf::Vector2f, sf::Color>>& direction_color_pairs);
 
     /**
      * Utility function used to position and rotate a triangle on the outside rim of a circle.

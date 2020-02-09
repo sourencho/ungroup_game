@@ -20,6 +20,7 @@ PlayerUpdate Player::getUpdate() const {
         .joinable = getJoinable(),
         .ungroup = getUngroup(),
         .resource_counts_to_win = getResourceCountsToWin(),
+        .intent = static_cast<sf::Uint32>(getIntent()),
     };
     return pu;
 }
@@ -30,16 +31,17 @@ void Player::applyUpdate(PlayerUpdate pu) {
     setJoinable(pu.joinable);
     setUngroup(pu.ungroup);
     setResourceCountToWin(pu.resource_counts_to_win);
+    setIntent(ResourceType(pu.intent));
 }
 
 sf::Packet& operator<<(sf::Packet& packet, const PlayerUpdate& player_update) {
     return packet << player_update.player_id << player_update.is_active << player_update.direction
                   << player_update.joinable << player_update.ungroup
-                  << player_update.resource_counts_to_win;
+                  << player_update.resource_counts_to_win << player_update.intent;
 }
 
 sf::Packet& operator>>(sf::Packet& packet, PlayerUpdate& player_update) {
     return packet >> player_update.player_id >> player_update.is_active >>
            player_update.direction >> player_update.joinable >> player_update.ungroup >>
-           player_update.resource_counts_to_win;
+           player_update.resource_counts_to_win >> player_update.intent;
 }

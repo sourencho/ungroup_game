@@ -5,10 +5,11 @@
 
 #include "../../common/physics/VectorUtil.hpp"
 #include "../../common/util/game_settings.hpp"
+#include "RenderingDef.hpp"
 
 const float MIN_SPEED = 1.f;            // Minimum speed at which velocity arrow will still show
 const float TWO_MINUS_SQRT_3 = 0.2679f; // 2 - sqrt(3);
-const float TARGET_ALPHA = 0.5;         // How much to fade target arrows
+const float TARGET_ALPHA = 1.f;         // How much to fade target arrows
 const float ARROW_SIZE = 6.f;           // Size of the triangle's base
 const float DISTANCE_FROM_EDGE = 1.f;   // Additional distance from cricle's edge
 
@@ -19,12 +20,15 @@ DirectionArrows::DirectionArrows() : m_velocityTriangle(0, 3) {
     }
 }
 
-void DirectionArrows::draw(sf::RenderTarget& render_target, float radius, sf::Vector2f position,
-                           sf::Vector2f velocity, const std::vector<sf::Vector2f>& targets,
-                           sf::Color color) {
+void DirectionArrows::draw(
+    sf::RenderTarget& render_target, float radius, sf::Vector2f position, sf::Vector2f velocity,
+    const std::vector<std::pair<sf::Vector2f, sf::Color>>& direction_color_pairs) {
 
-    drawTargetArrows(render_target, radius, position, targets, color);
-    drawVelocityArrow(render_target, radius, position, velocity, color);
+    drawTargetArrows(render_target, radius, position, direction_color_pairs);
+    if (RenderingDef::SHOW_VELOCITY_ARROW) {
+        drawVelocityArrow(render_target, radius, position, velocity,
+                          RenderingDef::DIRECTION_ARROW_COLOR);
+    }
 }
 
 void DirectionArrows::drawVelocityArrow(sf::RenderTarget& render_target, float radius,
@@ -44,17 +48,15 @@ void DirectionArrows::drawVelocityArrow(sf::RenderTarget& render_target, float r
     render_target.draw(m_velocityTriangle);
 }
 
-void DirectionArrows::drawTargetArrows(sf::RenderTarget& render_target, float radius,
-                                       sf::Vector2f position, std::vector<sf::Vector2f> directions,
-                                       sf::Color color) {
-    std::transform(directions.begin(), directions.end(), directions.begin(),
-                   [](sf::Vector2f d) -> sf::Vector2f { return VectorUtil::normalize(d); });
-
+void DirectionArrows::drawTargetArrows(
+    sf::RenderTarget& render_target, float radius, sf::Vector2f position,
+    const std::vector<std::pair<sf::Vector2f, sf::Color>>& direction_color_pairs) {
     // Keep track of directions we've already drawn to avoid drawing same direction more than once
     std::vector<sf::Vector2f> seen_directions;
+    for (size_t i = 0; i < direction_color_pairs.size(); i++) {
+        const auto& direction = VectorUtil::normalize(direction_color_pairs[i].first);
+        auto color = direction_color_pairs[i].second;
 
-    for (size_t i = 0; i < directions.size(); i++) {
-        sf::Vector2f direction = directions[i];
         if (direction == sf::Vector2f(0, 0) ||
             std::find(seen_directions.begin(), seen_directions.end(), direction) !=
                 seen_directions.end()) {

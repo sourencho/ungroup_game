@@ -53,6 +53,7 @@ namespace RenderingDef {
 
     // Direction Arrow
     const bool SHOW_DIRECTION_ARROWS = true;
+    const bool SHOW_VELOCITY_ARROW = false;
     const sf::Color DIRECTION_ARROW_COLOR(sf::Color::White);
 
     // Direction Line
