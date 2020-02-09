@@ -11,17 +11,11 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -g -fsanitize=address 
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
 set (CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
-# gperftools
-set (Gperftools_DIR "${CMAKE_CURRENT_LIST_DIR}/cmake/")
-find_package(Gperftools REQUIRED)
-
 # find sfml
 find_package(SFML 2.5 COMPONENTS audio graphics window system REQUIRED)
-
-# find boost
-find_package(Boost 1.65 COMPONENTS REQUIRED)
 
 add_subdirectory(src)
 add_subdirectory(extern/catch)
 add_subdirectory(extern/cxxopts)
+add_subdirectory(extern/boost)
 add_subdirectory(tests)
