@@ -58,14 +58,14 @@ void NetworkingServer::addEventListeners() {
 sf::Uint16 NetworkingServer::createStateUdpSocket() {
     std::lock_guard<std::mutex> m_stateUdpSocket_guard(m_stateUdpSocket_lock);
     m_stateUdpSocket_t = std::unique_ptr<sf::UdpSocket>(new sf::UdpSocket);
-    m_stateUdpSocket_t->bind(SERVER_STATE_UDP_PORT);
+    m_stateUdpSocket_t->bind(GAME_SETTINGS.SERVER_STATE_UDP_PORT);
     m_stateUdpSocket_t->setBlocking(false);
     return static_cast<sf::Uint16>(m_stateUdpSocket_t->getLocalPort());
 }
 
 sf::Uint16 NetworkingServer::createInputUdpSocket() {
     m_inputUdpSocket = std::unique_ptr<sf::UdpSocket>(new sf::UdpSocket);
-    m_inputUdpSocket->bind(SERVER_INPUT_UDP_PORT);
+    m_inputUdpSocket->bind(GAME_SETTINGS.SERVER_INPUT_UDP_PORT);
     return static_cast<sf::Uint16>(m_inputUdpSocket->getLocalPort());
 }
 
@@ -76,7 +76,7 @@ InputDef::PlayerInputs NetworkingServer::collectClientInputs() {
         m_playerUnreliableUpdates_lock.unlock();
         m_gameState_lock.unlock();
         EventController::getInstance().unlock();
-        std::this_thread::sleep_for(SERVER_INPUT_WINDOW_SLEEP);
+        std::this_thread::sleep_for(GAME_SETTINGS.SERVER_INPUT_WINDOW_SLEEP);
         m_playerReliableUpdates_lock.lock();
         m_playerUnreliableUpdates_lock.lock();
         m_gameState_lock.lock();
@@ -128,7 +128,7 @@ void NetworkingServer::unreliableRecv() {
     unsigned short port;
     sf::Packet command_packet;
     while (!m_stopThreads_ta) {
-        if (selector.wait(SERVER_UNRELIABLE_RECV_TIMEOUT)) {
+        if (selector.wait(GAME_SETTINGS.SERVER_UNRELIABLE_RECV_TIMEOUT_SEC)) {
             if (selector.isReady(*m_inputUdpSocket)) {
                 if (m_inputUdpSocket->receive(command_packet, sender, port) == sf::Socket::Done) {
                     handleUnreliableCommand(sf::Socket::Done, command_packet, sender, port);
@@ -206,7 +206,7 @@ void NetworkingServer::reliableRecvSend() {
     // Create a socket to listen to new connections
     sf::TcpListener listener;
     // Reliable socket
-    listener.listen(SERVER_TCP_PORT);
+    listener.listen(GAME_SETTINGS.SERVER_TCP_PORT);
 
     // Create a selector
     sf::SocketSelector selector;
@@ -249,7 +249,7 @@ void NetworkingServer::reliableRecvSend() {
             }
         }
 
-        std::this_thread::sleep_for(SERVER_RELIABLE_REVC_SEND_SLEEP);
+        std::this_thread::sleep_for(GAME_SETTINGS.SERVER_RELIABLE_REVC_SEND_SLEEP);
     }
 }
 
@@ -356,7 +356,7 @@ void NetworkingServer::registerClient(sf::Packet packet, sf::TcpSocket& socket,
 void NetworkingServer::broadcastGameState() {
     while (!m_stopThreads_ta) {
         sendGameState();
-        std::this_thread::sleep_for(SERVER_BROADCAST_GAME_STATE_SLEEP);
+        std::this_thread::sleep_for(GAME_SETTINGS.SERVER_BROADCAST_GAME_STATE_SLEEP);
     }
 }
 
@@ -401,6 +401,6 @@ void NetworkingServer::natRecv() {
         }
         handleUnreliableCommand(status, command_packet, sender, port);
 
-        std::this_thread::sleep_for(SERVER_NAT_RECV_SLEEP);
+        std::this_thread::sleep_for(GAME_SETTINGS.SERVER_NAT_RECV_SLEEP);
     }
 }

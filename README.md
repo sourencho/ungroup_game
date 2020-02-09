@@ -11,9 +11,14 @@ A game about temporary alliances.
 Created by [@sourenp](https://github.com/SourenP) and [@copacetic](https://github.com/copacetic)
 
 ## Building and Running
+
+
 ### Unix
 1. Clone this repo
-2. Install [SFML 2.5.1](https://www.sfml-dev.org/download/sfml/2.5.1/) package
+2. Install requirements
+  - [SFML 2.5.1](https://www.sfml-dev.org/download/sfml/2.5.1/)
+  - [Boost 1.65](https://www.boost.org/)
+  - [gperftools](https://github.com/gperftools/gperftools)
 3. Build:
 ```
 ./scripts/build.sh
@@ -177,6 +182,7 @@ Run this command to enable debug mode on a specific build: https://gist.github.c
 
 - [lefticus: CPP Best Practices](https://github.com/lefticus/cppbestpractices)
 - [cliutils: An Introduction to Modern CMake](https://cliutils.gitlab.io/modern-cmake/)
+- [rigtorp: Awesome Modern C++](https://github.com/rigtorp/awesome-modern-cpp)
 
 ### SFML
 

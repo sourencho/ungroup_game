@@ -7,7 +7,8 @@ RenderingController::RenderingController(sf::RenderWindow& window, GameObjectCon
     m_window(window),
     m_uiData({}), m_gameObjectController(goc), m_resourceStore(),
     m_animationController(m_resourceStore),
-    m_backgroundController(sf::Vector2u(GAME_SIZE), m_resourceStore), m_playerId(player_id),
+    m_backgroundController(sf::Vector2u(GAME_SETTINGS.GAME_SIZE), m_resourceStore),
+    m_playerId(player_id),
     m_gameObjectRenderer(m_resourceStore, m_gameObjectController.getResourceController(),
                          m_gameObjectController.getGroupController(),
                          m_gameObjectController.getMineController(),
@@ -17,7 +18,7 @@ RenderingController::RenderingController(sf::RenderWindow& window, GameObjectCon
     sf::Vector2f window_size = sf::Vector2f(m_window.getSize());
 
     // Create buffer to draw game onto. Buffer can be scaled to give pixelated effect
-    if (!m_buffer.create(GAME_SIZE.x, GAME_SIZE.y)) {
+    if (!m_buffer.create(GAME_SETTINGS.GAME_SIZE.x, GAME_SETTINGS.GAME_SIZE.y)) {
         throw std::runtime_error("Failed to create buffer.");
     }
     m_buffer.setSmooth(false);

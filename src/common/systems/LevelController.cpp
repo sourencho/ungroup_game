@@ -19,16 +19,16 @@ void LevelController::loadLevelEmpty() {
 
 void LevelController::loadLevelMineRing() {
     // Create mines in a ring around the center of the game
-    for (int i = 0; i < MAX_MINE_COUNT; i++) {
-        float radius = GAME_BOUNDS_RADIUS * 0.8f;
-        float angle = i * 360.f / MAX_MINE_COUNT;
+    for (int i = 0; i < GAME_SETTINGS.MAX_MINE_COUNT; i++) {
+        float radius = GAME_SETTINGS.GAME_BOUNDS_RADIUS * 0.8f;
+        float angle = i * 360.f / GAME_SETTINGS.MAX_MINE_COUNT;
         sf::Vector2f direction = VectorUtil::direction(angle);
-        sf::Vector2f mine_center_position = GAME_CENTER + direction * radius;
+        sf::Vector2f mine_center_position = GAME_SETTINGS.GAME_CENTER + direction * radius;
         m_mineController.createMine(mine_center_position);
     }
 
     // Set groups at the center of the game
     for (uint32_t group_id : m_groupController.getGroupIds()) {
-        m_groupController.getGroup(group_id).setPosition(GAME_CENTER);
+        m_groupController.getGroup(group_id).setPosition(GAME_SETTINGS.GAME_CENTER);
     }
 }

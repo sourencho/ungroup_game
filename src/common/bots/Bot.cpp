@@ -19,8 +19,9 @@ Bot::getNearestGreedyMove(std::vector<std::shared_ptr<Mine>> mines,
 
     for (auto& mine : mines) {
         auto curr_mine_id = mine->getId();
+        // TODO(souren): Change this conditional to use win condition instead of mine resource count
         if (mine_id_to_resource_count[curr_mine_id] != 0 &&
-            current_resources[mine->getResourceType()] != WIN_CONDITION[mine->getResourceType()]) {
+            current_resources[mine->getResourceType()] != GAME_SETTINGS.MINE_RESOURCE_COUNT) {
             // move towards this mine since it's closest and has a resource we need
             auto direction_to_mine = VectorUtil::getVector(bot_center, mine->getCenter());
             return InputUtil::vectorToNearestMove(direction_to_mine);

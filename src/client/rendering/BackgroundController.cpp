@@ -7,7 +7,7 @@
 
 BackgroundController::BackgroundController(sf::Vector2u background_size, ResourceStore& rs) :
     m_resourceStore(rs), m_backgroundSize(background_size),
-    m_boundsCircle(GAME_BOUNDS_RADIUS, RenderingDef::GAME_BOUNDS_CIRCLE_SIDES) {
+    m_boundsCircle(GAME_SETTINGS.GAME_BOUNDS_RADIUS, RenderingDef::GAME_BOUNDS_CIRCLE_SIDES) {
     m_shaderClock.restart();
 
     m_boundsCircle.setFillColor(RenderingDef::BACKGROUND_COLOR);

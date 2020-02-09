@@ -3,6 +3,7 @@ add_library(common-lib
     util/StateDef.cpp
     util/InputDef.cpp
     util/InputUtil.cpp
+    util/game_settings.cpp
     objects/CircleGameObject.cpp
     objects/Player.cpp
     objects/Mine.cpp
