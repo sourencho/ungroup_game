@@ -26,4 +26,4 @@ add_library(client-lib
     resources/ResourceStore.cpp
 )
 
-target_link_libraries(ug-client PRIVATE client-lib common-lib cxxopts ${GPERFTOOLS_PROFILER})
+target_link_libraries(ug-client PRIVATE client-lib common-lib cxxopts)
