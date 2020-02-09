@@ -18,7 +18,6 @@ Created by [@sourenp](https://github.com/SourenP) and [@copacetic](https://githu
 2. Install requirements
   - [SFML 2.5.1](https://www.sfml-dev.org/download/sfml/2.5.1/)
   - [Boost 1.65](https://www.boost.org/)
-  - [gperftools](https://github.com/gperftools/gperftools)
 3. Build:
 ```
 ./scripts/build.sh
