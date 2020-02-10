@@ -196,7 +196,7 @@ void GroupController::updateGroup(std::shared_ptr<Group>& group) {
     group->setDirection(group_vel);
 
     // Update group size
-    group->setRadius(group_players.size() * GAME_SETTINGS.GROUP_SPEED);
+    group->setRadius(group_players.size() * GAME_SETTINGS.GROUP_MEMBER_SIZE);
     group->setMass(group_players.size() / 10.f);
 }
 

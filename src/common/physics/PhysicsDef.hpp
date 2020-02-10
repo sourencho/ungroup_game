@@ -1,6 +1,7 @@
 #ifndef PhysicsDef_hpp
 #define PhysicsDef_hpp
 
+#include "../util/game_settings.hpp"
 #include <SFML/Graphics.hpp>
 
 namespace PhysicsDef {
@@ -10,7 +11,7 @@ namespace PhysicsDef {
     };
     const float IMPULSE_MILTIPLIER = 3.f;
     const float TRANSITION_SPEED = 10.f; // drag / friction
-    const float PLAYER_VELOCITY = 200.f;
+    const float PLAYER_VELOCITY = GAME_SETTINGS.GROUP_SPEED;
     const float MAX_VELOCITY = PLAYER_VELOCITY * 4.f;
     const float MIN_VELOCITY = -MAX_VELOCITY;
 }; // namespace PhysicsDef
