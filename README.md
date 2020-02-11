@@ -84,6 +84,12 @@ Features:
 
 ## Development
 
+### Playtesting
+
+Create a new release to playtest with.
+
+Add notes to [Wiki: Playtesting](https://github.com/SourenP/ungroup_game/wiki/Playtesting)
+
 ### Compiliation
 
 - When you create/delete a file you need to add the `<new_file>.cpp` to the corresponding `CMakeLists.txt` file.
