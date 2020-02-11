@@ -86,9 +86,7 @@ Features:
 
 ### Playtesting
 
-Create a new release to playtest with.
-
-Add notes to [Wiki: Playtesting](https://github.com/SourenP/ungroup_game/wiki/Playtesting)
+Create a new [release](https://github.com/SourenP/ungroup_game/releases) and write notes in [Wiki: Playtesting](https://github.com/SourenP/ungroup_game/wiki/Playtesting)
 
 ### Compiliation
 
