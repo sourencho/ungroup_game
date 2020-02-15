@@ -13,7 +13,7 @@ A multiplayer game where the main mechanic to win is forming temporary alliances
 - Resources are collected from mines by bumping into them.
 - The first player to reach their goal of resources wins.
 - Players can form groups with other players by merging their circles into a group.
-- The larger a group is the faster it moves/mines and resources are divided among members.
+- The larger a group is the faster it moves/mines and when mining resources are divided among members.
 - A player may leave a group and become a solo circle at any time.
 
 Created by [@sourenp](https://github.com/SourenP) and [@copacetic](https://github.com/copacetic) mostly for learning purposes.
