@@ -6,9 +6,17 @@
 
 ## Intro
 
-A game about temporary alliances.
+A multiplayer game where the main mechanic to win is forming temporary alliances.
 
-Created by [@sourenp](https://github.com/SourenP) and [@copacetic](https://github.com/copacetic)
+- The game is played in rounds.
+- Each player spawns as a circle and has a unique set of resources they need to collect to win.
+- Resources are collected from mines by bumping into them.
+- The first player to reach their goal of resources wins.
+- Players can form groups with other players by merging their circles into a group.
+- The larger a group is the faster it moves/mines and resources are divided among members.
+- A player may leave a group and become a solo circle at any time.
+
+Created by [@sourenp](https://github.com/SourenP) and [@copacetic](https://github.com/copacetic) mostly for learning purposes.
 
 ## Building and Running
 
