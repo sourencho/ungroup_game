@@ -17,6 +17,7 @@ A multiplayer game where the main mechanic to win is forming temporary alliances
 - A player may leave a group and become a solo circle at any time.
 
 Custom engine written in C++11 using the [SFML](https://www.sfml-dev.org/) framework.
+
 Created by [@sourenp](https://github.com/SourenP) and [@copacetic](https://github.com/copacetic) mostly for learning purposes.
 
 ## Building and Running
