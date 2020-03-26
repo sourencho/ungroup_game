@@ -29,8 +29,7 @@ void GameController::step() {
 
     InputDef::PlayerInputs pi = getPlayerInputs();
 
-    // Take a variable amount of game state steps depending on how long the last frame took. See:
-    // https://web.archive.org/web/20190403012130/https://gafferongames.com/post/fix_your_timestep/
+    // Take a variable amount of game state steps depending on how long the last frame took
     sf::Int32 frame_time = m_clock.restart().asMilliseconds();
     m_timeAccumulator += frame_time;
     while (m_timeAccumulator >= MIN_TIME_STEP) {

@@ -39,7 +39,7 @@ namespace RenderingDef {
     };
 
     /* Debug */
-    const bool RENDER_DEBUG = false;
+    const bool RENDER_DEBUG = true;
     const sf::Color DEBUG_TEXT_COLOR(sf::Color::Green);
 
     /* Group */

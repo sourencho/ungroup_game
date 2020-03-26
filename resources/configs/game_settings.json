@@ -4,7 +4,7 @@
         "MAX_MINE_COUNT": 8,
         "GROUP_MEMBER_SIZE": 10.0,
         "MINE_SIZE": 40.0,
-        "GROUP_SPEED": 40.0,
+        "GROUP_SPEED": 140.0,
         "MINE_RESOURCE_COUNT": 10.0,
         "GAME_BOUNDS_RADIUS": 600.0,
         "TOTAL_RESOURCE_REQUIREMENTS": 20

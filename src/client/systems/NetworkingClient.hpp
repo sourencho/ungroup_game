@@ -124,10 +124,10 @@ class NetworkingClient {
     GameState m_gameState_t;
 
     std::mutex m_unreliableInputs_lock;
-    std::queue<InputDef::UnreliableInput> m_unreliableInputs_t;
+    std::queue<InputDef::UnreliableInput> m_unreliableInputs_t; // FIFO
 
     std::mutex m_reliableInputs_lock;
-    std::queue<InputDef::ReliableInput> m_reliableInputs_t;
+    std::queue<InputDef::ReliableInput> m_reliableInputs_t; // FIFO
 
     sf::Uint16 m_serverStateUdpPort = 0;
     sf::Uint16 m_serverInputUdpPort = 0;

@@ -82,4 +82,5 @@ GameSettings load_game_setting_globals(const std::string& path) {
     return game_settings;
 };
 
-const GameSettings GAME_SETTINGS = load_game_setting_globals("data/configs/game_settings.json");
+const GameSettings GAME_SETTINGS =
+    load_game_setting_globals("resources/configs/game_settings.json");
