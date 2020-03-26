@@ -184,7 +184,7 @@ Run this command to enable debug mode on a specific build: https://gist.github.c
 - [Valve: Developer Community](https://developer.valvesoftware.com)
   - [Source Multiplayer Networking](https://developer.valvesoftware.com/wiki/Source_Multiplayer_Networking)
   - [Latency Compensating Methods in Client/Server In-game Protocol Design and Optimization](https://developer.valvesoftware.com/wiki/Latency_Compensating_Methods_in_Client/Server_In-game_Protocol_Design_and_Optimization)
-- [webdva](webdva.github.io)
+- [webdva](https://webdva.github.io/)
   - [How I Implemented Client-Side Linear Interpolation](https://webdva.github.io/how-i-implemented-client-side-linear-interpolation/)
 
 ### Graphics
