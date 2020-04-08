@@ -3,8 +3,8 @@
 #include <iostream>
 
 InputController::InputController(InputDef::InputKeys keys) :
-    m_inputKeys(keys), m_reliableInput{false, false}, m_unreliableInput{false, false, false,
-                                                                        false, false, false} {
+    m_inputKeys(keys), m_reliableInput{false, false, false}, m_unreliableInput{false, false, false,
+                                                                               false, false} {
 }
 
 std::pair<InputDef::ReliableInput, InputDef::UnreliableInput>
@@ -24,6 +24,7 @@ InputController::collectInputs(sf::RenderWindow& window) {
             m_reliableInput = {
                 .toggle_ungroup = sf::Keyboard::isKeyPressed(m_inputKeys.ungroup),
                 .toggle_joinable = sf::Keyboard::isKeyPressed(m_inputKeys.joinable),
+                .toggle_intent = sf::Keyboard::isKeyPressed(m_inputKeys.intent),
             };
             m_unreliableInput = {
                 .toggle_up = sf::Keyboard::isKeyPressed(m_inputKeys.up),
@@ -31,7 +32,6 @@ InputController::collectInputs(sf::RenderWindow& window) {
                 .toggle_right = sf::Keyboard::isKeyPressed(m_inputKeys.right),
                 .toggle_left = sf::Keyboard::isKeyPressed(m_inputKeys.left),
                 .toggle_stop = sf::Keyboard::isKeyPressed(m_inputKeys.stop),
-                .toggle_intent = sf::Keyboard::isKeyPressed(m_inputKeys.intent),
             };
         }
     }
