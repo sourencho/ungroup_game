@@ -163,8 +163,8 @@ GameState NetworkingClient::getGameState() {
 }
 
 void NetworkingClient::pushUnreliableInput(InputDef::UnreliableInput unreliable_input) {
-    std::lock_guard<std::mutex> m_unreliableInputs_guard(m_unreliableInputs_lock);
-    m_unreliableInputs_t.push(unreliable_input);
+    std::lock_guard<std::mutex> m_unreliableInput_guard(m_unreliableInput_lock);
+    m_unreliableInput_t = unreliable_input;
 }
 
 void NetworkingClient::pushReliableInput(InputDef::ReliableInput reliable_input) {
@@ -284,20 +284,14 @@ void NetworkingClient::unreliableSend() {
 }
 
 void NetworkingClient::sendUnreliableInput() {
-    std::lock_guard<std::mutex> m_unreliableInputs_guard(m_unreliableInputs_lock);
-    if (m_unreliableInputs_t.empty()) {
-        return;
-    }
-
-    InputDef::UnreliableInput unreliable_input = m_unreliableInputs_t.front();
-    m_unreliableInputs_t.pop();
+    std::lock_guard<std::mutex> m_unreliableInput_guard(m_unreliableInput_lock);
 
     sf::Packet packet;
     sf::Uint32 unreliable_input_cmd = UnreliableCommandType::unreliable_input;
     UnreliableCommand unreliable_command = {(sf::Uint32)m_clientId_ta, unreliable_input_cmd,
                                             m_tick_ta};
 
-    if (packet << unreliable_command && packet << unreliable_input) {
+    if (packet << unreliable_command && packet << m_unreliableInput_t) {
         sf::Socket::Status status = sf::Socket::Partial;
 
         while (status == sf::Socket::Partial) {
