@@ -32,14 +32,15 @@ class NetworkingClient {
     /**
      * Get last game state recieved from the server.
      */
-    GameState getGameState();
+    // GameState getGameState();
 
     int getClientId() const;
 
     /**
      * Bool indicating whether getGameState will return a new game state or one already fetched.
      */
-    bool getGameStateIsFresh() const;
+    // bool getGameStateIsFresh() const;
+
     /**
      * Push an unreliable input onto the stack to be sent to the server.
      */
@@ -53,6 +54,10 @@ class NetworkingClient {
     void incrementTick();
     uint getTick() const;
     void setTick(uint tick);
+
+    std::pair<bool, GameState> getGameState(uint tick);
+    void removeOlderGameStates(uint tick);
+    int getMaxGameStateTick();
 
   private:
     // Sockets
@@ -118,10 +123,13 @@ class NetworkingClient {
     // Misc
     std::atomic<int> m_clientId_ta{-1};
     std::atomic<uint> m_tick_ta{0};
-    std::atomic<bool> m_gameStateIsFresh_ta{true};
+    // std::atomic<bool> m_gameStateIsFresh_ta{true};
 
-    std::mutex m_gameState_lock;
-    GameState m_gameState_t;
+    // std::mutex m_gameState_lock;
+    // GameState m_gameState_t;
+
+    std::mutex m_gameStateBuffer_lock;
+    std::map<uint, GameState> m_gameStateBuffer_t;
 
     std::mutex m_unreliableInput_lock;
     InputDef::UnreliableInput m_unreliableInput_t;

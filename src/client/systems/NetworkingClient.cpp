@@ -14,8 +14,7 @@
 
 const sf::Time CLIENT_TCP_TIMEOUT = sf::milliseconds(300);
 
-NetworkingClient::NetworkingClient(const std::string& server_ip) :
-    m_gameState_t({}), m_serverIp(server_ip) {
+NetworkingClient::NetworkingClient(const std::string& server_ip) : m_serverIp(server_ip) {
     std::cout << "Starting client." << std::endl;
 
     createTcpSocket(GAME_SETTINGS.SERVER_TCP_PORT);
@@ -156,10 +155,43 @@ void NetworkingClient::readRegistrationResponse() {
     throw std::runtime_error("Failed to register.");
 }
 
-GameState NetworkingClient::getGameState() {
-    std::lock_guard<std::mutex> m_gameState_guard(m_gameState_lock);
-    m_gameStateIsFresh_ta = false;
-    return m_gameState_t;
+// GameState NetworkingClient::getGameState() {
+//     std::lock_guard<std::mutex> m_gameState_guard(m_gameState_lock);
+//     m_gameStateIsFresh_ta = false;
+//     return m_gameState_t;
+// }
+
+// Returns whether a game state exists for that tick and the state itself
+std::pair<bool, GameState> NetworkingClient::getGameState(uint tick) {
+    std::lock_guard<std::mutex> m_gameStateBuffer_guard(m_gameStateBuffer_lock);
+    std::cout << "game state count: " << m_gameStateBuffer_t.size() << std::endl;
+    if (m_gameStateBuffer_t.count(tick) == 1) {
+        return std::make_pair(true, m_gameStateBuffer_t[tick]);
+    }
+    return std::make_pair(false, (GameState){});
+}
+
+// Returns max game state tick. If no game states are present returns -1
+int NetworkingClient::getMaxGameStateTick() {
+    std::lock_guard<std::mutex> m_gameStateBuffer_guard(m_gameStateBuffer_lock);
+    if (!m_gameStateBuffer_t.empty())
+        return (--m_gameStateBuffer_t.end())->first;
+    return -1;
+}
+
+void NetworkingClient::removeOlderGameStates(uint tick) {
+    std::lock_guard<std::mutex> m_gameStateBuffer_guard(m_gameStateBuffer_lock);
+    std::vector<uint> ticksToRemove;
+    for (auto const& gameStateItem : m_gameStateBuffer_t) {
+        if (gameStateItem.first <= tick) {
+            ticksToRemove.push_back(gameStateItem.first);
+        } else {
+            break;
+        }
+    }
+    for (auto const t : ticksToRemove) {
+        m_gameStateBuffer_t.erase(t);
+    }
 }
 
 void NetworkingClient::pushUnreliableInput(InputDef::UnreliableInput unreliable_input) {
@@ -176,9 +208,9 @@ int NetworkingClient::getClientId() const {
     return m_clientId_ta;
 }
 
-bool NetworkingClient::getGameStateIsFresh() const {
-    return m_gameStateIsFresh_ta;
-}
+// bool NetworkingClient::getGameStateIsFresh() const {
+//     return m_gameStateIsFresh_ta;
+// }
 
 void NetworkingClient::incrementTick() {
     m_tick_ta++;
@@ -262,9 +294,9 @@ void NetworkingClient::unreliableRecv() {
         if (status != sf::Socket::NotReady) {
             GameState game_state;
             packet >> game_state;
-            std::lock_guard<std::mutex> m_gameState_guard(m_gameState_lock);
-            m_gameState_t = game_state;
-            m_gameStateIsFresh_ta = true;
+            std::lock_guard<std::mutex> m_gameStateBuffer_guard(m_gameStateBuffer_lock);
+            m_gameStateBuffer_t[game_state.core.tick] = game_state;
+            // m_gameStateIsFresh_ta = true;
         }
 
         std::this_thread::sleep_for(GAME_SETTINGS.CLIENT_UNRELIABLE_RECV_SLEEP);

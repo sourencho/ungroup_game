@@ -10,6 +10,8 @@
 #include "../../common/util/game_settings.hpp"
 #include "ClientGameController.hpp"
 
+const uint GAME_STATE_BUFFER_SIZE = 4;
+
 ClientGameController::ClientGameController(bool is_headless, bool is_bot, BotStrategy strategy,
                                            const std::string& server_ip, LevelKey level_key) :
     m_headless(is_headless),
@@ -68,7 +70,8 @@ void ClientGameController::preUpdate() {
     switch (m_gameStateCore.status) {
         case GameStatus::not_started: {
             // Keep fetching game state to check if game status changed from not_started
-            GameState game_state = m_networkingClient->getGameState();
+            GameState game_state =
+                m_networkingClient->getGameState(m_networkingClient->getMaxGameStateTick()).second;
             m_gameStateCore = game_state.core;
             break;
         }
@@ -131,13 +134,42 @@ void ClientGameController::postUpdate() {
 }
 
 void ClientGameController::rewindAndReplay() {
-    if (!m_networkingClient->getGameStateIsFresh()) {
+    // if (!m_networkingClient->getGameStateIsFresh()) {
+    //     return;
+    // }
+
+    uint max_server_tick = m_networkingClient->getMaxGameStateTick();
+
+    if (max_server_tick == -1) {
         return;
     }
 
-    GameState game_state = m_networkingClient->getGameState();
-
     uint client_tick = getTick();
+
+    std::cout << "=======" << std::endl;
+
+    std::cout << "Client tick / Server tick " << client_tick << " / " << max_server_tick
+              << std::endl;
+
+    if (client_tick >= max_server_tick) {
+        client_tick = max_server_tick;
+        std::cout << "client tick >= max_server_tick" << std::endl;
+    } else if (client_tick < max_server_tick - GAME_STATE_BUFFER_SIZE) {
+        client_tick = max_server_tick - GAME_STATE_BUFFER_SIZE;
+        std::cout << "client tick < max_server_tick - buffer_size" << std::endl;
+    } else {
+        std::cout << "client tick in [max_server_tick ... buffer_size]" << std::endl;
+    }
+
+    GameState game_state;
+    bool game_state_present;
+    std::tie(game_state_present, game_state) = m_networkingClient->getGameState(client_tick + 1);
+    m_networkingClient->removeOlderGameStates(client_tick + 1);
+    if (!game_state_present) {
+        setTick(client_tick);
+        return;
+    }
+
     uint server_tick = game_state.core.tick;
     int tick_delta = client_tick - server_tick;
 
