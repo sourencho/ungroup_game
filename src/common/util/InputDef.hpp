@@ -15,30 +15,29 @@ namespace InputDef {
         bool toggle_right;
         bool toggle_left;
         bool toggle_stop;
-        bool toggle_intent;
         void setAll(bool value) {
             toggle_up = value;
             toggle_down = value;
             toggle_right = value;
             toggle_left = value;
             toggle_stop = value;
-            toggle_intent = value;
         };
         bool allFalse() {
-            return !toggle_up && !toggle_down && !toggle_right && !toggle_left && !toggle_stop &&
-                   !toggle_intent;
+            return !toggle_up && !toggle_down && !toggle_right && !toggle_left && !toggle_stop;
         };
     };
 
     struct ReliableInput {
         bool toggle_ungroup;
         bool toggle_joinable;
+        bool toggle_intent;
         void setAll(bool value) {
             toggle_joinable = value;
             toggle_ungroup = value;
+            toggle_intent = value;
         };
         bool allFalse() {
-            return !toggle_joinable && !toggle_ungroup;
+            return !toggle_joinable && !toggle_ungroup && !toggle_intent;
         };
     };
 

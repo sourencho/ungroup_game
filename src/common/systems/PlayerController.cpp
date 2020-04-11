@@ -54,14 +54,15 @@ void PlayerController::update(const InputDef::PlayerInputs& pi) {
             player->setDirection(InputUtil::inputToDirection(
                 ui.toggle_up, ui.toggle_down, ui.toggle_right, ui.toggle_left, ui.toggle_stop));
         }
-        player->toggleIntent(ui.toggle_intent);
     }
     for (const auto& player_reliable_input : pi.player_reliable_inputs) {
         uint32_t player_id = player_reliable_input.player_id;
+        auto ri = player_reliable_input.reliable_input;
         auto player = getPlayer(player_id);
 
-        player->toggleJoinable(player_reliable_input.reliable_input.toggle_joinable);
-        player->toggleUngroup(player_reliable_input.reliable_input.toggle_ungroup);
+        player->toggleIntent(ri.toggle_intent);
+        player->toggleJoinable(ri.toggle_joinable);
+        player->toggleUngroup(ri.toggle_ungroup);
     }
 }
 
