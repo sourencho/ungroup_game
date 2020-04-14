@@ -52,6 +52,9 @@ GameSettings load_game_setting_globals(const std::string& path) {
         j["networking"]["SERVER_INPUT_UDP_PORT"].get<unsigned short>();
     std::string LOCALHOST_IP = j["networking"]["LOCALHOST_IP"].get<std::string>();
 
+    bool REPLAY = j["interpolation"]["REPLAY"].get<bool>();
+    int REPLAY_TICK_DELTA_THRESHOLD = j["interpolation"]["REPLAY_TICK_DELTA_THRESHOLD"].get<int>();
+
     GameSettings game_settings = {
         .MAX_PLAYER_COUNT = MAX_PLAYER_COUNT,
         .MAX_MINE_COUNT = MAX_MINE_COUNT,
@@ -78,6 +81,8 @@ GameSettings load_game_setting_globals(const std::string& path) {
         .SERVER_STATE_UDP_PORT = SERVER_STATE_UDP_PORT,
         .SERVER_INPUT_UDP_PORT = SERVER_INPUT_UDP_PORT,
         .LOCALHOST_IP = LOCALHOST_IP,
+        .REPLAY = REPLAY,
+        .REPLAY_TICK_DELTA_THRESHOLD = REPLAY_TICK_DELTA_THRESHOLD,
     };
     return game_settings;
 };

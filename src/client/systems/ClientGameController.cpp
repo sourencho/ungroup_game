@@ -139,12 +139,16 @@ void ClientGameController::rewindAndReplay() {
         int tick_delta = client_tick - server_tick;
 
         applyGameState(game_state);
-        if (server_tick < client_tick) {
+        if (GAME_SETTINGS.REPLAY) {
             replay(client_tick, server_tick);
         }
 
         m_largestAppliedGameStateTick = m_newGameStateTick;
         m_tickDeltaMetric.pushCount(tick_delta);
+        m_networkUpdateMetric.pushCount();
+    } else if (m_newGameStateTick < m_largestAppliedGameStateTick) {
+        std::cout << "Recieved stale game state: " << m_newGameStateTick << "<"
+                  << m_largestAppliedGameStateTick << std::endl;
     }
 }
 
@@ -153,12 +157,17 @@ void ClientGameController::applyGameState(GameState& game_state) {
     m_gameObjectController->applyGameStateObject(game_state.object);
     m_gameStateCore = game_state.core;
     setTick(game_state.core.tick);
-    m_networkUpdateMetric.pushCount();
 }
 
 void ClientGameController::replay(uint client_tick, uint server_tick) {
     int tick_delta = client_tick - server_tick;
-    // Todo if tick delta is too high then don't rewind all the way
+
+    if (tick_delta <= 0) {
+        return;
+    }
+
+    // Prevent the client from drifting too far from server
+    tick_delta = std::min(tick_delta, GAME_SETTINGS.REPLAY_TICK_DELTA_THRESHOLD);
 
     // Loop through ticks that need to be replayed and apply client input from cache if present
     for (int i = 0; i < tick_delta; ++i) {
@@ -175,8 +184,15 @@ void ClientGameController::replay(uint client_tick, uint server_tick) {
         }
     }
 
-    // Todo: https://github.com/SourenP/ungroup_game/issues/186
-    m_tickToInput.clear();
+    // Remove cached ticks older than the applied server game state's tick. We won't need them for
+    // future replays because we never apply stale game states.
+    for (auto it = m_tickToInput.begin(); it != m_tickToInput.end();) {
+        if (it->first < server_tick) {
+            m_tickToInput.erase(it++);
+        } else {
+            ++it;
+        }
+    }
 }
 
 void ClientGameController::sendInputs(
