@@ -27,9 +27,10 @@ class RenderingController {
 
     void preUpdate();
     void update(sf::Int32 delta_ms);
-    void postUpdate(const UIData& ui_data);
+    void postUpdate(sf::Int32 update_time, const UIData& ui_data);
 
   private:
+    void updateCamera(sf::Int32 delta_ms);
     void drawGameOver();
     void drawPlaying();
     void drawNotStarted();

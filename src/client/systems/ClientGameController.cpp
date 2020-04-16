@@ -112,7 +112,7 @@ void ClientGameController::update(const InputDef::PlayerInputs& pi, sf::Int32 de
     m_tickDeltaMetric.update();
 }
 
-void ClientGameController::postUpdate() {
+void ClientGameController::postUpdate(sf::Int32 update_time) {
     UIData ui_data = {
         .game_steps_per_second = m_gameStepMetric.getRate(sf::seconds(1)),
         .game_updates_per_second = m_gameUpdateMetric.getRate(sf::seconds(1)),
@@ -127,7 +127,7 @@ void ClientGameController::postUpdate() {
         .winner_player_id = m_gameStateCore.winner_player_id,
         .tick = getTick(),
     };
-    m_renderingController->postUpdate(ui_data);
+    m_renderingController->postUpdate(update_time, ui_data);
 }
 
 void ClientGameController::rewindAndReplay() {

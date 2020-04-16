@@ -31,7 +31,7 @@ class ClientGameController : public GameController {
     // Overrides
     void update(const InputDef::PlayerInputs& pi, sf::Int32 delta_ms) override;
     void preUpdate() override;
-    void postUpdate() override;
+    void postUpdate(sf::Int32 update_time) override;
     InputDef::PlayerInputs getPlayerInputs() override;
     void incrementTick() override;
 

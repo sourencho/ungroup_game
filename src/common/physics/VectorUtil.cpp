@@ -33,6 +33,7 @@ sf::Vector2f VectorUtil::getMidpoint(const sf::Vector2f& point_a, const sf::Vect
 }
 
 sf::Vector2f VectorUtil::lerp(const sf::Vector2f& a, const sf::Vector2f& b, float t) {
+    VectorUtil::clamp(t, 0, 1);
     return (1 - t) * a + t * b;
 }
 

@@ -39,7 +39,7 @@ class GameController {
 
     virtual void update(const InputDef::PlayerInputs& pi, sf::Int32 delta_ms) = 0;
     virtual void preUpdate() = 0;
-    virtual void postUpdate() = 0;
+    virtual void postUpdate(sf::Int32 update_time) = 0;
 
     virtual InputDef::PlayerInputs getPlayerInputs() = 0;
     virtual void incrementTick() = 0;

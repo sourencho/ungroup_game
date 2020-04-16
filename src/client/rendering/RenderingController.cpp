@@ -29,6 +29,7 @@ RenderingController::RenderingController(sf::RenderWindow& window, GameObjectCon
     // Create views to draw GUI and player view
     m_windowView = sf::View(window_size / 2.f, window_size);
     m_playerView = sf::View({}, sf::Vector2f(m_window.getSize()));
+    m_playerView.setCenter(0, 0);
 
     // Connecting text parameters
     m_connectingText.setFont(*m_resourceStore.getFont(RenderingDef::FontKey::monogram));
@@ -53,19 +54,28 @@ void RenderingController::update(sf::Int32 delta_ms) {
     m_animationController.update(delta_ms);
 }
 
-void RenderingController::postUpdate(const UIData& ui_data) {
+void RenderingController::postUpdate(sf::Int32 update_time, const UIData& ui_data) {
     if (m_headless) {
         return;
     }
 
-    auto player_position = m_gameObjectController.getPlayerPosition(m_playerId);
     m_uiData = ui_data;
-
-    sf::Vector2f player_view_position = RenderingUtil::mapCoordToPixelScaled(
-        player_position, m_window, m_windowView, RenderingDef::GAME_SCALING_FACTOR);
-    m_playerView.setCenter(player_view_position);
     m_guiController.update(m_uiData);
-    m_backgroundController.update(player_position);
+
+    auto player_position = m_gameObjectController.getPlayerPosition(m_playerId);
+    updateCamera(update_time);
+    // m_backgroundController.update(player_position);
+}
+
+void RenderingController::updateCamera(sf::Int32 delta_ms) {
+    auto player_position = m_gameObjectController.getPlayerPosition(m_playerId);
+    sf::Vector2f player_position_in_view = RenderingUtil::mapCoordToPixelScaled(
+        player_position, m_window, m_windowView, RenderingDef::GAME_SCALING_FACTOR);
+
+    float distance = VectorUtil::distance(m_playerView.getCenter(), player_position_in_view);
+    m_playerView.setCenter(VectorUtil::lerp(m_playerView.getCenter(), player_position_in_view,
+                                            std::pow(1.f - 0.2, delta_ms)));
+    std::cout << delta_ms << std::endl;
 }
 
 void RenderingController::draw() {
