@@ -9,6 +9,8 @@
 #include "../../common/events/Event.hpp"
 #include "../../common/systems/GameController.hpp"
 #include "../../common/systems/LevelController.hpp"
+#include "../rendering/TerminalRenderingController.hpp"
+
 #include "NetworkingServer.hpp"
 
 class ServerGameController : public GameController {
@@ -20,6 +22,7 @@ class ServerGameController : public GameController {
 
   private:
     // Overrides
+    void draw();
     void update(const InputDef::PlayerInputs& pi, sf::Int32 delta_ms) override;
     void preUpdate() override;
     void postUpdate() override;
@@ -31,6 +34,7 @@ class ServerGameController : public GameController {
 
     // Variables
     std::unique_ptr<NetworkingServer> m_networkingServer;
+    TerminalRenderingController m_terminalRenderingController;
 };
 
 #endif /* ServerGameController_hpp */

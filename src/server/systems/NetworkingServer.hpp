@@ -16,13 +16,14 @@
 
 #include <SFML/Network.hpp>
 
+#include "../../common/metrics/TemporalMetric.hpp"
 #include "../../common/objects/Group.hpp"
 #include "../../common/objects/Mine.hpp"
 #include "../../common/util/InputDef.hpp"
 #include "../../common/util/StateDef.hpp"
 
 class NetworkingServer {
-    const unsigned int CMD_DRIFT_THRESHOLD = 200;
+    const uint32_t CMD_DRIFT_THRESHOLD = 200;
 
   public:
     NetworkingServer();
@@ -34,6 +35,9 @@ class NetworkingServer {
     void incrementTick();
     unsigned int getTick() const;
     void setTick(unsigned int tick);
+    float getBroadcastGameStateRate();
+    std::unordered_map<sf::Uint32, float> getPlayerUnreliableUpdatesRates();
+    std::unordered_map<sf::Uint32, float> getPlayerTickDrifts();
 
   private:
     // Sockets
@@ -52,6 +56,9 @@ class NetworkingServer {
     void unreliableRecv();
     void broadcastGameState();
     void natRecv();
+    int32_t getPlayerIdFromClientId(uint32_t client_id);
+    void updateDriftMetric(uint32_t player_id, uint32_t drift);
+    void updateUpdatesMetric(uint32_t player_id);
 
     std::thread m_reliableRecvSend;
     std::thread m_unreliableRecv;
@@ -93,6 +100,17 @@ class NetworkingServer {
 
     std::mutex m_playerUnreliableUpdates_lock;
     std::vector<InputDef::PlayerUnreliableInput> m_playerUnreliableUpdates_t;
+
+    std::mutex m_broadcastGameStateMetric_lock;
+    TemporalMetric m_broadcastGameStateMetric_t{30, sf::seconds(0.5f)};
+
+    std::mutex m_playerIdsToUpdatesMetric_lock;
+    std::unordered_map<sf::Uint32, TemporalMetric*> m_playerIdsToUpdatesMetric_t;
+    std::unordered_map<sf::Uint32, float> m_playerIdsToUpdatesRates_t;
+
+    std::mutex m_playerIdsToDriftMetrics_lock;
+    std::unordered_map<sf::Uint32, TemporalMetric*> m_playerIdsToDriftMetrics_t;
+    std::unordered_map<sf::Uint32, float> m_playerIdsToDrifts_t;
 
     std::mutex m_gameState_lock;
     GameState m_gameState_t;

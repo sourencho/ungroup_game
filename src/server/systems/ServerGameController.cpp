@@ -7,10 +7,23 @@ ServerGameController::ServerGameController(LevelKey level_key) :
 ServerGameController::~ServerGameController() {
 }
 
+void ServerGameController::draw() {
+    auto player_ids_to_updates_rates = m_networkingServer->getPlayerUnreliableUpdatesRates();
+    auto player_ids_to_avg_tick_drifts = m_networkingServer->getPlayerTickDrifts();
+    auto broadcast_game_state_rate = m_networkingServer->getBroadcastGameStateRate();
+    GameStateObject gso = m_gameObjectController->getGameStateObject();
+    auto player_updates = gso.player_updates;
+    m_terminalRenderingController.draw(player_ids_to_updates_rates, player_ids_to_avg_tick_drifts,
+                                       broadcast_game_state_rate, player_updates,
+                                       m_gameStepMetric.getRate(sf::seconds(1)),
+                                       m_gameUpdateMetric.getRate(sf::seconds(1)));
+}
+
 void ServerGameController::start() {
     m_gameStateCore.status = GameStatus::playing;
     while (true) {
         step();
+        draw();
     }
 }
 
@@ -19,7 +32,7 @@ InputDef::PlayerInputs ServerGameController::getPlayerInputs() {
 }
 
 void ServerGameController::preUpdate() {
-    // noop
+    m_terminalRenderingController.preUpdate();
 }
 
 void ServerGameController::update(const InputDef::PlayerInputs& pi, sf::Int32 delta_ms) {
@@ -51,6 +64,7 @@ void ServerGameController::postUpdate() {
             uint32_t winner_player_id;
             std::tie(game_over, winner_player_id) = m_gameObjectController->getGameOver();
             if (game_over) {
+                m_terminalRenderingController.addWinner(std::to_string(winner_player_id));
                 m_gameStateCore.status = GameStatus::game_over;
                 m_gameStateCore.winner_player_id = winner_player_id;
             }

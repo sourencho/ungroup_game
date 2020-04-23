@@ -6,10 +6,10 @@ var spawn = require('child_process').spawn;
 var server = spawn('./build/src/server/ug-server');
 var client = spawn('./build/src/client/ug-client');
 
-DESIRED_OUTPUT = "Received client registration. Issued client ID 0"
+DESIRED_OUTPUT = "Registered as client 0"
 success = false;
 
-server.stdout.on('data', function(data) {
+client.stdout.on('data', function(data) {
     var str = data.toString()
     if (str.includes(DESIRED_OUTPUT)) {
         success = true;
@@ -18,8 +18,8 @@ server.stdout.on('data', function(data) {
 
 // We should have successfully registered the client 1 seconds in
 function testFailed() {
-    server.kill();
     client.kill();
+    server.kill();
     if (success) {
         console.log("Smoke test passed!");
         process.exit(0);
@@ -28,4 +28,4 @@ function testFailed() {
     process.exit(1);
 }
 
-setTimeout(testFailed, 1000);
+setTimeout(testFailed, 3000);
