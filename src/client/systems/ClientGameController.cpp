@@ -137,8 +137,8 @@ void ClientGameController::rewindAndReplay() {
 
     GameState game_state = m_networkingClient->getGameState();
 
-    uint client_tick = getTick();
-    uint server_tick = game_state.core.tick;
+    uint32_t client_tick = getTick();
+    uint32_t server_tick = game_state.core.tick;
     int tick_delta = client_tick - server_tick;
 
     // Rewind
@@ -155,7 +155,7 @@ void ClientGameController::rewindAndReplay() {
 
     // Loop through ticks that need to be replayed and apply client input from cache if present
     for (int i = 0; i < tick_delta; ++i) {
-        uint replay_tick = server_tick + i;
+        uint32_t replay_tick = server_tick + i;
         if (m_tickToInput.count(replay_tick) > 0) {
             InputDef::ClientInputAndTick client_input_and_tick = m_tickToInput[replay_tick];
             auto pi = InputDef::PlayerInputs(m_inputController->getPlayerInputs(

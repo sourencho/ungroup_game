@@ -37,8 +37,8 @@ class ClientGameController : public GameController {
 
     // Methods
 
-    uint getTick();
-    void setTick(uint tick);
+    uint32_t getTick();
+    void setTick(uint32_t tick);
 
     /**
      * Register the client via the NetworkingClient.

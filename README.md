@@ -27,7 +27,7 @@ Created by [@sourenp](https://github.com/SourenP) and [@copacetic](https://githu
 1. Clone this repo
 2. Install requirements
   - [SFML 2.5.1](https://www.sfml-dev.org/download/sfml/2.5.1/)
-  - [Boost 1.65](https://www.boost.org/)
+  - [Boost 1.5](https://www.boost.org/)
 3. Build:
 ```
 ./scripts/build.sh
@@ -38,6 +38,28 @@ Created by [@sourenp](https://github.com/SourenP) and [@copacetic](https://githu
 ```
 ```
 ./build/src/client/ug-client
+```
+
+### Windows
+1. Clone this repo
+2. Install requirments
+  - Mingw
+  - cmake
+3. Download dependencies
+  - [SFML 2.5.1 GCC 7.3.0 MinGW (DW2) - 32-bit](https://www.sfml-dev.org/download/sfml/2.5.1/)
+  - [Boost 1.5](https://www.boost.org/)
+3. Build:
+```
+cmake -DSFML_DIR="Path/to/SFML/lib/cmake/SFML" -DBOOST_ROOT="Path/to/Boost" -G "MinGW Makefiles" -S . -B build\
+cmake --build build
+```
+4. Run server and client in seperate terminals:
+**The server currently doesn't work on windows**
+```
+.\build\src\server\ug-server.exe
+```
+```
+ .\build\src\client\ug-client.exe
 ```
 
 *Note: if you are running from a remote server, you might need to open the tcp and udp ports on your machine*

@@ -26,4 +26,5 @@ add_library(client-lib
     resources/ResourceStore.cpp
 )
 
-target_link_libraries(ug-client PRIVATE client-lib common-lib cxxopts)
+target_link_libraries(client-lib common-lib sfml-window sfml-graphics sfml-network sfml-system cxxopts)
+target_link_libraries(ug-client client-lib)

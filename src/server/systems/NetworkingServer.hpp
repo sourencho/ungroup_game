@@ -99,7 +99,7 @@ class NetworkingServer {
 
     sf::Uint32 m_clientIdCounter = 0;
 
-    std::atomic<uint> m_tick_ta{0};
+    std::atomic<uint32_t> m_tick_ta{0};
 };
 
 #endif /* NetworkingServer_hpp */

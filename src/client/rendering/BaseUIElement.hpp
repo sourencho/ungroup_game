@@ -25,7 +25,7 @@ struct UIData {
     std::array<uint32_t, RESOURCE_TYPE_COUNT> resource_goals;
     GameStatus game_status;
     uint32_t winner_player_id;
-    uint tick;
+    uint32_t tick;
 };
 
 class BaseUIElement {

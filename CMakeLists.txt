@@ -5,16 +5,17 @@ project(Ungroup VERSION 1.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -pthread")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -lstdc++ -pthread -static-libgcc -static-libstdc++ -static")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -g -fsanitize=address -fno-omit-frame-pointer")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
 set (CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
+set(SFML_STATIC_LIBRARIES TRUE)
 # find sfml
-find_package(SFML 2.5 COMPONENTS audio graphics window system REQUIRED)
+find_package(SFML 2.5.1 COMPONENTS system window graphics network audio REQUIRED)
 
 # find boost
-find_package(Boost 1.65 COMPONENTS REQUIRED)
+find_package(Boost 1.55 COMPONENTS REQUIRED)
 
 add_subdirectory(src)
 add_subdirectory(extern/catch)

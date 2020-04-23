@@ -51,8 +51,8 @@ class NetworkingClient {
     void pushReliableInput(InputDef::ReliableInput reliable_input);
 
     void incrementTick();
-    uint getTick() const;
-    void setTick(uint tick);
+    uint32_t getTick() const;
+    void setTick(uint32_t tick);
 
   private:
     // Sockets
@@ -117,7 +117,7 @@ class NetworkingClient {
 
     // Misc
     std::atomic<int> m_clientId_ta{-1};
-    std::atomic<uint> m_tick_ta{0};
+    std::atomic<uint32_t> m_tick_ta{0};
     std::atomic<bool> m_gameStateIsFresh_ta{true};
 
     std::mutex m_gameState_lock;
