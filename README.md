@@ -22,12 +22,12 @@ Created by [@sourenp](https://github.com/SourenP) and [@copacetic](https://githu
 
 ## Building and Running
 
-
 ### Unix
 1. Clone this repo
-2. Install requirements
+2. Install/Download requirements
+  - [CMake](https://cmake.org/download/)
   - [SFML 2.5.1](https://www.sfml-dev.org/download/sfml/2.5.1/)
-  - [Boost 1.5](https://www.boost.org/)
+  - [Boost 1.55](https://www.boost.org/)
 3. Build:
 ```
 ./scripts/build.sh
@@ -42,17 +42,20 @@ Created by [@sourenp](https://github.com/SourenP) and [@copacetic](https://githu
 
 ### Windows
 1. Clone this repo
-2. Install requirments
-  - Mingw
-  - cmake
-3. Download dependencies
+2. Install/Download requirements
+  - [MinGW 32-bit](https://osdn.net/projects/mingw/releases/)
+  - [CMake](https://cmake.org/download/)
   - [SFML 2.5.1 GCC 7.3.0 MinGW (DW2) - 32-bit](https://www.sfml-dev.org/download/sfml/2.5.1/)
-  - [Boost 1.5](https://www.boost.org/)
+  - [Boost 1.55](https://www.boost.org/)
 3. Build:
 ```
 cmake -DSFML_DIR="Path/to/SFML/lib/cmake/SFML" -DBOOST_ROOT="Path/to/Boost" -G "MinGW Makefiles" -S . -B build\
 cmake --build build
 ```
+
+### Notes
+- You can statically link libraries by setting the cmake flag `-GUNGROUP_STATIC=TRUE`
+
 4. Run server and client in seperate terminals:
 **The server currently doesn't work on windows**
 ```
