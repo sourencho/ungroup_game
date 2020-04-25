@@ -57,6 +57,9 @@ class ClientGameController : public GameController {
      */
     void rewindAndReplay();
 
+    void applyGameState(GameState& game_state);
+    void replay(uint client_tick, uint server_tick);
+
     /**
      * Send client input to server
      */
@@ -72,8 +75,9 @@ class ClientGameController : public GameController {
     bool m_headless, m_isBot;
     BotStrategy m_strategy;
     std::string m_serverIP;
+    uint m_largestAppliedGameStateTick = 0;
 
-    std::unordered_map<unsigned int, InputDef::ClientInputAndTick>
+    std::unordered_map<uint, InputDef::ClientInputAndTick>
         m_tickToInput; // Cache of past inputs
 
     sf::RenderWindow m_window;

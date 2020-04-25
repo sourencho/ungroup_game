@@ -13,7 +13,6 @@ namespace RenderingDef {
     const float GAME_SCALE = 4.f;
     const sf::Vector2f GAME_SCALING_FACTOR(GAME_SCALE, GAME_SCALE);
     const bool USE_SHADERS = true;
-    const bool USE_INTERPOLATION_REPLAY = false;
     const std::size_t CIRCLE_POINT_COUNT = 60;
     enum TextureKey {
         collision,
