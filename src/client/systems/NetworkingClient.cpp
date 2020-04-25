@@ -156,10 +156,14 @@ void NetworkingClient::readRegistrationResponse() {
     throw std::runtime_error("Failed to register.");
 }
 
-GameState NetworkingClient::getGameState() {
+GameState NetworkingClient::getLatestGameState() {
     std::lock_guard<std::mutex> m_gameState_guard(m_gameState_lock);
-    m_gameStateIsFresh_ta = false;
     return m_gameState_t;
+}
+
+uint32_t NetworkingClient::getLatestGameStateTick() {
+    std::lock_guard<std::mutex> m_gameState_guard(m_gameState_lock);
+    return m_gameState_t.core.tick;
 }
 
 void NetworkingClient::pushUnreliableInput(InputDef::UnreliableInput unreliable_input) {
@@ -174,10 +178,6 @@ void NetworkingClient::pushReliableInput(InputDef::ReliableInput reliable_input)
 
 int NetworkingClient::getClientId() const {
     return m_clientId_ta;
-}
-
-bool NetworkingClient::getGameStateIsFresh() const {
-    return m_gameStateIsFresh_ta;
 }
 
 void NetworkingClient::incrementTick() {
@@ -264,7 +264,6 @@ void NetworkingClient::unreliableRecv() {
             packet >> game_state;
             std::lock_guard<std::mutex> m_gameState_guard(m_gameState_lock);
             m_gameState_t = game_state;
-            m_gameStateIsFresh_ta = true;
         }
 
         std::this_thread::sleep_for(GAME_SETTINGS.CLIENT_UNRELIABLE_RECV_SLEEP);

@@ -134,6 +134,10 @@ Create a new [release](https://github.com/SourenP/ungroup_game/releases) and wri
 - Test file should be named `tests-<FileName>.cpp`
 - Add a [test tag](https://github.com/catchorg/Catch2/blob/67b4ada6b0fbe98368df934e1378aeae1ba7f235/docs/test-cases-and-sections.md#tags) for each subdirectory and the file name.
 
+### Todo
+
+`todo(username|#issue|date): description`
+
 ### Style
 - We use [ClangFormat](https://clang.llvm.org/docs/ClangFormat.html). You can use the [xaver.clang-format](https://marketplace.visualstudio.com/items?itemName=xaver.clang-format) VSCode extension to automatically format.
 - Class member variables have the style `m_camelCase`.

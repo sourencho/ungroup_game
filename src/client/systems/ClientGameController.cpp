@@ -68,7 +68,7 @@ void ClientGameController::preUpdate() {
     switch (m_gameStateCore.status) {
         case GameStatus::not_started: {
             // Keep fetching game state to check if game status changed from not_started
-            GameState game_state = m_networkingClient->getGameState();
+            GameState game_state = m_networkingClient->getLatestGameState();
             m_gameStateCore = game_state.core;
             break;
         }
@@ -131,27 +131,43 @@ void ClientGameController::postUpdate() {
 }
 
 void ClientGameController::rewindAndReplay() {
-    if (!m_networkingClient->getGameStateIsFresh()) {
-        return;
+    uint32_t m_newGameStateTick = m_networkingClient->getLatestGameStateTick();
+    if (m_newGameStateTick > m_largestAppliedGameStateTick) {
+        GameState game_state = m_networkingClient->getLatestGameState();
+        uint32_t client_tick = getTick();
+        uint32_t server_tick = game_state.core.tick;
+        int tick_delta = client_tick - server_tick;
+
+        applyGameState(game_state);
+        if (GAME_SETTINGS.REPLAY) {
+            replay(client_tick, server_tick);
+        }
+
+        m_largestAppliedGameStateTick = m_newGameStateTick;
+        m_tickDeltaMetric.pushCount(tick_delta);
+        m_networkUpdateMetric.pushCount();
+    } else if (m_newGameStateTick < m_largestAppliedGameStateTick) {
+        std::cout << "Recieved stale game state: " << m_newGameStateTick << "<"
+                  << m_largestAppliedGameStateTick << std::endl;
     }
+}
 
-    GameState game_state = m_networkingClient->getGameState();
-
-    uint32_t client_tick = getTick();
-    uint32_t server_tick = game_state.core.tick;
-    int tick_delta = client_tick - server_tick;
-
+void ClientGameController::applyGameState(GameState& game_state) {
     // Rewind
     m_gameObjectController->applyGameStateObject(game_state.object);
     m_gameStateCore = game_state.core;
-    setTick(server_tick);
-    m_networkUpdateMetric.pushCount();
-    m_tickDeltaMetric.pushCount(tick_delta);
+    setTick(game_state.core.tick);
+}
 
-    // Replay
-    if (!RenderingDef::USE_INTERPOLATION_REPLAY || tick_delta <= 0) {
+void ClientGameController::replay(uint32_t client_tick, uint32_t server_tick) {
+    int tick_delta = client_tick - server_tick;
+
+    if (tick_delta <= 0) {
         return;
-    } // If the client is behind the server we don't need to replay
+    }
+
+    // Prevent the client from drifting too far from server
+    tick_delta = std::min(tick_delta, GAME_SETTINGS.REPLAY_TICK_DELTA_THRESHOLD);
 
     // Loop through ticks that need to be replayed and apply client input from cache if present
     for (int i = 0; i < tick_delta; ++i) {
@@ -167,7 +183,16 @@ void ClientGameController::rewindAndReplay() {
             GameController::computeGameState(pi, GameController::MIN_TIME_STEP);
         }
     }
-    m_tickToInput.clear();
+
+    // Remove cached ticks older than the applied server game state's tick. We won't need them for
+    // future replays because we never apply stale game states.
+    for (auto it = m_tickToInput.begin(); it != m_tickToInput.end();) {
+        if (it->first < server_tick) {
+            m_tickToInput.erase(it++);
+        } else {
+            ++it;
+        }
+    }
 }
 
 void ClientGameController::sendInputs(

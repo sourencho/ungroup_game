@@ -23,5 +23,9 @@
         "SERVER_STATE_UDP_PORT": 4845,
         "SERVER_INPUT_UDP_PORT": 4846,
         "LOCALHOST_IP": "127.0.0.1"
+    },
+    "interpolation": {
+        "REPLAY": true,
+        "REPLAY_TICK_DELTA_THRESHOLD": 5
     }
 }
