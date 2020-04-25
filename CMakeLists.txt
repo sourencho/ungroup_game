@@ -5,12 +5,18 @@ project(Ungroup VERSION 1.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -lstdc++ -pthread -static-libgcc -static-libstdc++ -static")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -g -fsanitize=address -fno-omit-frame-pointer")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
 set (CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
-set(SFML_STATIC_LIBRARIES TRUE)
+if(UNGROUP_STATIC)
+    # todo(souren|#192|2020-04-24): Unable to build with sfml statically linked on mac/linux 
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -lstdc++ -static-libgcc -static-libstdc++ -static")
+    set(CMAKE_FIND_FRAMEWORK LAST)
+    set(SFML_STATIC_LIBRARIES TRUE)
+endif()
+
 # find sfml
 find_package(SFML 2.5.1 COMPONENTS system window graphics network audio REQUIRED)
 
