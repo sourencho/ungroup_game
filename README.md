@@ -60,7 +60,7 @@ cd ungroup_game
   - [SFML 2.5.1 GCC 7.3.0 MinGW (DW2) - 32-bit](https://www.sfml-dev.org/download/sfml/2.5.1/)
   - [Boost 1.55](https://www.boost.org/)
 #### 3. Build
-The server currently doesn't build on windows ([#194](https://github.com/SourenP/ungroup_game/issues/194)
+The server currently doesn't build on windows ([#194](https://github.com/SourenP/ungroup_game/issues/194))
 ```
 cmake -DSFML_DIR="Path/to/SFML/lib/cmake/SFML" -DBOOST_ROOT="Path/to/Boost" -G "MinGW Makefiles" -S . -B build\
 cmake --build build
@@ -70,7 +70,7 @@ cmake --build build
  .\build\src\client\ug-client.exe
 ```
 
-The server currently doesn't run on windows ([#194](https://github.com/SourenP/ungroup_game/issues/194)), but if it did...
+The server currently doesn't run on windows ([#194](https://github.com/SourenP/ungroup_game/issues/194))
 ```
 .\build\src\server\ug-server.exe
 ```
