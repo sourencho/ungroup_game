@@ -27,7 +27,7 @@ struct GameStateObject {
 };
 
 struct GameStateCore {
-    unsigned int tick;
+    uint32_t tick;
     GameStatus status;
     uint32_t winner_player_id;
 };

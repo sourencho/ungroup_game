@@ -13,7 +13,7 @@ class TermboxTable {
   public:
     void addColumn(std::string name);
     void setCell(const std::string& cell_val, uint32_t row, uint32_t col);
-    void setOrigin(unsigned int x, unsigned int y);
+    void setOrigin(uint32_t x, uint32_t y);
     void setColHeaders();
 
   private:

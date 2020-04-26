@@ -211,10 +211,10 @@ void ClientGameController::saveInputs(
         (InputDef::ClientInputAndTick){inputs.second, inputs.first, m_networkingClient->getTick()};
 }
 
-unsigned int ClientGameController::getTick() {
+uint32_t ClientGameController::getTick() {
     return m_networkingClient->getTick();
 }
 
-void ClientGameController::setTick(unsigned int tick) {
+void ClientGameController::setTick(uint32_t tick) {
     m_networkingClient->setTick(tick);
 }

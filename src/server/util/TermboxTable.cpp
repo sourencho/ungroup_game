@@ -26,7 +26,7 @@ void TermboxTable::setCell(const std::string& cell_val, uint32_t row, uint32_t c
     }
 }
 
-void TermboxTable::setOrigin(unsigned int x, unsigned int y) {
+void TermboxTable::setOrigin(uint32_t x, uint32_t y) {
     m_origin_x = x;
     m_origin_y = y;
 }

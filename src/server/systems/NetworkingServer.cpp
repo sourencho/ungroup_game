@@ -114,11 +114,11 @@ void NetworkingServer::incrementTick() {
     m_tick_ta++;
 }
 
-unsigned int NetworkingServer::getTick() const {
-    return static_cast<unsigned int>(m_tick_ta);
+uint32_t NetworkingServer::getTick() const {
+    return static_cast<uint32_t>(m_tick_ta);
 }
 
-void NetworkingServer::setTick(unsigned int tick) {
+void NetworkingServer::setTick(uint32_t tick) {
     m_tick_ta = tick;
 }
 

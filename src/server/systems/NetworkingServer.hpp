@@ -33,8 +33,8 @@ class NetworkingServer {
     void setState(const GameState& gs);
     void setClientToPlayerId(int client_id, int player_id);
     void incrementTick();
-    unsigned int getTick() const;
-    void setTick(unsigned int tick);
+    uint32_t getTick() const;
+    void setTick(uint32_t tick);
     float getBroadcastGameStateRate();
     std::unordered_map<sf::Uint32, float> getPlayerUnreliableUpdatesRates();
     std::unordered_map<sf::Uint32, float> getPlayerTickDrifts();
@@ -77,7 +77,7 @@ class NetworkingServer {
     void handleUnreliableCommand(sf::Socket::Status status, sf::Packet command_packet,
                                  sf::IpAddress& sender, unsigned short port);
     void setClientReliableUpdate(sf::Packet packet, int client_id);
-    void setClientUnreliableUpdate(sf::Packet packet, int client_id, unsigned int client_tick);
+    void setClientUnreliableUpdate(sf::Packet packet, int client_id, uint32_t client_tick);
     std::vector<int> getClientIds();
     void sendGameState();
     void addEventListeners();
