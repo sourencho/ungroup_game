@@ -37,8 +37,8 @@ class ClientGameController : public GameController {
 
     // Methods
 
-    uint getTick();
-    void setTick(uint tick);
+    uint32_t getTick();
+    void setTick(uint32_t tick);
 
     /**
      * Register the client via the NetworkingClient.
@@ -58,7 +58,7 @@ class ClientGameController : public GameController {
     void rewindAndReplay();
 
     void applyGameState(GameState& game_state);
-    void replay(uint client_tick, uint server_tick);
+    void replay(uint32_t client_tick, uint32_t server_tick);
 
     /**
      * Send client input to server
@@ -75,9 +75,9 @@ class ClientGameController : public GameController {
     bool m_headless, m_isBot;
     BotStrategy m_strategy;
     std::string m_serverIP;
-    uint m_largestAppliedGameStateTick = 0;
+    uint32_t m_largestAppliedGameStateTick = 0;
 
-    std::unordered_map<uint, InputDef::ClientInputAndTick>
+    std::unordered_map<uint32_t, InputDef::ClientInputAndTick>
         m_tickToInput; // Cache of past inputs
 
     sf::RenderWindow m_window;

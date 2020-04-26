@@ -18,8 +18,8 @@ AnimatedSprite::AnimatedSprite(sf::Texture& spritesheet_texture, sf::Vector2u sp
     m_animation(m_sprite) {
     sf::Int32 frame_count = spritesheet_size.x * spritesheet_size.y;
     sf::Vector2u texture_size = spritesheet_texture.getSize();
-    uint frame_width = texture_size.x / spritesheet_size.x;
-    uint frame_height = texture_size.y / spritesheet_size.y;
+    uint32_t frame_width = texture_size.x / spritesheet_size.x;
+    uint32_t frame_height = texture_size.y / spritesheet_size.y;
     auto size = sf::Vector2i(frame_width, frame_height);
     for (size_t j = 0; j < spritesheet_size.y; j++) {
         for (size_t i = 0; i < spritesheet_size.x; i++) {

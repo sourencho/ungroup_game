@@ -175,7 +175,7 @@ void NetworkingServer::handleUnreliableCommand(sf::Socket::Status status, sf::Pa
 }
 
 void NetworkingServer::setClientUnreliableUpdate(sf::Packet packet, int client_id,
-                                                 uint client_tick) {
+                                                 uint32_t client_tick) {
     int drift = std::abs(static_cast<int>((m_tick_ta - client_tick)));
     if (drift < CMD_DRIFT_THRESHOLD) {
         sf::Uint32 player_id;

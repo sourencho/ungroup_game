@@ -131,11 +131,11 @@ void ClientGameController::postUpdate() {
 }
 
 void ClientGameController::rewindAndReplay() {
-    uint m_newGameStateTick = m_networkingClient->getLatestGameStateTick();
+    uint32_t m_newGameStateTick = m_networkingClient->getLatestGameStateTick();
     if (m_newGameStateTick > m_largestAppliedGameStateTick) {
         GameState game_state = m_networkingClient->getLatestGameState();
-        uint client_tick = getTick();
-        uint server_tick = game_state.core.tick;
+        uint32_t client_tick = getTick();
+        uint32_t server_tick = game_state.core.tick;
         int tick_delta = client_tick - server_tick;
 
         applyGameState(game_state);
@@ -159,7 +159,7 @@ void ClientGameController::applyGameState(GameState& game_state) {
     setTick(game_state.core.tick);
 }
 
-void ClientGameController::replay(uint client_tick, uint server_tick) {
+void ClientGameController::replay(uint32_t client_tick, uint32_t server_tick) {
     int tick_delta = client_tick - server_tick;
 
     if (tick_delta <= 0) {
@@ -171,7 +171,7 @@ void ClientGameController::replay(uint client_tick, uint server_tick) {
 
     // Loop through ticks that need to be replayed and apply client input from cache if present
     for (int i = 0; i < tick_delta; ++i) {
-        uint replay_tick = server_tick + i;
+        uint32_t replay_tick = server_tick + i;
         if (m_tickToInput.count(replay_tick) > 0) {
             InputDef::ClientInputAndTick client_input_and_tick = m_tickToInput[replay_tick];
             auto pi = InputDef::PlayerInputs(m_inputController->getPlayerInputs(
