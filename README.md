@@ -71,7 +71,7 @@ cmake --build build
 
 To run tests, after building, run:
 ```
-./build/tests/ug-test
+./build/tests/ug-test "~[skip]"
 ```
 
 ## Game Engine
