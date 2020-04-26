@@ -57,8 +57,6 @@ void TerminalRenderingController::draw(
     std::unordered_map<uint32_t, float> player_ids_to_avg_tick_drifts,
     float broadcast_game_state_rate, std::vector<PlayerUpdate> player_updates, float game_step_rate,
     float game_update_rate) {
-    uint32_t curr_row = 1;
-    uint32_t curr_col;
     // clear out internal termbox screen buffer
     tb_clear();
 
@@ -78,7 +76,8 @@ void TerminalRenderingController::draw(
     m_termboxPlayerTable.setColHeaders();
 
     for (auto pu : player_updates) {
-        curr_col = 0;
+        uint32_t curr_row = 1;
+        uint32_t curr_col = 0;
         if (pu.is_active) {
             // update player ID column
             auto player_id = std::to_string(pu.player_id);
