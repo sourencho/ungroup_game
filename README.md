@@ -27,13 +27,18 @@ Created by [@sourenp](https://github.com/SourenP) and [@copacetic](https://githu
 
 ### Unix
 #### 1. Clone this repo
+```
+git clone https://github.com/SourenP/ungroup_game.git
+cd ungroup_game
+```
 #### 2. Install/Download requirements
   - [CMake](https://cmake.org/download/)
   - [SFML 2.5.1](https://www.sfml-dev.org/download/sfml/2.5.1/)
   - [Boost 1.55](https://www.boost.org/)
 #### 3. Build
 ```
-./scripts/build.sh
+cmake -S . -B build
+cmake --build build -- -j
 ```
 #### 4. Run server and client in seperate terminals
 ```
@@ -45,6 +50,10 @@ Created by [@sourenp](https://github.com/SourenP) and [@copacetic](https://githu
 
 ### Windows
 #### 1. Clone this repo
+```
+git clone https://github.com/SourenP/ungroup_game.git
+cd ungroup_game
+```
 #### 2. Install/Download requirements
   - [MinGW 32-bit](https://osdn.net/projects/mingw/releases/)
   - [CMake](https://cmake.org/download/)
@@ -60,7 +69,7 @@ cmake --build build
  .\build\src\client\ug-client.exe
 ```
 
-The server currently doesn't run on windows ([#194](https://github.com/SourenP/ungroup_game/issues/194))
+The server currently doesn't run on windows ([#194](https://github.com/SourenP/ungroup_game/issues/194)), but if it did...
 ```
 .\build\src\server\ug-server.exe
 ```
