@@ -26,16 +26,16 @@ Created by [@sourenp](https://github.com/SourenP) and [@copacetic](https://githu
 - If you are running from a remote server, you might need to open the tcp and udp ports on your machine.n
 
 ### Unix
-1. Clone this repo
-2. Install/Download requirements
+#### 1. Clone this repo
+#### 2. Install/Download requirements
   - [CMake](https://cmake.org/download/)
   - [SFML 2.5.1](https://www.sfml-dev.org/download/sfml/2.5.1/)
   - [Boost 1.55](https://www.boost.org/)
-3. Build:
+#### 3. Build
 ```
 ./scripts/build.sh
 ```
-4. Run server and client in seperate terminals:
+#### 4. Run server and client in seperate terminals
 ```
 ./build/src/server/ug-server
 ```
@@ -44,18 +44,18 @@ Created by [@sourenp](https://github.com/SourenP) and [@copacetic](https://githu
 ```
 
 ### Windows
-1. Clone this repo
-2. Install/Download requirements
+#### 1. Clone this repo
+#### 2. Install/Download requirements
   - [MinGW 32-bit](https://osdn.net/projects/mingw/releases/)
   - [CMake](https://cmake.org/download/)
   - [SFML 2.5.1 GCC 7.3.0 MinGW (DW2) - 32-bit](https://www.sfml-dev.org/download/sfml/2.5.1/)
   - [Boost 1.55](https://www.boost.org/)
-3. Build:
+#### 3. Build
 ```
 cmake -DSFML_DIR="Path/to/SFML/lib/cmake/SFML" -DBOOST_ROOT="Path/to/Boost" -G "MinGW Makefiles" -S . -B build\
 cmake --build build
 ```
-4. Run server and client in seperate terminals:
+#### 4. Run server and client in seperate terminals
 ```
  .\build\src\client\ug-client.exe
 ```
