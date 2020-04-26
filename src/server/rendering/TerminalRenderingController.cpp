@@ -75,9 +75,9 @@ void TerminalRenderingController::draw(
     m_termboxPlayerTable.setOrigin(tb_width() / 2, 0);
     m_termboxPlayerTable.setColHeaders();
 
+    uint32_t curr_row = 1;
     for (auto pu : player_updates) {
         if (pu.is_active) {
-            uint32_t curr_row = 1;
             uint32_t curr_col = 0;
             // update player ID column
             auto player_id = std::to_string(pu.player_id);
