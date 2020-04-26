@@ -20,7 +20,7 @@ Custom engine written in C++11 using the [SFML](https://www.sfml-dev.org/) frame
 
 Created by [@sourenp](https://github.com/SourenP) and [@copacetic](https://github.com/copacetic) mostly for learning purposes.
 
-## Building and Running
+## Build
 
 ### Unix
 1. Clone this repo
@@ -54,9 +54,11 @@ cmake --build build
 ```
 
 ### Notes
-- You can statically link libraries by setting the cmake flag `-GUNGROUP_STATIC=TRUE`
+- You can statically link libraries by setting the cmake flag `-DUNGROUP_STATIC=TRUE`
 
-4. Run server and client in seperate terminals:
+## Run
+
+Run server and client in seperate terminals:
 **The server currently doesn't work on windows**
 ```
 .\build\src\server\ug-server.exe
