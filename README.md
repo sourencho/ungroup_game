@@ -114,7 +114,8 @@ Features:
 - Levelling
   - Configurable levels
 - UI
-  - Configurable UI elements allignable to window edges 
+  - Clint rendered overlay with configurable elements that are allignable to window edges
+  - Server terminal ui with tables and panes that displays realtime statistics
 - Bots
   - Template for writing bots that query game state and input moves as a client
 - Events
