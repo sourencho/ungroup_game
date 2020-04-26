@@ -15,8 +15,6 @@
 sf::Time TCP_TIMEOUT = sf::milliseconds(300);
 
 NetworkingServer::NetworkingServer() : m_gameState_t() {
-    std::cout << "Starting ungroup game server." << std::endl;
-
     m_stateUdpSocketPort = createStateUdpSocket();
     m_inputUdpSocketPort = createInputUdpSocket();
 
@@ -39,6 +37,12 @@ NetworkingServer::~NetworkingServer() {
         m_stateUdpSocket_t->unbind();
     }
 
+    // disconnect any connected clients
+    for (auto& client : m_clients) {
+        sf::Uint32 client_id = client.first;
+        sf::TcpSocket& socket = *client.second;
+        socket.disconnect();
+    }
     m_stopThreads_ta = true;
 
     m_reliableRecvSend.join();
@@ -110,11 +114,11 @@ void NetworkingServer::incrementTick() {
     m_tick_ta++;
 }
 
-unsigned int NetworkingServer::getTick() const {
-    return static_cast<unsigned int>(m_tick_ta);
+uint32_t NetworkingServer::getTick() const {
+    return static_cast<uint32_t>(m_tick_ta);
 }
 
-void NetworkingServer::setTick(unsigned int tick) {
+void NetworkingServer::setTick(uint32_t tick) {
     m_tick_ta = tick;
 }
 
@@ -168,35 +172,97 @@ void NetworkingServer::handleUnreliableCommand(sf::Socket::Status status, sf::Pa
             break;
         }
         default: {
-            std::cout << "Unknown command code sent: " << unreliable_command.command << std::endl;
+            std::cerr << "Unknown command code sent: " << unreliable_command.command << std::endl;
             break;
         }
     }
 }
 
+void NetworkingServer::updateDriftMetric(uint32_t player_id, uint32_t drift) {
+    {
+        std::lock_guard<std::mutex> m_playerIdsToDriftMetric_guard(m_playerIdsToDriftMetrics_lock);
+        if (m_playerIdsToDriftMetrics_t.count(player_id) == 0) {
+            m_playerIdsToDriftMetrics_t[player_id] = new TemporalMetric{30, sf::seconds(0.5f)};
+        }
+        m_playerIdsToDriftMetrics_t[player_id]->pushCount(drift);
+        m_playerIdsToDriftMetrics_t[player_id]->update();
+    }
+}
+
+void NetworkingServer::updateUpdatesMetric(uint32_t player_id) {
+    {
+        std::lock_guard<std::mutex> m_playerIdsToUpdatesMetric_guard(
+            m_playerIdsToUpdatesMetric_lock);
+        if (m_playerIdsToUpdatesMetric_t.count(player_id) == 0) {
+            m_playerIdsToUpdatesMetric_t[player_id] = new TemporalMetric{30, sf::seconds(0.5f)};
+        }
+        m_playerIdsToUpdatesMetric_t[player_id]->pushCount();
+        m_playerIdsToUpdatesMetric_t[player_id]->update();
+    }
+}
+
+int32_t NetworkingServer::getPlayerIdFromClientId(uint32_t client_id) {
+    {
+        std::lock_guard<std::mutex> m_clientToPlayerIds_guard(m_clientToPlayerIds_lock);
+        if (m_clientToPlayerIds_t.count(client_id) == 0) {
+            return -1;
+        }
+        return m_clientToPlayerIds_t[client_id];
+    }
+}
+
 void NetworkingServer::setClientUnreliableUpdate(sf::Packet packet, int client_id,
                                                  uint32_t client_tick) {
-    int drift = std::abs(static_cast<int>((m_tick_ta - client_tick)));
+    int32_t player_id = getPlayerIdFromClientId(client_id);
+    // client ID was not found
+    if (player_id < 0) {
+        return;
+    }
+    uint32_t drift = std::abs(static_cast<int>((m_tick_ta - client_tick)));
+
+    updateDriftMetric(player_id, drift);
     if (drift < CMD_DRIFT_THRESHOLD) {
-        sf::Uint32 player_id;
-        {
-            std::lock_guard<std::mutex> m_clientToPlayerIds_guard(m_clientToPlayerIds_lock);
-            if (m_clientToPlayerIds_t.count(client_id) == 0) {
-                return;
-            }
-            player_id = m_clientToPlayerIds_t[client_id];
-        }
+        updateUpdatesMetric(player_id);
+
         InputDef::UnreliableInput unreliable_input;
         packet >> unreliable_input;
-        InputDef::PlayerUnreliableInput player_unreliable_input = {player_id, unreliable_input};
+        InputDef::PlayerUnreliableInput player_unreliable_input = {static_cast<uint32_t>(player_id),
+                                                                   unreliable_input};
         {
             std::lock_guard<std::mutex> m_playerUnreliableUpdates_guard(
                 m_playerUnreliableUpdates_lock);
             m_playerUnreliableUpdates_t.push_back(player_unreliable_input);
         }
-    } else {
-        std::cout << "Receive client_update command with tick drifted past drift threshold. "
-                  << "Drift value is: " << drift << std::endl;
+    }
+}
+
+float NetworkingServer::getBroadcastGameStateRate() {
+    {
+        std::lock_guard<std::mutex> m_playerIdsToUpdatesMetric_guard(
+            m_playerIdsToUpdatesMetric_lock);
+        return m_broadcastGameStateMetric_t.getRate(sf::seconds(1));
+    }
+}
+
+std::unordered_map<sf::Uint32, float> NetworkingServer::getPlayerUnreliableUpdatesRates() {
+    {
+        std::lock_guard<std::mutex> m_playerIdsToUpdatesMetric_guard(
+            m_playerIdsToUpdatesMetric_lock);
+        for (const auto& kv : m_playerIdsToUpdatesMetric_t) {
+            m_playerIdsToUpdatesRates_t[kv.first] = (kv.second)->getRate(sf::seconds(1));
+        }
+
+        return m_playerIdsToUpdatesRates_t;
+    }
+}
+
+std::unordered_map<sf::Uint32, float> NetworkingServer::getPlayerTickDrifts() {
+    {
+        std::lock_guard<std::mutex> m_playerIdsToDriftMetrics_guard(m_playerIdsToDriftMetrics_lock);
+        for (const auto& kv : m_playerIdsToDriftMetrics_t) {
+            m_playerIdsToDrifts_t[kv.first] = (kv.second)->getAverage();
+        }
+        return m_playerIdsToDrifts_t;
     }
 }
 
@@ -272,12 +338,12 @@ void NetworkingServer::handleReliableCommand(sf::Socket::Status status, sf::Pack
             break;
         case sf::TcpSocket::Error:
         case sf::TcpSocket::Disconnected:
-            std::cout << "Removing client due to TCP dsconnect/error." << std::endl;
+            std::cerr << "Removing client due to TCP dsconnect/error." << std::endl;
             clientDisconnect(socket, client_id);
             selector.remove(socket);
             break;
         default:
-            std::cout << "TCP client sent unkown signal." << std::endl;
+            std::cerr << "TCP client sent unkown signal." << std::endl;
             break;
     }
 }
@@ -308,7 +374,7 @@ void NetworkingServer::sendPlayerId(sf::TcpSocket& socket, sf::Uint32 client_id)
     if (packet << reliable_command << player_id) {
         socket.send(packet);
     } else {
-        std::cout << "Failed to form packet" << std::endl;
+        std::cerr << "Failed to form packet" << std::endl;
     }
 }
 
@@ -345,9 +411,8 @@ void NetworkingServer::registerClient(sf::Packet packet, sf::TcpSocket& socket,
         socket.send(response_packet);
         EventController::getInstance().queueEvent(
             std::shared_ptr<ClientConnectedEvent>(new ClientConnectedEvent(client_id)));
-        std::cout << "Received client registration. Issued client ID " << client_id << std::endl;
     } else {
-        std::cout << "Failed to form packet" << std::endl;
+        std::cerr << "Failed to form packet" << std::endl;
     }
 }
 
@@ -384,6 +449,12 @@ void NetworkingServer::sendGameState() {
                 }
             }
         }
+    }
+    {
+        std::lock_guard<std::mutex> m_playerIdsToUpdatesMetric_guard(
+            m_playerIdsToUpdatesMetric_lock);
+        m_broadcastGameStateMetric_t.pushCount();
+        m_broadcastGameStateMetric_t.update();
     }
 }
 

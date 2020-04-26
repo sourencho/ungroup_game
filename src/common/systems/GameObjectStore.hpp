@@ -31,7 +31,7 @@ class GameObjectStore {
     std::vector<std::shared_ptr<Mine>> m_mines;
 
     PhysicsController& m_physicsController;
-    unsigned int m_nextPlayerId = 0;
+    uint32_t m_nextPlayerId = 0;
 };
 
 #endif /* GameObjectStore_hpp */

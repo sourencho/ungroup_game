@@ -1,6 +1,6 @@
 {
     "gameplay": {
-        "MAX_PLAYER_COUNT": 10,
+        "MAX_PLAYER_COUNT": 50,
         "MAX_MINE_COUNT": 8,
         "GROUP_MEMBER_SIZE": 10.0,
         "MINE_SIZE": 40.0,

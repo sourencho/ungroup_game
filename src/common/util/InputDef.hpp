@@ -59,7 +59,7 @@ namespace InputDef {
     struct ClientInputAndTick {
         UnreliableInput ui;
         ReliableInput ri;
-        unsigned int tick;
+        uint32_t tick;
     };
 } // namespace InputDef
 
