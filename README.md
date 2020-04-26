@@ -22,6 +22,9 @@ Created by [@sourenp](https://github.com/SourenP) and [@copacetic](https://githu
 
 ## Build
 
+- You can statically link libraries by setting the cmake flag `-DUNGROUP_STATIC=TRUE`
+- If you are running from a remote server, you might need to open the tcp and udp ports on your machine.n
+
 ### Unix
 1. Clone this repo
 2. Install/Download requirements
@@ -52,22 +55,15 @@ Created by [@sourenp](https://github.com/SourenP) and [@copacetic](https://githu
 cmake -DSFML_DIR="Path/to/SFML/lib/cmake/SFML" -DBOOST_ROOT="Path/to/Boost" -G "MinGW Makefiles" -S . -B build\
 cmake --build build
 ```
-
-### Notes
-- You can statically link libraries by setting the cmake flag `-DUNGROUP_STATIC=TRUE`
-
-## Run
-
-Run server and client in seperate terminals:
-**The server currently doesn't work on windows**
-```
-.\build\src\server\ug-server.exe
-```
+4. Run server and client in seperate terminals:
 ```
  .\build\src\client\ug-client.exe
 ```
 
-*Note: if you are running from a remote server, you might need to open the tcp and udp ports on your machine*
+The server currently doesn't run on windows ([#194](https://github.com/SourenP/ungroup_game/issues/194))
+```
+.\build\src\server\ug-server.exe
+```
 
 ## Testing
 
