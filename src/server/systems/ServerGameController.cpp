@@ -13,10 +13,10 @@ void ServerGameController::draw() {
     auto broadcast_game_state_rate = m_networkingServer->getBroadcastGameStateRate();
     GameStateObject gso = m_gameObjectController->getGameStateObject();
     auto player_updates = gso.player_updates;
-    m_terminalRenderingController.draw(player_ids_to_updates_rates, player_ids_to_avg_tick_drifts,
-                                       broadcast_game_state_rate, player_updates,
-                                       m_gameStepMetric.getRate(sf::seconds(1)),
-                                       m_gameUpdateMetric.getRate(sf::seconds(1)));
+    m_terminalRenderingController.draw(
+        player_ids_to_updates_rates, player_ids_to_avg_tick_drifts, broadcast_game_state_rate,
+        player_updates, m_gameStepMetric.getRate(sf::seconds(1)),
+        m_gameUpdateMetric.getRate(sf::seconds(1)), m_networkingServer->getTick());
 }
 
 void ServerGameController::start() {
