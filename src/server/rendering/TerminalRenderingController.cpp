@@ -15,6 +15,7 @@ TerminalRenderingController::TerminalRenderingController() : m_termboxTextOutput
     m_termboxServerStatsTable.addColumn("Steps per second");
     m_termboxServerStatsTable.addColumn("Updates per second");
     m_termboxServerStatsTable.addColumn("Broadcasts per second");
+    m_termboxServerStatsTable.addColumn("Tick");
     m_termboxTextOutputArea.addTitle("Ungroup Server Output");
 }
 
@@ -56,7 +57,7 @@ void TerminalRenderingController::draw(
     std::unordered_map<uint32_t, float> player_ids_to_updates_rates,
     std::unordered_map<uint32_t, float> player_ids_to_avg_tick_drifts,
     float broadcast_game_state_rate, std::vector<PlayerUpdate> player_updates, float game_step_rate,
-    float game_update_rate) {
+    float game_update_rate, uint32_t tick) {
     // clear out internal termbox screen buffer
     tb_clear();
 
@@ -70,6 +71,7 @@ void TerminalRenderingController::draw(
     m_termboxServerStatsTable.setCell(std::to_string(game_step_rate), 1, 0);
     m_termboxServerStatsTable.setCell(std::to_string(game_update_rate), 1, 1);
     m_termboxServerStatsTable.setCell(std::to_string(broadcast_game_state_rate), 1, 2);
+    m_termboxServerStatsTable.setCell(std::to_string(tick), 1, 3);
 
     // player table will be on right half of screen
     m_termboxPlayerTable.setOrigin(tb_width() / 2, 0);

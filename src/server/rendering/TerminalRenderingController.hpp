@@ -21,7 +21,7 @@ class TerminalRenderingController {
     void draw(std::unordered_map<uint32_t, float> player_ids_to_updates_rates,
               std::unordered_map<uint32_t, float> player_ids_to_avg_tick_drifts,
               float broadcast_game_state_rate, std::vector<PlayerUpdate> player_updates,
-              float game_step_rate, float game_update_rate);
+              float game_step_rate, float game_update_rate, uint32_t tick);
 
     void preUpdate();
     void update();
