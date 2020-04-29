@@ -20,7 +20,7 @@
 class NetworkingClient {
 
   public:
-    NetworkingClient(const std::string& server_ip);
+    NetworkingClient(const std::string& server_ip, uint32_t server_tcp_port);
     ~NetworkingClient();
 
     /**

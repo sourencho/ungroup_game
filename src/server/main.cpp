@@ -13,6 +13,7 @@ int main(int argc, char** argv) {
         cxxopts::Options options("Ungroup Server",
                                  "The server for Ungroup - a game about temporary allainces.");
         options.add_options()("h,help", "Displays options.")(
+            "p,port", "The TCP port to listen on.", cxxopts::value<int>())(
             "l,level", "Loads a level. Options are mine_ring, empty.", cxxopts::value<int>());
         auto result = options.parse(argc, argv);
 
@@ -28,7 +29,12 @@ int main(int argc, char** argv) {
             level = static_cast<LevelKey>(result["level"].as<int>());
         }
 
-        ServerGameController server_game_controller(level);
+        bool tcp_port_opt_present = result.count("port");
+        uint32_t tcp_port = GAME_SETTINGS.SERVER_TCP_PORT;
+        if (tcp_port_opt_present) {
+            tcp_port = result["port"].as<int>();
+        }
+        ServerGameController server_game_controller(level, tcp_port);
         server_game_controller.start();
         return EXIT_SUCCESS;
     } catch (const cxxopts::OptionException& e) {

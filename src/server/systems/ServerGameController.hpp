@@ -15,7 +15,7 @@
 
 class ServerGameController : public GameController {
   public:
-    explicit ServerGameController(LevelKey level_key = LevelKey::mine_ring);
+    explicit ServerGameController(LevelKey level_key = LevelKey::mine_ring, uint32_t tcp_port = GAME_SETTINGS.SERVER_TCP_PORT);
     ~ServerGameController();
 
     void start() override;

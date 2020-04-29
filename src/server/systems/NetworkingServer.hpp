@@ -26,7 +26,7 @@ class NetworkingServer {
     const uint32_t CMD_DRIFT_THRESHOLD = 7;
 
   public:
-    NetworkingServer();
+    NetworkingServer(uint32_t tcp_port);
     ~NetworkingServer();
 
     InputDef::PlayerInputs collectClientInputs();
@@ -118,6 +118,8 @@ class NetworkingServer {
     sf::Uint32 m_clientIdCounter = 0;
 
     std::atomic<uint32_t> m_tick_ta{0};
+
+    uint32_t m_tcpPort;
 };
 
 #endif /* NetworkingServer_hpp */
