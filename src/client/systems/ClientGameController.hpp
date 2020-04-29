@@ -22,6 +22,7 @@ class ClientGameController : public GameController {
     explicit ClientGameController(bool is_headless = false, bool is_bot = false,
                                   BotStrategy strategy = BotStrategy::Random,
                                   const std::string& server_ip = GAME_SETTINGS.LOCALHOST_IP,
+                                  uint32_t server_tcp_port = GAME_SETTINGS.SERVER_TCP_PORT,
                                   LevelKey level_key = LevelKey::empty);
     ~ClientGameController();
 

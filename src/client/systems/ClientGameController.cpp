@@ -11,10 +11,10 @@
 #include "ClientGameController.hpp"
 
 ClientGameController::ClientGameController(bool is_headless, bool is_bot, BotStrategy strategy,
-                                           const std::string& server_ip, LevelKey level_key) :
+                                           const std::string& server_ip, uint32_t server_tcp_port, LevelKey level_key) :
     m_headless(is_headless),
     m_isBot(is_bot), m_strategy(strategy), m_serverIP(server_ip), GameController(level_key),
-    m_networkingClient(new NetworkingClient(m_serverIP)) {
+    m_networkingClient(new NetworkingClient(m_serverIP, server_tcp_port)) {
 }
 
 ClientGameController::~ClientGameController() {

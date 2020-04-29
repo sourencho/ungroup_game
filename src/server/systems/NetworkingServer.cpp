@@ -14,7 +14,7 @@
 
 sf::Time TCP_TIMEOUT = sf::milliseconds(300);
 
-NetworkingServer::NetworkingServer() : m_gameState_t() {
+NetworkingServer::NetworkingServer(uint32_t tcp_port) : m_gameState_t(), m_tcpPort(tcp_port) {
     m_stateUdpSocketPort = createStateUdpSocket();
     m_inputUdpSocketPort = createInputUdpSocket();
 
@@ -272,7 +272,7 @@ void NetworkingServer::reliableRecvSend() {
     // Create a socket to listen to new connections
     sf::TcpListener listener;
     // Reliable socket
-    listener.listen(GAME_SETTINGS.SERVER_TCP_PORT);
+    listener.listen(m_tcpPort);
 
     // Create a selector
     sf::SocketSelector selector;
