@@ -15,7 +15,7 @@
 
 class TerminalRenderingController {
   public:
-    TerminalRenderingController();
+    TerminalRenderingController(uint32_t tcp_port);
     ~TerminalRenderingController(){};
 
     void draw(std::unordered_map<uint32_t, float> player_ids_to_updates_rates,
