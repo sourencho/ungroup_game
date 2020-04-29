@@ -1,6 +1,6 @@
 #include "TerminalRenderingController.hpp"
 
-TerminalRenderingController::TerminalRenderingController() : m_termboxTextOutputArea(10) {
+TerminalRenderingController::TerminalRenderingController(uint32_t tcp_port) : m_termboxTextOutputArea(10) {
     // termbox setup
     int ret = tb_init();
     if (ret) {
@@ -17,6 +17,7 @@ TerminalRenderingController::TerminalRenderingController() : m_termboxTextOutput
     m_termboxServerStatsTable.addColumn("Broadcasts per second");
     m_termboxServerStatsTable.addColumn("Tick");
     m_termboxTextOutputArea.addTitle("Ungroup Server Output");
+    m_termboxTextOutputArea.addLine("Listening on TCP Port: " + std::to_string(tcp_port));
 }
 
 void TerminalRenderingController::preUpdate() {

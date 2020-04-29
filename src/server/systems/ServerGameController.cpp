@@ -1,7 +1,7 @@
 #include "ServerGameController.hpp"
 
 ServerGameController::ServerGameController(LevelKey level_key, uint32_t tcp_port) :
-    GameController(level_key), m_networkingServer(new NetworkingServer(tcp_port)) {
+    GameController(level_key), m_terminalRenderingController(tcp_port), m_networkingServer(new NetworkingServer(tcp_port)) {
 }
 
 ServerGameController::~ServerGameController() {
