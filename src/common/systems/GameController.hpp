@@ -52,8 +52,8 @@ class GameController {
     sf::Int32 m_elapsedTime = 0;
     sf::Int32 m_timeAccumulator = 0;
 
-    TemporalMetric m_gameStepMetric{120, sf::seconds(0.5f)};
-    TemporalMetric m_gameUpdateMetric{120, sf::seconds(0.5f)};
+    TemporalMetric m_gameStepMetric{30, sf::seconds(0.5f)};
+    TemporalMetric m_gameUpdateMetric{30, sf::seconds(0.5f)};
 
     GameStateCore m_gameStateCore;
 };

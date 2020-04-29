@@ -20,19 +20,27 @@ Custom engine written in C++11 using the [SFML](https://www.sfml-dev.org/) frame
 
 Created by [@sourenp](https://github.com/SourenP) and [@copacetic](https://github.com/copacetic) mostly for learning purposes.
 
-## Building and Running
+## Build
 
+- You can statically link libraries by setting the cmake flag `-DUNGROUP_STATIC=TRUE`
+- If you are running from a remote server, you might need to open the tcp and udp ports on your machine.n
 
 ### Unix
-1. Clone this repo
-2. Install requirements
+#### 1. Clone this repo
+```
+git clone https://github.com/SourenP/ungroup_game.git
+cd ungroup_game
+```
+#### 2. Install/Download requirements
+  - [CMake](https://cmake.org/download/)
   - [SFML 2.5.1](https://www.sfml-dev.org/download/sfml/2.5.1/)
-  - [Boost 1.65](https://www.boost.org/)
-3. Build:
+  - [Boost 1.55](https://www.boost.org/)
+#### 3. Build
 ```
-./scripts/build.sh
+cmake -S . -B build
+cmake --build build -- -j
 ```
-4. Run server and client in seperate terminals:
+#### 4. Run server and client in seperate terminals
 ```
 ./build/src/server/ug-server
 ```
@@ -40,13 +48,38 @@ Created by [@sourenp](https://github.com/SourenP) and [@copacetic](https://githu
 ./build/src/client/ug-client
 ```
 
-*Note: if you are running from a remote server, you might need to open the tcp and udp ports on your machine*
+### Windows
+#### 1. Clone this repo
+```
+git clone https://github.com/SourenP/ungroup_game.git
+cd ungroup_game
+```
+#### 2. Install/Download requirements
+  - [MinGW 32-bit](https://osdn.net/projects/mingw/releases/)
+  - [CMake](https://cmake.org/download/)
+  - [SFML 2.5.1 GCC 7.3.0 MinGW (DW2) - 32-bit](https://www.sfml-dev.org/download/sfml/2.5.1/)
+  - [Boost 1.55](https://www.boost.org/)
+#### 3. Build
+The server currently doesn't build on windows ([#194](https://github.com/SourenP/ungroup_game/issues/194))
+```
+cmake -DSFML_DIR="Path/to/SFML/lib/cmake/SFML" -DBOOST_ROOT="Path/to/Boost" -G "MinGW Makefiles" -S . -B build\
+cmake --build build
+```
+#### 4. Run server and client in seperate terminals
+```
+ .\build\src\client\ug-client.exe
+```
+
+The server currently doesn't run on windows ([#194](https://github.com/SourenP/ungroup_game/issues/194))
+```
+.\build\src\server\ug-server.exe
+```
 
 ## Testing
 
 To run tests, after building, run:
 ```
-./build/tests/ug-test
+./build/tests/ug-test "~[skip]"
 ```
 
 ## Game Engine
@@ -81,7 +114,8 @@ Features:
 - Levelling
   - Configurable levels
 - UI
-  - Configurable UI elements allignable to window edges 
+  - Clint rendered overlay with configurable elements that are allignable to window edges
+  - Server terminal ui with tables and panes that displays realtime statistics
 - Bots
   - Template for writing bots that query game state and input moves as a client
 - Events
@@ -108,6 +142,10 @@ Create a new [release](https://github.com/SourenP/ungroup_game/releases) and wri
 - Add tests for a file in a mirror directory under `tests/`.
 - Test file should be named `tests-<FileName>.cpp`
 - Add a [test tag](https://github.com/catchorg/Catch2/blob/67b4ada6b0fbe98368df934e1378aeae1ba7f235/docs/test-cases-and-sections.md#tags) for each subdirectory and the file name.
+
+### Todo
+
+`todo(username|#issue|date): description`
 
 ### Style
 - We use [ClangFormat](https://clang.llvm.org/docs/ClangFormat.html). You can use the [xaver.clang-format](https://marketplace.visualstudio.com/items?itemName=xaver.clang-format) VSCode extension to automatically format.

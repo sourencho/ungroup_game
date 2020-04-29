@@ -30,16 +30,21 @@ class NetworkingClient {
     uint32_t registerClientAndFetchPlayerId();
 
     /**
-     * Get last game state recieved from the server.
+     * Get copy of latest game state recieved from the server.
+     * Note that since game state packets can come out of order this value won't always be the
+     * latest game state on the server.
      */
-    GameState getGameState();
+    GameState getLatestGameState();
+
+    /**
+     * Get latest game state tick.
+     * Note that since game state packets can come out of order this value won't always be the
+     * latest game state tick on the server.
+     */
+    uint32_t getLatestGameStateTick();
 
     int getClientId() const;
 
-    /**
-     * Bool indicating whether getGameState will return a new game state or one already fetched.
-     */
-    bool getGameStateIsFresh() const;
     /**
      * Push an unreliable input onto the stack to be sent to the server.
      */
@@ -51,8 +56,8 @@ class NetworkingClient {
     void pushReliableInput(InputDef::ReliableInput reliable_input);
 
     void incrementTick();
-    uint getTick() const;
-    void setTick(uint tick);
+    uint32_t getTick() const;
+    void setTick(uint32_t tick);
 
   private:
     // Sockets
@@ -117,8 +122,7 @@ class NetworkingClient {
 
     // Misc
     std::atomic<int> m_clientId_ta{-1};
-    std::atomic<uint> m_tick_ta{0};
-    std::atomic<bool> m_gameStateIsFresh_ta{true};
+    std::atomic<uint32_t> m_tick_ta{0};
 
     std::mutex m_gameState_lock;
     GameState m_gameState_t;

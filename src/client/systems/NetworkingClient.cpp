@@ -143,8 +143,8 @@ void NetworkingClient::readRegistrationResponse() {
     if (status == sf::Socket::Done) {
         if (registration_response >> reliable_command &&
             reliable_command.command == ReliableCommandType::register_client) {
-            m_clientId_ta = static_cast<uint>(reliable_command.client_id);
-            m_tick_ta = static_cast<uint>(reliable_command.tick);
+            m_clientId_ta = static_cast<uint32_t>(reliable_command.client_id);
+            m_tick_ta = static_cast<uint32_t>(reliable_command.tick);
             registration_response >> m_serverInputUdpPort >> m_serverStateUdpPort;
             std::cout << "Registered as client " << m_clientId_ta << " at tick " << m_tick_ta
                       << std::endl
@@ -156,10 +156,14 @@ void NetworkingClient::readRegistrationResponse() {
     throw std::runtime_error("Failed to register.");
 }
 
-GameState NetworkingClient::getGameState() {
+GameState NetworkingClient::getLatestGameState() {
     std::lock_guard<std::mutex> m_gameState_guard(m_gameState_lock);
-    m_gameStateIsFresh_ta = false;
     return m_gameState_t;
+}
+
+uint32_t NetworkingClient::getLatestGameStateTick() {
+    std::lock_guard<std::mutex> m_gameState_guard(m_gameState_lock);
+    return m_gameState_t.core.tick;
 }
 
 void NetworkingClient::pushUnreliableInput(InputDef::UnreliableInput unreliable_input) {
@@ -176,19 +180,15 @@ int NetworkingClient::getClientId() const {
     return m_clientId_ta;
 }
 
-bool NetworkingClient::getGameStateIsFresh() const {
-    return m_gameStateIsFresh_ta;
-}
-
 void NetworkingClient::incrementTick() {
     m_tick_ta++;
 }
 
-uint NetworkingClient::getTick() const {
+uint32_t NetworkingClient::getTick() const {
     return m_tick_ta;
 }
 
-void NetworkingClient::setTick(uint tick) {
+void NetworkingClient::setTick(uint32_t tick) {
     m_tick_ta = tick;
 }
 
@@ -264,7 +264,6 @@ void NetworkingClient::unreliableRecv() {
             packet >> game_state;
             std::lock_guard<std::mutex> m_gameState_guard(m_gameState_lock);
             m_gameState_t = game_state;
-            m_gameStateIsFresh_ta = true;
         }
 
         std::this_thread::sleep_for(GAME_SETTINGS.CLIENT_UNRELIABLE_RECV_SLEEP);
