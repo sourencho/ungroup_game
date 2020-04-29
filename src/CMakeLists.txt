@@ -1,3 +1,10 @@
 add_subdirectory(common)
-add_subdirectory(client)
-add_subdirectory(server)
+
+IF(ONLY_CLEINT)
+    add_subdirectory(client)
+ELSEIF(ONLY_SERVER)
+    add_subdirectory(server)
+ELSE()
+    add_subdirectory(client)
+    add_subdirectory(server)
+ENDIF()

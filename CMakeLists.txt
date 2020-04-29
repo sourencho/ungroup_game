@@ -30,4 +30,7 @@ add_subdirectory(src)
 add_subdirectory(extern/catch)
 add_subdirectory(extern/cxxopts)
 add_subdirectory(extern/termbox)
-add_subdirectory(tests)
+
+IF(BUILD_TESTS)
+    add_subdirectory(tests)
+ENDIF()
