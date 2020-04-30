@@ -15,6 +15,7 @@ RenderingController::RenderingController(sf::RenderWindow& window, GameObjectCon
                          m_gameObjectController.getPlayerController(), m_playerId),
     m_guiController(m_window.getSize(), m_resourceStore), m_headless(headless) {
     m_window.setFramerateLimit(RenderingDef::WINDOW_FRAME_LIMIT);
+    m_window.setVerticalSyncEnabled(RenderingDef::VSYNC_ENABLED);
     sf::Vector2f window_size = sf::Vector2f(m_window.getSize());
 
     // Create buffer to draw game onto. Buffer can be scaled to give pixelated effect
@@ -29,7 +30,7 @@ RenderingController::RenderingController(sf::RenderWindow& window, GameObjectCon
     // Create views to draw GUI and player view
     m_windowView = sf::View(window_size / 2.f, window_size);
     m_playerView = sf::View({}, sf::Vector2f(m_window.getSize()));
-    m_playerView.setCenter(0, 0);
+    m_playerView.setCenter(GAME_SETTINGS.GAME_SIZE * 2.f);
 
     // Connecting text parameters
     m_connectingText.setFont(*m_resourceStore.getFont(RenderingDef::FontKey::monogram));
@@ -62,8 +63,10 @@ void RenderingController::postUpdate(sf::Int32 update_time, const UIData& ui_dat
     m_uiData = ui_data;
     m_guiController.update(m_uiData);
 
-    auto player_position = m_gameObjectController.getPlayerPosition(m_playerId);
     updateCamera(update_time);
+
+    // todo(sourenp|#199|2020-04-29) Reenable background update issue with player jitter resolved
+    // auto player_position = m_gameObjectController.getPlayerPosition(m_playerId);
     // m_backgroundController.update(player_position);
 }
 
@@ -71,11 +74,10 @@ void RenderingController::updateCamera(sf::Int32 delta_ms) {
     auto player_position = m_gameObjectController.getPlayerPosition(m_playerId);
     sf::Vector2f player_position_in_view = RenderingUtil::mapCoordToPixelScaled(
         player_position, m_window, m_windowView, RenderingDef::GAME_SCALING_FACTOR);
-
-    float distance = VectorUtil::distance(m_playerView.getCenter(), player_position_in_view);
-    m_playerView.setCenter(VectorUtil::lerp(m_playerView.getCenter(), player_position_in_view,
-                                            std::pow(1.f - 0.2, delta_ms)));
-    std::cout << delta_ms << std::endl;
+    m_playerView.setCenter(VectorUtil::lerp(
+        m_playerView.getCenter(), player_position_in_view,
+        VectorUtil::clamp((RenderingDef::CAMERA_CHASE * GAME_SETTINGS.MIN_TIME_STEP_SEC) * delta_ms,
+                          0, 1)));
 }
 
 void RenderingController::draw() {

@@ -20,7 +20,7 @@
 class GameController {
   public:
     // Game state is stepped at least every <MIN_TIME_STEP> milliseconds.
-    sf::Int32 MIN_TIME_STEP = (sf::Int32)((1 / 60.) * 1000.);
+    sf::Int32 MIN_TIME_STEP = (sf::Int32)(GAME_SETTINGS.MIN_TIME_STEP_SEC * 1000.);
 
     explicit GameController(LevelKey level_key);
     ~GameController();
