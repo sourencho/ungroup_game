@@ -52,7 +52,7 @@ void ServerGameController::update(const InputDef::PlayerInputs& pi, sf::Int32 de
     }
 }
 
-void ServerGameController::postUpdate() {
+void ServerGameController::postUpdate(sf::Int32 update_time) {
 
     switch (m_gameStateCore.status) {
         case GameStatus::not_started: {

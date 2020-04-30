@@ -32,6 +32,7 @@ void GameController::step() {
     // Take a variable amount of game state steps depending on how long the last frame took
     sf::Int32 frame_time = m_clock.restart().asMilliseconds();
     m_timeAccumulator += frame_time;
+    sf::Int32 update_time = 0;
     while (m_timeAccumulator >= MIN_TIME_STEP) {
         update(pi, MIN_TIME_STEP);
 
@@ -47,9 +48,10 @@ void GameController::step() {
 
         m_timeAccumulator -= MIN_TIME_STEP;
         m_elapsedTime += MIN_TIME_STEP;
+        update_time += MIN_TIME_STEP;
     }
     m_gameStepMetric.pushCount();
-    postUpdate();
+    postUpdate(update_time);
 }
 
 void GameController::computeGameState(const InputDef::PlayerInputs& pi, sf::Int32 delta_ms) {

@@ -24,6 +24,8 @@ GameSettings load_game_setting_globals(const std::string& path) {
     uint32_t TOTAL_RESOURCE_REQUIREMENTS =
         j["gameplay"]["TOTAL_RESOURCE_REQUIREMENTS"].get<uint32_t>();
 
+    float MIN_TIME_STEP_SEC = j["physics"]["MIN_TIME_STEP_SEC"].get<float>();
+
     std::chrono::milliseconds CLIENT_FETCH_PLAYER_ID_SLEEP(
         j["threads"]["CLIENT_FETCH_PLAYER_ID_SLEEP"].get<uint32_t>());
     std::chrono::milliseconds SERVER_INPUT_WINDOW_SLEEP(
@@ -66,6 +68,7 @@ GameSettings load_game_setting_globals(const std::string& path) {
         .GAME_CENTER = GAME_CENTER,
         .GAME_SIZE = GAME_SIZE,
         .TOTAL_RESOURCE_REQUIREMENTS = TOTAL_RESOURCE_REQUIREMENTS,
+        .MIN_TIME_STEP_SEC = MIN_TIME_STEP_SEC,
         .CLIENT_FETCH_PLAYER_ID_SLEEP = CLIENT_FETCH_PLAYER_ID_SLEEP,
         .SERVER_INPUT_WINDOW_SLEEP = SERVER_INPUT_WINDOW_SLEEP,
         .CLIENT_RELIABLE_SEND_SLEEP = CLIENT_RELIABLE_SEND_SLEEP,

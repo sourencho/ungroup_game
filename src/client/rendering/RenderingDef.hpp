@@ -9,6 +9,7 @@
 
 namespace RenderingDef {
     const uint32_t WINDOW_FRAME_LIMIT = 60;
+    const bool VSYNC_ENABLED = true;
     const sf::Vector2f WINDOW_RESOLUTION(1200, 900);
     const float GAME_SCALE = 4.f;
     const sf::Vector2f GAME_SCALING_FACTOR(GAME_SCALE, GAME_SCALE);
@@ -36,6 +37,9 @@ namespace RenderingDef {
         float top;
         float bottom;
     };
+
+    /* Camera */
+    const float CAMERA_CHASE = 0.2;
 
     /* Debug */
     const bool RENDER_DEBUG = true;
