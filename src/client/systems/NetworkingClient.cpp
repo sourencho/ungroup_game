@@ -14,11 +14,12 @@
 
 const sf::Time CLIENT_TCP_TIMEOUT = sf::milliseconds(300);
 
-NetworkingClient::NetworkingClient(const std::string& server_ip) :
+NetworkingClient::NetworkingClient(const std::string& server_ip, uint32_t server_tcp_port) :
     m_gameState_t({}), m_serverIp(server_ip) {
     std::cout << "Starting client." << std::endl;
 
-    createTcpSocket(GAME_SETTINGS.SERVER_TCP_PORT);
+    std::cout << "Server reliable port is: " << server_tcp_port << std::endl;
+    createTcpSocket(server_tcp_port);
 
     createInputUdpSocket();
     createStateUdpSocket();
