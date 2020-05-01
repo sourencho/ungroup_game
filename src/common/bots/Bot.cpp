@@ -6,10 +6,23 @@ Bot::Bot(){};
  * Once it has enough of a resource, it will move to the next closest mine with a resource it needs.
  */
 std::pair<InputDef::ReliableInput, InputDef::UnreliableInput>
-Bot::getNearestGreedyMove(std::vector<std::shared_ptr<Mine>> mines,
-                          std::array<uint32_t, RESOURCE_TYPE_COUNT> current_resources,
-                          sf::Vector2f bot_center,
-                          std::unordered_map<uint32_t, uint32_t> mine_id_to_resource_count) {
+Bot::getNearestGreedyMove(uint32_t bot_player_id, GameObjectController& goc) {
+    auto gso = goc.getGameStateObject();
+    auto bot_center = goc.getPlayerPosition(bot_player_id);
+    auto resource_controller = goc.getResourceController();
+    auto& player_controller = goc.getPlayerController();
+    auto current_resources = resource_controller.get(bot_player_id);
+    auto mines = (goc.getMineController()).getMines();
+
+    auto bot_player = player_controller.getPlayer(bot_player_id);
+    auto& bot_win_condition = bot_player->getWinCondition();
+    auto resource_counts_to_win = bot_win_condition.getResourceCountsToWin();
+    std::unordered_map<uint32_t, uint32_t> mine_id_to_resource_count;
+    for (auto mine : mines) {
+        auto mine_id = mine->getId();
+        mine_id_to_resource_count[mine_id] =
+            resource_controller.get(mine_id, mine->getResourceType());
+    }
     std::sort(mines.begin(), mines.end(),
               [bot_center](std::shared_ptr<Mine> mine_a, std::shared_ptr<Mine> mine_b) {
                   auto dist_a = VectorUtil::distance(bot_center, mine_a->getCenter());
@@ -19,9 +32,9 @@ Bot::getNearestGreedyMove(std::vector<std::shared_ptr<Mine>> mines,
 
     for (auto& mine : mines) {
         auto curr_mine_id = mine->getId();
-        // TODO(souren): Change this conditional to use win condition instead of mine resource count
         if (mine_id_to_resource_count[curr_mine_id] != 0 &&
-            current_resources[mine->getResourceType()] != GAME_SETTINGS.MINE_RESOURCE_COUNT) {
+            (current_resources[mine->getResourceType()] <
+             resource_counts_to_win[mine->getResourceType()])) {
             // move towards this mine since it's closest and has a resource we need
             auto direction_to_mine = VectorUtil::getVector(bot_center, mine->getCenter());
             return InputUtil::vectorToNearestMove(direction_to_mine);
@@ -55,16 +68,13 @@ std::pair<InputDef::ReliableInput, InputDef::UnreliableInput> Bot::getRandomMove
 }
 
 std::pair<InputDef::ReliableInput, InputDef::UnreliableInput>
-Bot::getMove(BotStrategy strategy, const std::vector<std::shared_ptr<Mine>>& mines,
-             std::array<uint32_t, RESOURCE_TYPE_COUNT> current_resources, sf::Vector2f bot_center,
-             const std::unordered_map<uint32_t, uint32_t>& mine_id_to_resource_count) {
+Bot::getMove(uint32_t bot_player_id, BotStrategy strategy, GameObjectController& goc) {
     switch (strategy) {
         case BotStrategy::Random:
             return getRandomMove();
             break;
         case BotStrategy::NearestGreedy:
-            return getNearestGreedyMove(mines, current_resources, bot_center,
-                                        mine_id_to_resource_count);
+            return getNearestGreedyMove(bot_player_id, goc);
             break;
         default:
             std::cerr << "Unimplemented strategy passed to bot. Returning random move."

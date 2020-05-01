@@ -4,7 +4,6 @@
 #include <memory>
 #include <unordered_map>
 
-#include "../bots/Bot.hpp"
 #include "../physics/PhysicsController.hpp"
 #include "../util/StateDef.hpp"
 #include "../util/game_def.hpp"
@@ -34,10 +33,6 @@ class GameObjectController {
     ResourceController& getResourceController();
     PlayerController& getPlayerController();
 
-    // bot methods
-    std::pair<InputDef::ReliableInput, InputDef::UnreliableInput> getBotMove(uint32_t bot_player_id,
-                                                                             BotStrategy strategy);
-
   private:
     void addEventListeners();
     void handleClientConnectedEvent(std::shared_ptr<Event> event);
@@ -50,8 +45,6 @@ class GameObjectController {
     GroupController m_groupController;
     MineController m_mineController;
     LevelController m_levelController;
-
-    Bot m_bot;
 };
 
 #endif /* GameObjectController_hpp */

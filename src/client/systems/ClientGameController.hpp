@@ -8,6 +8,7 @@
 #include <unordered_map>
 #include <vector>
 
+#include "../../common/bots/Bot.hpp"
 #include "../../common/systems/GameController.hpp"
 #include "../rendering/Animation.hpp"
 #include "../rendering/AnimationController.hpp"
@@ -38,6 +39,8 @@ class ClientGameController : public GameController {
 
     // Methods
 
+    std::pair<InputDef::ReliableInput, InputDef::UnreliableInput> getBotMove(uint32_t bot_player_id,
+                                                                             BotStrategy strategy);
     uint32_t getTick();
     void setTick(uint32_t tick);
 
@@ -75,6 +78,7 @@ class ClientGameController : public GameController {
     uint32_t m_playerId = 0;
     bool m_headless, m_isBot;
     BotStrategy m_strategy;
+    Bot m_bot;
     std::string m_serverIP;
     uint32_t m_largestAppliedGameStateTick = 0;
 

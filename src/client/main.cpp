@@ -15,8 +15,8 @@ int main(int argc, char** argv) {
         options.add_options()("h,help", "Displays options.")(
             "x,headless", "Runs game without updating window.")("b,bot", "Runs game using a bot.")(
             "a,server-ip", "The server's IP address in CIDR notation (ex. 127.0.0.1)",
-            cxxopts::value<std::string>())(
-            "p,port", "The TCP port to connect to.", cxxopts::value<int>())(
+            cxxopts::value<std::string>())("p,port", "The TCP port to connect to.",
+                                           cxxopts::value<int>())(
             "s,strategy", "Runs game using specified strategy. Options are Random, NearestGreedy.",
             cxxopts::value<int>());
         auto result = options.parse(argc, argv);
@@ -47,7 +47,8 @@ int main(int argc, char** argv) {
         if (tcp_port_opt_present) {
             tcp_port = result["port"].as<int>();
         }
-        ClientGameController client_game_controller(is_headless, is_bot, strategy, server_ip, tcp_port);
+        ClientGameController client_game_controller(is_headless, is_bot, strategy, server_ip,
+                                                    tcp_port);
         client_game_controller.start();
         return EXIT_SUCCESS;
     } catch (const cxxopts::OptionException& e) {

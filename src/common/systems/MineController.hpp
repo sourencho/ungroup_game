@@ -16,6 +16,9 @@ class MineController {
     uint32_t createMine(sf::Vector2f center_position);
     void update();
     Mine& getMine(uint32_t mine_id);
+    std::vector<std::shared_ptr<Mine>>& getMines() {
+        return m_mines;
+    };
     std::vector<uint32_t> getMineIds();
 
   private:
