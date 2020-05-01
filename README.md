@@ -27,7 +27,7 @@ Created by [@sourenp](https://github.com/SourenP) and [@copacetic](https://githu
 
 ### Cmake variables
 
-- Set a variable by adding the arg `-GFLAG_NAME=TRUE` to cmake
+- Set a variable by adding the arg `-GVAR_NAME=TRUE` to cmake
 
 | Variable  | Meaning |
 | ------------- | ------------- |
