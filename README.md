@@ -23,7 +23,18 @@ Created by [@sourenp](https://github.com/SourenP) and [@copacetic](https://githu
 ## Build
 
 - You can statically link libraries by setting the cmake flag `-DUNGROUP_STATIC=TRUE`
-- If you are running from a remote server, you might need to open the tcp and udp ports on your machine.n
+- If you are running from a remote server, you might need to open the tcp and udp ports on your machine.
+
+### Cmake variables
+
+- Set a variable by adding the arg `-GVAR_NAME=TRUE` to cmake
+
+| Variable  | Meaning |
+| ------------- | ------------- |
+| UNGROUP_STATIC | Statically link SFML  |
+| BUILD_TESTS  | Build tests  |
+| ONLY_SERVER  | Only build server  |
+| ONLY_CLIENT  | Only build client  |
 
 ### Unix
 #### 1. Clone this repo
@@ -62,7 +73,7 @@ cd ungroup_game
 #### 3. Build
 The server currently doesn't build on windows ([#194](https://github.com/SourenP/ungroup_game/issues/194))
 ```
-cmake -DSFML_DIR="Path/to/SFML/lib/cmake/SFML" -DBOOST_ROOT="Path/to/Boost" -G "MinGW Makefiles" -S . -B build\
+cmake -DONLY_CLIENT=TRUE -DSFML_DIR="Path/to/SFML/lib/cmake/SFML" -DBOOST_ROOT="Path/to/Boost" -G "MinGW Makefiles" -S . -B build\
 cmake --build build
 ```
 #### 4. Run server and client in seperate terminals
@@ -77,7 +88,8 @@ The server currently doesn't run on windows ([#194](https://github.com/SourenP/u
 
 ## Testing
 
-To run tests, after building, run:
+- Build with the cmake flag `-GBUILD_TESTS=TRUE`
+- Run tests
 ```
 ./build/tests/ug-test "~[skip]"
 ```
@@ -100,7 +112,7 @@ Features:
   - Multi threaded UDP/TCP communication between server and client
   - Reliable (TCP) and Unreliable (UDP) client inputs sent to server
   - Unreliable (UDP) game state broadcasted to client
-  - Works locally and over the internet 
+  - Works locally and over the internet
 - Interpolation
   - Snapshot interpolation
 - Rendering
@@ -114,7 +126,7 @@ Features:
 - Levelling
   - Configurable levels
 - UI
-  - Clint rendered overlay with configurable elements that are allignable to window edges
+  - Client HUD with configurable elements that are allignable to window edges
   - Server terminal ui with tables and panes that displays realtime statistics
 - Bots
   - Template for writing bots that query game state and input moves as a client
