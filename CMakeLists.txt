@@ -26,8 +26,12 @@ find_package(SFML 2.5.1 COMPONENTS system window graphics network audio REQUIRED
 # find boost
 find_package(Boost 1.55 COMPONENTS REQUIRED)
 
-add_subdirectory(src)
 add_subdirectory(extern/catch)
 add_subdirectory(extern/cxxopts)
 add_subdirectory(extern/termbox)
-add_subdirectory(tests)
+
+add_subdirectory(src)
+
+IF(BUILD_TESTS)
+    add_subdirectory(tests)
+ENDIF()
