@@ -72,7 +72,7 @@ cd ungroup_game
 #### 3. Build
 The server currently doesn't build on windows ([#194](https://github.com/SourenP/ungroup_game/issues/194))
 ```
-cmake -DONLY_CLIENT -DSFML_DIR="Path/to/SFML/lib/cmake/SFML" -DBOOST_ROOT="Path/to/Boost" -G "MinGW Makefiles" -S . -B build\
+cmake -DONLY_CLIENT=TRUE -DSFML_DIR="Path/to/SFML/lib/cmake/SFML" -DBOOST_ROOT="Path/to/Boost" -G "MinGW Makefiles" -S . -B build\
 cmake --build build
 ```
 #### 4. Run server and client in seperate terminals
@@ -86,6 +86,8 @@ The server currently doesn't run on windows ([#194](https://github.com/SourenP/u
 ```
 
 ## Testing
+
+- Build with the flag `-GBUILD_TESTS=TRUE`
 
 To run tests, after building, run:
 ```
