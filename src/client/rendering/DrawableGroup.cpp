@@ -34,10 +34,11 @@ void DrawableGroup::drawDirectionLines(sf::RenderTarget& target, Group& group,
                                        const std::vector<std::shared_ptr<Player>>& players) {
     std::vector<std::pair<sf::Vector2f, sf::Color>> direction_color_pairs;
     direction_color_pairs.reserve(players.size());
-    for (const auto& player : players) {
-        direction_color_pairs.push_back(std::make_pair(
-            player->getDirection(), RenderingDef::RESOURCE_COLORS[player->getIntent()]));
-    }
+    std::transform(players.begin(), players.end(), std::back_inserter(direction_color_pairs),
+                   [](std::shared_ptr<Player> player) {
+                       return std::make_pair(player->getDirection(),
+                                             RenderingDef::RESOURCE_COLORS[player->getIntent()]);
+                   });
     m_directionLines.draw(target, group.getRadius(), group.getPosition(), direction_color_pairs);
 }
 
@@ -47,13 +48,15 @@ void DrawableGroup::drawDirectionArrows(sf::RenderTarget& target, Group& group,
     std::vector<std::pair<sf::Vector2f, sf::Color>> direction_color_pairs;
     direction_color_pairs.reserve(players.size());
 
-    for (const auto& player : players) {
-        sf::Color player_color = RenderingDef::RESOURCE_COLORS[player->getIntent()];
-        if (player->getId() != player_id) {
-            player_color.a = RenderingDef::NON_PLAYER_DIRECTION_ARROW_ALPHA * 255;
-        }
-        direction_color_pairs.push_back(std::make_pair(player->getDirection(), player_color));
-    }
+    std::transform(players.begin(), players.end(), std::back_inserter(direction_color_pairs),
+                   [player_id](std::shared_ptr<Player> player) {
+                       sf::Color player_color = RenderingDef::RESOURCE_COLORS[player->getIntent()];
+                       if (player->getId() != player_id) {
+                           player_color.a = RenderingDef::NON_PLAYER_DIRECTION_ARROW_ALPHA * 255;
+                       }
+                       return std::make_pair(player->getDirection(), player_color);
+                   });
+
     m_directionArrow.draw(target, group.getRadius(), group.getPosition(), group.getVelocity(),
                           direction_color_pairs);
 }

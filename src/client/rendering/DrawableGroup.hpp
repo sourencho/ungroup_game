@@ -24,7 +24,7 @@ class DrawableGroup : public DrawableCircle {
 
     void draw(sf::RenderTarget& target, Group& group, bool joinable, bool ungroup,
               const std::vector<std::shared_ptr<Player>>& players,
-              const std::array<uint32_t, RESOURCE_TYPE_COUNT>& resource_counts, uint32_t player);
+              const std::array<uint32_t, RESOURCE_TYPE_COUNT>& resource_counts, uint32_t player_id);
 
   private:
     void drawDirectionLines(sf::RenderTarget& target, Group& group,
