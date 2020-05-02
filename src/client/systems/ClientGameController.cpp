@@ -11,7 +11,8 @@
 #include "ClientGameController.hpp"
 
 ClientGameController::ClientGameController(bool is_headless, bool is_bot, BotStrategy strategy,
-                                           const std::string& server_ip, uint32_t server_tcp_port, LevelKey level_key) :
+                                           const std::string& server_ip, uint32_t server_tcp_port,
+                                           LevelKey level_key) :
     m_headless(is_headless),
     m_isBot(is_bot), m_strategy(strategy), m_serverIP(server_ip), GameController(level_key),
     m_networkingClient(new NetworkingClient(m_serverIP, server_tcp_port)) {
@@ -62,6 +63,11 @@ InputDef::PlayerInputs ClientGameController::getPlayerInputs() {
     return m_inputController->getPlayerInputs(m_playerId);
 }
 
+std::pair<InputDef::ReliableInput, InputDef::UnreliableInput>
+ClientGameController::getBotMove(uint32_t bot_player_id, BotStrategy strategy) {
+    return m_bot.getMove(bot_player_id, strategy, *m_gameObjectController);
+}
+
 void ClientGameController::preUpdate() {
     auto inputs = m_inputController->collectInputs(m_window);
 
@@ -75,7 +81,7 @@ void ClientGameController::preUpdate() {
         case GameStatus::playing: {
             if (m_isBot) {
                 // Override user input with bot input
-                inputs = m_gameObjectController->getBotMove(m_playerId, m_strategy);
+                inputs = getBotMove(m_playerId, m_strategy);
             }
             sendInputs(inputs);
             saveInputs(inputs);

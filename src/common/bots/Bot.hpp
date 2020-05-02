@@ -2,6 +2,7 @@
 #define Bot_hpp
 
 #include "../../common/objects/Mine.hpp"
+#include "../../common/systems/GameObjectController.hpp"
 #include "../../common/util/InputDef.hpp"
 #include "../../common/util/InputUtil.hpp"
 #include "../../common/util/game_settings.hpp"
@@ -23,15 +24,10 @@ class Bot {
     Bot& operator=(const Bot& temp_obj) = delete;
 
     std::pair<InputDef::ReliableInput, InputDef::UnreliableInput>
-    getNearestGreedyMove(std::vector<std::shared_ptr<Mine>> mines,
-                         std::array<uint32_t, RESOURCE_TYPE_COUNT> current_resources,
-                         sf::Vector2f bot_center,
-                         std::unordered_map<uint32_t, uint32_t> mine_id_to_resource_count);
+    getNearestGreedyMove(uint32_t bot_player_id, GameObjectController& goc);
     std::pair<InputDef::ReliableInput, InputDef::UnreliableInput> getRandomMove();
     std::pair<InputDef::ReliableInput, InputDef::UnreliableInput>
-    getMove(BotStrategy strategy, const std::vector<std::shared_ptr<Mine>>& mines,
-            std::array<uint32_t, RESOURCE_TYPE_COUNT> current_resources, sf::Vector2f bot_center,
-            const std::unordered_map<uint32_t, uint32_t>& mine_id_to_resource_count);
+    getMove(uint32_t bot_player_id, BotStrategy strategy, GameObjectController& goc);
 };
 
 #endif /* Bot_hpp */

@@ -12,8 +12,8 @@ int main(int argc, char** argv) {
     try {
         cxxopts::Options options("Ungroup Server",
                                  "The server for Ungroup - a game about temporary allainces.");
-        options.add_options()("h,help", "Displays options.")(
-            "p,port", "The TCP port to listen on.", cxxopts::value<int>())(
+        options.add_options()("h,help", "Displays options.")("p,port", "The TCP port to listen on.",
+                                                             cxxopts::value<int>())(
             "l,level", "Loads a level. Options are mine_ring, empty.", cxxopts::value<int>());
         auto result = options.parse(argc, argv);
 

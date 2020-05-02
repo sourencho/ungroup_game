@@ -1,6 +1,7 @@
 #include "TerminalRenderingController.hpp"
 
-TerminalRenderingController::TerminalRenderingController(uint32_t tcp_port) : m_termboxTextOutputArea(10) {
+TerminalRenderingController::TerminalRenderingController(uint32_t tcp_port) :
+    m_termboxTextOutputArea(10) {
     // termbox setup
     int ret = tb_init();
     if (ret) {
