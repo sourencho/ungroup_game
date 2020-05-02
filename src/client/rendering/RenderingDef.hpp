@@ -43,7 +43,7 @@ namespace RenderingDef {
 
     /* Debug */
     const bool RENDER_DEBUG = true;
-    const sf::Color DEBUG_TEXT_COLOR(sf::Color::Green);
+    const sf::Color DEBUG_TEXT_COLOR(sf::Color::Cyan);
 
     /* Group */
     const sf::Color DEFAULT_GROUP_COLOR(255, 255, 255, 0.05 * 255);
@@ -80,10 +80,10 @@ namespace RenderingDef {
     // const sf::Color RESOURCE_D_COLOR(236, 219, 96);
 
     // Soft palette
-    const sf::Color RESOURCE_A_COLOR(159, 224, 246);
-    const sf::Color RESOURCE_B_COLOR(243, 229, 154);
-    const sf::Color RESOURCE_C_COLOR(243, 181, 155);
-    const sf::Color RESOURCE_D_COLOR(243, 156, 156);
+    const sf::Color RESOURCE_A_COLOR(159, 224, 246); // blue
+    const sf::Color RESOURCE_B_COLOR(243, 229, 154); // yellow
+    const sf::Color RESOURCE_C_COLOR(195, 235, 141); // green
+    const sf::Color RESOURCE_D_COLOR(243, 181, 155); // orange
 
     /* Mine */
     const sf::Color DEFAULT_MINE_COLOR(sf::Color::Red);
@@ -120,9 +120,9 @@ namespace RenderingDef {
     const float DEBUG_UI_TEXT_SIZE(40.f);
     const RenderingDef::Padding DEBUG_UI_PADDING({
         .right = 0.f,
-        .left = 24.f,
+        .left = 60.f,
         .top = 0.f,
-        .bottom = 24.f,
+        .bottom = 60.f,
     });
 
     // Resource
@@ -130,7 +130,7 @@ namespace RenderingDef {
     const float RESOURCE_UI_TEXT_SIZE(58.f);
     const sf::Color RESOURCE_UI_TEXT_COLOR(sf::Color::White);
     const RenderingDef::Padding RESOURCE_UI_PADDING({
-        .right = MINE_DIRECTION_PADDING + 93.f,
+        .right = MINE_DIRECTION_PADDING + 96.f,
         .left = 0.f,
         .top = MINE_DIRECTION_PADDING + 20.f, // Text seems to add padding to the top
         .bottom = 0.f,
