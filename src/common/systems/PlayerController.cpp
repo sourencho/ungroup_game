@@ -84,8 +84,7 @@ std::vector<std::shared_ptr<Player>>
 PlayerController::getPlayers(const std::vector<uint32_t>& player_ids) {
     std::vector<std::shared_ptr<Player>> players;
     players.reserve(player_ids.size());
-    for (const auto& player_id : player_ids) {
-        players.push_back(getPlayer(player_id));
-    }
+    std::transform(player_ids.begin(), player_ids.end(), std::back_inserter(players),
+                   [this](uint32_t player_id) { return getPlayer(player_id); });
     return players;
 }
