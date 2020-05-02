@@ -12,50 +12,47 @@ DrawableGroup::DrawableGroup(ResourceStore& rs) :
 }
 
 void DrawableGroup::draw(sf::RenderTarget& target, Group& group, bool joinable, bool ungroup,
-                         const std::vector<sf::Vector2f>& player_directions,
-                         const std::vector<ResourceType>& player_intents,
-                         const std::array<uint32_t, RESOURCE_TYPE_COUNT>& resource_counts) {
+                         const std::vector<std::shared_ptr<Player>>& players,
+                         const std::array<uint32_t, RESOURCE_TYPE_COUNT>& resource_counts,
+                         uint32_t player_id) {
     if (!group.isActive()) {
         return;
     }
 
-    if (player_intents.size() != player_directions.size()) {
-        throw std::runtime_error("Size of player directions and intents should be the same.");
-    }
-
     if (RenderingDef::SHOW_DIRECTION_LINES) {
-        drawDirectionLines(target, group, player_directions, player_intents);
+        drawDirectionLines(target, group, players);
     }
 
     if (RenderingDef::SHOW_DIRECTION_ARROWS) {
-        drawDirectionArrows(target, group, player_directions, player_intents);
+        drawDirectionArrows(target, group, players, player_id);
     }
 
     drawGroup(target, group, joinable, ungroup, resource_counts);
 }
 
 void DrawableGroup::drawDirectionLines(sf::RenderTarget& target, Group& group,
-                                       const std::vector<sf::Vector2f>& player_directions,
-                                       const std::vector<ResourceType>& player_intents) {
-    size_t player_count = player_directions.size();
+                                       const std::vector<std::shared_ptr<Player>>& players) {
     std::vector<std::pair<sf::Vector2f, sf::Color>> direction_color_pairs;
-    direction_color_pairs.reserve(player_count);
-    for (size_t i = 0; i < player_count; i++) {
-        direction_color_pairs.push_back(
-            std::make_pair(player_directions[i], RenderingDef::RESOURCE_COLORS[player_intents[i]]));
+    direction_color_pairs.reserve(players.size());
+    for (const auto& player : players) {
+        direction_color_pairs.push_back(std::make_pair(
+            player->getDirection(), RenderingDef::RESOURCE_COLORS[player->getIntent()]));
     }
     m_directionLines.draw(target, group.getRadius(), group.getPosition(), direction_color_pairs);
 }
 
 void DrawableGroup::drawDirectionArrows(sf::RenderTarget& target, Group& group,
-                                        const std::vector<sf::Vector2f>& player_directions,
-                                        const std::vector<ResourceType>& player_intents) {
-    size_t player_count = player_directions.size();
+                                        const std::vector<std::shared_ptr<Player>>& players,
+                                        uint32_t player_id) {
     std::vector<std::pair<sf::Vector2f, sf::Color>> direction_color_pairs;
-    direction_color_pairs.reserve(player_count);
-    for (size_t i = 0; i < player_count; i++) {
-        direction_color_pairs.push_back(
-            std::make_pair(player_directions[i], RenderingDef::RESOURCE_COLORS[player_intents[i]]));
+    direction_color_pairs.reserve(players.size());
+
+    for (const auto& player : players) {
+        sf::Color player_color = RenderingDef::RESOURCE_COLORS[player->getIntent()];
+        if (player->getId() != player_id) {
+            player_color.a = RenderingDef::NON_PLAYER_DIRECTION_ARROW_ALPHA * 255;
+        }
+        direction_color_pairs.push_back(std::make_pair(player->getDirection(), player_color));
     }
     m_directionArrow.draw(target, group.getRadius(), group.getPosition(), group.getVelocity(),
                           direction_color_pairs);

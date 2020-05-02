@@ -58,6 +58,7 @@ namespace RenderingDef {
     const bool SHOW_DIRECTION_ARROWS = true;
     const bool SHOW_VELOCITY_ARROW = false;
     const sf::Color DIRECTION_ARROW_COLOR(sf::Color::White);
+    const float NON_PLAYER_DIRECTION_ARROW_ALPHA = 0.2f;
 
     // Direction Line
     const bool SHOW_DIRECTION_LINES = false;

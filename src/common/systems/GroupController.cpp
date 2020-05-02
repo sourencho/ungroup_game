@@ -60,13 +60,8 @@ std::vector<sf::Vector2f> GroupController::getPlayerDirections(uint32_t group_id
     return player_directions;
 }
 
-std::vector<ResourceType> GroupController::getPlayerIntents(uint32_t group_id) {
-    const auto& group_players = m_groupToPlayers[group_id];
-    std::vector<ResourceType> player_intents;
-    std::transform(
-        group_players.begin(), group_players.end(), std::back_inserter(player_intents),
-        [this](int player_id) -> ResourceType { return getPlayer(player_id).getIntent(); });
-    return player_intents;
+std::vector<uint32_t>& GroupController::getPlayerIds(uint32_t group_id) {
+    return m_groupToPlayers[group_id];
 }
 
 bool GroupController::getUngroup(uint32_t group_id) {
