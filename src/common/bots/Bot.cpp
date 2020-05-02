@@ -6,6 +6,48 @@ Bot::Bot(){};
  * Once it has enough of a resource, it will move to the next closest mine with a resource it needs.
  */
 std::pair<InputDef::ReliableInput, InputDef::UnreliableInput>
+Bot::getGroupieMove(uint32_t bot_player_id, GameObjectController& goc) {
+    auto bot_center = goc.getPlayerPosition(bot_player_id);
+    auto& gc = goc.getGroupController();
+    auto bot_group_id = gc.getGroupId(bot_player_id);
+    auto group_ids = gc.getGroupIds();
+    uint32_t nearest_joinable_group_id = -1;
+    uint32_t nearest_joinable_group_dist = UINT32_MAX;
+
+    for (auto& gid : group_ids) {
+        auto& group = gc.getGroup(gid);
+        if (group.isActive() && gc.getJoinable(gid) && (gid != bot_group_id)) {
+            auto dist = VectorUtil::distance(bot_center, group.getCenter());
+            if (dist < nearest_joinable_group_dist) {
+                nearest_joinable_group_id = gid;
+                nearest_joinable_group_dist = dist;
+            }
+        }
+    }
+
+    bool target_found = (nearest_joinable_group_id != -1);
+    if (target_found) {
+        auto& target_group = gc.getGroup(nearest_joinable_group_id);
+        auto direction = VectorUtil::getVector(bot_center, target_group.getCenter());
+        auto move = InputUtil::vectorToNearestMove(direction);
+        // we only want to group with the target, so we wait to toggle joinability
+        // until we're quite close to the target
+        if (nearest_joinable_group_dist <
+                (MIN_DISTANCE_TO_TOGGLE_JOINABLE + target_group.getRadius()) &&
+            !gc.getJoinable(bot_group_id)) {
+            move.first.toggle_joinable = true;
+        }
+        return move;
+    }
+
+    // if nothing to group with, be greedy
+    return getNearestGreedyMove(bot_player_id, goc);
+}
+
+/* This strategy will move towards the closest mine which has a resource the bot needs to win.
+ * Once it has enough of a resource, it will move to the next closest mine with a resource it needs.
+ */
+std::pair<InputDef::ReliableInput, InputDef::UnreliableInput>
 Bot::getNearestGreedyMove(uint32_t bot_player_id, GameObjectController& goc) {
     auto gso = goc.getGameStateObject();
     auto bot_center = goc.getPlayerPosition(bot_player_id);
@@ -75,6 +117,9 @@ Bot::getMove(uint32_t bot_player_id, BotStrategy strategy, GameObjectController&
             break;
         case BotStrategy::NearestGreedy:
             return getNearestGreedyMove(bot_player_id, goc);
+            break;
+        case BotStrategy::Groupie:
+            return getGroupieMove(bot_player_id, goc);
             break;
         default:
             std::cerr << "Unimplemented strategy passed to bot. Returning random move."

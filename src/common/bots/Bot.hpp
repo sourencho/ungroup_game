@@ -14,15 +14,18 @@
 #include <iostream>
 #include <memory>
 
-enum BotStrategy { Random, NearestGreedy, MostNeededGreedy, Groupie, GreedieGroupie };
+enum BotStrategy { Random, NearestGreedy, Groupie, MostNeededGreedy, GreedieGroupie };
 
 class Bot {
   public:
+    const uint32_t MIN_DISTANCE_TO_TOGGLE_JOINABLE = 15;
     Bot();
     ~Bot(){};
     Bot(const Bot& temp_obj) = delete;
     Bot& operator=(const Bot& temp_obj) = delete;
 
+    std::pair<InputDef::ReliableInput, InputDef::UnreliableInput>
+    getGroupieMove(uint32_t bot_player_id, GameObjectController& goc);
     std::pair<InputDef::ReliableInput, InputDef::UnreliableInput>
     getNearestGreedyMove(uint32_t bot_player_id, GameObjectController& goc);
     std::pair<InputDef::ReliableInput, InputDef::UnreliableInput> getRandomMove();
