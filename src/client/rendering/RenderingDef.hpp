@@ -10,8 +10,8 @@
 namespace RenderingDef {
     const uint32_t WINDOW_FRAME_LIMIT = 60;
     const bool VSYNC_ENABLED = true;
-    const sf::Vector2f WINDOW_RESOLUTION(1200, 900);
-    const float GAME_SCALE = 4.f;
+    const sf::Vector2f WINDOW_RESOLUTION(900, 900);
+    const float GAME_SCALE = 3.f;
     const sf::Vector2f GAME_SCALING_FACTOR(GAME_SCALE, GAME_SCALE);
     const bool USE_SHADERS = true;
     const std::size_t CIRCLE_POINT_COUNT = 60;
@@ -42,7 +42,7 @@ namespace RenderingDef {
     const float CAMERA_CHASE = 0.2;
 
     /* Debug */
-    const bool RENDER_DEBUG = true;
+    const bool RENDER_DEBUG = false;
     const sf::Color DEBUG_TEXT_COLOR(sf::Color::Green);
 
     /* Group */
