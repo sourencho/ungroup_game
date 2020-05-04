@@ -10,7 +10,7 @@
 namespace RenderingDef {
     const uint32_t WINDOW_FRAME_LIMIT = 60;
     const bool VSYNC_ENABLED = true;
-    const sf::Vector2f WINDOW_RESOLUTION(900, 900);
+    const sf::Vector2f WINDOW_RESOLUTION(1200, 900);
     const float GAME_SCALE = 3.f;
     const sf::Vector2f GAME_SCALING_FACTOR(GAME_SCALE, GAME_SCALE);
     const bool USE_SHADERS = true;

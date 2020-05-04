@@ -72,7 +72,7 @@ void DrawableGroup::drawGroup(sf::RenderTarget& target, Group& group, bool joina
         std::copy(resource_counts.begin(), resource_counts.end(), m_resourceCounts);
         int total_resource_count =
             std::accumulate(resource_counts.begin(), resource_counts.end(), 0);
-        m_shader.shader->setUniform("u_resolution", sf::Vector2f(RenderingDef::WINDOW_RESOLUTION));
+        m_shader.shader->setUniform("u_resolution", sf::Vector2f(GAME_SETTINGS.GAME_SIZE));
         m_shader.shader->setUniform("u_position", group.getPosition());
         m_shader.shader->setUniform("u_radius", group.getRadius());
         m_shader.shader->setUniform("u_time", m_shaderClock.getElapsedTime().asSeconds());
