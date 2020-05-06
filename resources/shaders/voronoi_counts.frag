@@ -34,11 +34,18 @@ vec2 random2(vec2 p) {
 
 void main() {
     vec2 frag_coord = gl_FragCoord.xy;
-    vec2 coord_trans = vec2(frag_coord.x, frag_coord.y - u_resolution.y);
-    coord_trans += vec2(-u_position.x, u_position.y);
-    vec2 st = coord_trans / u_resolution;
 
-    st *= u_resolution / (u_radius * 2.);
+    // flip y axis
+    vec2 coord = vec2(frag_coord.x, u_resolution.y - frag_coord.y);
+
+    // move view in opposite direction to align with top left position of object
+    coord -= u_position;
+
+    // normalize coord space
+    vec2 st = coord / u_resolution;
+
+    // make tiles with size of object
+    st *= (u_resolution / (u_radius * 2.));
     st = fract(st);
 
     vec4 color = vec4(1., 1., 1., 0.);
