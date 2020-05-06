@@ -25,8 +25,8 @@ const vec4 green_d = vec4(236. / 255., 219. / 255., 96. / 255., 1.);
 // Soft palette
 const vec4 soft_a = vec4(159. / 255., 224. / 255., 246. / 255., 1.);
 const vec4 soft_b = vec4(243. / 255., 229. / 255., 154. / 255., 1.);
-const vec4 soft_c = vec4(243. / 255., 181. / 255., 155. / 255., 1.);
-const vec4 soft_d = vec4(243. / 255., 156. / 255., 156. / 255., 1.);
+const vec4 soft_c = vec4(195. / 255., 235. / 255., 141. / 255., 1.);
+const vec4 soft_d = vec4(243. / 255., 181. / 255., 155. / 255., 1.);
 
 vec2 random2(vec2 p) {
     return fract(sin(vec2(dot(p, vec2(127.1, 311.7)), dot(p, vec2(269.5, 183.3)))) * 43758.5453);

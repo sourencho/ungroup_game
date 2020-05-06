@@ -16,6 +16,7 @@ class PlayerController {
     PlayerController& operator=(const PlayerController& temp_obj) = delete;
 
     std::shared_ptr<Player> getPlayer(uint32_t player_id);
+    std::vector<std::shared_ptr<Player>> getPlayers(const std::vector<uint32_t>& player_ids);
     std::vector<uint32_t> getActivePlayerIds() const;
     uint32_t createPlayer(uint32_t client_id);
     void update(const InputDef::PlayerInputs& pi);

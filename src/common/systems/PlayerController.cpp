@@ -79,3 +79,12 @@ std::vector<uint32_t> PlayerController::getActivePlayerIds() const {
     }
     return active_player_ids;
 }
+
+std::vector<std::shared_ptr<Player>>
+PlayerController::getPlayers(const std::vector<uint32_t>& player_ids) {
+    std::vector<std::shared_ptr<Player>> players;
+    players.reserve(player_ids.size());
+    std::transform(player_ids.begin(), player_ids.end(), std::back_inserter(players),
+                   [this](uint32_t player_id) { return getPlayer(player_id); });
+    return players;
+}
