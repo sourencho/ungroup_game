@@ -23,18 +23,16 @@ class DrawableGroup : public DrawableCircle {
     DrawableGroup& operator=(const DrawableGroup& temp_obj) = delete;
 
     void draw(sf::RenderTarget& target, Group& group, bool joinable, bool ungroup,
-              const std::vector<sf::Vector2f>& player_directions,
-              const std::vector<ResourceType>& player_intents,
-              const std::array<uint32_t, RESOURCE_TYPE_COUNT>& resource_counts);
+              const std::vector<std::shared_ptr<Player>>& players,
+              const std::array<uint32_t, RESOURCE_TYPE_COUNT>& resource_counts, uint32_t player_id);
 
   private:
     void drawDirectionLines(sf::RenderTarget& target, Group& group,
-                            const std::vector<sf::Vector2f>& player_directions,
-                            const std::vector<ResourceType>& player_intents);
+                            const std::vector<std::shared_ptr<Player>>& players);
 
     void drawDirectionArrows(sf::RenderTarget& target, Group& group,
-                             const std::vector<sf::Vector2f>& player_directions,
-                             const std::vector<ResourceType>& player_intents);
+                             const std::vector<std::shared_ptr<Player>>& players,
+                             uint32_t player_id);
 
     void drawGroup(sf::RenderTarget& target, Group& group, bool joinable, bool ungroup,
                    const std::array<uint32_t, RESOURCE_TYPE_COUNT>& resource_counts);

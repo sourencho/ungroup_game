@@ -54,11 +54,11 @@ void GameObjectRenderer::drawGroups(sf::RenderTarget& target) {
         uint32_t group_id = m_groupController.getGroupIds()[i];
         auto& drawable_group = m_drawableGroups[i];
         Group& group = m_groupController.getGroup(group_id);
+        auto players = m_playerController.getPlayers(m_groupController.getPlayerIds(group_id));
 
-        drawable_group->draw(
-            target, group, m_groupController.getJoinable(group_id),
-            m_groupController.getUngroup(group_id), m_groupController.getPlayerDirections(group_id),
-            m_groupController.getPlayerIntents(group_id), m_groupController.getResources(group_id));
+        drawable_group->draw(target, group, m_groupController.getJoinable(group_id),
+                             m_groupController.getUngroup(group_id), players,
+                             m_groupController.getResources(group_id), m_playerId);
     }
 }
 

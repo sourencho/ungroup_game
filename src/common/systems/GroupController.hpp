@@ -50,7 +50,7 @@ class GroupController {
 
     std::vector<uint32_t> getGroupIds();
     std::vector<sf::Vector2f> getPlayerDirections(uint32_t group_id);
-    std::vector<ResourceType> getPlayerIntents(uint32_t group_id);
+    std::vector<uint32_t>& getPlayerIds(uint32_t group_id);
     std::array<uint32_t, RESOURCE_TYPE_COUNT> getResources(uint32_t group_id);
 
     /**
