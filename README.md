@@ -241,6 +241,9 @@ Run this command to enable debug mode on a specific build: https://gist.github.c
 
 - [The Book of Shaders](https://thebookofshaders.com/)
 
+### Game Design
+- [Ella Hoeppner: Plan Disruption](http://www.ellahoeppner.com/blog/post/plan_disruption)
+
 ### C++
 
 - [lefticus: CPP Best Practices](https://github.com/lefticus/cppbestpractices)
