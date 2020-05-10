@@ -25,7 +25,7 @@
     },
     "networking": {
         "SERVER_UNRELIABLE_RECV_TIMEOUT_SEC": 1,
-        "SERVER_TCP_PORT": 4845,
+        "SERVER_TCP_PORT": 4844,
         "SERVER_STATE_UDP_PORT": 4845,
         "SERVER_INPUT_UDP_PORT": 4846,
         "LOCALHOST_IP": "127.0.0.1"
