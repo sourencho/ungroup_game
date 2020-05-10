@@ -19,6 +19,7 @@ struct GroupUpdate {
     float y_pos;
     float radius;
     bool joinable;
+    sf::Vector2f velocity;
 };
 
 sf::Packet& operator<<(sf::Packet& packet, const GroupUpdate& group_update);
@@ -36,6 +37,7 @@ class Group : public CircleGameObject {
 
     GroupUpdate getUpdate();
     void applyUpdate(GroupUpdate gu);
+    void applyInterpolatedUpdate(GroupUpdate gu, float a, sf::Int32 delta_ms);
 
   private:
 };

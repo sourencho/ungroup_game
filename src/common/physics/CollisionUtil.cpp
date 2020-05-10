@@ -106,14 +106,14 @@ Collision CollisionUtil::getCollision(const CircleRigidBody& circle_a,
     return collision;
 }
 
-std::pair<PhysicsDef::Impulse, PhysicsDef::Impulse>
-CollisionUtil::getImpulses(const CircleRigidBody& circle_a, const CircleRigidBody& circle_b,
-                           const Collision& collision) {
+std::pair<Impulse, Impulse> CollisionUtil::getImpulses(const CircleRigidBody& circle_a,
+                                                       const CircleRigidBody& circle_b,
+                                                       const Collision& collision) {
     sf::Vector2f relative_velocity = circle_a.getVelocity() - circle_b.getVelocity();
     float impulse = -2.f * VectorUtil::dot(relative_velocity, collision.normal) /
                     (1 / circle_a.getMass() + 1 / circle_b.getMass());
-    return std::make_pair((PhysicsDef::Impulse){impulse, collision.normal},
-                          (PhysicsDef::Impulse){impulse, -collision.normal});
+    return std::make_pair((Impulse){impulse, collision.normal},
+                          (Impulse){impulse, -collision.normal});
 }
 
 bool CollisionUtil::isInBounds(const CircleRigidBody& circle, sf::Vector2f bounds_center,

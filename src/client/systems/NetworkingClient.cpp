@@ -1,12 +1,13 @@
 #include "NetworkingClient.hpp"
 
-#include <SFML/Network.hpp>
 #include <chrono>
 #include <ctime>
 #include <iostream>
 #include <mutex>
 #include <thread>
 #include <vector>
+
+#include <SFML/Network.hpp>
 
 #include "../../common/util/InputDef.hpp"
 #include "../../common/util/game_settings.hpp"
@@ -15,7 +16,7 @@
 const sf::Time CLIENT_TCP_TIMEOUT = sf::milliseconds(300);
 
 NetworkingClient::NetworkingClient(const std::string& server_ip, uint32_t server_tcp_port) :
-    m_gameState_t({}), m_serverIp(server_ip) {
+    m_serverIp(server_ip) {
     std::cout << "Starting client." << std::endl;
 
     std::cout << "Server reliable port is: " << server_tcp_port << std::endl;
@@ -157,16 +158,6 @@ void NetworkingClient::readRegistrationResponse() {
     throw std::runtime_error("Failed to register.");
 }
 
-GameState NetworkingClient::getLatestGameState() {
-    std::lock_guard<std::mutex> m_gameState_guard(m_gameState_lock);
-    return m_gameState_t;
-}
-
-uint32_t NetworkingClient::getLatestGameStateTick() {
-    std::lock_guard<std::mutex> m_gameState_guard(m_gameState_lock);
-    return m_gameState_t.core.tick;
-}
-
 void NetworkingClient::pushUnreliableInput(InputDef::UnreliableInput unreliable_input) {
     std::lock_guard<std::mutex> m_unreliableInput_guard(m_unreliableInput_lock);
     m_unreliableInput_t = unreliable_input;
@@ -191,6 +182,11 @@ uint32_t NetworkingClient::getTick() const {
 
 void NetworkingClient::setTick(uint32_t tick) {
     m_tick_ta = tick;
+}
+
+float NetworkingClient::getServerGameStateRate(sf::Time seconds) {
+    std::lock_guard<std::mutex> m_serverGameStateMetric_guard(m_serverGameStateMetric_lock);
+    return m_serverGameStateMetric.getRate(seconds);
 }
 
 /* m_reliableRecv thread methods */
@@ -263,12 +259,31 @@ void NetworkingClient::unreliableRecv() {
         if (status != sf::Socket::NotReady) {
             GameState game_state;
             packet >> game_state;
-            std::lock_guard<std::mutex> m_gameState_guard(m_gameState_lock);
-            m_gameState_t = game_state;
+            updateGameStateBuffer(game_state);
         }
 
         std::this_thread::sleep_for(GAME_SETTINGS.CLIENT_UNRELIABLE_RECV_SLEEP);
     }
+}
+
+void NetworkingClient::updateGameStateBuffer(GameState& game_state) {
+    std::lock_guard<std::mutex> m_gameStateBuffer_guard(m_gameStateBuffer_lock);
+    std::lock_guard<std::mutex> m_serverGameStateMetric_guard(m_serverGameStateMetric_lock);
+    m_gameStateBuffer_t[game_state.core.tick] = game_state;
+    if (m_gameStateBuffer_t.size() > GAME_SETTINGS.CLIENT_GAME_STATE_BUFFER_SIZE) {
+        if (m_gameStateBuffer_t.begin()->first != game_state.core.tick) {
+            m_serverGameStateMetric.pushCount();
+        }
+        m_gameStateBuffer_t.erase(m_gameStateBuffer_t.begin()->first);
+    } else {
+        m_serverGameStateMetric.pushCount();
+    }
+    m_serverGameStateMetric.update();
+}
+
+std::map<uint32_t, GameState> NetworkingClient::getGameStateBuffer() {
+    std::lock_guard<std::mutex> m_gameStateBuffer_guard(m_gameStateBuffer_lock);
+    return m_gameStateBuffer_t;
 }
 
 // m_unreliableSend Thread Methods

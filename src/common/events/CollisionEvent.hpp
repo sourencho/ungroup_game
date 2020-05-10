@@ -1,7 +1,7 @@
 #ifndef CollisionEvent_hpp
 #define CollisionEvent_hpp
 
-#include "../physics/PhysicsController.hpp"
+#include "../physics/PhysicsDef.hpp"
 #include "Event.hpp"
 
 class CollisionEvent : public Event {

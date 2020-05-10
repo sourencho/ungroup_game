@@ -23,6 +23,7 @@ class GameObjectController {
     uint32_t createPlayerWithGroup(uint32_t client_id);
     GameStateObject getGameStateObject();
     void applyGameStateObject(GameStateObject game_state_object);
+    void interpolateGameStateObject(GameStateObject game_state_object, float a, sf::Int32 delta_ms);
 
     sf::Vector2f getPlayerPosition(uint32_t player_id);
     std::array<uint32_t, RESOURCE_TYPE_COUNT> getPlayerResources(uint32_t player_id);

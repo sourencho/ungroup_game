@@ -4,6 +4,7 @@
 #include <time.h>
 
 #include <atomic>
+#include <map>
 #include <memory>
 #include <mutex>
 #include <queue>
@@ -13,6 +14,7 @@
 
 #include <SFML/Network.hpp>
 
+#include "../../common/metrics/TemporalMetric.hpp"
 #include "../../common/util/InputDef.hpp"
 #include "../../common/util/StateDef.hpp"
 #include "../../common/util/game_def.hpp"
@@ -29,19 +31,12 @@ class NetworkingClient {
      */
     uint32_t registerClientAndFetchPlayerId();
 
-    /**
-     * Get copy of latest game state recieved from the server.
-     * Note that since game state packets can come out of order this value won't always be the
-     * latest game state on the server.
-     */
-    GameState getLatestGameState();
+    std::map<uint32_t, GameState> getGameStateBuffer();
 
     /**
-     * Get latest game state tick.
-     * Note that since game state packets can come out of order this value won't always be the
-     * latest game state tick on the server.
+     * Get rate of m_serverGameStateMetric.
      */
-    uint32_t getLatestGameStateTick();
+    float getServerGameStateRate(sf::Time seconds);
 
     int getClientId() const;
 
@@ -120,12 +115,20 @@ class NetworkingClient {
      */
     void addEventListeners();
 
+    /**
+     * Add a game state to the buffer while making sure buffer doesn't exceed the size limit. Game
+     * states are ordered in desc order by tick. Game states with the smallest tick will be
+     * discarded if needed.
+     */
+    void updateGameStateBuffer(GameState& game_state);
+
     // Misc
     std::atomic<int> m_clientId_ta{-1};
     std::atomic<uint32_t> m_tick_ta{0};
 
-    std::mutex m_gameState_lock;
-    GameState m_gameState_t;
+    std::mutex m_gameStateBuffer_lock;
+    std::map<uint32_t, GameState> m_gameStateBuffer_t; // A limited size buffer of game states
+                                                       // recieved from the server, indexed by tick.
 
     std::mutex m_unreliableInput_lock;
     InputDef::UnreliableInput m_unreliableInput_t;
@@ -135,6 +138,12 @@ class NetworkingClient {
 
     sf::Uint16 m_serverStateUdpPort = 0;
     sf::Uint16 m_serverInputUdpPort = 0;
+
+    std::mutex m_serverGameStateMetric_lock;
+    TemporalMetric m_serverGameStateMetric{
+        4 * 4,
+        sf::seconds(0.25f)}; // Tracks the number of applicable (not out of order and unique) game
+                             // state updates recieved from the server. Each count is a game state.
 };
 
 #endif /* NetworkingClient_hpp */

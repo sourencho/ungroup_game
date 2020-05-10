@@ -38,6 +38,19 @@ class CircleGameObject : public GameObject {
         m_circleRigidBody.setPosition(position);
     };
 
+    void interpolatePosition(const sf::Vector2f position, float a) {
+        m_circleRigidBody.interpolatePosition(position, a);
+    }
+
+    void interpolateVelocity(sf::Vector2f velocity, float a) {
+        m_circleRigidBody.interpolateVelocity(velocity, a);
+    }
+
+    void hermiteInterpolation(sf::Vector2f position, sf::Vector2f velocity, float a,
+                              sf::Int32 delta_ms) {
+        m_circleRigidBody.hermiteInterpolation(position, velocity, a, delta_ms);
+    }
+
     void setCenterPosition(sf::Vector2f position) {
         setPosition({position.x - getRadius(), position.y - getRadius()});
     }

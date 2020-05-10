@@ -19,8 +19,12 @@
 struct UIData {
     float game_steps_per_second;
     float game_updates_per_second;
-    float network_updates_per_second;
+    float server_state_per_second;
     float tick_delta_average;
+    float behind_game_state_rate;
+    float ahead_game_state_rate;
+    float interpolate_distance_average;
+    float stall_distance_average;
     std::array<uint32_t, RESOURCE_TYPE_COUNT> resources;
     std::array<uint32_t, RESOURCE_TYPE_COUNT> resource_goals;
     GameStatus game_status;

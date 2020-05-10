@@ -20,13 +20,19 @@ DebugUIElement::DebugUIElement(sf::Vector2u window_size, sf::Vector2f size,
 
 void DebugUIElement::update(const UIData& ui_data) {
     std::stringstream stream;
-    stream << "FPS: " << std::fixed << std::setprecision(0) << ui_data.game_steps_per_second << "\n"
-           << "UPS: " << std::fixed << std::setprecision(0) << ui_data.game_updates_per_second
-           << "\n"
-           << "XPS: " << std::fixed << std::setprecision(0) << ui_data.network_updates_per_second
-           << "\n"
-           << "TDA: " << std::fixed << std::setprecision(0) << ui_data.tick_delta_average << "\n"
-           << "TIK: " << ui_data.tick;
+    stream << "FPS:               " << std::fixed << std::setprecision(0)
+           << ui_data.game_steps_per_second << "\n"
+           << "State updates/sec: " << std::fixed << std::setprecision(0)
+           << ui_data.game_updates_per_second << "\n"
+           << "Server states/sec: " << std::fixed << std::setprecision(0)
+           << ui_data.server_state_per_second << "\n"
+           << "Tick delta avg:    " << std::fixed << std::setprecision(1)
+           << ui_data.tick_delta_average << "\n"
+           << "Behind server/sec: " << ui_data.behind_game_state_rate << "\n"
+           << "Ahead server/sec:  " << ui_data.ahead_game_state_rate << "\n"
+           << "Inter dist avg:    " << ui_data.interpolate_distance_average << "\n"
+           << "Stall dist avg:    " << ui_data.stall_distance_average << "\n"
+           << "Tick:              " << ui_data.tick;
     m_text.setString(stream.str());
 
     // Update position according to text size

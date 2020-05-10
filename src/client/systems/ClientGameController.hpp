@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <queue>
+#include <random>
 #include <stdio.h>
 #include <thread>
 #include <unordered_map>
@@ -54,25 +55,38 @@ class ClientGameController : public GameController {
 
     void draw();
 
-    /*
-     * Apply the game state update from the server (rewind, because it is likely the state of an old
-     * tick) and then interpolate up to the current tick by applying local inputs for each tick
-     * (replay).
+    /**
+     * Update game state by stalling, interpolating and/or extrapolating.
      */
-    void rewindAndReplay();
+    void updateGameState(const InputDef::PlayerInputs& pi, sf::Int32 delta_ms);
 
-    void applyGameState(GameState& game_state);
-    void replay(uint32_t client_tick, uint32_t server_tick);
+    /**
+     * Interpolate game state from start_tick to to_tick using end_tick's game state.
+     */
+    void interpolateGameState(uint32_t start_tick, uint32_t to_tick, uint32_t end_tick,
+                              const GameState& game_state);
+
+    /**
+     * Locally apply game state events recieved from the server.
+     */
+    void applyGameStateEvents(const GameStateEvent& game_state_event);
+
+    /**
+     * Handle local state is behind smallest server game state in the buffer.
+     */
+    void behind(uint32_t client_tick, uint32_t smallest_server_tick,
+                const GameState& smallest_server_game_state);
+
+    /**
+     * Handle local state is ahead of smallest server game state buffer.
+     */
+    void ahead(uint32_t client_tick, uint32_t smallest_server_tick,
+               std::map<uint32_t, GameState>& game_state_buffer);
 
     /**
      * Send client input to server
      */
     void sendInputs(std::pair<InputDef::ReliableInput, InputDef::UnreliableInput> inputs);
-
-    /**
-     * Save local input for replay
-     */
-    void saveInputs(std::pair<InputDef::ReliableInput, InputDef::UnreliableInput> inputs);
 
     // Variables
     uint32_t m_playerId = 0;
@@ -80,19 +94,24 @@ class ClientGameController : public GameController {
     BotStrategy m_strategy;
     Bot m_bot;
     std::string m_serverIP;
-    uint32_t m_largestAppliedGameStateTick = 0;
-
-    std::unordered_map<uint32_t, InputDef::ClientInputAndTick>
-        m_tickToInput; // Cache of past inputs
 
     sf::RenderWindow m_window;
 
-    TemporalMetric m_networkUpdateMetric{
-        120, sf::seconds(
-                 0.5f)}; // Keeps track of the number of game state updates recieved from the server
     TemporalMetric m_tickDeltaMetric{
-        5, sf::seconds(1)}; // Keeps track of the tick delta between the client and server
-                            // based on updates recieved from the server
+        4 * 15, sf::seconds(0.25f)}; // Tracks the tick delta between the client and target server
+                                     // state. Each count is a tick delta.
+    TemporalMetric m_behindGameStateMetric{
+        4 * 15, sf::seconds(0.25f)}; // Tracks of the number of ticks the client is behind the
+                                     // target server state. Each count is a tick delta.
+    TemporalMetric m_aheadGameStateMetric{
+        4 * 15, sf::seconds(0.25f)}; // Tracks the number of ticks the client is ahead the target
+                                     // server state. Each count is a tick delta.
+    TemporalMetric m_interpolateGameStateMetric{
+        4 * 15, sf::seconds(0.25f)}; // Tracks the number of ticks away the state was interpolated
+                                     // to. Each count is a tick delta.
+    TemporalMetric m_stallGameStateMetric{
+        4 * 15, sf::seconds(0.25f)}; // Tracks the number of ticks where the game was stalled and no
+                                     // new game state was applied. Each count is a stall.
 
     std::unique_ptr<NetworkingClient> m_networkingClient;
     std::unique_ptr<InputController> m_inputController;

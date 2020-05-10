@@ -7,7 +7,7 @@ TemporalMetric::TemporalMetric(size_t size, sf::Time time_granularity) :
     m_countSlots(size), m_timeGranularity(time_granularity) {
 }
 
-float TemporalMetric::getRate(sf::Time interval) {
+float TemporalMetric::getRate(sf::Time interval) const {
     sf::Time total_time = static_cast<float>(m_countSlots.size()) * m_timeGranularity;
     if (total_time.asSeconds() == 0 || interval.asSeconds() == 0) {
         return 0;
@@ -20,7 +20,7 @@ float TemporalMetric::getRate(sf::Time interval) {
     return rate;
 }
 
-float TemporalMetric::getAverage() {
+float TemporalMetric::getAverage() const {
     size_t total_count;
     int total_sum;
     std::tie(total_count, total_sum) = accumulateCounts();
@@ -50,7 +50,7 @@ void TemporalMetric::stepSlot() {
     m_currentCounts.clear();
 }
 
-std::pair<size_t, int> TemporalMetric::accumulateCounts() {
+std::pair<size_t, int> TemporalMetric::accumulateCounts() const {
     size_t total_count = 0;
     int total_sum = 0;
     for (auto& count_slot : m_countSlots) {

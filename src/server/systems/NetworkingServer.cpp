@@ -233,6 +233,8 @@ void NetworkingServer::setClientUnreliableUpdate(sf::Packet packet, int client_i
                 m_playerUnreliableUpdates_lock);
             m_playerUnreliableUpdates_t.push_back(player_unreliable_input);
         }
+    } else {
+        std::cerr << "Player input drift too high" << std::endl;
     }
 }
 

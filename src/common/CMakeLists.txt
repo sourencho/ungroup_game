@@ -13,6 +13,7 @@ add_library(common-lib
     physics/PhysicsController.cpp
     physics/CollisionUtil.cpp
     physics/VectorUtil.cpp
+    physics/PhysicsDef.cpp
     systems/GameObjectStore.cpp
     systems/GroupController.cpp
     systems/PlayerController.cpp

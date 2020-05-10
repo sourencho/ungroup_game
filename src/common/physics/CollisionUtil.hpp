@@ -9,21 +9,6 @@
 #include "../objects/CircleRigidBody.hpp"
 #include "PhysicsDef.hpp"
 
-/**
- * Details of collision between two rigid bodies.
- * @ids: ids of the two rigid bodies.
- * @position: point of contact between the rigid bodies after collision is resolved.
- * @normal: normal of the collision from the latter body to the former.
- * @resolution: the amount by which the bodies should be displaced to resolve the collision.
- */
-struct Collision {
-    std::pair<uint32_t, uint32_t> ids;
-    sf::Vector2f position;
-    sf::Vector2f normal;
-    std::pair<sf::Vector2f, sf::Vector2f> resolution;
-    bool collided;
-};
-
 enum Orientation { above, below, left, right, inside };
 
 namespace CollisionUtil {
@@ -66,9 +51,9 @@ namespace CollisionUtil {
      * This impulse assumes a perfect elastic collision.
      * Formulas taken from http://www.chrishecker.com/Rigid_Body_Dynamics
      */
-    std::pair<PhysicsDef::Impulse, PhysicsDef::Impulse> getImpulses(const CircleRigidBody& circle_a,
-                                                                    const CircleRigidBody& circle_b,
-                                                                    const Collision& collision);
+    std::pair<Impulse, Impulse> getImpulses(const CircleRigidBody& circle_a,
+                                            const CircleRigidBody& circle_b,
+                                            const Collision& collision);
 
     /**
      * Returns true if the entire circle is inside the "bounds" circle defined by bounds center and

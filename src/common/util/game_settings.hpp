@@ -50,6 +50,7 @@ struct GameSettings {
     std::string LOCALHOST_IP;
     bool REPLAY;
     int REPLAY_TICK_DELTA_THRESHOLD;
+    uint32_t CLIENT_GAME_STATE_BUFFER_SIZE;
 };
 
 extern const GameSettings GAME_SETTINGS;

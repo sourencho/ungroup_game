@@ -58,6 +58,8 @@ GameSettings load_game_setting_globals(const std::string& path) {
 
     bool REPLAY = j["interpolation"]["REPLAY"].get<bool>();
     int REPLAY_TICK_DELTA_THRESHOLD = j["interpolation"]["REPLAY_TICK_DELTA_THRESHOLD"].get<int>();
+    uint32_t CLIENT_GAME_STATE_BUFFER_SIZE =
+        j["interpolation"]["CLIENT_GAME_STATE_BUFFER_SIZE"].get<uint32_t>();
 
     GameSettings game_settings = {
         .MAX_PLAYER_COUNT = MAX_PLAYER_COUNT,
@@ -89,6 +91,7 @@ GameSettings load_game_setting_globals(const std::string& path) {
         .LOCALHOST_IP = LOCALHOST_IP,
         .REPLAY = REPLAY,
         .REPLAY_TICK_DELTA_THRESHOLD = REPLAY_TICK_DELTA_THRESHOLD,
+        .CLIENT_GAME_STATE_BUFFER_SIZE = CLIENT_GAME_STATE_BUFFER_SIZE,
     };
     return game_settings;
 };

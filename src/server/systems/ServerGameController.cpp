@@ -3,6 +3,13 @@
 ServerGameController::ServerGameController(LevelKey level_key, uint32_t tcp_port) :
     GameController(level_key), m_terminalRenderingController(tcp_port),
     m_networkingServer(new NetworkingServer(tcp_port)) {
+    addEventListeners();
+}
+
+void ServerGameController::addEventListeners() {
+    EventController::getInstance().addEventListener(
+        EventType::EVENT_TYPE_COLLISION,
+        std::bind(&ServerGameController::handleCollisionEvent, this, std::placeholders::_1));
 }
 
 ServerGameController::~ServerGameController() {
@@ -83,9 +90,19 @@ void ServerGameController::postUpdate(sf::Int32 update_time) {
 void ServerGameController::setNetworkState() {
     GameState game_state = {
         .object = m_gameObjectController->getGameStateObject(),
+        .event = m_gameStateEvent,
         .core = m_gameStateCore,
     };
     m_networkingServer->setState(game_state);
+    m_gameStateEvent.collisions.clear();
+}
+
+void ServerGameController::handleCollisionEvent(std::shared_ptr<Event> event) {
+    std::shared_ptr<CollisionEvent> collision_event =
+        std::dynamic_pointer_cast<CollisionEvent>(event);
+
+    // save collision data
+    m_gameStateEvent.collisions.push_back(collision_event->getCollision());
 }
 
 void ServerGameController::incrementTick() {

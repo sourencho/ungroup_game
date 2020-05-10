@@ -10,14 +10,14 @@
         "TOTAL_RESOURCE_REQUIREMENTS": 20
     },
     "core": {
-        "USE_REMAINDER_DELTA_TIME": false
+        "USE_REMAINDER_DELTA_TIME": true
     },
     "physics": {
         "MIN_TIME_STEP_SEC": 0.008
     },
     "threads": {
         "CLIENT_FETCH_PLAYER_ID_SLEEP": 16,
-        "SERVER_INPUT_WINDOW_SLEEP": 50,
+        "SERVER_INPUT_WINDOW_SLEEP": 16,
         "CLIENT_RELIABLE_SEND_SLEEP": 16,
         "CLIENT_UNRELIABLE_SEND_SLEEP": 16,
         "SERVER_BROADCAST_GAME_STATE_SLEEP": 16,
@@ -32,6 +32,7 @@
     },
     "interpolation": {
         "REPLAY": true,
-        "REPLAY_TICK_DELTA_THRESHOLD": 5
+        "REPLAY_TICK_DELTA_THRESHOLD": 5,
+        "CLIENT_GAME_STATE_BUFFER_SIZE": 3
     }
 }
