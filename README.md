@@ -236,6 +236,8 @@ Run this command to enable debug mode on a specific build: https://gist.github.c
   - [Latency Compensating Methods in Client/Server In-game Protocol Design and Optimization](https://developer.valvesoftware.com/wiki/Latency_Compensating_Methods_in_Client/Server_In-game_Protocol_Design_and_Optimization)
 - [webdva](https://webdva.github.io/)
   - [How I Implemented Client-Side Linear Interpolation](https://webdva.github.io/how-i-implemented-client-side-linear-interpolation/)
+- [GDC](https://www.youtube.com/channel/UC0JB7TSe49lg56u6qH8y_MQ)
+  - [I Shot You First: Networking the Gameplay of Halo: Reach](https://www.youtube.com/watch?v=h47zZrqjgLc)
 
 ### Graphics
 
