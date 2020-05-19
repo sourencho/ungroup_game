@@ -25,7 +25,7 @@ begin
   pids = []
   for _ in 1..num_bots do
     j = fork do
-      exec "./build/src/client/ug-client -x -b -s 0 -a #{server_ip}"
+      exec "./build/src/client/ug-client -x -b -s 2 -a #{server_ip}"
       exit
     end
     pids.push j
