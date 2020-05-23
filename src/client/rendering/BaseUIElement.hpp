@@ -30,6 +30,7 @@ struct UIData {
     GameStatus game_status;
     uint32_t winner_player_id;
     uint32_t tick;
+    float tick_duration_ms;
 };
 
 class BaseUIElement {

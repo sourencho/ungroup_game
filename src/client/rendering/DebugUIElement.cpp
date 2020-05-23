@@ -20,19 +20,25 @@ DebugUIElement::DebugUIElement(sf::Vector2u window_size, sf::Vector2f size,
 
 void DebugUIElement::update(const UIData& ui_data) {
     std::stringstream stream;
-    stream << "FPS:               " << std::fixed << std::setprecision(0)
-           << ui_data.game_steps_per_second << "\n"
-           << "State updates/sec: " << std::fixed << std::setprecision(0)
-           << ui_data.game_updates_per_second << "\n"
-           << "Server states/sec: " << std::fixed << std::setprecision(0)
-           << ui_data.server_state_per_second << "\n"
-           << "Tick delta avg:    " << std::fixed << std::setprecision(1)
-           << ui_data.tick_delta_average << "\n"
-           << "Behind server/sec: " << ui_data.behind_game_state_rate << "\n"
-           << "Ahead server/sec:  " << ui_data.ahead_game_state_rate << "\n"
-           << "Inter dist avg:    " << ui_data.interpolate_distance_average << "\n"
-           << "Stall dist avg:    " << ui_data.stall_distance_average << "\n"
-           << "Tick:              " << ui_data.tick;
+    stream << std::fixed << std::setprecision(0) << std::setw(6) << ui_data.game_steps_per_second
+           << " FPS\n"
+           << std::fixed << std::setprecision(0) << std::setw(6) << ui_data.game_updates_per_second
+           << " State updates/sec\n"
+           << std::fixed << std::setprecision(0) << std::setw(6) << ui_data.server_state_per_second
+           << " Server states/sec\n"
+           << std::setw(6) << std::fixed << std::setprecision(2)
+           << ui_data.behind_game_state_rate / ui_data.game_updates_per_second
+           << " Behind server state\n"
+           << std::setw(6) << std::fixed << std::setprecision(2)
+           << ui_data.ahead_game_state_rate / ui_data.game_updates_per_second
+           << " Ahead server state\n"
+           << std::setw(6) << ui_data.interpolate_distance_average << " Inter dist avg\n"
+           << std::setw(6) << ui_data.stall_distance_average << " Stall dist avg\n"
+           << std::fixed << std::setprecision(1) << std::setw(6) << ui_data.tick_delta_average
+           << " Tick delta avg\n"
+           << std::setw(6) << ui_data.tick << " Tick\n"
+           << std::setw(6) << std::fixed << std::setprecision(0) << ui_data.tick_duration_ms
+           << " Tick duration ms";
     m_text.setString(stream.str());
 
     // Update position according to text size

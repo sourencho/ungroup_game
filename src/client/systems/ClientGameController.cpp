@@ -145,6 +145,7 @@ void ClientGameController::postUpdate(sf::Int32 update_time) {
         .game_status = m_gameStateCore.status,
         .winner_player_id = m_gameStateCore.winner_player_id,
         .tick = getTick(),
+        .tick_duration_ms = GAME_SETTINGS.MIN_TIME_STEP_SEC * 1000,
     };
     m_renderingController->postUpdate(update_time, ui_data);
 }
@@ -180,6 +181,7 @@ void ClientGameController::behind(uint32_t client_tick, uint32_t smallest_server
     uint32_t next_tick;
     if (smallest_server_tick - client_tick > MAX_BEHIND_TICK_DELTA) {
         next_tick = smallest_server_tick;
+
     } else {
         next_tick = client_tick + 1;
     }
@@ -222,10 +224,16 @@ void ClientGameController::interpolateGameState(uint32_t start_tick, uint32_t to
         throw std::runtime_error("Can't interpolate to the past.");
     }
 
-    float a = static_cast<float>(to_tick - start_tick) / static_cast<float>(end_tick - start_tick);
-    m_gameStateCore = game_state.core;
-    sf::Int32 delta_ms = MIN_TIME_STEP * (to_tick - start_tick);
-    m_gameObjectController->interpolateGameStateObject(game_state.object, a, delta_ms);
+    if (to_tick == end_tick) {
+        m_gameObjectController->applyGameStateObject(game_state.object);
+        m_gameStateCore = game_state.core;
+    } else {
+        float a =
+            static_cast<float>(to_tick - start_tick) / static_cast<float>(end_tick - start_tick);
+        m_gameStateCore = game_state.core;
+        sf::Int32 delta_ms = MIN_TIME_STEP * (to_tick - start_tick);
+        m_gameObjectController->interpolateGameStateObject(game_state.object, a, delta_ms);
+    }
     applyGameStateEvents(game_state.event);
     setTick(to_tick);
     m_interpolateGameStateMetric.pushCount(end_tick - to_tick);
