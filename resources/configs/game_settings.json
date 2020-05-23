@@ -9,8 +9,11 @@
         "GAME_BOUNDS_RADIUS": 600.0,
         "TOTAL_RESOURCE_REQUIREMENTS": 20
     },
+    "core": {
+        "USE_REMAINDER_DELTA_TIME": false
+    },
     "physics": {
-        "MIN_TIME_STEP_SEC": 0.016
+        "MIN_TIME_STEP_SEC": 0.008
     },
     "threads": {
         "CLIENT_FETCH_PLAYER_ID_SLEEP": 16,

@@ -26,6 +26,8 @@ GameSettings load_game_setting_globals(const std::string& path) {
 
     float MIN_TIME_STEP_SEC = j["physics"]["MIN_TIME_STEP_SEC"].get<float>();
 
+    bool USE_REMAINDERS_DELTA_TIME = j["core"]["USE_REMAINDER_DELTA_TIME"].get<bool>();
+
     std::chrono::milliseconds CLIENT_FETCH_PLAYER_ID_SLEEP(
         j["threads"]["CLIENT_FETCH_PLAYER_ID_SLEEP"].get<uint32_t>());
     std::chrono::milliseconds SERVER_INPUT_WINDOW_SLEEP(
@@ -69,6 +71,7 @@ GameSettings load_game_setting_globals(const std::string& path) {
         .GAME_SIZE = GAME_SIZE,
         .TOTAL_RESOURCE_REQUIREMENTS = TOTAL_RESOURCE_REQUIREMENTS,
         .MIN_TIME_STEP_SEC = MIN_TIME_STEP_SEC,
+        .USE_REMAINDER_DELTA_TIME = USE_REMAINDERS_DELTA_TIME,
         .CLIENT_FETCH_PLAYER_ID_SLEEP = CLIENT_FETCH_PLAYER_ID_SLEEP,
         .SERVER_INPUT_WINDOW_SLEEP = SERVER_INPUT_WINDOW_SLEEP,
         .CLIENT_RELIABLE_SEND_SLEEP = CLIENT_RELIABLE_SEND_SLEEP,

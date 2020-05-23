@@ -32,6 +32,7 @@ struct GameSettings {
     sf::Vector2f GAME_SIZE;
     uint32_t TOTAL_RESOURCE_REQUIREMENTS;
     float MIN_TIME_STEP_SEC;
+    bool USE_REMAINDER_DELTA_TIME;
     std::chrono::milliseconds CLIENT_FETCH_PLAYER_ID_SLEEP;
     std::chrono::milliseconds SERVER_INPUT_WINDOW_SLEEP;
     std::chrono::milliseconds CLIENT_RELIABLE_SEND_SLEEP;
