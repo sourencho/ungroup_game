@@ -221,7 +221,7 @@ void NetworkingServer::setClientUnreliableUpdate(sf::Packet packet, int client_i
     uint32_t drift = std::abs(static_cast<int>((m_tick_ta - client_tick)));
 
     updateDriftMetric(player_id, drift);
-    if (drift < CMD_DRIFT_THRESHOLD) {
+    if (drift < GAME_SETTINGS.INPUT_TICK_DELTA_THRESHOLD) {
         updateUpdatesMetric(player_id);
 
         InputDef::UnreliableInput unreliable_input;

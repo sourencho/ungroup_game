@@ -13,8 +13,6 @@
 #include "../../common/util/game_settings.hpp"
 #include "ClientGameController.hpp"
 
-const uint MAX_BEHIND_TICK_DELTA = 10;
-
 ClientGameController::ClientGameController(bool is_headless, bool is_bot, BotStrategy strategy,
                                            const std::string& server_ip, uint32_t server_tcp_port,
                                            LevelKey level_key) :
@@ -179,8 +177,8 @@ void ClientGameController::updateGameState(const InputDef::PlayerInputs& pi, sf:
 void ClientGameController::behind(uint32_t client_tick, uint32_t smallest_server_tick,
                                   const GameState& smallest_server_game_state) {
     uint32_t next_tick;
-    if (smallest_server_tick - client_tick > MAX_BEHIND_TICK_DELTA) {
-        next_tick = smallest_server_tick;
+    if (smallest_server_tick - client_tick > GAME_SETTINGS.BEHIND_TICK_DELTA_THRESHOLD) {
+        next_tick = smallest_server_tick - GAME_SETTINGS.BEHIND_TICK_DELTA_THRESHOLD;
 
     } else {
         next_tick = client_tick + 1;
