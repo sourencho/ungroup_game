@@ -23,8 +23,6 @@
 #include "../../common/util/StateDef.hpp"
 
 class NetworkingServer {
-    const uint32_t CMD_DRIFT_THRESHOLD = 1000000;
-
   public:
     NetworkingServer(uint32_t tcp_port);
     ~NetworkingServer();

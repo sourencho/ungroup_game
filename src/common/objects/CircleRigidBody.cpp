@@ -74,8 +74,8 @@ sf::Vector2f CircleRigidBody::getCenter() const {
     return sf::Vector2f(position.x + radius, position.y + radius);
 }
 
-void CircleRigidBody::hermiteInterpolation(sf::Vector2f position, sf::Vector2f velocity, float a,
-                                           sf::Int32 delta_ms) {
+void CircleRigidBody::hermiteInterpolatePosition(sf::Vector2f position, sf::Vector2f velocity,
+                                                 float a, sf::Int32 delta_ms) {
     float t = a;
     float t2 = t * t;
     float t3 = t2 * t;

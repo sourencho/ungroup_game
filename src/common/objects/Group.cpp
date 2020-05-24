@@ -34,7 +34,7 @@ void Group::applyUpdate(GroupUpdate gu) {
 
 void Group::applyInterpolatedUpdate(GroupUpdate gu, float a, sf::Int32 delta_ms) {
     setActive(gu.is_active);
-    hermiteInterpolation({gu.x_pos, gu.y_pos}, gu.velocity, a, delta_ms);
+    hermiteInterpolatePosition({gu.x_pos, gu.y_pos}, gu.velocity, a, delta_ms);
     setRadius(gu.radius);
 }
 

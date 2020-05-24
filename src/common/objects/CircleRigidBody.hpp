@@ -39,7 +39,7 @@ class CircleRigidBody : public GameObject {
         m_position = position;
     }
 
-    void interpolatePosition(const sf::Vector2f position, float a) {
+    void linearInterpolatePosition(const sf::Vector2f position, float a) {
         m_position = VectorUtil::lerp(m_position, position, a);
     }
 
@@ -63,8 +63,8 @@ class CircleRigidBody : public GameObject {
 
     void setTargetVelocity(sf::Vector2f target_velocity);
 
-    void hermiteInterpolation(sf::Vector2f position, sf::Vector2f velocity, float a,
-                              sf::Int32 delta_ms);
+    void hermiteInterpolatePosition(sf::Vector2f position, sf::Vector2f velocity, float a,
+                                    sf::Int32 delta_ms);
 
     void applyImpulse(const Impulse& impulse);
 

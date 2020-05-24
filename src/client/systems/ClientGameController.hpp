@@ -62,6 +62,8 @@ class ClientGameController : public GameController {
 
     /**
      * Interpolate game state from start_tick to to_tick using end_tick's game state.
+     * For example, if start tick is 10, end tick is 20 and to_tick is 11 then we will interpolate
+     * 10% from the local game state to the game state passed in.
      */
     void interpolateGameState(uint32_t start_tick, uint32_t to_tick, uint32_t end_tick,
                               const GameState& game_state);
@@ -98,8 +100,8 @@ class ClientGameController : public GameController {
     sf::RenderWindow m_window;
 
     TemporalMetric m_tickDeltaMetric{
-        4 * 15, sf::seconds(0.25f)}; // Tracks the tick delta between the client and target server
-                                     // state. Each count is a tick delta.
+        4 * 15, sf::seconds(0.25f)}; // Tracks the absolute tick delta between the client and target
+                                     // server state. Each count is a tick delta.
     TemporalMetric m_behindGameStateMetric{
         4 * 15, sf::seconds(0.25f)}; // Tracks of the number of ticks the client is behind the
                                      // target server state. Each count is a tick delta.
@@ -112,6 +114,9 @@ class ClientGameController : public GameController {
     TemporalMetric m_stallGameStateMetric{
         4 * 15, sf::seconds(0.25f)}; // Tracks the number of ticks where the game was stalled and no
                                      // new game state was applied. Each count is a stall.
+    TemporalMetric m_noGameStateMetric{
+        4 * 15, sf::seconds(0.25f)}; // Tracks the number of ticks where there weren't any server
+                                     // game states in the buffer.
 
     std::unique_ptr<NetworkingClient> m_networkingClient;
     std::unique_ptr<InputController> m_inputController;

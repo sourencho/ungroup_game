@@ -32,10 +32,12 @@ void DebugUIElement::update(const UIData& ui_data) {
            << std::setw(6) << std::fixed << std::setprecision(2)
            << ui_data.ahead_game_state_rate / ui_data.game_updates_per_second
            << " Ahead server state\n"
+           << std::setw(6) << std::fixed << std::setprecision(2)
+           << ui_data.no_game_state_rate / ui_data.game_updates_per_second << " No server state\n"
            << std::setw(6) << ui_data.interpolate_distance_average << " Inter dist avg\n"
            << std::setw(6) << ui_data.stall_distance_average << " Stall dist avg\n"
            << std::fixed << std::setprecision(1) << std::setw(6) << ui_data.tick_delta_average
-           << " Tick delta avg\n"
+           << " Tick delta avg (abs)\n"
            << std::setw(6) << ui_data.tick << " Tick\n"
            << std::setw(6) << std::fixed << std::setprecision(0) << ui_data.tick_duration_ms
            << " Tick duration ms";

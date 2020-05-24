@@ -121,6 +121,7 @@ void ClientGameController::update(const InputDef::PlayerInputs& pi, sf::Int32 de
     m_tickDeltaMetric.update();
     m_behindGameStateMetric.update();
     m_aheadGameStateMetric.update();
+    m_noGameStateMetric.update();
     m_interpolateGameStateMetric.update();
     m_stallGameStateMetric.update();
 }
@@ -133,6 +134,7 @@ void ClientGameController::postUpdate(sf::Int32 update_time) {
         .tick_delta_average = m_tickDeltaMetric.getAverage(),
         .behind_game_state_rate = m_behindGameStateMetric.getRate(sf::seconds(1)),
         .ahead_game_state_rate = m_aheadGameStateMetric.getRate(sf::seconds(1)),
+        .no_game_state_rate = m_noGameStateMetric.getRate(sf::seconds(1)),
         .interpolate_distance_average = m_interpolateGameStateMetric.getAverage(),
         .stall_distance_average = m_stallGameStateMetric.getAverage(),
         .resources = m_gameObjectController->getPlayerResources(m_playerId),
@@ -167,7 +169,7 @@ void ClientGameController::updateGameState(const InputDef::PlayerInputs& pi, sf:
         ahead(client_tick, smallest_server_tick, game_state_buffer);
         m_aheadGameStateMetric.pushCount();
     }
-    m_tickDeltaMetric.pushCount(smallest_server_tick - client_tick);
+    m_tickDeltaMetric.pushCount(std::abs(static_cast<int>(smallest_server_tick - client_tick)));
 }
 
 /**

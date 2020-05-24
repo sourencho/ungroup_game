@@ -23,6 +23,7 @@ struct UIData {
     float tick_delta_average;
     float behind_game_state_rate;
     float ahead_game_state_rate;
+    float no_game_state_rate;
     float interpolate_distance_average;
     float stall_distance_average;
     std::array<uint32_t, RESOURCE_TYPE_COUNT> resources;
