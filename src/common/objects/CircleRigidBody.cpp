@@ -20,7 +20,7 @@ void CircleRigidBody::applyInput(sf::Vector2f input) {
  * Apply impulse to change velocity based on mass.
  * Formulas taken from http://www.chrishecker.com/Rigid_Body_Dynamics
  */
-void CircleRigidBody::applyImpulse(const PhysicsDef::Impulse& impulse) {
+void CircleRigidBody::applyImpulse(const Impulse& impulse) {
     sf::Vector2f velocity = m_velocity + (impulse.magnitude / m_mass) * impulse.normal;
     setVelocity(velocity);
     setTargetVelocity(velocity);
@@ -72,4 +72,18 @@ sf::Vector2f CircleRigidBody::getCenter() const {
     sf::Vector2f position = getPosition();
     float radius = getRadius();
     return sf::Vector2f(position.x + radius, position.y + radius);
+}
+
+void CircleRigidBody::hermiteInterpolatePosition(sf::Vector2f position, sf::Vector2f velocity,
+                                                 float a, sf::Int32 delta_ms) {
+    float t = a;
+    float t2 = t * t;
+    float t3 = t2 * t;
+    m_position = (2.f * t3 - 3.f * t2 + 1.f) * m_position +
+                 (t3 - 2.f * t2 + t) * delta_ms * m_velocity + (-2.f * t3 + 3.f * t2) * position +
+                 (t3 - t2) * delta_ms * velocity;
+    m_velocity =
+        1.f / delta_ms *
+        ((6.f * t2 - 6.f * t) * m_position + (3.f * t2 - 4.f * t + 1.f) * delta_ms * m_velocity +
+         (-6.f * t2 + 6.f * t) * position + (3.f * t2 - 2.f * t) * delta_ms * velocity);
 }

@@ -92,6 +92,21 @@ void GameObjectController::applyGameStateObject(GameStateObject game_state_objec
     m_resourceController.applyUpdate(game_state_object.rcu);
 }
 
+void GameObjectController::interpolateGameStateObject(GameStateObject game_state_object, float a,
+                                                      sf::Int32 delta_ms) {
+    for (auto gu : game_state_object.group_updates) {
+        m_gameObjectStore.getGroup(gu.group_id)->applyInterpolatedUpdate(gu, a, delta_ms);
+    }
+    for (auto mu : game_state_object.mine_updates) {
+        m_gameObjectStore.getMine(mu.mine_id)->applyUpdate(mu);
+    }
+    for (auto pu : game_state_object.player_updates) {
+        m_gameObjectStore.getPlayer(pu.player_id)->applyUpdate(pu);
+    }
+    m_groupController.applyUpdate(game_state_object.gcu);
+    m_resourceController.applyUpdate(game_state_object.rcu);
+}
+
 GameStateObject GameObjectController::getGameStateObject() {
     auto groups = m_gameObjectStore.getGroups();
     auto mines = m_gameObjectStore.getMines();

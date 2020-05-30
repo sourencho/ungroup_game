@@ -4,23 +4,45 @@
 
 sf::Packet& operator<<(sf::Packet& packet, const GameStateObject& game_state_object) {
     packet << static_cast<sf::Uint32>(game_state_object.group_updates.size());
-    for (const auto group_update : game_state_object.group_updates) {
+    for (const auto& group_update : game_state_object.group_updates) {
         packet << group_update;
     }
 
     packet << static_cast<sf::Uint32>(game_state_object.mine_updates.size());
-    for (const auto mine_update : game_state_object.mine_updates) {
+    for (const auto& mine_update : game_state_object.mine_updates) {
         packet << mine_update;
     }
 
     packet << static_cast<sf::Uint32>(game_state_object.player_updates.size());
-    for (const auto player_update : game_state_object.player_updates) {
+    for (const auto& player_update : game_state_object.player_updates) {
         packet << player_update;
     }
 
     packet << game_state_object.gcu;
     packet << game_state_object.rcu;
 
+    return packet;
+}
+
+sf::Packet& operator<<(sf::Packet& packet, const GameStateEvent& game_state_event) {
+    packet << static_cast<sf::Uint32>(game_state_event.collisions.size());
+    for (const auto& collision : game_state_event.collisions) {
+        packet << collision;
+    }
+    return packet;
+}
+
+sf::Packet& operator>>(sf::Packet& packet, GameStateEvent& game_state_event) {
+    sf::Uint32 collisions_size;
+    std::vector<Collision> collisions;
+    packet >> collisions_size;
+    collisions.reserve(collisions_size);
+    for (int i = 0; i < collisions_size; ++i) {
+        Collision c = {};
+        packet >> c;
+        collisions.push_back(c);
+    }
+    game_state_event = {collisions};
     return packet;
 }
 
@@ -35,6 +57,7 @@ sf::Packet& operator>>(sf::Packet& packet, GameStateObject& game_state_object) {
     ResourceControllerUpdate rcu;
 
     packet >> group_updates_size;
+    group_updates.reserve(group_updates_size);
     for (int i = 0; i < group_updates_size; ++i) {
         GroupUpdate gu = {};
         packet >> gu;
@@ -42,6 +65,7 @@ sf::Packet& operator>>(sf::Packet& packet, GameStateObject& game_state_object) {
     }
 
     packet >> mine_updates_size;
+    mine_updates.reserve(mine_updates_size);
     for (int i = 0; i < mine_updates_size; ++i) {
         MineUpdate mu = {};
         packet >> mu;
@@ -49,6 +73,7 @@ sf::Packet& operator>>(sf::Packet& packet, GameStateObject& game_state_object) {
     }
 
     packet >> player_updates_size;
+    player_updates.reserve(player_updates_size);
     for (int i = 0; i < player_updates_size; ++i) {
         PlayerUpdate pu = {};
         packet >> pu;
@@ -74,10 +99,10 @@ sf::Packet& operator>>(sf::Packet& packet, GameStateCore& game_state_core) {
 }
 
 sf::Packet& operator<<(sf::Packet& packet, const GameState& game_state) {
-    return packet << game_state.object << game_state.core;
+    return packet << game_state.object << game_state.event << game_state.core;
 }
 sf::Packet& operator>>(sf::Packet& packet, GameState& game_state) {
-    return packet >> game_state.object >> game_state.core;
+    return packet >> game_state.object >> game_state.event >> game_state.core;
 }
 
 sf::Packet& operator<<(sf::Packet& packet, const GameStatus& game_status) {

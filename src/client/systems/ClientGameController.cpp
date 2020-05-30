@@ -1,9 +1,12 @@
+#include <cmath>
 #include <iostream>
 #include <numeric>
 #include <thread>
 
 #include <SFML/Graphics.hpp>
 
+#include "../../common/events/CollisionEvent.hpp"
+#include "../../common/events/EventController.hpp"
 #include "../../common/physics/VectorUtil.hpp"
 #include "../../common/util/InputDef.hpp"
 #include "../../common/util/StateDef.hpp"
@@ -74,8 +77,11 @@ void ClientGameController::preUpdate() {
     switch (m_gameStateCore.status) {
         case GameStatus::not_started: {
             // Keep fetching game state to check if game status changed from not_started
-            GameState game_state = m_networkingClient->getLatestGameState();
-            m_gameStateCore = game_state.core;
+            std::map<uint32_t, GameState> game_state_buffer =
+                m_networkingClient->getGameStateBuffer();
+            if (game_state_buffer.size() == GAME_SETTINGS.CLIENT_GAME_STATE_BUFFER_SIZE) {
+                m_gameStateCore = game_state_buffer.begin()->second.core;
+            }
             break;
         }
         case GameStatus::playing: {
@@ -84,8 +90,6 @@ void ClientGameController::preUpdate() {
                 inputs = getBotMove(m_playerId, m_strategy);
             }
             sendInputs(inputs);
-            saveInputs(inputs);
-            rewindAndReplay();
             break;
         }
         case GameStatus::game_over: {
@@ -104,7 +108,7 @@ void ClientGameController::update(const InputDef::PlayerInputs& pi, sf::Int32 de
             break;
         }
         case GameStatus::playing: {
-            computeGameState(pi, delta_ms);
+            updateGameState(pi, delta_ms);
             break;
         }
         case GameStatus::game_over: {
@@ -114,16 +118,25 @@ void ClientGameController::update(const InputDef::PlayerInputs& pi, sf::Int32 de
     }
 
     m_renderingController->update(delta_ms);
-    m_networkUpdateMetric.update();
     m_tickDeltaMetric.update();
+    m_behindGameStateMetric.update();
+    m_aheadGameStateMetric.update();
+    m_noGameStateMetric.update();
+    m_interpolateGameStateMetric.update();
+    m_stallGameStateMetric.update();
 }
 
 void ClientGameController::postUpdate(sf::Int32 update_time) {
     UIData ui_data = {
         .game_steps_per_second = m_gameStepMetric.getRate(sf::seconds(1)),
         .game_updates_per_second = m_gameUpdateMetric.getRate(sf::seconds(1)),
-        .network_updates_per_second = m_networkUpdateMetric.getRate(sf::seconds(1)),
+        .server_state_per_second = m_networkingClient->getServerGameStateRate(sf::seconds(1)),
         .tick_delta_average = m_tickDeltaMetric.getAverage(),
+        .behind_game_state_rate = m_behindGameStateMetric.getRate(sf::seconds(1)),
+        .ahead_game_state_rate = m_aheadGameStateMetric.getRate(sf::seconds(1)),
+        .no_game_state_rate = m_noGameStateMetric.getRate(sf::seconds(1)),
+        .interpolate_distance_average = m_interpolateGameStateMetric.getAverage(),
+        .stall_distance_average = m_stallGameStateMetric.getAverage(),
         .resources = m_gameObjectController->getPlayerResources(m_playerId),
         .resource_goals = m_gameObjectController->getPlayerController()
                               .getPlayer(m_playerId)
@@ -132,73 +145,106 @@ void ClientGameController::postUpdate(sf::Int32 update_time) {
         .game_status = m_gameStateCore.status,
         .winner_player_id = m_gameStateCore.winner_player_id,
         .tick = getTick(),
+        .tick_duration_ms = GAME_SETTINGS.MIN_TIME_STEP_SEC * 1000,
     };
     m_renderingController->postUpdate(update_time, ui_data);
 }
 
-void ClientGameController::rewindAndReplay() {
-    uint32_t m_newGameStateTick = m_networkingClient->getLatestGameStateTick();
-    if (m_newGameStateTick > m_largestAppliedGameStateTick) {
-        GameState game_state = m_networkingClient->getLatestGameState();
-        uint32_t client_tick = getTick();
-        uint32_t server_tick = game_state.core.tick;
-        int tick_delta = client_tick - server_tick;
+void ClientGameController::updateGameState(const InputDef::PlayerInputs& pi, sf::Int32 delta_ms) {
 
-        applyGameState(game_state);
-        if (GAME_SETTINGS.REPLAY) {
-            replay(client_tick, server_tick);
-        }
+    std::map<uint32_t, GameState> game_state_buffer = m_networkingClient->getGameStateBuffer();
 
-        m_largestAppliedGameStateTick = m_newGameStateTick;
-        m_tickDeltaMetric.pushCount(tick_delta);
-        m_networkUpdateMetric.pushCount();
-    } else if (m_newGameStateTick < m_largestAppliedGameStateTick) {
-        std::cout << "Recieved stale game state: " << m_newGameStateTick << "<"
-                  << m_largestAppliedGameStateTick << std::endl;
-    }
-}
-
-void ClientGameController::applyGameState(GameState& game_state) {
-    // Rewind
-    m_gameObjectController->applyGameStateObject(game_state.object);
-    m_gameStateCore = game_state.core;
-    setTick(game_state.core.tick);
-}
-
-void ClientGameController::replay(uint32_t client_tick, uint32_t server_tick) {
-    int tick_delta = client_tick - server_tick;
-
-    if (tick_delta <= 0) {
+    if (game_state_buffer.empty()) {
         return;
     }
 
-    // Prevent the client from drifting too far from server
-    tick_delta = std::min(tick_delta, GAME_SETTINGS.REPLAY_TICK_DELTA_THRESHOLD);
+    uint32_t client_tick = getTick();
+    uint32_t smallest_server_tick = game_state_buffer.begin()->first;
+    const GameState& smallest_server_game_state = game_state_buffer.begin()->second;
 
-    // Loop through ticks that need to be replayed and apply client input from cache if present
-    for (int i = 0; i < tick_delta; ++i) {
-        uint32_t replay_tick = server_tick + i;
-        if (m_tickToInput.count(replay_tick) > 0) {
-            InputDef::ClientInputAndTick client_input_and_tick = m_tickToInput[replay_tick];
-            auto pi = InputDef::PlayerInputs(m_inputController->getPlayerInputs(
-                m_playerId, client_input_and_tick.ri, client_input_and_tick.ui));
-            GameController::computeGameState(pi, GameController::MIN_TIME_STEP);
-        } else {
-            // If we don't have input for this tick pass in empty inputs
-            auto pi = InputDef::PlayerInputs();
-            GameController::computeGameState(pi, GameController::MIN_TIME_STEP);
+    if (client_tick < smallest_server_tick) {
+        behind(client_tick, smallest_server_tick, smallest_server_game_state);
+        m_behindGameStateMetric.pushCount();
+    } else {
+        ahead(client_tick, smallest_server_tick, game_state_buffer);
+        m_aheadGameStateMetric.pushCount();
+    }
+    m_tickDeltaMetric.pushCount(std::abs(static_cast<int>(smallest_server_tick - client_tick)));
+}
+
+/**
+ * If client is too far behind smallest server game state in the buffer, jump to server
+ * game state, otherwise interpolate the game state of the next tick.
+ */
+void ClientGameController::behind(uint32_t client_tick, uint32_t smallest_server_tick,
+                                  const GameState& smallest_server_game_state) {
+    uint32_t next_tick;
+    if (smallest_server_tick - client_tick > GAME_SETTINGS.BEHIND_TICK_DELTA_THRESHOLD) {
+        next_tick = smallest_server_tick - GAME_SETTINGS.BEHIND_TICK_DELTA_THRESHOLD;
+
+    } else {
+        next_tick = client_tick + 1;
+    }
+    interpolateGameState(client_tick, next_tick, smallest_server_tick, smallest_server_game_state);
+}
+
+/**
+ * If client is ahead of the smallest server game state in the buffer, stay at the same tick but
+ * interpolate to the next available game state in the buffer. If there are none available just keep
+ * the game state the same. Note that the tick stays the same in this case so that we fall back
+ * behind to being behind the smallest server game state in the buffer.
+ */
+void ClientGameController::ahead(uint32_t client_tick, uint32_t smallest_server_tick,
+                                 std::map<uint32_t, GameState>& game_state_buffer) {
+    std::map<uint32_t, GameState>::iterator game_state_buffer_it = game_state_buffer.begin();
+    ++game_state_buffer_it;
+    while (game_state_buffer_it != game_state_buffer.end()) {
+        uint32_t next_server_tick = game_state_buffer_it->first;
+        if (client_tick < next_server_tick) {
+            const GameState& next_server_game_state = game_state_buffer_it->second;
+            uint32_t next_tick = client_tick;
+            // Keep the same tick but interpolate to the next available server game state.
+            interpolateGameState(client_tick - 1, next_tick, next_server_tick,
+                                 next_server_game_state);
+            m_stallGameStateMetric.pushCount(client_tick - smallest_server_tick);
+            return;
         }
+        ++game_state_buffer_it;
     }
 
-    // Remove cached ticks older than the applied server game state's tick. We won't need them for
-    // future replays because we never apply stale game states.
-    for (auto it = m_tickToInput.begin(); it != m_tickToInput.end();) {
-        if (it->first < server_tick) {
-            m_tickToInput.erase(it++);
-        } else {
-            ++it;
-        }
+    // If we reach here then we don't have any game states to interpolate to. Keep the same tick and
+    // game state.
+    m_stallGameStateMetric.pushCount(client_tick - smallest_server_tick);
+    return;
+}
+
+void ClientGameController::interpolateGameState(uint32_t start_tick, uint32_t to_tick,
+                                                uint32_t end_tick, const GameState& game_state) {
+    if (to_tick < start_tick || end_tick < to_tick) {
+        throw std::runtime_error("Can't interpolate to the past.");
     }
+
+    if (to_tick == end_tick) {
+        m_gameObjectController->applyGameStateObject(game_state.object);
+        m_gameStateCore = game_state.core;
+    } else {
+        float a =
+            static_cast<float>(to_tick - start_tick) / static_cast<float>(end_tick - start_tick);
+        m_gameStateCore = game_state.core;
+        sf::Int32 delta_ms = MIN_TIME_STEP * (to_tick - start_tick);
+        m_gameObjectController->interpolateGameStateObject(game_state.object, a, delta_ms);
+    }
+    applyGameStateEvents(game_state.event);
+    setTick(to_tick);
+    m_interpolateGameStateMetric.pushCount(end_tick - to_tick);
+}
+
+void ClientGameController::applyGameStateEvents(const GameStateEvent& game_state_event) {
+    for (const auto& collision : game_state_event.collisions) {
+        EventController::getInstance().forceQueueEvent(
+            std::move(std::unique_ptr<CollisionEvent>(new CollisionEvent(collision))));
+    }
+    EventController::getInstance().forceProcessEvents();
 }
 
 void ClientGameController::sendInputs(
@@ -209,12 +255,6 @@ void ClientGameController::sendInputs(
     if (!inputs.second.allFalse()) {
         m_networkingClient->pushUnreliableInput(inputs.second);
     }
-}
-
-void ClientGameController::saveInputs(
-    std::pair<InputDef::ReliableInput, InputDef::UnreliableInput> inputs) {
-    m_tickToInput[m_networkingClient->getTick()] =
-        (InputDef::ClientInputAndTick){inputs.second, inputs.first, m_networkingClient->getTick()};
 }
 
 uint32_t ClientGameController::getTick() {

@@ -39,6 +39,10 @@ class CircleRigidBody : public GameObject {
         m_position = position;
     }
 
+    void linearInterpolatePosition(const sf::Vector2f position, float a) {
+        m_position = VectorUtil::lerp(m_position, position, a);
+    }
+
     void setCenterPosition(sf::Vector2f position) {
         setPosition({position.x - getRadius(), position.y - getRadius()});
     }
@@ -50,10 +54,20 @@ class CircleRigidBody : public GameObject {
     sf::Vector2f getTargetVelocity() const {
         return m_targetVelocity;
     }
+
     void setVelocity(sf::Vector2f velocity);
+
+    void interpolateVelocity(sf::Vector2f velocity, float a) {
+        m_position = VectorUtil::lerp(m_velocity, velocity, a);
+    }
+
     void setTargetVelocity(sf::Vector2f target_velocity);
 
-    void applyImpulse(const PhysicsDef::Impulse& impulse);
+    void hermiteInterpolatePosition(sf::Vector2f position, sf::Vector2f velocity, float a,
+                                    sf::Int32 delta_ms);
+
+    void applyImpulse(const Impulse& impulse);
+
     void applyInput(sf::Vector2f input);
 
     const bool isMovable() const {

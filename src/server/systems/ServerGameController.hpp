@@ -7,9 +7,11 @@
 #include <vector>
 
 #include "../../common/events/Event.hpp"
+#include "../../common/events/EventController.hpp"
 #include "../../common/systems/GameController.hpp"
 #include "../../common/systems/LevelController.hpp"
 #include "../rendering/TerminalRenderingController.hpp"
+#include "../../common/events/CollisionEvent.hpp"
 
 #include "NetworkingServer.hpp"
 
@@ -20,6 +22,7 @@ class ServerGameController : public GameController {
     ~ServerGameController();
 
     void start() override;
+    void handleCollisionEvent(std::shared_ptr<Event> event);
 
   private:
     // Overrides
@@ -32,10 +35,12 @@ class ServerGameController : public GameController {
 
     // Methods
     void setNetworkState();
+    void addEventListeners();
 
     // Variables
     std::unique_ptr<NetworkingServer> m_networkingServer;
     TerminalRenderingController m_terminalRenderingController;
+    GameStateEvent m_gameStateEvent;
 };
 
 #endif /* ServerGameController_hpp */

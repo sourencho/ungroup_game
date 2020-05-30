@@ -20,13 +20,27 @@ DebugUIElement::DebugUIElement(sf::Vector2u window_size, sf::Vector2f size,
 
 void DebugUIElement::update(const UIData& ui_data) {
     std::stringstream stream;
-    stream << "FPS: " << std::fixed << std::setprecision(0) << ui_data.game_steps_per_second << "\n"
-           << "UPS: " << std::fixed << std::setprecision(0) << ui_data.game_updates_per_second
-           << "\n"
-           << "XPS: " << std::fixed << std::setprecision(0) << ui_data.network_updates_per_second
-           << "\n"
-           << "TDA: " << std::fixed << std::setprecision(0) << ui_data.tick_delta_average << "\n"
-           << "TIK: " << ui_data.tick;
+    stream << std::fixed << std::setprecision(0) << std::setw(6) << ui_data.game_steps_per_second
+           << " FPS\n"
+           << std::fixed << std::setprecision(0) << std::setw(6) << ui_data.game_updates_per_second
+           << " State updates/sec\n"
+           << std::fixed << std::setprecision(0) << std::setw(6) << ui_data.server_state_per_second
+           << " Server states/sec\n"
+           << std::setw(6) << std::fixed << std::setprecision(2)
+           << ui_data.behind_game_state_rate / ui_data.game_updates_per_second
+           << " Behind server state\n"
+           << std::setw(6) << std::fixed << std::setprecision(2)
+           << ui_data.ahead_game_state_rate / ui_data.game_updates_per_second
+           << " Ahead server state\n"
+           << std::setw(6) << std::fixed << std::setprecision(2)
+           << ui_data.no_game_state_rate / ui_data.game_updates_per_second << " No server state\n"
+           << std::setw(6) << ui_data.interpolate_distance_average << " Inter dist avg\n"
+           << std::setw(6) << ui_data.stall_distance_average << " Stall dist avg\n"
+           << std::fixed << std::setprecision(1) << std::setw(6) << ui_data.tick_delta_average
+           << " Tick delta avg (abs)\n"
+           << std::setw(6) << ui_data.tick << " Tick\n"
+           << std::setw(6) << std::fixed << std::setprecision(0) << ui_data.tick_duration_ms
+           << " Tick duration ms";
     m_text.setString(stream.str());
 
     // Update position according to text size

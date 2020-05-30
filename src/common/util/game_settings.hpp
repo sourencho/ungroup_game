@@ -48,8 +48,9 @@ struct GameSettings {
     unsigned short SERVER_STATE_UDP_PORT;
     unsigned short SERVER_INPUT_UDP_PORT;
     std::string LOCALHOST_IP;
-    bool REPLAY;
-    int REPLAY_TICK_DELTA_THRESHOLD;
+    uint32_t INPUT_TICK_DELTA_THRESHOLD;
+    uint32_t CLIENT_GAME_STATE_BUFFER_SIZE;
+    uint32_t BEHIND_TICK_DELTA_THRESHOLD;
 };
 
 extern const GameSettings GAME_SETTINGS;

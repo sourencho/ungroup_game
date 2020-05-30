@@ -13,12 +13,12 @@ class PhysicsController {
     CircleRigidBody& add(std::unique_ptr<CircleRigidBody> circle_rigid_body);
     void update(sf::Int32 delta_ms);
     void step(sf::Int32 delta_ms);
+    void resolveCollisions();
+    void resolveMapBounds();
 
   private:
-    void resolveCollisions();
     void resolveCollision(CircleRigidBody& circle_a, CircleRigidBody& circle_b,
                           const Collision& collision);
-    void resolveMapBounds();
     void fireCollisionEvent(const Collision& collision);
 
     std::vector<std::unique_ptr<CircleRigidBody>> m_circleRigidBodies;

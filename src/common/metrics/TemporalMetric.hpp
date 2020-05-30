@@ -47,12 +47,12 @@ class TemporalMetric {
     /**
      * Get rate of metric per @interval amount of time
      */
-    float getRate(sf::Time interval);
+    float getRate(sf::Time interval) const;
 
     /**
      * Get average value of metric over the entire time span tracked.
      */
-    float getAverage();
+    float getAverage() const;
 
     /**
      * Updates the slot currently accumilating the metric.
@@ -63,7 +63,7 @@ class TemporalMetric {
     /**
      * Returns the count and sum of all the counts.
      */
-    std::pair<size_t, int> accumulateCounts();
+    std::pair<size_t, int> accumulateCounts() const;
 
     sf::Clock m_clock;
     boost::circular_buffer<std::vector<int>> m_countSlots;
