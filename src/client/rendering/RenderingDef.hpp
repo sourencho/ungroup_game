@@ -10,7 +10,7 @@
 namespace RenderingDef {
     const uint32_t WINDOW_FRAME_LIMIT = 60;
     const bool VSYNC_ENABLED = true;
-    const sf::Vector2f WINDOW_RESOLUTION(1200, 900);
+    const sf::Vector2f WINDOW_RESOLUTION(1080, 810);
     const float GAME_SCALE = 3.f;
     const sf::Vector2f GAME_SCALING_FACTOR(GAME_SCALE, GAME_SCALE);
     const bool USE_SHADERS = true;
@@ -39,10 +39,10 @@ namespace RenderingDef {
     };
 
     /* Camera */
-    const float CAMERA_CHASE = 0.2;
+    const float CAMERA_CHASE = 0.5;
 
     /* Debug */
-    const bool RENDER_DEBUG = true;
+    const bool RENDER_DEBUG = false;
     const sf::Color DEBUG_TEXT_COLOR(sf::Color::Cyan);
 
     /* Group */
@@ -82,8 +82,8 @@ namespace RenderingDef {
     // Soft palette
     const sf::Color RESOURCE_A_COLOR(159, 224, 246); // blue
     const sf::Color RESOURCE_B_COLOR(243, 229, 154); // yellow
-    const sf::Color RESOURCE_C_COLOR(195, 235, 141); // green
-    const sf::Color RESOURCE_D_COLOR(243, 181, 155); // orange
+    const sf::Color RESOURCE_C_COLOR(243, 181, 155); // orange
+    const sf::Color RESOURCE_D_COLOR(243, 156, 156); // red
 
     /* Mine */
     const sf::Color DEFAULT_MINE_COLOR(sf::Color::Red);

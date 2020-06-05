@@ -10,7 +10,7 @@
 
 #include <SFML/Network.hpp>
 
-enum ResourceType { RED, GREEN, BLUE, YELLOW };
+enum ResourceType { RED, ORANGE, BLUE, YELLOW };
 const size_t RESOURCE_TYPE_COUNT = 4;
 const std::array<std::string, RESOURCE_TYPE_COUNT> RESOURCE_NAME = {"A", "B", "C", "D"};
 
