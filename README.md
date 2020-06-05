@@ -110,11 +110,12 @@ Features:
   - Server-Client seperation
   - Authoritative server
   - Multi threaded UDP/TCP communication between server and client
-  - Reliable (TCP) and Unreliable (UDP) client inputs sent to server
-  - Unreliable (UDP) game state broadcasted to client
+  - Reliable (TCP) and Unreliable (UDP) updates
+  - Networked phsyics
+    - Hermite Interpolation
+    - Event updates
+  - Tick sync
   - Works locally and over the internet
-- Interpolation
-  - Snapshot interpolation
 - Rendering
   - 2D Cirlce shapes, textures and shaders
   - Animations with texture sprite sheets
