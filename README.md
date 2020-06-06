@@ -107,11 +107,11 @@ Features:
   - 2D Circle collision detection and handling
   - 2D Circle perfect ellastic collision impulses
 - Networking
-  - Server-Client seperation
+  - Server-Client separation
   - Authoritative server
   - Multi threaded UDP/TCP communication between server and client
   - Reliable (TCP) and Unreliable (UDP) updates
-  - Networked phsyics
+  - Networked physics
     - Hermite Interpolation
     - Event updates
   - Tick sync
@@ -127,8 +127,8 @@ Features:
 - Levelling
   - Configurable levels
 - UI
-  - Client HUD with configurable elements that are allignable to window edges
-  - Server terminal ui with tables and panes that displays realtime statistics
+  - Client HUD with configurable elements that are alignable to window edges
+  - Server terminal ui with tables and panes that displays real time statistics
 - Bots
   - Template for writing bots that query game state and input moves as a client
 - Events
