@@ -162,6 +162,12 @@ void ClientGameController::updateGameState(const InputDef::PlayerInputs& pi, sf:
     uint32_t smallest_server_tick = game_state_buffer.begin()->first;
     const GameState& smallest_server_game_state = game_state_buffer.begin()->second;
 
+    const GameState& largest_server_game_state = game_state_buffer.rbegin()->second;
+    if (largest_server_game_state.core.status == GameStatus::game_over) {
+        m_gameStateCore = largest_server_game_state.core;
+        return;
+    }
+
     if (client_tick < smallest_server_tick) {
         behind(client_tick, smallest_server_tick, smallest_server_game_state);
         m_behindGameStateMetric.pushCount();
