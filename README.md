@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.com/SourenP/ungroup_game.svg?branch=master)](https://travis-ci.com/SourenP/ungroup_game)
 
-![screenshot](https://user-images.githubusercontent.com/3184499/72916611-5438c880-3d10-11ea-846b-57579872f243.png)
+![demo](https://github.com/SourenP/ungroup_game/blob/master/docs/images/ungroup_demo.gif?raw=true)
 
 ## Intro
 
@@ -107,14 +107,15 @@ Features:
   - 2D Circle collision detection and handling
   - 2D Circle perfect ellastic collision impulses
 - Networking
-  - Server-Client seperation
+  - Server-Client separation
   - Authoritative server
   - Multi threaded UDP/TCP communication between server and client
-  - Reliable (TCP) and Unreliable (UDP) client inputs sent to server
-  - Unreliable (UDP) game state broadcasted to client
+  - Reliable (TCP) and Unreliable (UDP) updates
+  - Networked physics
+    - Hermite Interpolation
+    - Event updates
+  - Tick sync
   - Works locally and over the internet
-- Interpolation
-  - Snapshot interpolation
 - Rendering
   - 2D Cirlce shapes, textures and shaders
   - Animations with texture sprite sheets
@@ -126,8 +127,8 @@ Features:
 - Levelling
   - Configurable levels
 - UI
-  - Client HUD with configurable elements that are allignable to window edges
-  - Server terminal ui with tables and panes that displays realtime statistics
+  - Client HUD with configurable elements that are alignable to window edges
+  - Server terminal ui with tables and panes that displays real time statistics
 - Bots
   - Template for writing bots that query game state and input moves as a client
 - Events
